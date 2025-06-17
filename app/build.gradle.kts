@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.aboutLibraries)
+    alias(libs.plugins.google.services)
 }
 
 val appName = "Momemtum"

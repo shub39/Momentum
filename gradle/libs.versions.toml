@@ -1,6 +1,6 @@
 [versions]
 agp = "8.10.1"
-koin = "4.0.4"
+koin = "4.1.0"
 kotlin = "2.1.21"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -15,14 +15,15 @@ colorpicker = "1.1.2"
 datastore = "1.2.0-alpha02"
 calendar = "2.7.0"
 ksp = "2.1.21-2.0.1"
-reorderable = "2.4.3"
+reorderable = "2.5.1"
 room = "2.7.1"
 sqlite = "2.5.1"
 navigation = "2.9.0"
 serialization = "1.8.1"
 materialKolor = "2.1.1"
-aboutLibraries = "12.2.0"
+aboutLibraries = "12.2.2"
 splashscreen = "1.0.1"
+google = "4.4.2"
 
 [libraries]
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
@@ -71,3 +72,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google" }
