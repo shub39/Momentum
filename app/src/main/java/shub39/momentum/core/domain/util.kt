@@ -1,6 +1,7 @@
 package shub39.momentum.core.domain
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -12,8 +13,8 @@ fun <T, K> observePreferenceFlow(
     scope: CoroutineScope,
     state: MutableStateFlow<K>,
     update: (K, T) -> K
-) {
-    flow
+): Job {
+    return flow
         .onEach { pref ->
             state.update { currentState ->
                 update(currentState, pref)

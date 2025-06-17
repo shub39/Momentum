@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,10 +33,11 @@ fun App(
 
     val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    // go to onboarding if first launch
+    LaunchedEffect(settingsState.isOnboardingDone) {
         if (!settingsState.isOnboardingDone) {
             navController.navigate(Screens.Onboarding) {
-                popUpTo(Screens.Onboarding) { inclusive = true }
+                popUpTo(Screens.HomeGraph) { inclusive = true }
             }
         }
     }
@@ -55,15 +57,15 @@ fun App(
                 .fillMaxSize(),
         ) {
             composable<Screens.HomeGraph> {
-
+                Text(text = "Home")
             }
 
             composable<Screens.Onboarding> {
-
+                Text(text = "Onboarding")
             }
 
             composable<Screens.SettingsGraph> {
-
+                Text(text = "Settings")
             }
         }
     }
