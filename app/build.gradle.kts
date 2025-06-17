@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,7 +7,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.aboutLibraries)
-    alias(libs.plugins.google.services)
 }
 
 val appName = "Momemtum"
@@ -44,11 +45,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JvmTarget.JVM_17.target
     }
     buildFeatures {
         compose = true
@@ -64,19 +65,19 @@ dependencies {
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.calendar)
-    implementation(libs.reorderable)
+//    implementation(libs.calendar)
+//    implementation(libs.reorderable)
     implementation(libs.materialKolor)
     implementation(libs.colorpicker.compose)
-    implementation(libs.aboutLibraries)
-    implementation(libs.aboutlibraries.compose.m3)
-    implementation(libs.composeIcons.fontAwesome)
+//    implementation(libs.aboutLibraries)
+//    implementation(libs.aboutlibraries.compose.m3)
+//    implementation(libs.composeIcons.fontAwesome)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.compiler)
-    implementation(libs.sqlite.bundled)
-    annotationProcessor(libs.androidx.room.compiler)
-    ksp(libs.androidx.room.compiler)
+//    implementation(libs.androidx.room.runtime)
+//    implementation(libs.androidx.room.compiler)
+//    implementation(libs.sqlite.bundled)
+//    annotationProcessor(libs.androidx.room.compiler)
+//    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -84,7 +85,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

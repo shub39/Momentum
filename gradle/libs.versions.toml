@@ -23,7 +23,6 @@ serialization = "1.8.1"
 materialKolor = "2.1.1"
 aboutLibraries = "12.2.2"
 splashscreen = "1.0.1"
-google = "4.4.2"
 
 [libraries]
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
@@ -40,7 +39,6 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material" }
-androidx-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite" }
 
 # Room
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -72,4 +70,3 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-google-services = { id = "com.google.gms.google-services", version.ref = "google" }
