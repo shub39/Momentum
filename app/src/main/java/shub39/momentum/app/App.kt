@@ -18,6 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.onboarding.Onboarding
+import shub39.momentum.viewmodels.OnboardingViewModel
 import shub39.momentum.viewmodels.SettingsViewModel
 
 private sealed interface Screens {
@@ -61,7 +63,18 @@ fun App(
             }
 
             composable<Screens.Onboarding> {
-                Text(text = "Onboarding")
+                val onboardingViewModel: OnboardingViewModel = koinInject()
+                val onboardingState by onboardingViewModel.state.collectAsStateWithLifecycle()
+
+                Onboarding(
+                    state = onboardingState,
+                    onAction = onboardingViewModel::onAction,
+                    onNavigateToHome = {
+                        navController.navigate(Screens.HomeGraph) {
+                            popUpTo(Screens.Onboarding) { inclusive = true }
+                        }
+                    }
+                )
             }
 
             composable<Screens.SettingsGraph> {

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 
+// generic to observe flows in viewmodels to update states
 fun <T, K> observePreferenceFlow(
     flow: Flow<T>,
     scope: CoroutineScope,
