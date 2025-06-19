@@ -48,7 +48,7 @@ class SettingsViewModel(
                 state = _state,
                 update = { state, pref ->
                     state.copy(theme = state.theme.copy(appTheme = pref))
-                },
+                }
             )
             observePreferenceFlow(
                 flow = datastore.getAmoledPrefFlow(),
