@@ -5,9 +5,10 @@ import shub39.momentum.R
 
 enum class Fonts(
     @FontRes val fontRes: Int,
+    val displayName: String
 ) {
-    INTER(R.font.inter),
-    POPPINS(R.font.poppins),
-    MANROPE(R.font.manrope),
-    MONTSERRAT(R.font.montserrat)
+    INTER(R.font.inter, "Inter"),
+    POPPINS(R.font.poppins, "Poppins"),
+    MANROPE(R.font.manrope, "Manrope"),
+    MONTSERRAT(R.font.montserrat, "Montserrat")
 }

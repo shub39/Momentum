@@ -8,20 +8,21 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-compose = "1.8.2"
-material = "1.4.0-alpha15"
+compose = "1.8.3"
+material = "1.4.0-alpha16"
 composeIcons = "1.1.1"
 colorpicker = "1.1.2"
 datastore = "1.2.0-alpha02"
 calendar = "2.7.0"
 ksp = "2.1.21-2.0.1"
 reorderable = "2.5.1"
-room = "2.7.1"
-sqlite = "2.5.1"
+room = "2.7.2"
+sqlite = "2.5.2"
 navigation = "2.9.0"
 serialization = "1.8.1"
 materialKolor = "2.1.1"
 aboutLibraries = "12.2.2"
+materialIconsCore = "1.7.3"
 splashscreen = "1.0.1"
 
 [libraries]
@@ -39,6 +40,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material" }
+material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 
 # Room
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }

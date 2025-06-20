@@ -22,6 +22,7 @@ import shub39.momentum.onboarding.Onboarding
 import shub39.momentum.viewmodels.OnboardingViewModel
 import shub39.momentum.viewmodels.SettingsViewModel
 
+@Serializable
 private sealed interface Screens {
     @Serializable data object Onboarding: Screens
     @Serializable data object HomeGraph: Screens
