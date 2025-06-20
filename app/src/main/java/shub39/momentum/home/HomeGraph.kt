@@ -13,6 +13,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
+import shub39.momentum.core.domain.data_classes.LapseDay
+import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.domain.enums.Fonts
@@ -62,7 +64,26 @@ private fun Preview() {
     var state by remember {
         mutableStateOf(
             HomeState(
-                isLoading = false
+                isLoading = false,
+                projects = (0..10).map {
+                    Project(
+                        id = it.toLong(),
+                        index = it,
+                        title = "Project $it",
+                        description = "Description for project $it",
+                        startDate = it.toLong(),
+                        lastUpdatedDate = it.toLong(),
+                        days = (0..10).map { day ->
+                            LapseDay(
+                                projectId = it.toLong(),
+                                image = "TODO()",
+                                comment = "TODO()",
+                                date = day.toLong(),
+                                isFavorite = false
+                            )
+                        }
+                    )
+                }
             )
         )
     }

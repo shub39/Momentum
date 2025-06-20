@@ -2,8 +2,6 @@ package shub39.momentum.home.component
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -71,11 +69,7 @@ fun ProjectsList(
                 LoadingIndicator()
             } else {
                 if (state.projects.isNotEmpty()) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(state.projects, key = { it.id }) { project ->
                             ProjectListItem(
                                 project = project,
