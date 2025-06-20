@@ -4,4 +4,5 @@
     <string name="theme_dark">Dark</string>
     <string name="theme_system">System</string>
     <string name="projects">Projects</string>
+    <string name="empty_list">Start a new Project</string>
 </resources>

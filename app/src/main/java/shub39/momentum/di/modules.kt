@@ -7,6 +7,7 @@ import org.koin.dsl.module
 import shub39.momentum.core.data.DatastoreFactory
 import shub39.momentum.core.data.SettingsPrefsImpl
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
+import shub39.momentum.viewmodels.HomeViewmodel
 import shub39.momentum.viewmodels.OnboardingViewModel
 import shub39.momentum.viewmodels.SettingsViewModel
 import shub39.momentum.viewmodels.StateLayer
@@ -20,5 +21,6 @@ val modules = module {
     // states and viewmodels
     singleOf(::StateLayer)
     singleOf(::SettingsViewModel)
+    singleOf(::HomeViewmodel)
     singleOf(::OnboardingViewModel)
 }

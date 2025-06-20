@@ -18,7 +18,9 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.home.HomeGraph
 import shub39.momentum.onboarding.Onboarding
+import shub39.momentum.viewmodels.HomeViewmodel
 import shub39.momentum.viewmodels.OnboardingViewModel
 import shub39.momentum.viewmodels.SettingsViewModel
 
@@ -29,10 +31,10 @@ private sealed interface Screens {
     @Serializable data object SettingsGraph: Screens
 }
 @Composable
-fun App(
-    settingsViewModel: SettingsViewModel = koinInject()
-) {
+fun App() {
     val navController = rememberNavController()
+
+    val settingsViewModel: SettingsViewModel = koinInject()
 
     val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
 
@@ -60,7 +62,16 @@ fun App(
                 .fillMaxSize(),
         ) {
             composable<Screens.HomeGraph> {
-                Text(text = "Home")
+                val homeViewModel: HomeViewmodel = koinInject()
+                val homeState by homeViewModel.state.collectAsStateWithLifecycle()
+
+                HomeGraph(
+                    state = homeState,
+                    onAction = homeViewModel::onAction,
+                    onNavigateToSettings = {
+                        navController.navigate(Screens.SettingsGraph)
+                    }
+                )
             }
 
             composable<Screens.Onboarding> {
