@@ -50,7 +50,9 @@ fun ProjectsList(
                         fontWeight = FontWeight.Bold
                     )
                 },
-                subtitle = { Text(text = stringResource(R.string.projects)) },
+                subtitle = {
+                    Text(text = "${state.projects.size} " + stringResource(R.string.projects))
+                },
                 actions = {
                     FilledTonalIconButton(
                         onClick = onNavigateToSettings,

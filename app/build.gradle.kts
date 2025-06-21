@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.aboutLibraries)
 }
 
-val appName = "Momemtum"
+val appName = "Momentum"
 val appVersionCode = 1000
 val appVersionName = "1.0.0"
 val appNameSpace = "shub39.momentum"
