@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.materialkolor.PaletteStyle
 import kotlinx.serialization.Serializable
 import shub39.momentum.core.domain.data_classes.LapseDay
 import shub39.momentum.core.domain.data_classes.Project
@@ -91,7 +92,8 @@ private fun Preview() {
     MomentumTheme(
         theme = Theme(
             appTheme = AppTheme.DARK,
-            font = Fonts.INTER
+            font = Fonts.INTER,
+            paletteStyle = PaletteStyle.TonalSpot
         )
     ) {
         HomeGraph(
