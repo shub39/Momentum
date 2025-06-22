@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 // individual Days
 @Serializable
-data class LapseDay(
+data class Day(
     val id: Long = 0,
     val projectId: Long,
     val image: String, // Uri.toString()

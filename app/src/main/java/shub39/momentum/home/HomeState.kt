@@ -4,6 +4,7 @@ import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.enums.SortOrder
 
 data class HomeState(
+    val sendNotifications: Boolean = false,
     val searchQuery: String = "",
     val searchedProjects: List<Project> = emptyList(),
     val sortOrder: SortOrder = SortOrder.DATE_CREATED_ASC,

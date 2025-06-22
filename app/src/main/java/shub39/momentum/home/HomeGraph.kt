@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
-import shub39.momentum.core.domain.data_classes.LapseDay
+import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
@@ -74,14 +74,15 @@ private fun Preview() {
                         startDate = it.toLong(),
                         lastUpdatedDate = it.toLong(),
                         days = (0..10).map { day ->
-                            LapseDay(
+                            Day(
                                 projectId = it.toLong(),
                                 image = "TODO()",
                                 comment = "TODO()",
                                 date = day.toLong(),
                                 isFavorite = false
                             )
-                        }
+                        },
+                        goalDate = it.plus(100000).toLong()
                     )
                 }
             )
