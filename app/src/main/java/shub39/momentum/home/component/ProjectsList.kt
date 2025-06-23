@@ -93,7 +93,10 @@ fun ProjectsList(
                         items(state.projects, key = { it.id }) { project ->
                             ProjectListItem(
                                 project = project,
-                                modifier = Modifier.clickable { /*TODO: Action to navigate*/ }
+                                modifier = Modifier.clickable {
+                                    onAction(HomeAction.OnChangeProject(project))
+                                    onNavigateToProject()
+                                }
                             )
                         }
                     }

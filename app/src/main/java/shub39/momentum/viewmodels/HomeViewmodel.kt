@@ -24,7 +24,8 @@ class HomeViewmodel(
 
     fun onAction(action: HomeAction) = viewModelScope.launch {
         when (action) {
-            else -> {}
+            is HomeAction.OnChangeNotificationPref -> {}
+            is HomeAction.OnChangeProject -> {}
         }
     }
 }
