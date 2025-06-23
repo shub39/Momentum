@@ -1,50 +1,51 @@
 package shub39.momentum.home.component
 
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import compose.icons.FontAwesomeIcons
-import compose.icons.fontawesomeicons.Solid
-import compose.icons.fontawesomeicons.solid.Landmark
 import shub39.momentum.core.domain.data_classes.Project
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectListItem(
     project: Project,
     modifier: Modifier = Modifier
 ) {
-    ListItem(
-        modifier = modifier.clip(MaterialTheme.shapes.medium),
-        colors = ListItemDefaults.colors(
+    Card(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            headlineColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            supportingColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            trailingIconColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
-        headlineContent = {
-            Text(
-                text = project.title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-        },
-        supportingContent = {
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            HorizontalMultiBrowseCarousel(
+                state = rememberCarouselState { 2 },
+                preferredItemWidth = 100.dp
+            ) { index ->
 
-        },
-        trailingContent = {
-            Icon(
-                imageVector = FontAwesomeIcons.Solid.Landmark,
-                contentDescription = "Image",
-                modifier = Modifier.size(24.dp)
-            )
+            }
+
+            Text(project.title)
+            Text(project.description)
+            Text(project.startDate.toString())
+            Text(project.lastUpdatedDate.toString())
+            Text(project.goalDate.toString())
         }
-    )
+    }
 }
