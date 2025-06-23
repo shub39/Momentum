@@ -62,6 +62,10 @@ android {
 }
 
 dependencies {
+    configurations.all {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+
     implementation(libs.material.icons.core)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)
@@ -74,11 +78,11 @@ dependencies {
 //    implementation(libs.aboutLibraries.compose.m3)
     implementation(libs.composeIcons.fontAwesome)
     implementation(libs.kotlinx.serialization.json)
-//    implementation(libs.androidx.room.runtime)
-//    implementation(libs.androidx.room.compiler)
-//    implementation(libs.sqlite.bundled)
-//    annotationProcessor(libs.androidx.room.compiler)
-//    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.compiler)
+    implementation(libs.sqlite.bundled)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

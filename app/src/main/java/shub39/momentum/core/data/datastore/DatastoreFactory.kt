@@ -1,4 +1,4 @@
-package shub39.momentum.core.data
+package shub39.momentum.core.data.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore

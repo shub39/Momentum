@@ -21,7 +21,7 @@ sqlite = "2.5.2"
 navigation = "2.9.0"
 serialization = "1.8.1"
 materialKolor = "2.1.1"
-aboutLibraries = "12.2.2"
+aboutLibraries = "12.2.3"
 materialIconsCore = "1.7.3"
 splashscreen = "1.0.1"
 

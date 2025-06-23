@@ -1,0 +1,16 @@
+package shub39.momentum.core.data.database
+
+import android.content.Context
+import androidx.room.Room
+import androidx.room.RoomDatabase
+
+class ProjectDBFactory(
+    private val context: Context
+) {
+    fun create(): RoomDatabase.Builder<ProjectDatabase> {
+        val appContext = context.applicationContext
+        val dbFile = appContext.getDatabasePath(ProjectDatabase.DATABASE_NAME)
+
+        return Room.databaseBuilder(appContext, dbFile.absolutePath)
+    }
+}

@@ -19,6 +19,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonShapes
+import androidx.compose.material3.IconToggleButtonShapes
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,6 +51,11 @@ fun ProjectsList(
                     FilledTonalIconToggleButton(
                         checked = state.sendNotifications,
                         onCheckedChange = { onAction(HomeAction.OnChangeNotificationPref(it)) },
+                        shapes = IconToggleButtonShapes(
+                            shape = CircleShape,
+                            pressedShape = RoundedCornerShape(10.dp),
+                            checkedShape = CircleShape
+                        )
                     ) {
                         Icon(
                             imageVector = Icons.Default.Notifications,

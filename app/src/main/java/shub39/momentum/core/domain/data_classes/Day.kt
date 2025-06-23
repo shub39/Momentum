@@ -1,9 +1,6 @@
 package shub39.momentum.core.domain.data_classes
 
-import kotlinx.serialization.Serializable
-
 // individual Days
-@Serializable
 data class Day(
     val id: Long = 0,
     val projectId: Long,

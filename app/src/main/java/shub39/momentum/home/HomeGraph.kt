@@ -14,7 +14,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.materialkolor.PaletteStyle
 import kotlinx.serialization.Serializable
-import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
@@ -74,15 +73,6 @@ private fun Preview() {
                         description = "Description for project $it",
                         startDate = it.toLong(),
                         lastUpdatedDate = it.toLong(),
-                        days = (0..10).map { day ->
-                            Day(
-                                projectId = it.toLong(),
-                                image = "TODO()",
-                                comment = "TODO()",
-                                date = day.toLong(),
-                                isFavorite = false
-                            )
-                        },
                         goalDate = it.plus(100000).toLong()
                     )
                 }

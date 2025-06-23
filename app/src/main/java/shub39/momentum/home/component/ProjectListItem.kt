@@ -37,11 +37,7 @@ fun ProjectListItem(
                 state = rememberCarouselState { 2 },
                 preferredItemWidth = 100.dp
             ) { index ->
-                val image = project.days.getOrNull(index)
 
-                if (image == null) {
-
-                }
             }
         }
     }
