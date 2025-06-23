@@ -27,6 +27,7 @@ class SettingsPrefsImpl(
         private val materialTheme = booleanPreferencesKey("material_theme")
         private val onboardingDone = booleanPreferencesKey("onboarding_done")
         private val selectedFont = stringPreferencesKey("font")
+        private val notificationPref = booleanPreferencesKey("notification_pref")
     }
 
     override fun getAppThemePrefFlow(): Flow<AppTheme> = dataStore.data
@@ -34,7 +35,6 @@ class SettingsPrefsImpl(
             val theme = preferences[appTheme] ?: AppTheme.SYSTEM.name
             AppTheme.valueOf(theme)
         }
-
     override suspend fun updateAppThemePref(pref: AppTheme) {
         dataStore.edit {
             it[appTheme] = pref.name
@@ -43,7 +43,6 @@ class SettingsPrefsImpl(
 
     override fun getSeedColorFlow(): Flow<Color> = dataStore.data
         .map { preferences -> Color(preferences[seedColor] ?: Color.Companion.White.toArgb()) }
-
     override suspend fun updateSeedColor(color: Color) {
         dataStore.edit { settings ->
             settings[seedColor] = color.toArgb()
@@ -52,7 +51,6 @@ class SettingsPrefsImpl(
 
     override fun getAmoledPrefFlow(): Flow<Boolean> = dataStore.data
         .map { preferences -> preferences[amoledPref] == true }
-
     override suspend fun updateAmoledPref(amoled: Boolean) {
         dataStore.edit { settings ->
             settings[amoledPref] = amoled
@@ -63,7 +61,6 @@ class SettingsPrefsImpl(
         .map { preferences ->
             PaletteStyle.valueOf(preferences[paletteStyle] ?: PaletteStyle.TonalSpot.name)
         }
-
     override suspend fun updatePaletteStyle(style: PaletteStyle) {
         dataStore.edit { settings ->
             settings[paletteStyle] = style.name
@@ -72,7 +69,6 @@ class SettingsPrefsImpl(
 
     override fun getOnboardingDoneFlow(): Flow<Boolean> = dataStore.data
         .map { preferences -> preferences[onboardingDone] == true }
-
     override suspend fun updateOnboardingDone(done: Boolean) {
         dataStore.edit { settings ->
             settings[onboardingDone] = done
@@ -81,7 +77,6 @@ class SettingsPrefsImpl(
 
     override fun getMaterialYouFlow(): Flow<Boolean> = dataStore.data
         .map { preferences -> preferences[materialTheme] == true }
-
     override suspend fun updateMaterialTheme(pref: Boolean) {
         dataStore.edit { settings ->
             settings[materialTheme] = pref
@@ -93,10 +88,18 @@ class SettingsPrefsImpl(
             val font = prefs[selectedFont] ?: Fonts.POPPINS.name
             Fonts.valueOf(font)
         }
-
     override suspend fun updateFonts(font: Fonts) {
         dataStore.edit { settings ->
             settings[selectedFont] = font.name
+        }
+    }
+
+    override fun getNotificationPrefFlow(): Flow<Boolean> = dataStore.data
+        .map { preferences -> preferences[notificationPref] == true }
+
+    override suspend fun updateNotificationPref(pref: Boolean) {
+        dataStore.edit { settings ->
+            settings[notificationPref] = pref
         }
     }
 }

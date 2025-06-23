@@ -7,8 +7,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
-import androidx.compose.material3.carousel.rememberCarouselState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -33,12 +32,8 @@ fun ProjectListItem(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            HorizontalMultiBrowseCarousel(
-                state = rememberCarouselState { 2 },
-                preferredItemWidth = 100.dp
-            ) { index ->
-
-            }
+            Text(project.title)
+            Text(project.description)
         }
     }
 }

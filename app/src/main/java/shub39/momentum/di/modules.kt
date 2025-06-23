@@ -10,9 +10,11 @@ import shub39.momentum.core.data.database.ProjectDBFactory
 import shub39.momentum.core.data.database.ProjectDatabase
 import shub39.momentum.core.data.datastore.DatastoreFactory
 import shub39.momentum.core.data.datastore.SettingsPrefsImpl
+import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
-import shub39.momentum.viewmodels.HomeViewmodel
+import shub39.momentum.viewmodels.HomeViewModel
 import shub39.momentum.viewmodels.OnboardingViewModel
+import shub39.momentum.viewmodels.ProjectViewModel
 import shub39.momentum.viewmodels.SettingsViewModel
 import shub39.momentum.viewmodels.StateLayer
 
@@ -35,11 +37,12 @@ val modules = module {
     single { SettingsPrefsImpl(get(named("settings_datastore"))) }.bind<SettingsPrefs>()
 
     // repositories and use cases
-    singleOf(::ProjectRepositoryImpl)
+    singleOf(::ProjectRepositoryImpl).bind<ProjectRepository>()
 
     // states and viewmodels
     singleOf(::StateLayer)
     singleOf(::SettingsViewModel)
-    singleOf(::HomeViewmodel)
+    singleOf(::HomeViewModel)
     singleOf(::OnboardingViewModel)
+    singleOf(::ProjectViewModel)
 }

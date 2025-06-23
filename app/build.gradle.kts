@@ -70,7 +70,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
-//    implementation(libs.calendar)
+    implementation(libs.calendar)
 //    implementation(libs.reorderable)
     implementation(libs.materialKolor)
     implementation(libs.colorpicker.compose)

@@ -8,10 +8,8 @@ import kotlinx.serialization.Serializable
 @Entity(tableName = "projects_table")
 data class ProjectEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val index: Int,
     val title: String,
     val description: String,
     val startDate: Long,
     val lastUpdatedDate: Long,
-    val goalDate: Long
 )

@@ -27,4 +27,7 @@ interface SettingsPrefs {
 
     fun getFontFlow(): Flow<Fonts>
     suspend fun updateFonts(font: Fonts)
+
+    fun getNotificationPrefFlow(): Flow<Boolean>
+    suspend fun updateNotificationPref(pref: Boolean)
 }

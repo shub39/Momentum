@@ -41,7 +41,7 @@ fun Empty(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(R.string.empty_list),
+            text = stringResource(R.string.start_new_project),
             textAlign = TextAlign.Center
         )
     }

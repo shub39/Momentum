@@ -8,24 +8,20 @@ import shub39.momentum.core.domain.data_classes.Project
 fun ProjectEntity.toProject(): Project {
     return Project(
         id = id,
-        index = index,
         title = title,
         description = description,
         startDate = startDate,
         lastUpdatedDate = lastUpdatedDate,
-        goalDate = goalDate
     )
 }
 
 fun Project.toEntity(): ProjectEntity {
     return ProjectEntity(
         id = id,
-        index = index,
         title = title,
         description = description,
         startDate = startDate,
         lastUpdatedDate = lastUpdatedDate,
-        goalDate = goalDate
     )
 }
 
