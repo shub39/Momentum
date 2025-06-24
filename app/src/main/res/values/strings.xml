@@ -7,4 +7,6 @@
     <string name="start_new_project">Start a new Project</string>
     <string name="add_new_project">Add new Project</string>
     <string name="done">Done</string>
+    <string name="calendar">Calendar</string>
+    <string name="timeline">Timeline</string>
 </resources>

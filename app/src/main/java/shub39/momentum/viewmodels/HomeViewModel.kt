@@ -10,11 +10,14 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 import shub39.momentum.core.domain.observePreferenceFlow
 import shub39.momentum.home.HomeAction
 import shub39.momentum.home.HomeState
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 class HomeViewModel(
     private val stateLayer: StateLayer,
@@ -34,11 +37,20 @@ class HomeViewModel(
         when (action) {
             is HomeAction.OnChangeNotificationPref -> settingsPrefs.updateNotificationPref(action.pref)
 
-            is HomeAction.OnChangeProject -> {
-                stateLayer.projectState.update { it.copy(project = action.project) }
-            }
+            is HomeAction.OnChangeProject -> stateLayer.projectState.update { it.copy(project = action.project) }
 
-            is HomeAction.OnAddProject -> projectRepository.upsertProject(action.project)
+            is HomeAction.OnAddProject -> {
+                val startDate = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
+
+                projectRepository.upsertProject(
+                    Project(
+                        title = action.title,
+                        description = action.description,
+                        startDate = startDate,
+                        lastUpdatedDate = startDate
+                    )
+                )
+            }
         }
     }
 

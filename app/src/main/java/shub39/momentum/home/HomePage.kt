@@ -48,8 +48,6 @@ import shub39.momentum.core.domain.enums.Fonts
 import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.home.component.Empty
 import shub39.momentum.home.component.ProjectListItem
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -143,6 +141,8 @@ fun HomePage(
         }
 
         if (projectAddSheet) {
+            // TODO: Make it prettier
+
             var newProjectTitle by remember { mutableStateOf("") }
             var newProjectDescription by remember { mutableStateOf("") }
 
@@ -164,16 +164,10 @@ fun HomePage(
                 Button(
                     enabled = newProjectDescription.isNotBlank() && newProjectTitle.isNotBlank(),
                     onClick = {
-                        val startDate = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
-
                         onAction(
                             HomeAction.OnAddProject(
-                                Project(
-                                    title = newProjectTitle,
-                                    description = newProjectDescription,
-                                    startDate = startDate,
-                                    lastUpdatedDate = startDate
-                                )
+                                title = newProjectTitle,
+                                description = newProjectDescription
                             )
                         )
 

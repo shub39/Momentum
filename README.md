@@ -8,5 +8,5 @@ App to make montages easily, in the works
 - Integrate Camera
 - Add notifications
 - Design UI and animations
-- Integrate firebase and revenue cat with onboarding
+- Publish on fdroid and izzyondroid
 - Publish on google play

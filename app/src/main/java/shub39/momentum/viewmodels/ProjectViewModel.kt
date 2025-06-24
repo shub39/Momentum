@@ -30,9 +30,16 @@ class ProjectViewModel(
     fun onAction(action: ProjectAction) = viewModelScope.launch {
         when (action) {
             is ProjectAction.OnUpdateProject -> repository.upsertProject(action.project)
+
             is ProjectAction.OnDeleteProject -> repository.deleteProject(action.project)
+
             is ProjectAction.OnDeleteDay -> repository.upsertDay(action.day)
+
             is ProjectAction.OnUpsertDay -> repository.upsertDay(action.day)
+
+            ProjectAction.OnSetMontage -> {
+                //TODO: Set montage to video page
+            }
         }
     }
 
