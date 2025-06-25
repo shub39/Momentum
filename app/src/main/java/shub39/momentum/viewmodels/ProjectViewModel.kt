@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
+import java.time.LocalDate
 
 class ProjectViewModel(
     private val stateLayer: StateLayer,
@@ -48,9 +49,12 @@ class ProjectViewModel(
             .getDays()
             .onEach { days ->
                 if (_state.value.project != null) {
+                    val days = days.filter { day -> day.projectId == _state.value.project!!.id }
+
                     _state.update {
                         it.copy(
-                            days = days.filter { day -> day.projectId == it.project!!.id }
+                            days = days,
+                            dates = days.map { day -> LocalDate.ofEpochDay(day.date) }
                         )
                     }
                 }

@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.calendar)
+    implementation(libs.filekit.core)
+    implementation(libs.filekit.dialogs.compose)
 //    implementation(libs.reorderable)
     implementation(libs.materialKolor)
     implementation(libs.colorpicker.compose)
