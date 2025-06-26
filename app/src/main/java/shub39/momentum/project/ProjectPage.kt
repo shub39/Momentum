@@ -1,6 +1,6 @@
 package shub39.momentum.project
 
-import android.util.Log
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,13 +23,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.kizitonwose.calendar.compose.VerticalCalendar
@@ -40,6 +40,7 @@ import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.uri
 import shub39.momentum.core.domain.data_classes.Day
+import java.time.LocalDate
 import java.time.YearMonth
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -110,7 +111,9 @@ fun ProjectPage(
                                     MaterialTheme.colorScheme.surface
                                 }
                             )
-                            .clickable { selectedDate = day.date.toEpochDay() },
+                            .clickable(
+                                enabled = day.date < LocalDate.now()
+                            ) { selectedDate = day.date.toEpochDay() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(day.date.dayOfMonth.toString())
@@ -120,15 +123,23 @@ fun ProjectPage(
         }
 
         if (selectedDate != null) {
-            var imageFile: PlatformFile? by remember { mutableStateOf(null) }
+            val context = LocalContext.current
+            val day = state.days.find { it.date == selectedDate }
+            var imageFile: PlatformFile? by remember {
+                mutableStateOf(
+                    day?.let { PlatformFile(it.image.toUri()) }
+                )
+            }
+
             val imagePicker = rememberFilePickerLauncher(
                 type = FileKitType.Image
-            ) { image -> imageFile = image }
-
-            LaunchedEffect(Unit) {
-                imageFile = state.days.find { it.date == selectedDate }?.let {
-                    Log.d("ProjectPage", "Image file: ${it.image.toUri()}")
-                    PlatformFile(it.image.toUri())
+            ) { image ->
+                if (image != null) {
+                    imageFile = image
+                    context.contentResolver.takePersistableUriPermission(
+                        image.uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
                 }
             }
 
@@ -142,26 +153,39 @@ fun ProjectPage(
                 )
 
                 Text(text = selectedDate.toString())
-                Button(
-                    onClick = { imagePicker.launch() }
-                ) { Text("Select Image") }
-                Button(
-                    onClick = {
-                        onAction(
-                            ProjectAction.OnUpsertDay(
-                                Day(
-                                    projectId = state.project.id,
-                                    image = imageFile!!.uri.toString(),
-                                    comment = null,
-                                    date = selectedDate!!,
-                                    isFavorite = false
+
+                if (day == null) {
+                    Button(
+                        onClick = { imagePicker.launch() },
+                    ) { Text("Select Image") }
+
+                    Button(
+                        onClick = {
+                            onAction(
+                                ProjectAction.OnUpsertDay(
+                                    Day(
+                                        projectId = state.project.id,
+                                        image = imageFile!!.uri.toString(),
+                                        comment = null,
+                                        date = selectedDate!!,
+                                        isFavorite = false
+                                    )
                                 )
                             )
-                        )
-                        selectedDate = null
-                    },
-                    enabled = imageFile != null
-                ) { Text("Add Day") }
+                            selectedDate = null
+                        },
+                        enabled = imageFile != null
+                    ) { Text("Add Day") }
+                } else {
+                    Button(
+                        onClick = {
+                            onAction(ProjectAction.OnDeleteDay(day))
+                            selectedDate = null
+                        }
+                    ) {
+                        Text("Delete Day")
+                    }
+                }
             }
         }
     }
