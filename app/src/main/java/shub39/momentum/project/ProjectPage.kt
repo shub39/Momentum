@@ -1,5 +1,7 @@
 package shub39.momentum.project
 
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,11 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.kizitonwose.calendar.compose.VerticalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
+import com.skydoves.landscapist.coil3.CoilImage
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
+import io.github.vinceglb.filekit.dialogs.uri
 import shub39.momentum.core.domain.data_classes.Day
 import java.time.YearMonth
 
@@ -70,15 +76,19 @@ fun ProjectPage(
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        // TODO: Navigate to video maker page
-                    }
+                AnimatedVisibility(
+                    visible = state.dates.isNotEmpty()
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Show Preview"
-                    )
+                    FloatingActionButton(
+                        onClick = {
+                            // TODO: Navigate to video maker page
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Show Preview"
+                        )
+                    }
                 }
             }
         ) { padding ->
@@ -94,7 +104,7 @@ fun ProjectPage(
                         modifier = Modifier
                             .size(40.dp)
                             .background(
-                                if (day.date in state.dates) {
+                                if (state.days.map { it.date }.contains(day.date.toEpochDay())) {
                                     MaterialTheme.colorScheme.primaryContainer
                                 } else {
                                     MaterialTheme.colorScheme.surface
@@ -111,16 +121,29 @@ fun ProjectPage(
 
         if (selectedDate != null) {
             var imageFile: PlatformFile? by remember { mutableStateOf(null) }
-            val photoPicker = rememberFilePickerLauncher(
+            val imagePicker = rememberFilePickerLauncher(
                 type = FileKitType.Image
             ) { image -> imageFile = image }
+
+            LaunchedEffect(Unit) {
+                imageFile = state.days.find { it.date == selectedDate }?.let {
+                    Log.d("ProjectPage", "Image file: ${it.image.toUri()}")
+                    PlatformFile(it.image.toUri())
+                }
+            }
 
             ModalBottomSheet(
                 onDismissRequest = { selectedDate = null }
             ) {
+                CoilImage(
+                    imageModel = { imageFile?.uri },
+                    loading = { LoadingIndicator() },
+                    failure = { Text(text = it.reason?.message.toString()) }
+                )
+
                 Text(text = selectedDate.toString())
                 Button(
-                    onClick = { photoPicker.launch() }
+                    onClick = { imagePicker.launch() }
                 ) { Text("Select Image") }
                 Button(
                     onClick = {
@@ -128,7 +151,7 @@ fun ProjectPage(
                             ProjectAction.OnUpsertDay(
                                 Day(
                                     projectId = state.project.id,
-                                    image = imageFile!!.toString(),
+                                    image = imageFile!!.uri.toString(),
                                     comment = null,
                                     date = selectedDate!!,
                                     isFavorite = false

@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.calendar)
     implementation(libs.filekit.core)
     implementation(libs.filekit.dialogs.compose)
+    implementation(libs.landscapist.coil)
 //    implementation(libs.reorderable)
     implementation(libs.materialKolor)
     implementation(libs.colorpicker.compose)

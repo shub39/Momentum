@@ -1,5 +1,6 @@
 package shub39.momentum.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,7 +37,9 @@ class ProjectViewModel(
 
             is ProjectAction.OnDeleteDay -> repository.upsertDay(action.day)
 
-            is ProjectAction.OnUpsertDay -> repository.upsertDay(action.day)
+            is ProjectAction.OnUpsertDay -> repository.upsertDay(action.day).also {
+                Log.d("ProjectViewModel", "Upserted day: ${action.day.image}")
+            }
 
             ProjectAction.OnSetMontage -> {
                 //TODO: Set montage to video page
