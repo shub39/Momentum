@@ -1,6 +1,5 @@
 package shub39.momentum.di
 
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -25,7 +24,6 @@ val modules = module {
         get<ProjectDBFactory>()
             .create()
             .fallbackToDestructiveMigration(true)
-            .setDriver(BundledSQLiteDriver())
             .build()
     }
     single { get<ProjectDatabase>().projectDao }

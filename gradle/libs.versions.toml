@@ -17,7 +17,6 @@ calendar = "2.7.0"
 ksp = "2.2.0-2.0.2"
 reorderable = "2.5.1"
 room = "2.7.2"
-sqlite = "2.5.2"
 navigation = "2.9.1"
 serialization = "1.9.0"
 materialKolor = "2.1.1"
@@ -47,7 +46,6 @@ material-icons-core = { module = "org.jetbrains.compose.material:material-icons-
 # Room
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 # Datastore
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }

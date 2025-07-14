@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import okio.Path.Companion.toPath
 
-
 class DatastoreFactory(
     private val context: Context
 ) {

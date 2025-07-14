@@ -83,7 +83,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.compiler)
-    implementation(libs.sqlite.bundled)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.core.ktx)
