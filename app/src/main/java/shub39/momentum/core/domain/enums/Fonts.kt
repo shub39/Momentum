@@ -9,5 +9,6 @@ enum class Fonts(
     INTER(R.font.inter, "Inter"),
     POPPINS(R.font.poppins, "Poppins"),
     MANROPE(R.font.manrope, "Manrope"),
-    MONTSERRAT(R.font.montserrat, "Montserrat")
+    MONTSERRAT(R.font.montserrat, "Montserrat"),
+    FIGTREE(R.font.figtree, "Figtree")
 }

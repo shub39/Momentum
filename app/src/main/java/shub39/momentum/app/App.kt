@@ -28,13 +28,20 @@ import shub39.momentum.viewmodels.SettingsViewModel
 
 @Serializable
 private sealed interface Screens {
-    @Serializable data object Onboarding: Screens
+    @Serializable
+    data object Onboarding : Screens
     @Serializable
     data object HomePage : Screens
     @Serializable
     data object ProjectPage : Screens
-    @Serializable data object SettingsGraph: Screens
+
+    @Serializable
+    data object SettingsGraph : Screens
+
+    @Serializable
+    data object PaywallPage : Screens
 }
+
 @Composable
 fun App() {
     val navController = rememberNavController()
