@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import shub39.momentum.core.domain.data_classes.Project
 
@@ -21,7 +22,7 @@ fun ProjectListItem(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
             contentColor = MaterialTheme.colorScheme.onSurface
@@ -32,7 +33,11 @@ fun ProjectListItem(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(project.title)
+            Text(
+                text = project.title,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
             Text(project.description)
         }
     }

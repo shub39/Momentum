@@ -204,7 +204,7 @@ private fun Preview() {
     MomentumTheme(
         theme = Theme(
             appTheme = AppTheme.DARK,
-            font = Fonts.MANROPE,
+            font = Fonts.FIGTREE,
             paletteStyle = PaletteStyle.TonalSpot
         )
     ) {
