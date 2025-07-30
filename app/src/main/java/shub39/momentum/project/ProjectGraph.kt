@@ -15,7 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import shub39.momentum.project.component.ProjectHome
-import shub39.momentum.project.component.ProjectMontage
 
 @Serializable
 private sealed interface ProjectRoutes {
@@ -55,11 +54,7 @@ fun ProjectGraph(
         }
 
         composable<ProjectRoutes.ProjectMontage> {
-            ProjectMontage(
-                state = state,
-                onAction = onAction,
-                onNavigateBack = { navController.navigateUp() }
-            )
+
         }
     }
 }
