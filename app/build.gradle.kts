@@ -71,7 +71,6 @@ android {
 }
 
 dependencies {
-    implementation(files("../libs/ffmpeg-kit.aar"))
     implementation(libs.material.icons.core)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)

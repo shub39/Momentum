@@ -11,7 +11,7 @@ import shub39.momentum.core.domain.enums.AppTheme
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MomentumTheme(
-    theme: Theme,
+    theme: Theme = Theme(),
     content: @Composable () -> Unit
 ) {
     DynamicMaterialExpressiveTheme(

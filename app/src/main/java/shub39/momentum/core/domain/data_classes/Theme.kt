@@ -11,5 +11,5 @@ data class Theme(
     val paletteStyle: PaletteStyle = PaletteStyle.Expressive,
     val isMaterialYou: Boolean = false,
     val seedColor: Color = Color.Companion.Red,
-    val font: Fonts = Fonts.MANROPE
+    val font: Fonts = Fonts.FIGTREE
 )

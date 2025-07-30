@@ -20,7 +20,7 @@ import org.koin.compose.koinInject
 import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.home.HomePage
 import shub39.momentum.onboarding.Onboarding
-import shub39.momentum.project.ProjectPage
+import shub39.momentum.project.ProjectGraph
 import shub39.momentum.viewmodels.HomeViewModel
 import shub39.momentum.viewmodels.OnboardingViewModel
 import shub39.momentum.viewmodels.ProjectViewModel
@@ -34,10 +34,8 @@ private sealed interface Screens {
     data object HomePage : Screens
     @Serializable
     data object ProjectPage : Screens
-
     @Serializable
     data object SettingsGraph : Screens
-
     @Serializable
     data object PaywallPage : Screens
 }
@@ -103,7 +101,7 @@ fun App() {
                 val projectViewModel: ProjectViewModel = koinInject()
                 val projectState by projectViewModel.state.collectAsStateWithLifecycle()
 
-                ProjectPage(
+                ProjectGraph(
                     state = projectState,
                     onAction = projectViewModel::onAction,
                     onNavigateBack = { navController.navigateUp() }

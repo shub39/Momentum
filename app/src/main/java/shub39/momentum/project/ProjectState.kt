@@ -7,5 +7,6 @@ import java.time.LocalDate
 data class ProjectState(
     val project: Project? = null,
     val days: List<Day> = emptyList(),
-    val dates: List<LocalDate> = emptyList()
+    val dates: List<LocalDate> = emptyList(),
+    val montageProgress: Float? = null,
 )

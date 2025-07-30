@@ -16,7 +16,7 @@ import shub39.momentum.project.ProjectState
 import java.time.LocalDate
 
 class ProjectViewModel(
-    private val stateLayer: StateLayer,
+    stateLayer: StateLayer,
     private val repository: ProjectRepository
 ) : ViewModel() {
     private val _state = stateLayer.projectState
@@ -38,9 +38,7 @@ class ProjectViewModel(
 
             is ProjectAction.OnUpsertDay -> repository.upsertDay(action.day)
 
-            ProjectAction.OnSetMontage -> {
-                //TODO: Set montage to video page
-            }
+
         }
     }
 
