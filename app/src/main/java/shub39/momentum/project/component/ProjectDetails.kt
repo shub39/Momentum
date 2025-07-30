@@ -47,7 +47,7 @@ import java.time.YearMonth
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectHome(
+fun ProjectDetails(
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
@@ -81,7 +81,7 @@ fun ProjectHome(
             },
             floatingActionButton = {
                 AnimatedVisibility(
-                    visible = state.dates.isNotEmpty()
+                    visible = state.days.isNotEmpty()
                 ) {
                     FloatingActionButton(
                         onClick = {

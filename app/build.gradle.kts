@@ -90,7 +90,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling)
     implementation(libs.koin.androidx.compose)
-    implementation(libs.arthenica.smartexceptions)
 }
 
 java {
