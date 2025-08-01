@@ -91,6 +91,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling)
     implementation(libs.koin.androidx.compose)
+    implementation("network.chaintech:compose-multiplatform-media-player:1.0.42")
 }
 
 java {

@@ -51,7 +51,7 @@ fun ProjectDetails(
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
-    onNavigateToVideoMaker: () -> Unit
+    onNavigateToMontage: () -> Unit
 ) {
     var selectedDate: Long? by remember { mutableStateOf(null) }
 
@@ -85,7 +85,7 @@ fun ProjectDetails(
                 ) {
                     FloatingActionButton(
                         onClick = {
-                            onNavigateToVideoMaker()
+                            onNavigateToMontage()
                         }
                     ) {
                         Icon(

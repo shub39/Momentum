@@ -4,11 +4,13 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import shub39.momentum.core.data.MontageMakerImpl
 import shub39.momentum.core.data.ProjectRepositoryImpl
 import shub39.momentum.core.data.database.ProjectDBFactory
 import shub39.momentum.core.data.database.ProjectDatabase
 import shub39.momentum.core.data.datastore.DatastoreFactory
 import shub39.momentum.core.data.datastore.SettingsPrefsImpl
+import shub39.momentum.core.domain.interfaces.MontageMaker
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 import shub39.momentum.viewmodels.HomeViewModel
@@ -38,6 +40,7 @@ val modules = module {
     singleOf(::ProjectRepositoryImpl).bind<ProjectRepository>()
 
     // montage maker stuff
+    singleOf(::MontageMakerImpl).bind<MontageMaker>()
 
     // states and viewmodels
     singleOf(::StateLayer)

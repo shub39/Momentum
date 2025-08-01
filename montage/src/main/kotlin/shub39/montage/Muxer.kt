@@ -3,17 +3,12 @@ package shub39.montage
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.media.MediaCodecList
-import android.media.MediaCodecList.REGULAR_CODECS
 import android.util.Log
 import androidx.annotation.RawRes
 import java.io.File
 import java.io.IOException
 
 class Muxer(private val context: Context, private val file: File) {
-    constructor(context: Context, config: MuxerConfiguration) : this(context, config.file) {
-        muxerConfig = config
-    }
 
     companion object {
         private const val TAG = "Muxer"
@@ -63,7 +58,9 @@ class Muxer(private val context: Context, private val file: File) {
         frameBuilder.releaseVideoCodec()
 
         // Add audio
-        frameBuilder.muxAudioFrames()
+        if (audioTrack != null) {
+            frameBuilder.muxAudioFrames()
+        }
 
         // Release everything
         frameBuilder.releaseAudioExtractor()
@@ -80,17 +77,4 @@ class Muxer(private val context: Context, private val file: File) {
     fun setOnMuxingCompletedListener(muxingCompletionListener: MuxingCompletionListener) {
         this.muxingCompletionListener = muxingCompletionListener
     }
-}
-
-fun isCodecSupported(mimeType: String?): Boolean {
-    val codecs = MediaCodecList(REGULAR_CODECS)
-    for (codec in codecs.codecInfos) {
-        if (!codec.isEncoder) {
-            continue
-        }
-        for (type in codec.supportedTypes) {
-            if (type == mimeType) return true
-        }
-    }
-    return false
 }

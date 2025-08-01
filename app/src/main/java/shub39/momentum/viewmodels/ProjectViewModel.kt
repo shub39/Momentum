@@ -1,5 +1,6 @@
 package shub39.momentum.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -10,13 +11,17 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import shub39.momentum.core.domain.interfaces.MontageMaker
+import shub39.momentum.core.domain.interfaces.MontageResult
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
-import java.time.LocalDate
+import kotlin.io.path.createTempFile
+import kotlin.io.path.deleteIfExists
 
 class ProjectViewModel(
     stateLayer: StateLayer,
+    private val montageMaker: MontageMaker,
     private val repository: ProjectRepository
 ) : ViewModel() {
     private val _state = stateLayer.projectState
@@ -38,7 +43,26 @@ class ProjectViewModel(
 
             is ProjectAction.OnUpsertDay -> repository.upsertDay(action.day)
 
+            ProjectAction.OnCreateMontage -> {
+                Log.d("ProjectViewModel", "Starting montage creation")
+                val file = createTempFile(suffix = ".mp4")
 
+                when (
+                    val result = montageMaker.createMontage(
+                        days = _state.value.days,
+                        file = file.toFile()
+                    )
+                ) {
+                    is MontageResult.Error -> {
+                        _state.update { it.copy(montage = result) }
+                        file.deleteIfExists()
+                    }
+
+                    is MontageResult.Success -> {
+                        _state.update { it.copy(montage = result) }
+                    }
+                }
+            }
         }
     }
 
@@ -51,8 +75,7 @@ class ProjectViewModel(
 
                     _state.update {
                         it.copy(
-                            days = days,
-                            dates = days.map { day -> LocalDate.ofEpochDay(day.date) }
+                            days = days
                         )
                     }
                 }

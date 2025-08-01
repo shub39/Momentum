@@ -1,10 +1,8 @@
 package shub39.momentum.core.domain.data_classes
 
 import android.media.MediaFormat
-import java.io.File
 
 class MontageConfig(
-    val file: File,
     val videoWidth: Int = 1080,
     val videoHeight: Int = 1920,
     val mimeType: String = MediaFormat.MIMETYPE_VIDEO_AVC,
