@@ -71,6 +71,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":montage"))
     implementation(libs.material.icons.core)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)

@@ -5,25 +5,21 @@ composeCharts = "0.1.7"
 purchases = "9.1.2"
 splashscreen = "1.0.1"
 datastore = "1.2.0-alpha02"
-arthenica-smartexceptions = "0.2.1"
 colorpicker = "1.1.2"
-glance = "1.1.1"
 koin = "4.1.0"
 kotlin = "2.2.0"
 ksp = "2.2.0-2.0.2"
-material3 = "1.4.0-alpha18"
-reorderable = "2.5.1"
+material3 = "1.4.0-beta01"
 room = "2.7.2"
-navigation = "2.9.2"
+navigation = "2.9.3"
 serialization = "1.9.0"
-materialKolor = "3.0.0"
-aboutLibraries = "12.2.4"
+materialKolor = "3.0.1"
 composeIcons = "1.1.1"
 compose = "1.8.3"
 materialIconsCore = "1.7.3"
-biometric = "1.4.0-alpha02"
 landscapist = "2.5.1"
-filekitCore = "0.10.0-beta04"
+filekitCore = "0.10.0"
+annotationJvm = "1.9.1"
 
 [libraries]
 # Android
@@ -40,7 +36,6 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 
 # Others
-arthenica-smartexceptions = { group = "com.arthenica", name = "smart-exception-java", version.ref = "arthenica-smartexceptions" }
 filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekitCore" }
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekitCore" }
 landscapist-coil = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapist" }
@@ -49,10 +44,12 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
 composeIcons-fontAwesome = { module = "br.com.devsrsouza.compose.icons:font-awesome", version.ref = "composeIcons" }
+androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

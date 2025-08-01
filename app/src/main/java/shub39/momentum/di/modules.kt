@@ -37,6 +37,8 @@ val modules = module {
     // repositories and use cases
     singleOf(::ProjectRepositoryImpl).bind<ProjectRepository>()
 
+    // montage maker stuff
+
     // states and viewmodels
     singleOf(::StateLayer)
     singleOf(::SettingsViewModel)
