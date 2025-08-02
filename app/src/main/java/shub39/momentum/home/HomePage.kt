@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.materialkolor.PaletteStyle
 import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.Project
+import shub39.momentum.core.domain.data_classes.ProjectListData
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.domain.enums.Fonts
@@ -124,11 +125,11 @@ fun HomePage(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(state.projects, key = { it.id }) { project ->
+                        items(state.projects, key = { it.project.id }) { projectListData ->
                             ProjectListItem(
-                                project = project,
+                                projectListData = projectListData,
                                 modifier = Modifier.clickable {
-                                    onAction(HomeAction.OnChangeProject(project))
+                                    onAction(HomeAction.OnChangeProject(projectListData.project))
                                     onNavigateToProject()
                                 }
                             )
@@ -187,12 +188,14 @@ private fun Preview() {
             HomeState(
                 isLoading = false,
                 projects = (0..10).map {
-                    Project(
-                        id = it.toLong(),
-                        title = "Project $it",
-                        description = "Description for project $it",
-                        startDate = it.toLong(),
-                        lastUpdatedDate = it.toLong()
+                    ProjectListData(
+                        project = Project(
+                            id = it.toLong(),
+                            title = "Project $it",
+                            description = "Description for project $it",
+                            startDate = it.toLong(),
+                            lastUpdatedDate = it.toLong()
+                        )
                     )
                 }
             )

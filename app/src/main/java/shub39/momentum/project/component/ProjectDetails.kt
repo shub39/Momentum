@@ -115,7 +115,7 @@ fun ProjectDetails(
                                 }
                             )
                             .clickable(
-                                enabled = day.date < LocalDate.now()
+                                enabled = day.date <= LocalDate.now()
                             ) { selectedDate = day.date.toEpochDay() },
                         contentAlignment = Alignment.Center
                     ) {

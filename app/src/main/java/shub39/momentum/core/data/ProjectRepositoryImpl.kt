@@ -6,16 +6,24 @@ import shub39.momentum.core.data.database.DaysDao
 import shub39.momentum.core.data.database.ProjectDao
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
+import shub39.momentum.core.domain.data_classes.ProjectListData
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 
 class ProjectRepositoryImpl(
     private val projectDao: ProjectDao,
     private val daysDao: DaysDao
 ) : ProjectRepository {
-    override fun getProjects(): Flow<List<Project>> {
+    override fun getProjectListData(): Flow<List<ProjectListData>> {
         return projectDao
             .getProjects()
-            .map { flow -> flow.map { it.toProject() } }
+            .map { flow ->
+                flow.map {
+                    ProjectListData(
+                        project = it.toProject(),
+                        lastDay = daysDao.getLastDayById(it.id)?.toDays()
+                    )
+                }
+            }
     }
 
     override suspend fun upsertProject(project: Project) {

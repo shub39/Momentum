@@ -12,12 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import shub39.momentum.core.domain.data_classes.Project
+import com.skydoves.landscapist.coil3.CoilImage
+import shub39.momentum.core.domain.data_classes.ProjectListData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectListItem(
-    project: Project,
+    projectListData: ProjectListData,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -33,12 +34,17 @@ fun ProjectListItem(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+            projectListData.lastDay?.let {
+                CoilImage(
+                    imageModel = { it.image }
+                )
+            }
             Text(
-                text = project.title,
+                text = projectListData.project.title,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(project.description)
+            Text(projectListData.project.description)
         }
     }
 }

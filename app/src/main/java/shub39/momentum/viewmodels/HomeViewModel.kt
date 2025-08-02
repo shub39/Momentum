@@ -63,7 +63,7 @@ class HomeViewModel(
         )
 
         projectRepository
-            .getProjects()
+            .getProjectListData()
             .onStart { _state.update { it.copy(isLoading = false) } }
             .onEach { projects -> _state.update { it.copy(projects = projects) } }
             .launchIn(this)
