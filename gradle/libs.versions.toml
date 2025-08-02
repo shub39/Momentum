@@ -1,6 +1,7 @@
 [versions]
 agp = "8.11.1"
 calendar = "2.8.0"
+composeMultiplatformMediaPlayer = "1.0.42"
 splashscreen = "1.0.1"
 datastore = "1.2.0-alpha02"
 colorpicker = "1.1.2"
@@ -31,6 +32,7 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compo
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+compose-multiplatform-media-player = { module = "network.chaintech:compose-multiplatform-media-player", version.ref = "composeMultiplatformMediaPlayer" }
 material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 
 # Others

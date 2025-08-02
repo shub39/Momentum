@@ -141,8 +141,6 @@ fun HomePage(
         }
 
         if (projectAddSheet) {
-            // TODO: Make it prettier
-
             var newProjectTitle by remember { mutableStateOf("") }
             var newProjectDescription by remember { mutableStateOf("") }
 
