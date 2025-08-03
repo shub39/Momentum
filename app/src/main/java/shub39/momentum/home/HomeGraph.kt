@@ -74,8 +74,8 @@ fun HomeGraph(
 
         composable<HomeRoutes.AddProject> {
             AddProject(
-                state = state,
-                onAction = onAction
+                onAction = onAction,
+                onNavigateBack = { navController.navigateUp() }
             )
         }
     }

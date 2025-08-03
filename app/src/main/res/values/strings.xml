@@ -9,4 +9,7 @@
     <string name="done">Done</string>
     <string name="calendar">Calendar</string>
     <string name="timeline">Timeline</string>
+    <string name="title">Add title</string>
+    <string name="description">Add description</string>
+    <string name="cancel">Cancel</string>
 </resources>
