@@ -18,7 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 import shub39.momentum.core.presentation.MomentumTheme
-import shub39.momentum.home.HomePage
+import shub39.momentum.home.HomeGraph
 import shub39.momentum.onboarding.Onboarding
 import shub39.momentum.project.ProjectGraph
 import shub39.momentum.viewmodels.HomeViewModel
@@ -31,9 +31,9 @@ private sealed interface Screens {
     @Serializable
     data object Onboarding : Screens
     @Serializable
-    data object HomePage : Screens
+    data object HomeGraph : Screens
     @Serializable
-    data object ProjectPage : Screens
+    data object ProjectGraph : Screens
     @Serializable
     data object SettingsGraph : Screens
     @Serializable
@@ -51,7 +51,7 @@ fun App() {
     LaunchedEffect(settingsState.isOnboardingDone) {
         if (!settingsState.isOnboardingDone) {
             navController.navigate(Screens.Onboarding) {
-                popUpTo(Screens.HomePage) { inclusive = true }
+                popUpTo(Screens.HomeGraph) { inclusive = true }
             }
         }
     }
@@ -61,7 +61,7 @@ fun App() {
     ) {
         NavHost(
             navController = navController,
-            startDestination = Screens.HomePage,
+            startDestination = Screens.HomeGraph,
             enterTransition = { fadeIn(tween(300)) },
             exitTransition = { fadeOut(tween(300)) },
             popEnterTransition = { fadeIn(tween(300)) },
@@ -70,15 +70,15 @@ fun App() {
                 .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize()
         ) {
-            composable<Screens.HomePage> {
+            composable<Screens.HomeGraph> {
                 val homeViewModel: HomeViewModel = koinInject()
                 val homeState by homeViewModel.state.collectAsStateWithLifecycle()
 
-                HomePage(
+                HomeGraph(
                     state = homeState,
                     onAction = homeViewModel::onAction,
                     onNavigateToSettings = { navController.navigate(Screens.SettingsGraph) },
-                    onNavigateToProject = { navController.navigate(Screens.ProjectPage) }
+                    onNavigateToProject = { navController.navigate(Screens.ProjectGraph) }
                 )
             }
 
@@ -90,14 +90,14 @@ fun App() {
                     state = onboardingState,
                     onAction = onboardingViewModel::onAction,
                     onNavigateToHome = {
-                        navController.navigate(Screens.HomePage) {
+                        navController.navigate(Screens.HomeGraph) {
                             popUpTo(Screens.Onboarding) { inclusive = true }
                         }
                     }
                 )
             }
 
-            composable<Screens.ProjectPage> {
+            composable<Screens.ProjectGraph> {
                 val projectViewModel: ProjectViewModel = koinInject()
                 val projectState by projectViewModel.state.collectAsStateWithLifecycle()
 

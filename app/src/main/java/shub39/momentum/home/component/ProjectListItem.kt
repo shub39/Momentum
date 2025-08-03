@@ -23,11 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
+import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.ProjectListData
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -63,6 +65,7 @@ fun ProjectListItem(
                         imageOptions = ImageOptions(
                             contentScale = ContentScale.Crop
                         ),
+                        previewPlaceholder = painterResource(R.drawable.ic_launcher_foreground),
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(MaterialTheme.shapes.medium)
