@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
-import shub39.momentum.core.domain.observePreferenceFlow
 import shub39.momentum.settings.SettingsAction
 import shub39.momentum.settings.SettingsState
 
@@ -40,64 +39,5 @@ class SettingsViewModel(
     }
 
     private fun observeDatastore() = viewModelScope.launch {
-        observeJob?.cancel()
-        observeJob = launch {
-            observePreferenceFlow(
-                flow = datastore.getAppThemePrefFlow(),
-                scope = this,
-                state = _state,
-                update = { state, pref ->
-                    state.copy(theme = state.theme.copy(appTheme = pref))
-                }
-            )
-            observePreferenceFlow(
-                flow = datastore.getAmoledPrefFlow(),
-                scope = this,
-                state = _state,
-                update = { state, pref ->
-                    state.copy(theme = state.theme.copy(isAmoled = pref))
-                }
-            )
-            observePreferenceFlow(
-                flow = datastore.getFontFlow(),
-                scope = this,
-                state = _state,
-                update = { state, pref ->
-                    state.copy(theme = state.theme.copy(font = pref))
-                }
-            )
-            observePreferenceFlow(
-                flow = datastore.getMaterialYouFlow(),
-                scope = this,
-                state = _state,
-                update = { state, pref ->
-                    state.copy(theme = state.theme.copy(isMaterialYou = pref))
-                }
-            )
-            observePreferenceFlow(
-                flow = datastore.getSeedColorFlow(),
-                scope = this,
-                state = _state,
-                update = { state, pref ->
-                    state.copy(theme = state.theme.copy(seedColor = pref))
-                }
-            )
-            observePreferenceFlow(
-                flow = datastore.getPaletteStyle(),
-                scope = this,
-                state = _state,
-                update = { state, pref ->
-                    state.copy(theme = state.theme.copy(paletteStyle = pref))
-                }
-            )
-            observePreferenceFlow(
-                flow = datastore.getOnboardingDoneFlow(),
-                scope = this,
-                state = _state,
-                update = { state, pref ->
-                    state.copy(isOnboardingDone = pref)
-                }
-            )
-        }
     }
 }

@@ -9,5 +9,5 @@ sealed interface ProjectAction {
     data class OnUpsertDay(val day: Day) : ProjectAction
     data class OnDeleteDay(val day: Day) : ProjectAction
 
-    data object OnCreateMontage : ProjectAction
+    data class OnCreateMontage(val days: List<Day>) : ProjectAction
 }

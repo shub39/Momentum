@@ -19,11 +19,11 @@ import shub39.momentum.project.ProjectState
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProjectMontageView(
-    state: ProjectState,
+    state: ProjectState.Loaded,
     onAction: (ProjectAction) -> Unit
 ) {
     LaunchedEffect(Unit) {
-        onAction(ProjectAction.OnCreateMontage)
+        onAction(ProjectAction.OnCreateMontage(state.days))
     }
 
     Box(

@@ -2,8 +2,11 @@ package shub39.momentum.home
 
 import shub39.momentum.core.domain.data_classes.ProjectListData
 
-data class HomeState(
-    val sendNotifications: Boolean = false,
-    val isLoading: Boolean = true,
-    val projects: List<ProjectListData> = emptyList(),
-)
+sealed class HomeState {
+    data object Loading : HomeState()
+
+    data class ProjectList(
+        val sendNotifications: Boolean = false,
+        val projects: List<ProjectListData> = emptyList(),
+    ) : HomeState()
+}

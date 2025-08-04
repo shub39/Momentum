@@ -13,9 +13,9 @@ import kotlinx.coroutines.launch
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
-import shub39.momentum.core.domain.observePreferenceFlow
 import shub39.momentum.home.HomeAction
 import shub39.momentum.home.HomeState
+import shub39.momentum.project.ProjectState
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -30,14 +30,19 @@ class HomeViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = HomeState()
+            initialValue = HomeState.Loading
         )
 
     fun onAction(action: HomeAction) = viewModelScope.launch {
         when (action) {
             is HomeAction.OnChangeNotificationPref -> settingsPrefs.updateNotificationPref(action.pref)
 
-            is HomeAction.OnChangeProject -> stateLayer.projectState.update { it.copy(project = action.project) }
+            is HomeAction.OnChangeProject -> stateLayer.projectState.update {
+                when (it) {
+                    is ProjectState.Loaded -> it.copy(project = action.project)
+                    ProjectState.Loading -> ProjectState.Loaded(project = action.project)
+                }
+            }
 
             is HomeAction.OnAddProject -> {
                 val startDate = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
@@ -55,17 +60,24 @@ class HomeViewModel(
     }
 
     private fun observeProjects() = viewModelScope.launch {
-        observePreferenceFlow(
-            flow = settingsPrefs.getNotificationPrefFlow(),
-            scope = this,
-            state = _state,
-            update = { state, pref -> state.copy(sendNotifications = pref) }
-        )
-
         projectRepository
             .getProjectListData()
-            .onStart { _state.update { it.copy(isLoading = false) } }
-            .onEach { projects -> _state.update { it.copy(projects = projects) } }
+            .onEach { projects ->
+                _state.update {
+                    HomeState.ProjectList(projects = projects)
+                }
+            }
+            .launchIn(this)
+
+        settingsPrefs.getNotificationPrefFlow()
+            .onEach { it ->
+                _state.update { homeState ->
+                    when (homeState) {
+                        HomeState.Loading -> homeState
+                        is HomeState.ProjectList -> homeState.copy(sendNotifications = it)
+                    }
+                }
+            }
             .launchIn(this)
     }
 }

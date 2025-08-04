@@ -61,166 +61,163 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProjectCalendar(
-    state: ProjectState,
+    state: ProjectState.Loaded,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToMontage: () -> Unit
 ) {
     var selectedDate: Long? by remember { mutableStateOf(null) }
 
-    if (state.project == null) {
-        LoadingIndicator()
-    } else {
-        val calendarState = rememberCalendarState(
-            startMonth = YearMonth.now().minusMonths(12),
-            endMonth = YearMonth.now(),
-            firstVisibleMonth = YearMonth.now(),
-            outDateStyle = OutDateStyle.EndOfRow
-        )
 
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = state.project.title) },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                )
-            },
-            floatingActionButton = {
-                AnimatedVisibility(
-                    visible = state.days.isNotEmpty()
-                ) {
-                    FloatingActionButton(
-                        onClick = {
-                            onNavigateToMontage()
-                        }
-                    ) {
+    val calendarState = rememberCalendarState(
+        startMonth = YearMonth.now().minusMonths(12),
+        endMonth = YearMonth.now(),
+        firstVisibleMonth = YearMonth.now(),
+        outDateStyle = OutDateStyle.EndOfRow
+    )
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = state.project.title) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
                         Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "Show Preview"
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null
                         )
-                    }
-                }
-            }
-        ) { padding ->
-            VerticalCalendar(
-                reverseLayout = true,
-                state = calendarState,
-                contentPadding = padding,
-                modifier = Modifier.padding(horizontal = 16.dp),
-                monthHeader = { month ->
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            containerColor = MaterialTheme.colorScheme.primary
-                        ),
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        shape = CircleShape
-                    ) {
-                        Text(
-                            text = month.yearMonth.format(
-                                DateTimeFormatter.ofPattern("MMMM yyyy")
-                            ),
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 3.dp)
-                        )
-                    }
-                },
-                monthFooter = { Spacer(modifier = Modifier.height(16.dp)) },
-                dayContent = { day ->
-                    if (day.position.name == "MonthDate") {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(
-                                    if (state.days.map { it.date }
-                                            .contains(day.date.toEpochDay())) {
-                                        MaterialTheme.colorScheme.primaryContainer
-                                    } else {
-                                        MaterialTheme.colorScheme.surface
-                                    }
-                                )
-                                .clickable(
-                                    enabled = day.date <= LocalDate.now()
-                                ) { selectedDate = day.date.toEpochDay() },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(day.date.dayOfMonth.toString())
-                        }
                     }
                 }
             )
-        }
-
-        if (selectedDate != null) {
-            val context = LocalContext.current
-            val day = state.days.find { it.date == selectedDate }
-            var imageFile: PlatformFile? by remember {
-                mutableStateOf(
-                    day?.let { PlatformFile(it.image.toUri()) }
-                )
-            }
-
-            val imagePicker = rememberFilePickerLauncher(
-                type = FileKitType.Image
-            ) { image ->
-                if (image != null) {
-                    imageFile = image
-                    context.contentResolver.takePersistableUriPermission(
-                        image.uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+        },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = state.days.isNotEmpty()
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        onNavigateToMontage()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = "Show Preview"
                     )
                 }
             }
+        }
+    ) { padding ->
+        VerticalCalendar(
+            reverseLayout = true,
+            state = calendarState,
+            contentPadding = padding,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            monthHeader = { month ->
+                Card(
+                    colors = CardDefaults.cardColors(
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    shape = CircleShape
+                ) {
+                    Text(
+                        text = month.yearMonth.format(
+                            DateTimeFormatter.ofPattern("MMMM yyyy")
+                        ),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 3.dp)
+                    )
+                }
+            },
+            monthFooter = { Spacer(modifier = Modifier.height(16.dp)) },
+            dayContent = { day ->
+                if (day.position.name == "MonthDate") {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(
+                                if (state.days.map { it.date }
+                                        .contains(day.date.toEpochDay())) {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.surface
+                                }
+                            )
+                            .clickable(
+                                enabled = day.date <= LocalDate.now()
+                            ) { selectedDate = day.date.toEpochDay() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(day.date.dayOfMonth.toString())
+                    }
+                }
+            }
+        )
+    }
 
-            ModalBottomSheet(
-                onDismissRequest = { selectedDate = null }
-            ) {
-                CoilImage(
-                    imageModel = { imageFile?.uri },
-                    loading = { LoadingIndicator() },
-                    failure = { Text(text = it.reason?.message.toString()) }
+    if (selectedDate != null) {
+        val context = LocalContext.current
+        val day = state.days.find { it.date == selectedDate }
+        var imageFile: PlatformFile? by remember {
+            mutableStateOf(
+                day?.let { PlatformFile(it.image.toUri()) }
+            )
+        }
+
+        val imagePicker = rememberFilePickerLauncher(
+            type = FileKitType.Image
+        ) { image ->
+            if (image != null) {
+                imageFile = image
+                context.contentResolver.takePersistableUriPermission(
+                    image.uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
+            }
+        }
 
-                Text(text = selectedDate.toString())
+        ModalBottomSheet(
+            onDismissRequest = { selectedDate = null }
+        ) {
+            CoilImage(
+                imageModel = { imageFile?.uri },
+                loading = { LoadingIndicator() },
+                failure = { Text(text = it.reason?.message.toString()) }
+            )
 
-                if (day == null) {
-                    Button(
-                        onClick = { imagePicker.launch() },
-                    ) { Text("Select Image") }
+            Text(text = selectedDate.toString())
 
-                    Button(
-                        onClick = {
-                            onAction(
-                                ProjectAction.OnUpsertDay(
-                                    Day(
-                                        projectId = state.project.id,
-                                        image = imageFile!!.uri.toString(),
-                                        comment = null,
-                                        date = selectedDate!!,
-                                        isFavorite = false
-                                    )
+            if (day == null) {
+                Button(
+                    onClick = { imagePicker.launch() },
+                ) { Text("Select Image") }
+
+                Button(
+                    onClick = {
+                        onAction(
+                            ProjectAction.OnUpsertDay(
+                                Day(
+                                    projectId = state.project.id,
+                                    image = imageFile!!.uri.toString(),
+                                    comment = null,
+                                    date = selectedDate!!,
+                                    isFavorite = false
                                 )
                             )
-                            selectedDate = null
-                        },
-                        enabled = imageFile != null
-                    ) { Text("Add Day") }
-                } else {
-                    Button(
-                        onClick = {
-                            onAction(ProjectAction.OnDeleteDay(day))
-                            selectedDate = null
-                        }
-                    ) {
-                        Text("Delete Day")
+                        )
+                        selectedDate = null
+                    },
+                    enabled = imageFile != null
+                ) { Text("Add Day") }
+            } else {
+                Button(
+                    onClick = {
+                        onAction(ProjectAction.OnDeleteDay(day))
+                        selectedDate = null
                     }
+                ) {
+                    Text("Delete Day")
                 }
             }
         }
@@ -232,7 +229,7 @@ fun ProjectCalendar(
 private fun Preview() {
     var state by remember {
         mutableStateOf(
-            ProjectState(
+            ProjectState.Loaded(
                 project = Project(
                     id = 1,
                     title = "Sample Project",

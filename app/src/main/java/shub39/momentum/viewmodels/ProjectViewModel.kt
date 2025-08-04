@@ -12,12 +12,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import shub39.momentum.core.domain.interfaces.MontageMaker
-import shub39.momentum.core.domain.interfaces.MontageResult
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
 import kotlin.io.path.createTempFile
-import kotlin.io.path.deleteIfExists
 
 class ProjectViewModel(
     stateLayer: StateLayer,
@@ -30,7 +28,7 @@ class ProjectViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = ProjectState()
+            initialValue = ProjectState.Loading
         )
 
     fun onAction(action: ProjectAction) = viewModelScope.launch {
@@ -43,23 +41,20 @@ class ProjectViewModel(
 
             is ProjectAction.OnUpsertDay -> repository.upsertDay(action.day)
 
-            ProjectAction.OnCreateMontage -> {
-                Log.d("ProjectViewModel", "Starting montage creation")
+            is ProjectAction.OnCreateMontage -> {
                 val file = createTempFile(suffix = ".mp4")
 
-                when (
-                    val result = montageMaker.createMontage(
-                        days = _state.value.days,
-                        file = file.toFile()
-                    )
-                ) {
-                    is MontageResult.Error -> {
-                        _state.update { it.copy(montage = result) }
-                        file.deleteIfExists()
-                    }
+                Log.d("ProjectViewModel", "Starting montage creation")
 
-                    is MontageResult.Success -> {
-                        _state.update { it.copy(montage = result) }
+                val result = montageMaker.createMontage(
+                    days = action.days,
+                    file = file.toFile()
+                )
+
+                _state.update {
+                    when (it) {
+                        ProjectState.Loading -> it
+                        is ProjectState.Loaded -> it.copy(montage = result)
                     }
                 }
             }
@@ -70,13 +65,14 @@ class ProjectViewModel(
         repository
             .getDays()
             .onEach { days ->
-                if (_state.value.project != null) {
-                    val days = days.filter { day -> day.projectId == _state.value.project!!.id }
+                _state.update {
+                    when (it) {
+                        is ProjectState.Loaded -> {
+                            val days = days.filter { day -> day.projectId == it.project.id }
+                            it.copy(days = days)
+                        }
 
-                    _state.update {
-                        it.copy(
-                            days = days
-                        )
+                        ProjectState.Loading -> it
                     }
                 }
             }

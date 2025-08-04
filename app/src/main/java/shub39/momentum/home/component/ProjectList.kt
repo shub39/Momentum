@@ -44,83 +44,99 @@ fun ProjectList(
     onNavigateToProject: () -> Unit,
     onNavigateToNewProject: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                titleHorizontalAlignment = Alignment.CenterHorizontally,
-                title = { Text(text = stringResource(R.string.app_name)) },
-                subtitle = { Text(text = "${state.projects.size} " + stringResource(R.string.projects)) },
-                navigationIcon = {
-                    FilledTonalIconToggleButton(
-                        checked = state.sendNotifications,
-                        onCheckedChange = { onAction(HomeAction.OnChangeNotificationPref(it)) },
-                        shapes = IconToggleButtonShapes(
-                            shape = CircleShape,
-                            pressedShape = RoundedCornerShape(10.dp),
-                            checkedShape = CircleShape
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications"
-                        )
-                    }
-                },
-                actions = {
-                    FilledTonalIconButton(
-                        onClick = onNavigateToSettings,
-                        shapes = IconButtonShapes(
-                            shape = CircleShape,
-                            pressedShape = RoundedCornerShape(10.dp)
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings"
-                        )
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToNewProject
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add New Project"
-                )
-            }
-        }
-    ) { padding ->
-        AnimatedContent(
-            targetState = state.isLoading,
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) { loading ->
-            if (loading) {
+    AnimatedContent(
+        targetState = state,
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) { homeState ->
+        when (homeState) {
+            HomeState.Loading -> {
                 LoadingIndicator()
-            } else {
-                if (state.projects.isNotEmpty()) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(state.projects, key = { it.project.id }) { projectListData ->
-                            ProjectListItem(
-                                projectListData = projectListData,
-                                modifier = Modifier.clickable {
-                                    onAction(HomeAction.OnChangeProject(projectListData.project))
-                                    onNavigateToProject()
+            }
+
+            is HomeState.ProjectList -> {
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            titleHorizontalAlignment = Alignment.CenterHorizontally,
+                            title = { Text(text = stringResource(R.string.app_name)) },
+                            subtitle = {
+                                Text(
+                                    text = "${homeState.projects.size} " + stringResource(
+                                        R.string.projects
+                                    )
+                                )
+                            },
+                            navigationIcon = {
+                                FilledTonalIconToggleButton(
+                                    checked = homeState.sendNotifications,
+                                    onCheckedChange = {
+                                        onAction(
+                                            HomeAction.OnChangeNotificationPref(
+                                                it
+                                            )
+                                        )
+                                    },
+                                    shapes = IconToggleButtonShapes(
+                                        shape = CircleShape,
+                                        pressedShape = RoundedCornerShape(10.dp),
+                                        checkedShape = CircleShape
+                                    )
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Notifications,
+                                        contentDescription = "Notifications"
+                                    )
                                 }
+                            },
+                            actions = {
+                                FilledTonalIconButton(
+                                    onClick = onNavigateToSettings,
+                                    shapes = IconButtonShapes(
+                                        shape = CircleShape,
+                                        pressedShape = RoundedCornerShape(10.dp)
+                                    )
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Settings,
+                                        contentDescription = "Settings"
+                                    )
+                                }
+                            }
+                        )
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = onNavigateToNewProject
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add New Project"
                             )
                         }
                     }
-                } else {
-                    Empty()
+                ) { padding ->
+                    if (homeState.projects.isNotEmpty()) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(padding)
+                                .fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(homeState.projects, key = { it.project.id }) { projectListData ->
+                                ProjectListItem(
+                                    projectListData = projectListData,
+                                    modifier = Modifier.clickable {
+                                        onAction(HomeAction.OnChangeProject(projectListData.project))
+                                        onNavigateToProject()
+                                    }
+                                )
+                            }
+                        }
+                    } else {
+                        Empty()
+                    }
                 }
             }
         }
