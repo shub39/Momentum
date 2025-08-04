@@ -67,7 +67,10 @@ class HomeViewModel(
             .getProjectListData()
             .onEach { projects ->
                 _state.update {
-                    HomeState.ProjectList(projects = projects)
+                    when (it) {
+                        HomeState.Loading -> HomeState.ProjectList(projects = projects)
+                        is HomeState.ProjectList -> it.copy(projects = projects)
+                    }
                 }
             }
             .launchIn(this)

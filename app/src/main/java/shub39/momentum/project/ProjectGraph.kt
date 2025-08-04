@@ -86,8 +86,7 @@ fun ProjectGraph(
                         ProjectCalendar(
                             state = projectState,
                             onAction = onAction,
-                            onNavigateBack = { navController.navigateUp() },
-                            onNavigateToMontage = { navController.navigate(ProjectRoutes.ProjectMontageView) }
+                            onNavigateBack = { navController.navigateUp() }
                         )
                     }
 
