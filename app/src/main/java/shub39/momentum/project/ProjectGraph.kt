@@ -10,6 +10,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +57,8 @@ fun ProjectGraph(
         when (projectState) {
             ProjectState.Loading -> LoadingIndicator()
             is ProjectState.Loaded -> {
+                LaunchedEffect(Unit) { onAction(ProjectAction.OnUpdateDays) }
+
                 val navController = rememberNavController()
 
                 NavHost(

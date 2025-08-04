@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -33,6 +34,20 @@ class ProjectViewModel(
 
     fun onAction(action: ProjectAction) = viewModelScope.launch {
         when (action) {
+            ProjectAction.OnUpdateDays -> {
+                _state.update {
+                    when (it) {
+                        is ProjectState.Loaded -> {
+                            val days = repository.getDays().first()
+                                .filter { day -> day.projectId == it.project.id }
+                            it.copy(days = days)
+                        }
+
+                        ProjectState.Loading -> it
+                    }
+                }
+            }
+
             is ProjectAction.OnUpdateProject -> repository.upsertProject(action.project)
 
             is ProjectAction.OnDeleteProject -> repository.deleteProject(action.project)

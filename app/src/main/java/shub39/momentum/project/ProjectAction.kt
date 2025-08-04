@@ -4,6 +4,7 @@ import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 
 sealed interface ProjectAction {
+    data object OnUpdateDays : ProjectAction
     data class OnUpdateProject(val project: Project) : ProjectAction
     data class OnDeleteProject(val project: Project) : ProjectAction
     data class OnUpsertDay(val day: Day) : ProjectAction

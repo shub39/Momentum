@@ -39,7 +39,10 @@ class HomeViewModel(
 
             is HomeAction.OnChangeProject -> stateLayer.projectState.update {
                 when (it) {
-                    is ProjectState.Loaded -> it.copy(project = action.project)
+                    is ProjectState.Loaded -> it.copy(
+                        project = action.project,
+                        days = emptyList()
+                    )
                     ProjectState.Loading -> ProjectState.Loaded(project = action.project)
                 }
             }
