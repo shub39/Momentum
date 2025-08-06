@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +20,7 @@ import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.home.HomeGraph
 import shub39.momentum.onboarding.Onboarding
 import shub39.momentum.project.ProjectGraph
+import shub39.momentum.settings.SettingsGraph
 import shub39.momentum.viewmodels.HomeViewModel
 import shub39.momentum.viewmodels.OnboardingViewModel
 import shub39.momentum.viewmodels.ProjectViewModel
@@ -109,7 +109,11 @@ fun App() {
             }
 
             composable<Screens.SettingsGraph> {
-                Text(text = "Settings")
+                SettingsGraph(
+                    state = settingsState,
+                    onAction = settingsViewModel::onAction,
+                    onNavigateBack = { navController.navigateUp() }
+                )
             }
         }
     }
