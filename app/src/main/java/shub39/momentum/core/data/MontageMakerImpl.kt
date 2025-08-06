@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.RectF
 import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
@@ -25,7 +26,7 @@ class MontageMakerImpl(
         file: File,
         montageConfig: MontageConfig
     ): MontageState = withContext(Dispatchers.Default) {
-            val muxer = Muxer(context, file)
+        val muxer = Muxer(context, file)
         muxer.setMuxerConfig(muxer.getMuxerConfig().update(montageConfig))
 
         val images = uriStringsToCenteredBitmaps(
@@ -34,24 +35,25 @@ class MontageMakerImpl(
             height = montageConfig.videoHeight
         )
 
-            return@withContext when (val result = muxer.muxAsync(images)) {
-                is MuxingResult.MuxingError -> {
-                    MontageState.Error(
-                        message = result.message,
-                        exception = result.exception
-                    )
-                }
-
-                is MuxingResult.MuxingSuccess -> {
-                    MontageState.Success(result.file)
-                }
+        return@withContext when (val result = muxer.muxAsync(images)) {
+            is MuxingResult.MuxingError -> {
+                MontageState.Error(
+                    message = result.message,
+                    exception = result.exception
+                )
             }
+
+            is MuxingResult.MuxingSuccess -> {
+                MontageState.Success(result.file)
+            }
+        }
     }
 
     private fun uriStringsToCenteredBitmaps(
         uriStrings: List<String>,
         width: Int,
-        height: Int
+        height: Int,
+        backgroundColor: Int = Color.BLACK
     ): List<Bitmap> {
         val contentResolver = context.contentResolver
         return uriStrings.mapNotNull { uriString ->
@@ -62,6 +64,7 @@ class MontageMakerImpl(
                     if (originalBitmap != null) {
                         val canvasBitmap = createBitmap(width, height)
                         val canvas = Canvas(canvasBitmap)
+                        canvas.drawColor(backgroundColor)
 
                         val scale = minOf(
                             width.toFloat() / originalBitmap.width,
@@ -79,22 +82,6 @@ class MontageMakerImpl(
 
                         canvasBitmap
                     } else null
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
-        }
-    }
-
-    private fun uriStringsToBitmaps(uriStrings: List<String>): List<Bitmap> {
-        val contentResolver = context.contentResolver
-        return uriStrings.mapNotNull { uriString ->
-            try {
-                val uri = uriString.toUri()
-                val inputStream = contentResolver.openInputStream(uri)
-                BitmapFactory.decodeStream(inputStream).also {
-                    inputStream?.close()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
