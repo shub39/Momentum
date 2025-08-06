@@ -97,7 +97,8 @@ fun ProjectGraph(
                 composable<ProjectRoutes.ProjectMontageView> {
                     ProjectMontageView(
                         state = state,
-                        onAction = onAction
+                        onAction = onAction,
+                        onNavigateBack = { navController.navigateUp() }
                     )
                 }
             }
