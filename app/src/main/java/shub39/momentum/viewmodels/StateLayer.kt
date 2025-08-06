@@ -7,8 +7,8 @@ import shub39.momentum.project.ProjectState
 import shub39.momentum.settings.SettingsState
 
 class StateLayer {
-    val projectState: MutableStateFlow<ProjectState> = MutableStateFlow(ProjectState.Loading)
+    val projectState: MutableStateFlow<ProjectState> = MutableStateFlow(ProjectState())
     val settingsState = MutableStateFlow(SettingsState())
     val onboardingState = MutableStateFlow(OnboardingState())
-    val homeState: MutableStateFlow<HomeState> = MutableStateFlow(HomeState.Loading)
+    val homeState: MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
 }

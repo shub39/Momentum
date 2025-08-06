@@ -4,12 +4,8 @@ import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.interfaces.MontageResult
 
-sealed class ProjectState {
-    data object Loading : ProjectState()
-
-    data class Loaded(
-        val project: Project,
-        val days: List<Day> = emptyList(),
-        val montage: MontageResult? = null
-    ) : ProjectState()
-}
+data class ProjectState(
+    val project: Project? = null,
+    val days: List<Day> = emptyList(),
+    val montage: MontageResult? = null
+)

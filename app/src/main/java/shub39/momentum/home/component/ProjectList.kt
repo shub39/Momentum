@@ -1,6 +1,5 @@
 package shub39.momentum.home.component
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,7 +21,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonShapes
 import androidx.compose.material3.IconToggleButtonShapes
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -44,101 +42,87 @@ fun ProjectList(
     onNavigateToProject: () -> Unit,
     onNavigateToNewProject: () -> Unit
 ) {
-    AnimatedContent(
-        targetState = state,
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) { homeState ->
-        when (homeState) {
-            HomeState.Loading -> {
-                LoadingIndicator()
-            }
-
-            is HomeState.ProjectList -> {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            titleHorizontalAlignment = Alignment.CenterHorizontally,
-                            title = { Text(text = stringResource(R.string.app_name)) },
-                            subtitle = {
-                                Text(
-                                    text = "${homeState.projects.size} " + stringResource(
-                                        R.string.projects
-                                    )
-                                )
-                            },
-                            navigationIcon = {
-                                FilledTonalIconToggleButton(
-                                    checked = homeState.sendNotifications,
-                                    onCheckedChange = {
-                                        onAction(
-                                            HomeAction.OnChangeNotificationPref(
-                                                it
-                                            )
-                                        )
-                                    },
-                                    shapes = IconToggleButtonShapes(
-                                        shape = CircleShape,
-                                        pressedShape = RoundedCornerShape(10.dp),
-                                        checkedShape = CircleShape
-                                    )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Notifications,
-                                        contentDescription = "Notifications"
-                                    )
-                                }
-                            },
-                            actions = {
-                                FilledTonalIconButton(
-                                    onClick = onNavigateToSettings,
-                                    shapes = IconButtonShapes(
-                                        shape = CircleShape,
-                                        pressedShape = RoundedCornerShape(10.dp)
-                                    )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Settings,
-                                        contentDescription = "Settings"
-                                    )
-                                }
-                            }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                titleHorizontalAlignment = Alignment.CenterHorizontally,
+                title = { Text(text = stringResource(R.string.app_name)) },
+                subtitle = {
+                    Text(
+                        text = "${state.projects.size} " + stringResource(
+                            R.string.projects
                         )
-                    },
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = onNavigateToNewProject
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add New Project"
-                            )
-                        }
-                    }
-                ) { padding ->
-                    if (homeState.projects.isNotEmpty()) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .padding(padding)
-                                .fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(homeState.projects, key = { it.project.id }) { projectListData ->
-                                ProjectListItem(
-                                    projectListData = projectListData,
-                                    modifier = Modifier.clickable {
-                                        onAction(HomeAction.OnChangeProject(projectListData.project))
-                                        onNavigateToProject()
-                                    }
+                    )
+                },
+                navigationIcon = {
+                    FilledTonalIconToggleButton(
+                        checked = state.sendNotifications,
+                        onCheckedChange = {
+                            onAction(
+                                HomeAction.OnChangeNotificationPref(
+                                    it
                                 )
-                            }
-                        }
-                    } else {
-                        Empty()
+                            )
+                        },
+                        shapes = IconToggleButtonShapes(
+                            shape = CircleShape,
+                            pressedShape = RoundedCornerShape(10.dp),
+                            checkedShape = CircleShape
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = "Notifications"
+                        )
+                    }
+                },
+                actions = {
+                    FilledTonalIconButton(
+                        onClick = onNavigateToSettings,
+                        shapes = IconButtonShapes(
+                            shape = CircleShape,
+                            pressedShape = RoundedCornerShape(10.dp)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings"
+                        )
                     }
                 }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onNavigateToNewProject
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add New Project"
+                )
             }
+        }
+    ) { padding ->
+        if (state.projects.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(state.projects, key = { it.project.id }) { projectListData ->
+                    ProjectListItem(
+                        projectListData = projectListData,
+                        modifier = Modifier.clickable {
+                            onAction(HomeAction.OnChangeProject(projectListData.project))
+                            onNavigateToProject()
+                        }
+                    )
+                }
+            }
+        } else {
+            Empty()
         }
     }
 }

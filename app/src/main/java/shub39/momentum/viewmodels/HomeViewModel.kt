@@ -15,7 +15,6 @@ import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 import shub39.momentum.home.HomeAction
 import shub39.momentum.home.HomeState
-import shub39.momentum.project.ProjectState
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -30,7 +29,7 @@ class HomeViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = HomeState.Loading
+            initialValue = HomeState()
         )
 
     fun onAction(action: HomeAction) = viewModelScope.launch {
@@ -38,13 +37,10 @@ class HomeViewModel(
             is HomeAction.OnChangeNotificationPref -> settingsPrefs.updateNotificationPref(action.pref)
 
             is HomeAction.OnChangeProject -> stateLayer.projectState.update {
-                when (it) {
-                    is ProjectState.Loaded -> it.copy(
-                        project = action.project,
-                        days = emptyList()
-                    )
-                    ProjectState.Loading -> ProjectState.Loaded(project = action.project)
-                }
+                it.copy(
+                    project = action.project,
+                    days = emptyList()
+                )
             }
 
             is HomeAction.OnAddProject -> {
@@ -67,10 +63,7 @@ class HomeViewModel(
             .getProjectListData()
             .onEach { projects ->
                 _state.update {
-                    when (it) {
-                        HomeState.Loading -> HomeState.ProjectList(projects = projects)
-                        is HomeState.ProjectList -> it.copy(projects = projects)
-                    }
+                    it.copy(projects = projects)
                 }
             }
             .launchIn(this)
@@ -78,10 +71,7 @@ class HomeViewModel(
         settingsPrefs.getNotificationPrefFlow()
             .onEach { it ->
                 _state.update { homeState ->
-                    when (homeState) {
-                        HomeState.Loading -> homeState
-                        is HomeState.ProjectList -> homeState.copy(sendNotifications = it)
-                    }
+                    homeState.copy(sendNotifications = it)
                 }
             }
             .launchIn(this)

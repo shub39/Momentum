@@ -50,56 +50,55 @@ fun ProjectGraph(
     onNavigateBack: () -> Unit
 ) {
     AnimatedContent(
-        targetState = state,
+        targetState = state.project,
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ) { projectState ->
-        when (projectState) {
-            ProjectState.Loading -> LoadingIndicator()
-            is ProjectState.Loaded -> {
-                LaunchedEffect(Unit) { onAction(ProjectAction.OnUpdateDays) }
+    ) { project ->
+        if (project == null) {
+            LoadingIndicator()
+        } else {
+            LaunchedEffect(project) { onAction(ProjectAction.OnUpdateDays) }
 
-                val navController = rememberNavController()
+            val navController = rememberNavController()
 
-                NavHost(
-                    navController = navController,
-                    startDestination = ProjectRoutes.ProjectCalendarView,
-                    enterTransition = { fadeIn(tween(300)) },
-                    exitTransition = { fadeOut(tween(300)) },
-                    popEnterTransition = { fadeIn(tween(300)) },
-                    popExitTransition = { fadeOut(tween(300)) },
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
-                        .fillMaxSize()
-                ) {
-                    composable<ProjectRoutes.ProjectDetails> {
-                        ProjectDetails(
-                            state = projectState,
-                            onAction = onAction,
-                            onNavigateBack = onNavigateBack,
-                            onNavigateToCalendar = { navController.navigate(ProjectRoutes.ProjectCalendarView) },
-                            onNavigateToMontage = { navController.navigate(ProjectRoutes.ProjectMontageView) }
-                        )
-                    }
+            NavHost(
+                navController = navController,
+                startDestination = ProjectRoutes.ProjectCalendarView,
+                enterTransition = { fadeIn(tween(300)) },
+                exitTransition = { fadeOut(tween(300)) },
+                popEnterTransition = { fadeIn(tween(300)) },
+                popExitTransition = { fadeOut(tween(300)) },
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxSize()
+            ) {
+                composable<ProjectRoutes.ProjectDetails> {
+                    ProjectDetails(
+                        state = state,
+                        onAction = onAction,
+                        onNavigateBack = onNavigateBack,
+                        onNavigateToCalendar = { navController.navigate(ProjectRoutes.ProjectCalendarView) },
+                        onNavigateToMontage = { navController.navigate(ProjectRoutes.ProjectMontageView) }
+                    )
+                }
 
-                    composable<ProjectRoutes.ProjectCalendarView> {
-                        ProjectCalendar(
-                            state = projectState,
-                            onAction = onAction,
-                            onNavigateBack = { navController.navigateUp() }
-                        )
-                    }
+                composable<ProjectRoutes.ProjectCalendarView> {
+                    ProjectCalendar(
+                        state = state,
+                        onAction = onAction,
+                        onNavigateBack = { navController.navigateUp() }
+                    )
+                }
 
-                    composable<ProjectRoutes.ProjectShortsView> {
+                composable<ProjectRoutes.ProjectShortsView> {
 
-                    }
+                }
 
-                    composable<ProjectRoutes.ProjectMontageView> {
-                        ProjectMontageView(
-                            state = projectState,
-                            onAction = onAction
-                        )
-                    }
+                composable<ProjectRoutes.ProjectMontageView> {
+                    ProjectMontageView(
+                        state = state,
+                        onAction = onAction
+                    )
                 }
             }
         }
@@ -111,7 +110,7 @@ fun ProjectGraph(
 private fun Preview() {
     var state by remember {
         mutableStateOf(
-            ProjectState.Loaded(
+            ProjectState(
                 project = Project(
                     id = 1,
                     title = "Sample Project",

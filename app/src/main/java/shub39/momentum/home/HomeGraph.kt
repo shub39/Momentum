@@ -86,7 +86,7 @@ fun HomeGraph(
 private fun Preview() {
     var state by remember {
         mutableStateOf(
-            HomeState.ProjectList(
+            HomeState(
                 projects = (0..10).map {
                     ProjectListData(
                         project = Project(

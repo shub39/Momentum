@@ -62,7 +62,7 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProjectCalendar(
-    state: ProjectState.Loaded,
+    state: ProjectState,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -78,7 +78,7 @@ fun ProjectCalendar(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = state.project.title) },
+                title = { Text(text = state.project?.title!!) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -196,7 +196,7 @@ fun ProjectCalendar(
                         onAction(
                             ProjectAction.OnUpsertDay(
                                 Day(
-                                    projectId = state.project.id,
+                                    projectId = state.project?.id!!,
                                     image = imageFile!!.uri.toString(),
                                     comment = null,
                                     date = selectedDate!!,
@@ -227,7 +227,7 @@ fun ProjectCalendar(
 private fun Preview() {
     var state by remember {
         mutableStateOf(
-            ProjectState.Loaded(
+            ProjectState(
                 project = Project(
                     id = 1,
                     title = "Sample Project",

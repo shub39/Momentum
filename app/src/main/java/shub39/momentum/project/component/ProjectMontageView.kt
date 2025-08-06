@@ -19,7 +19,7 @@ import shub39.momentum.project.ProjectState
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProjectMontageView(
-    state: ProjectState.Loaded,
+    state: ProjectState,
     onAction: (ProjectAction) -> Unit
 ) {
     LaunchedEffect(Unit) {

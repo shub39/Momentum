@@ -3,12 +3,11 @@ package shub39.momentum.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,31 +22,18 @@ class ProjectViewModel(
     private val montageMaker: MontageMaker,
     private val repository: ProjectRepository
 ) : ViewModel() {
+    private var observeDaysJob: Job? = null
+
     private val _state = stateLayer.projectState
     val state = _state.asStateFlow()
-        .onStart { observeDays() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = ProjectState.Loading
+            initialValue = ProjectState()
         )
 
     fun onAction(action: ProjectAction) = viewModelScope.launch {
         when (action) {
-            ProjectAction.OnUpdateDays -> {
-                _state.update {
-                    when (it) {
-                        is ProjectState.Loaded -> {
-                            val days = repository.getDays().first()
-                                .filter { day -> day.projectId == it.project.id }
-                            it.copy(days = days)
-                        }
-
-                        ProjectState.Loading -> it
-                    }
-                }
-            }
-
             is ProjectAction.OnUpdateProject -> repository.upsertProject(action.project)
 
             is ProjectAction.OnDeleteProject -> repository.deleteProject(action.project)
@@ -67,30 +53,27 @@ class ProjectViewModel(
                 )
 
                 _state.update {
-                    when (it) {
-                        ProjectState.Loading -> it
-                        is ProjectState.Loaded -> it.copy(montage = result)
-                    }
+                    it.copy(montage = result)
                 }
             }
+
+            ProjectAction.OnUpdateDays -> refreshDays()
         }
     }
 
-    fun observeDays() = viewModelScope.launch {
-        repository
-            .getDays()
-            .onEach { days ->
-                _state.update {
-                    when (it) {
-                        is ProjectState.Loaded -> {
-                            val days = days.filter { day -> day.projectId == it.project.id }
-                            it.copy(days = days)
-                        }
-
-                        ProjectState.Loading -> it
+    private fun refreshDays() {
+        observeDaysJob?.cancel()
+        observeDaysJob = viewModelScope.launch {
+            repository.getDays()
+                .onEach { days ->
+                    val filteredDays = days.filter { it.projectId == _state.value.project?.id }
+                    _state.update {
+                        it.copy(
+                            days = filteredDays
+                        )
                     }
                 }
-            }
-            .launchIn(this)
+                .launchIn(this)
+        }
     }
 }

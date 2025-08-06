@@ -18,7 +18,7 @@ import shub39.momentum.project.ProjectState
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectDetails(
-    state: ProjectState.Loaded,
+    state: ProjectState,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToMontage: () -> Unit,
@@ -32,7 +32,7 @@ fun ProjectDetails(
 private fun Preview() {
     var state by remember {
         mutableStateOf(
-            ProjectState.Loaded(
+            ProjectState(
                 project = Project(
                     id = 1,
                     title = "Sample Project",
