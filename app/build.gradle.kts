@@ -72,7 +72,6 @@ android {
 
 dependencies {
     implementation(project(":montage"))
-    implementation(libs.material.icons.core)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
@@ -91,7 +90,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling)
     implementation(libs.koin.androidx.compose)
-    implementation(libs.compose.multiplatform.media.player)
+
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
 }
 
 java {

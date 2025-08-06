@@ -1,7 +1,8 @@
 [versions]
 agp = "8.11.1"
 calendar = "2.8.0"
-composeMultiplatformMediaPlayer = "1.0.42"
+materialIconsExtended = "1.7.8"
+media3Exoplayer = "1.8.0"
 splashscreen = "1.0.1"
 datastore = "1.2.0-alpha02"
 colorpicker = "1.1.2"
@@ -15,7 +16,6 @@ serialization = "1.9.0"
 materialKolor = "3.0.1"
 composeIcons = "1.1.1"
 compose = "1.8.3"
-materialIconsCore = "1.7.3"
 landscapist = "2.5.1"
 filekitCore = "0.10.0"
 annotationJvm = "1.9.1"
@@ -23,8 +23,11 @@ annotationJvm = "1.9.1"
 [libraries]
 # Android
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
@@ -32,8 +35,6 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compo
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-compose-multiplatform-media-player = { module = "network.chaintech:compose-multiplatform-media-player", version.ref = "composeMultiplatformMediaPlayer" }
-material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 
 # Others
 filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekitCore" }

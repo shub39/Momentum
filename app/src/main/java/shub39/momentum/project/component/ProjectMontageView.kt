@@ -1,18 +1,19 @@
 package shub39.momentum.project.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import chaintech.videoplayer.host.MediaPlayerHost
-import chaintech.videoplayer.ui.video.VideoPlayerComposable
-import shub39.momentum.core.domain.interfaces.MontageResult
+import androidx.compose.ui.unit.dp
+import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
 
@@ -26,22 +27,31 @@ fun ProjectMontageView(
         onAction(ProjectAction.OnCreateMontage(state.days))
     }
 
-    Box(
+    Column(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when (state.montage) {
-            is MontageResult.Error -> Text("Error")
-            is MontageResult.Success -> {
-                val videoPlayerHost =
-                    remember { MediaPlayerHost(mediaUrl = state.montage.file.absolutePath) }
-                VideoPlayerComposable(
-                    playerHost = videoPlayerHost,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            when (state.montage) {
+                is MontageState.Error -> Text("Error")
 
-            null -> LoadingIndicator()
+                is MontageState.Success -> {
+                    VideoPlayerWithProgress(
+                        file = state.montage.file,
+                        modifier = Modifier.size(300.dp, 600.dp)
+                    )
+                }
+
+                MontageState.Idle -> {
+                    Text("Idle")
+                }
+
+                MontageState.Making -> LoadingIndicator()
+            }
         }
     }
 }

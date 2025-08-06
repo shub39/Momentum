@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import shub39.momentum.core.domain.interfaces.MontageMaker
+import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
@@ -43,13 +44,18 @@ class ProjectViewModel(
             is ProjectAction.OnUpsertDay -> repository.upsertDay(action.day)
 
             is ProjectAction.OnCreateMontage -> {
+                _state.update {
+                    it.copy(montage = MontageState.Making)
+                }
+
                 val file = createTempFile(suffix = ".mp4")
 
                 Log.d("ProjectViewModel", "Starting montage creation")
 
                 val result = montageMaker.createMontage(
                     days = action.days,
-                    file = file.toFile()
+                    file = file.toFile(),
+                    montageConfig = _state.value.montageConfig
                 )
 
                 _state.update {

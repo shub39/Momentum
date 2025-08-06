@@ -9,7 +9,7 @@ data class MuxerConfiguration(
     val videoHeight: Int = 1920,
     val mimeType: String = MediaFormat.MIMETYPE_VIDEO_AVC,
     val framesPerImage: Int = 1,
-    val framesPerSecond: Float = 10f,
+    val framesPerSecond: Float = 1f,
     val bitrate: Int = 1500000,
     val frameMuxer: FrameMuxer = Mp4FrameMuxer(file.absolutePath, framesPerSecond),
     val iFrameInterval: Int = 10

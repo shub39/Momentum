@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import shub39.momentum.core.domain.data_classes.Project
+import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 import shub39.momentum.home.HomeAction
@@ -39,7 +40,8 @@ class HomeViewModel(
             is HomeAction.OnChangeProject -> stateLayer.projectState.update {
                 it.copy(
                     project = action.project,
-                    days = emptyList()
+                    days = emptyList(),
+                    montage = MontageState.Idle
                 )
             }
 

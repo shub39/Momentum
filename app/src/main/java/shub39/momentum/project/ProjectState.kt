@@ -1,11 +1,13 @@
 package shub39.momentum.project
 
 import shub39.momentum.core.domain.data_classes.Day
+import shub39.momentum.core.domain.data_classes.MontageConfig
 import shub39.momentum.core.domain.data_classes.Project
-import shub39.momentum.core.domain.interfaces.MontageResult
+import shub39.momentum.core.domain.interfaces.MontageState
 
 data class ProjectState(
     val project: Project? = null,
     val days: List<Day> = emptyList(),
-    val montage: MontageResult? = null
+    val montage: MontageState = MontageState.Idle,
+    val montageConfig: MontageConfig = MontageConfig()
 )

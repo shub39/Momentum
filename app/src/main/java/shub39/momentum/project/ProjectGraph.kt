@@ -63,7 +63,7 @@ fun ProjectGraph(
 
             NavHost(
                 navController = navController,
-                startDestination = ProjectRoutes.ProjectCalendarView,
+                startDestination = ProjectRoutes.ProjectDetails,
                 enterTransition = { fadeIn(tween(300)) },
                 exitTransition = { fadeOut(tween(300)) },
                 popEnterTransition = { fadeIn(tween(300)) },

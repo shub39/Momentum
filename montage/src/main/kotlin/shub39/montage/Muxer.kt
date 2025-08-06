@@ -70,7 +70,7 @@ class Muxer(private val context: Context, private val file: File) {
         return MuxingResult.MuxingSuccess(file)
     }
 
-    suspend fun muxAsync(imageList: List<Any>, @RawRes audioTrack: Int? = null): MuxingResult {
+    fun muxAsync(imageList: List<Any>, @RawRes audioTrack: Int? = null): MuxingResult {
         return mux(imageList, audioTrack)
     }
 
