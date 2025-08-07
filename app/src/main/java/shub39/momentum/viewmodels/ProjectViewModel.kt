@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.core.domain.interfaces.MontageMaker
 import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.domain.interfaces.ProjectRepository
@@ -18,6 +19,7 @@ import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
 import kotlin.io.path.createTempFile
 
+@KoinViewModel
 class ProjectViewModel(
     stateLayer: StateLayer,
     private val montageMaker: MontageMaker,

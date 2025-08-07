@@ -11,10 +11,12 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.materialkolor.PaletteStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.koin.core.annotation.Single
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.domain.enums.Fonts
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 
+@Single(binds = [SettingsPrefs::class])
 class SettingsPrefsImpl(
     private val dataStore: DataStore<Preferences>
 ) : SettingsPrefs {

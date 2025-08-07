@@ -3,7 +3,8 @@ package shub39.momentum.app
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import shub39.momentum.di.modules
+import org.koin.ksp.generated.module
+import shub39.momentum.di.AppModule
 
 class MomentumApp: Application() {
     override fun onCreate() {
@@ -11,7 +12,8 @@ class MomentumApp: Application() {
 
         startKoin {
             androidContext(this@MomentumApp)
-            modules(modules)
+//            modules(modules)
+            modules(AppModule().module)
         }
     }
 }

@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 import shub39.momentum.settings.SettingsAction
 import shub39.momentum.settings.SettingsState
 
+@KoinViewModel
 class SettingsViewModel(
     stateLayer: StateLayer,
     private val datastore: SettingsPrefs

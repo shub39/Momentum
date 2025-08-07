@@ -10,6 +10,7 @@ import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.core.annotation.Single
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.MontageConfig
 import shub39.momentum.core.domain.interfaces.MontageMaker
@@ -18,6 +19,7 @@ import shub39.montage.Muxer
 import shub39.montage.MuxingResult
 import java.io.File
 
+@Single(binds = [MontageMaker::class])
 class MontageMakerImpl(
     private val context: Context
 ) : MontageMaker {

@@ -3,7 +3,9 @@ package shub39.momentum.core.data.database
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import org.koin.core.annotation.Single
 
+@Single
 class ProjectDBFactory(
     private val context: Context
 ) {

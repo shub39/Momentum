@@ -2,6 +2,7 @@ package shub39.momentum.core.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.koin.core.annotation.Single
 import shub39.momentum.core.data.database.DaysDao
 import shub39.momentum.core.data.database.ProjectDao
 import shub39.momentum.core.domain.data_classes.Day
@@ -9,6 +10,7 @@ import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.ProjectListData
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 
+@Single(binds = [ProjectRepository::class])
 class ProjectRepositoryImpl(
     private val projectDao: ProjectDao,
     private val daysDao: DaysDao

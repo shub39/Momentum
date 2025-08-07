@@ -1,51 +1,41 @@
 package shub39.momentum.di
 
-import org.koin.core.module.dsl.singleOf
-import org.koin.core.qualifier.named
-import org.koin.dsl.bind
-import org.koin.dsl.module
-import shub39.momentum.core.data.MontageMakerImpl
-import shub39.momentum.core.data.ProjectRepositoryImpl
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
+import shub39.momentum.core.data.database.DaysDao
 import shub39.momentum.core.data.database.ProjectDBFactory
+import shub39.momentum.core.data.database.ProjectDao
 import shub39.momentum.core.data.database.ProjectDatabase
 import shub39.momentum.core.data.datastore.DatastoreFactory
 import shub39.momentum.core.data.datastore.SettingsPrefsImpl
-import shub39.momentum.core.domain.interfaces.MontageMaker
-import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
-import shub39.momentum.viewmodels.HomeViewModel
-import shub39.momentum.viewmodels.OnboardingViewModel
-import shub39.momentum.viewmodels.ProjectViewModel
-import shub39.momentum.viewmodels.SettingsViewModel
-import shub39.momentum.viewmodels.StateLayer
 
-val modules = module {
-    // database
-    singleOf(::ProjectDBFactory)
-    single {
-        get<ProjectDBFactory>()
+@Module
+@ComponentScan("shub39.momentum")
+class AppModule {
+    @Single
+    fun provideAppDb(
+        dbFactory: ProjectDBFactory
+    ): ProjectDatabase {
+        return dbFactory
             .create()
             .fallbackToDestructiveMigration(true)
             .build()
     }
-    single { get<ProjectDatabase>().projectDao }
-    single { get<ProjectDatabase>().daysDao }
 
-    // datastore
-    singleOf(::DatastoreFactory)
-    single(named("settings_datastore")) { get<DatastoreFactory>().getSettingsDatastore() }
-    single { SettingsPrefsImpl(get(named("settings_datastore"))) }.bind<SettingsPrefs>()
+    @Single
+    fun getProjectDao(database: ProjectDatabase): ProjectDao = database.projectDao
 
-    // repositories and use cases
-    singleOf(::ProjectRepositoryImpl).bind<ProjectRepository>()
+    @Single
+    fun getDaysDao(database: ProjectDatabase): DaysDao = database.daysDao
 
-    // montage maker stuff
-    singleOf(::MontageMakerImpl).bind<MontageMaker>()
+    @Single
+    fun getDatastore(datastoreFactory: DatastoreFactory): DataStore<Preferences> =
+        datastoreFactory.getSettingsDatastore()
 
-    // states and viewmodels
-    singleOf(::StateLayer)
-    singleOf(::SettingsViewModel)
-    singleOf(::HomeViewModel)
-    singleOf(::OnboardingViewModel)
-    singleOf(::ProjectViewModel)
+    @Single
+    fun getSettingsPrefs(settingsPrefsImpl: SettingsPrefsImpl): SettingsPrefs = settingsPrefsImpl
 }
