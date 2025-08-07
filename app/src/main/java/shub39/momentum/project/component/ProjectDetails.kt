@@ -2,6 +2,7 @@ package shub39.momentum.project.component
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -162,7 +163,10 @@ fun ProjectDetails(
                                     Box(
                                         modifier = Modifier
                                             .aspectRatio(1f)
-                                            .padding(2.dp),
+                                            .padding(2.dp)
+                                            .clickable(enabled = weekDay.date <= LocalDate.now()) {
+                                                onAction(ProjectAction.OnUpdateSelectedDay(weekDay.date.toEpochDay()))
+                                            },
                                         contentAlignment = Alignment.Center
                                     ) {
                                         day?.let {

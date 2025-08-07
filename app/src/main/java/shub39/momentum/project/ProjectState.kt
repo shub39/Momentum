@@ -9,5 +9,6 @@ data class ProjectState(
     val project: Project? = null,
     val days: List<Day> = emptyList(),
     val montage: MontageState = MontageState.Processing,
-    val montageConfig: MontageConfig = MontageConfig()
+    val montageConfig: MontageConfig = MontageConfig(),
+    val selectedDate: Long? = null
 )

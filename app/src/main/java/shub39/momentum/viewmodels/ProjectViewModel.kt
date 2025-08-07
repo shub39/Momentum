@@ -3,7 +3,9 @@ package shub39.momentum.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -66,6 +68,8 @@ class ProjectViewModel(
             }
 
             ProjectAction.OnUpdateDays -> refreshDays()
+
+            is ProjectAction.OnUpdateSelectedDay -> _state.update { it.copy(selectedDate = action.day) }
         }
     }
 
@@ -74,10 +78,13 @@ class ProjectViewModel(
         observeDaysJob = viewModelScope.launch {
             repository.getDays()
                 .onEach { days ->
-                    val filteredDays = days.filter { it.projectId == _state.value.project?.id }
+                    val filteredDays = async(Dispatchers.Default) {
+                        days.filter { it.projectId == _state.value.project?.id }
+                            .sortedByDescending { it.date }
+                    }
                     _state.update {
                         it.copy(
-                            days = filteredDays
+                            days = filteredDays.await()
                         )
                     }
                 }

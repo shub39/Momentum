@@ -26,6 +26,7 @@ import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.project.component.DayInfoSheet
 import shub39.momentum.project.component.ProjectCalendar
 import shub39.momentum.project.component.ProjectDetails
 import shub39.momentum.project.component.ProjectMontageView
@@ -101,6 +102,14 @@ fun ProjectGraph(
                         onNavigateBack = { navController.navigateUp() }
                     )
                 }
+            }
+
+            state.selectedDate?.let {
+                DayInfoSheet(
+                    selectedDate = it,
+                    state = state,
+                    onAction = onAction
+                )
             }
         }
     }
