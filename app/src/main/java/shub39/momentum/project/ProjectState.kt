@@ -8,6 +8,6 @@ import shub39.momentum.core.domain.interfaces.MontageState
 data class ProjectState(
     val project: Project? = null,
     val days: List<Day> = emptyList(),
-    val montage: MontageState = MontageState.Idle,
+    val montage: MontageState = MontageState.Processing,
     val montageConfig: MontageConfig = MontageConfig()
 )

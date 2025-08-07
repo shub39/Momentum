@@ -43,7 +43,7 @@ class HomeViewModel(
                 it.copy(
                     project = action.project,
                     days = emptyList(),
-                    montage = MontageState.Idle
+                    montage = MontageState.Processing
                 )
             }
 

@@ -70,9 +70,7 @@ fun ProjectMontageView(
                     )
                 }
 
-                MontageState.Idle -> LaunchedEffect(Unit) { onNavigateBack() }
-
-                MontageState.Making -> LoadingIndicator()
+                MontageState.Processing -> LoadingIndicator()
             }
 
             HorizontalFloatingToolbar(

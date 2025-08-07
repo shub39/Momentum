@@ -47,7 +47,7 @@ class ProjectViewModel(
 
             is ProjectAction.OnCreateMontage -> {
                 _state.update {
-                    it.copy(montage = MontageState.Making)
+                    it.copy(montage = MontageState.Processing)
                 }
 
                 val file = createTempFile(suffix = ".mp4")
