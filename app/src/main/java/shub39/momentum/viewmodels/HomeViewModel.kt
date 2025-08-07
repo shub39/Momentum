@@ -72,7 +72,8 @@ class HomeViewModel(
             }
             .launchIn(this)
 
-        settingsPrefs.getNotificationPrefFlow()
+        settingsPrefs
+            .getNotificationPrefFlow()
             .onEach { it ->
                 _state.update { homeState ->
                     homeState.copy(sendNotifications = it)

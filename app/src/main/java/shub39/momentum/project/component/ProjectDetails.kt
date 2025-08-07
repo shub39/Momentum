@@ -1,11 +1,22 @@
 package shub39.momentum.project.component
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,22 +42,74 @@ fun ProjectDetails(
     onNavigateToMontage: () -> Unit,
     onNavigateToCalendar: () -> Unit
 ) {
-    Column(
+    AnimatedContent(
+        targetState = state.project,
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(
-            onClick = onNavigateToMontage,
-            enabled = state.days.isNotEmpty()
-        ) {
-            Text("Montage")
-        }
+        contentAlignment = Alignment.Center
+    ) { project ->
+        if (project == null) {
+            LoadingIndicator()
+        } else {
+            Scaffold(
+                topBar = {
+                    LargeFlexibleTopAppBar(
+                        title = { Text(text = project.title) },
+                        subtitle = { Text(text = project.description) },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = onNavigateBack
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Navigate Back"
+                                )
+                            }
+                        },
+                        actions = {
+                            IconButton(
+                                onClick = { /*TODO: Delete Logic*/ }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete"
+                                )
+                            }
 
-        Button(
-            onClick = onNavigateToCalendar
-        ) {
-            Text("Calendar")
+                            IconButton(
+                                onClick = { /*TODO: Edit Logic*/ }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Edit"
+                                )
+                            }
+                        }
+                    )
+                }
+            ) { paddingValues ->
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    item {
+                        Button(
+                            onClick = onNavigateToMontage,
+                            enabled = state.days.isNotEmpty()
+                        ) {
+                            Text("Montage")
+                        }
+
+                        Button(
+                            onClick = onNavigateToCalendar
+                        ) {
+                            Text("Calendar")
+                        }
+                    }
+                }
+            }
         }
     }
 }

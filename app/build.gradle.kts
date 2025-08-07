@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.api.ApkVariantOutputImpl
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -28,6 +30,26 @@ android {
     kotlin {
         compilerOptions {
             jvmToolchain(17)
+        }
+    }
+
+    flavorDimensions += "version"
+
+    productFlavors {
+        create("play") {
+            dimension = "version"
+            applicationIdSuffix = ".play"
+            versionNameSuffix = "-play"
+        }
+        create("foss") {
+            dimension = "version"
+        }
+    }
+
+    applicationVariants.all {
+        outputs.all {
+            val apkOutput = this as ApkVariantOutputImpl
+            apkOutput.outputFileName = "app-release.apk"
         }
     }
 
@@ -71,6 +93,9 @@ android {
 }
 
 dependencies {
+    "playImplementation"(libs.purchases.ui)
+    "playImplementation"(libs.purchases)
+
     implementation(project(":montage"))
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)

@@ -19,6 +19,7 @@ compose = "1.8.3"
 landscapist = "2.5.1"
 filekitCore = "0.10.0"
 annotationJvm = "1.9.1"
+purchases = "9.2.0"
 
 [libraries]
 # Android
@@ -35,6 +36,10 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compo
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+
+# Purchases
+purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "purchases" }
+purchases-ui = { module = "com.revenuecat.purchases:purchases-ui", version.ref = "purchases" }
 
 # Koin
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-core" }
