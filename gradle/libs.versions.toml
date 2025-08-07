@@ -14,7 +14,6 @@ room = "2.7.2"
 navigation = "2.9.3"
 serialization = "1.9.0"
 materialKolor = "3.0.1"
-composeIcons = "1.1.1"
 compose = "1.8.3"
 landscapist = "2.5.1"
 filekitCore = "0.10.0"
@@ -44,7 +43,6 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
-composeIcons-fontAwesome = { module = "br.com.devsrsouza.compose.icons:font-awesome", version.ref = "composeIcons" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
 
 [plugins]
