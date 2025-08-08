@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import kotlinx.coroutines.delay
@@ -48,14 +50,14 @@ fun VideoPlayer(
             setMediaItem(MediaItem.fromUri(Uri.fromFile(file)))
             prepare()
             playWhenReady = true
-            repeatMode = 1
+            repeatMode = Player.REPEAT_MODE_ALL
         }
     }
 
     var isPlaying by remember { mutableStateOf(true) }
     var showControls by remember { mutableStateOf(true) }
-    var duration by remember { mutableStateOf(0L) }
-    var position by remember { mutableStateOf(0L) }
+    var duration by remember { mutableLongStateOf(0L) }
+    var position by remember { mutableLongStateOf(0L) }
 
     // Update position periodically
     LaunchedEffect(exoPlayer) {

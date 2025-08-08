@@ -17,8 +17,6 @@ import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 import shub39.momentum.home.HomeAction
 import shub39.momentum.home.HomeState
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 @KoinViewModel
 class HomeViewModel(
@@ -48,14 +46,10 @@ class HomeViewModel(
             }
 
             is HomeAction.OnAddProject -> {
-                val startDate = LocalDate.now().atStartOfDay().toEpochSecond(ZoneOffset.UTC)
-
                 projectRepository.upsertProject(
                     Project(
                         title = action.title,
                         description = action.description,
-                        startDate = startDate,
-                        lastUpdatedDate = startDate
                     )
                 )
             }

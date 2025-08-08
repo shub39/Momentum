@@ -9,7 +9,5 @@ import kotlinx.serialization.Serializable
 data class ProjectEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
-    val description: String,
-    val startDate: Long,
-    val lastUpdatedDate: Long,
+    val description: String
 )

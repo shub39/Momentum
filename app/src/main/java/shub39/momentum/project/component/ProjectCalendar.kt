@@ -164,8 +164,6 @@ private fun Preview() {
                     id = 1,
                     title = "Sample Project",
                     description = "A sample project",
-                    startDate = 1,
-                    lastUpdatedDate = 1
                 ),
                 days = (0..10).map {
                     Day(

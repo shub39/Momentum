@@ -93,8 +93,6 @@ private fun Preview() {
                             id = it.toLong(),
                             title = "Project $it",
                             description = "Description for project $it",
-                            startDate = it.toLong(),
-                            lastUpdatedDate = it.toLong()
                         ),
                         lastDay = Day(
                             id = it.toLong(),

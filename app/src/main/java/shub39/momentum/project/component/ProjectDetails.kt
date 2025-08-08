@@ -1,6 +1,12 @@
 package shub39.momentum.project.component
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +19,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -20,17 +28,22 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialShapes.Companion.VerySunny
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +52,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +64,7 @@ import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.materialkolor.PaletteStyle
 import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
+import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
@@ -73,9 +90,15 @@ fun ProjectDetails(
         if (project == null) {
             LoadingIndicator()
         } else {
+            var showDeleteDialog by remember { mutableStateOf(false) }
+            var showEditDialog by remember { mutableStateOf(false) }
+
+            val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
             Scaffold(
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
                     LargeFlexibleTopAppBar(
+                        scrollBehavior = scrollBehavior,
                         title = { Text(text = project.title) },
                         subtitle = { Text(text = project.description) },
                         navigationIcon = {
@@ -90,7 +113,7 @@ fun ProjectDetails(
                         },
                         actions = {
                             IconButton(
-                                onClick = { /*TODO: Delete Logic*/ }
+                                onClick = { showDeleteDialog = true }
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
@@ -99,7 +122,7 @@ fun ProjectDetails(
                             }
 
                             IconButton(
-                                onClick = { /*TODO: Edit Logic*/ }
+                                onClick = { showEditDialog = true }
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Edit,
@@ -227,12 +250,103 @@ fun ProjectDetails(
                         }
                     }
 
+                    // montage wait/ creator options
                     item {
-                        Button(
-                            onClick = onNavigateToMontage,
-                            enabled = state.days.isNotEmpty()
+                        val canCreateMontage = state.days.size >= 5
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .clickable(enabled = canCreateMontage) {
+                                    onNavigateToMontage()
+                                },
+                            shape = MaterialTheme.shapes.large,
+                            colors = if (canCreateMontage) {
+                                CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                )
+                            } else {
+                                CardDefaults.cardColors()
+                            }
                         ) {
-                            Text("Montage")
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                            ) {
+                                Column {
+                                    Text(
+                                        text = stringResource(R.string.montage),
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    if (!canCreateMontage) {
+                                        val daysLeft = 5 - state.days.size
+                                        Text(
+                                            text = pluralStringResource(
+                                                id = R.plurals.add_more_days,
+                                                count = daysLeft,
+                                                formatArgs = arrayOf(daysLeft)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                Box(
+                                    modifier = Modifier.wrapContentSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (canCreateMontage) {
+                                        val infiniteTransition =
+                                            rememberInfiniteTransition(label = "rotation")
+
+                                        val rotation by infiniteTransition.animateFloat(
+                                            initialValue = 0f,
+                                            targetValue = 360f,
+                                            animationSpec = infiniteRepeatable(
+                                                animation = tween(
+                                                    durationMillis = 2000,
+                                                    easing = LinearEasing
+                                                ),
+                                                repeatMode = RepeatMode.Restart
+                                            ),
+                                            label = "infinite rotation"
+                                        )
+
+                                        Box(
+                                            modifier = Modifier
+                                                .size(50.dp)
+                                                .graphicsLayer {
+                                                    rotationZ = rotation
+                                                }
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                    shape = VerySunny.toShape()
+                                                )
+                                        )
+
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                            contentDescription = "Create Montage",
+                                            tint = MaterialTheme.colorScheme.primaryContainer
+                                        )
+                                    } else {
+                                        CircularWavyProgressIndicator(
+                                            progress = { state.days.size.toFloat() / 5 },
+                                            modifier = Modifier.size(50.dp)
+                                        )
+
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                            contentDescription = "Create Montage"
+                                        )
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
@@ -251,9 +365,17 @@ private fun Preview() {
                     id = 1,
                     title = "Sample Project",
                     description = "A sample project",
-                    startDate = 1,
-                    lastUpdatedDate = 1
-                )
+                ),
+                days = (0..3).map {
+                    Day(
+                        id = it.toLong(),
+                        projectId = 1,
+                        image = "",
+                        comment = it.toString(),
+                        date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
+                        isFavorite = false
+                    )
+                }
             )
         )
     }
@@ -261,7 +383,7 @@ private fun Preview() {
     MomentumTheme(
         theme = Theme(
             appTheme = AppTheme.DARK,
-            paletteStyle = PaletteStyle.Fidelity
+            paletteStyle = PaletteStyle.Expressive
         )
     ) {
         ProjectDetails(

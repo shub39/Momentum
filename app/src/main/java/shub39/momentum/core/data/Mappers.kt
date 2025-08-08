@@ -24,8 +24,6 @@ fun ProjectEntity.toProject(): Project {
         id = id,
         title = title,
         description = description,
-        startDate = startDate,
-        lastUpdatedDate = lastUpdatedDate,
     )
 }
 
@@ -34,8 +32,6 @@ fun Project.toEntity(): ProjectEntity {
         id = id,
         title = title,
         description = description,
-        startDate = startDate,
-        lastUpdatedDate = lastUpdatedDate,
     )
 }
 
