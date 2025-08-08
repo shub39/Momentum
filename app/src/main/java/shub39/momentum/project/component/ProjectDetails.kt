@@ -153,18 +153,21 @@ fun ProjectDetails(
                                 }
                             }
 
+                            val today = LocalDate.now()
                             WeekCalendar(
                                 state = weekState,
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                                 dayContent = { weekDay ->
                                     val day =
                                         state.days.find { it.date == weekDay.date.toEpochDay() }
+                                    val possibleDay = weekDay.date <= today
 
                                     Box(
                                         modifier = Modifier
                                             .aspectRatio(1f)
                                             .padding(2.dp)
-                                            .clickable(enabled = weekDay.date <= LocalDate.now()) {
+                                            .clip(CircleShape)
+                                            .clickable(enabled = possibleDay) {
                                                 onAction(ProjectAction.OnUpdateSelectedDay(weekDay.date.toEpochDay()))
                                             },
                                         contentAlignment = Alignment.Center
@@ -196,12 +199,26 @@ fun ProjectDetails(
                                             Text(
                                                 text = weekDay.date.dayOfMonth.toString(),
                                                 style = MaterialTheme.typography.bodyMedium,
+                                                color = if (possibleDay) {
+                                                    MaterialTheme.colorScheme.onBackground
+                                                } else {
+                                                    MaterialTheme.colorScheme.onBackground.copy(
+                                                        alpha = 0.5f
+                                                    )
+                                                },
                                                 fontWeight = FontWeight.Bold,
                                             )
 
                                             Text(
                                                 text = weekDay.date.dayOfWeek.toString().take(3),
-                                                style = MaterialTheme.typography.bodySmall,
+                                                color = if (possibleDay) {
+                                                    MaterialTheme.colorScheme.onBackground
+                                                } else {
+                                                    MaterialTheme.colorScheme.onBackground.copy(
+                                                        alpha = 0.5f
+                                                    )
+                                                },
+                                                style = MaterialTheme.typography.bodySmall
                                             )
                                         }
                                     }

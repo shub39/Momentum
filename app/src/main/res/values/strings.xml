@@ -26,4 +26,10 @@
     <string name="seed_color_desc">Select seed color for App theme</string>
     <string name="unlock_more_pro">Unlock more with plus</string>
     <string name="palette_style">Palette style</string>
+    <string name="select_image">Select Image</string>
+    <string name="delete_day">Delete day</string>
+    <string name="add_day">Add Day</string>
+    <string name="update_day">Update Day</string>
+    <string name="add_comment">Add a comment on this</string>
+    <string name="too_long">That\'s a long comment :/</string>
 </resources>

@@ -10,6 +10,6 @@ data class Theme(
     val isAmoled: Boolean = false,
     val paletteStyle: PaletteStyle = PaletteStyle.Expressive,
     val isMaterialYou: Boolean = false,
-    val seedColor: Color = Color.Companion.Red,
+    val seedColor: Color = Color.Blue,
     val font: Fonts = Fonts.FIGTREE
 )

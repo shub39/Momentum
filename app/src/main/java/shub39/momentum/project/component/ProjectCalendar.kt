@@ -57,7 +57,7 @@ fun ProjectCalendar(
     onNavigateBack: () -> Unit,
 ) {
     val calendarState = rememberCalendarState(
-        startMonth = YearMonth.now().minusMonths(12),
+        startMonth = YearMonth.of(2025, 1),
         endMonth = YearMonth.now(),
         firstVisibleMonth = YearMonth.now(),
         outDateStyle = OutDateStyle.EndOfRow
@@ -78,6 +78,7 @@ fun ProjectCalendar(
             )
         }
     ) { padding ->
+        val today = LocalDate.now()
         VerticalCalendar(
             reverseLayout = true,
             state = calendarState,
@@ -104,10 +105,13 @@ fun ProjectCalendar(
             monthFooter = { Spacer(modifier = Modifier.height(16.dp)) },
             dayContent = { day ->
                 if (day.position.name == "MonthDate") {
+                    val possibleDay = day.date <= today
+
                     Box(
                         modifier = Modifier
                             .size(40.dp)
-                            .clickable(enabled = day.date <= LocalDate.now()) {
+                            .clip(CircleShape)
+                            .clickable(enabled = possibleDay) {
                                 onAction(ProjectAction.OnUpdateSelectedDay(day.date.toEpochDay()))
                             },
                         contentAlignment = Alignment.Center
@@ -135,7 +139,14 @@ fun ProjectCalendar(
                             }
                         }
 
-                        Text(day.date.dayOfMonth.toString())
+                        Text(
+                            text = day.date.dayOfMonth.toString(),
+                            color = if (possibleDay) {
+                                MaterialTheme.colorScheme.onBackground
+                            } else {
+                                MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                            }
+                        )
                     }
                 }
             }
