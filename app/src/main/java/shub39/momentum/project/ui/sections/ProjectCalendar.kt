@@ -1,6 +1,7 @@
 package shub39.momentum.project.ui.sections
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -130,6 +131,17 @@ fun ProjectCalendar(
                                 CoilImage(
                                     previewPlaceholder = painterResource(R.drawable.ic_launcher_foreground),
                                     imageModel = { foundDay.image },
+                                    failure = {
+                                        Box(
+                                            modifier = Modifier
+                                                .matchParentSize()
+                                                .border(
+                                                    width = 2.dp,
+                                                    color = MaterialTheme.colorScheme.error,
+                                                    shape = CircleShape
+                                                )
+                                        )
+                                    },
                                     modifier = Modifier
                                         .size(38.dp)
                                         .clip(CircleShape)

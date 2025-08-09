@@ -8,6 +8,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -204,6 +205,17 @@ fun ProjectDetails(
                                         day?.let {
                                             CoilImage(
                                                 imageModel = { it.image },
+                                                failure = {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .matchParentSize()
+                                                            .border(
+                                                                width = 2.dp,
+                                                                color = MaterialTheme.colorScheme.error,
+                                                                shape = CircleShape
+                                                            )
+                                                    )
+                                                },
                                                 modifier = Modifier
                                                     .matchParentSize()
                                                     .clip(CircleShape)

@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -55,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -150,7 +152,24 @@ fun DayInfoSheet(
                         imageModel = { imageFile!!.uri },
                         loading = { LoadingIndicator() },
                         failure = {
-                            // TODO: Image not found error/ option
+                            Column(
+                                modifier = Modifier
+                                    .size(300.dp)
+                                    .padding(12.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Warning,
+                                    contentDescription = "Placeholder",
+                                    modifier = Modifier.size(100.dp)
+                                )
+
+                                Text(
+                                    text = stringResource(R.string.select_another_image),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         },
                         previewPlaceholder = painterResource(R.drawable.ic_launcher_foreground),
                         modifier = Modifier.heightIn(max = 500.dp),
