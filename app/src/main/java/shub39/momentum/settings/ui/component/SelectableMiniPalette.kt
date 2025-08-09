@@ -1,4 +1,4 @@
-package shub39.momentum.settings.component
+package shub39.momentum.settings.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring

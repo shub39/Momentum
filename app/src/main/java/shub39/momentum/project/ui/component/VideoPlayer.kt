@@ -1,4 +1,4 @@
-package shub39.momentum.project.component
+package shub39.momentum.project.ui.component
 
 import android.net.Uri
 import androidx.compose.foundation.background

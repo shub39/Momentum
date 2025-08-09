@@ -1,4 +1,4 @@
-package shub39.momentum.settings.component
+package shub39.momentum.settings.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -27,10 +27,10 @@ import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.presentation.MomentumTheme
-import shub39.momentum.project.component.DayInfoSheet
-import shub39.momentum.project.component.ProjectCalendar
-import shub39.momentum.project.component.ProjectDetails
-import shub39.momentum.project.component.ProjectMontageView
+import shub39.momentum.project.ui.component.DayInfoSheet
+import shub39.momentum.project.ui.sections.ProjectCalendar
+import shub39.momentum.project.ui.sections.ProjectDetails
+import shub39.momentum.project.ui.sections.ProjectMontageView
 
 @Serializable
 private sealed interface ProjectRoutes {

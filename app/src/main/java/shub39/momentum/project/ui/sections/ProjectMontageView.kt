@@ -1,4 +1,4 @@
-package shub39.momentum.project.component
+package shub39.momentum.project.ui.sections
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +37,7 @@ import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
+import shub39.momentum.project.ui.component.VideoPlayer
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

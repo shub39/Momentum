@@ -1,4 +1,4 @@
-package shub39.momentum.settings.component
+package shub39.momentum.settings.ui.sections
 
 import android.R.color.system_accent1_200
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -59,6 +59,7 @@ import shub39.momentum.core.presentation.ColorPickerDialog
 import shub39.momentum.core.presentation.MomentumDialog
 import shub39.momentum.settings.SettingsAction
 import shub39.momentum.settings.SettingsState
+import shub39.momentum.settings.ui.component.SelectableMiniPalette
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

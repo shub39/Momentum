@@ -1,4 +1,4 @@
-package shub39.momentum.home.component
+package shub39.momentum.home.ui.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package shub39.momentum.home.component
+package shub39.momentum.home.ui.sections
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import shub39.momentum.R
 import shub39.momentum.home.HomeAction
 import shub39.momentum.home.HomeState
+import shub39.momentum.home.ui.component.Empty
+import shub39.momentum.home.ui.component.ProjectListItem
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

@@ -1,4 +1,4 @@
-package shub39.momentum.project.component
+package shub39.momentum.project.ui.sections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

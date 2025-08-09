@@ -5,8 +5,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
-import shub39.momentum.settings.component.LookAndFeel
-import shub39.momentum.settings.component.Root
+import shub39.momentum.settings.ui.sections.LookAndFeel
+import shub39.momentum.settings.ui.sections.Root
 
 @Serializable
 private sealed interface SettingsRoutes {

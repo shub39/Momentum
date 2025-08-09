@@ -1,4 +1,4 @@
-package shub39.momentum.project.component
+package shub39.momentum.project.ui.component
 
 import android.content.Intent
 import androidx.compose.foundation.border

@@ -28,8 +28,8 @@ import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.domain.enums.Fonts
 import shub39.momentum.core.presentation.MomentumTheme
-import shub39.momentum.home.component.AddProject
-import shub39.momentum.home.component.ProjectList
+import shub39.momentum.home.ui.sections.AddProject
+import shub39.momentum.home.ui.sections.ProjectList
 import java.time.LocalDate
 
 @Serializable

@@ -1,4 +1,4 @@
-package shub39.momentum.settings.component
+package shub39.momentum.settings.ui.sections
 
 
 import androidx.compose.foundation.clickable
@@ -25,6 +25,7 @@ import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.settings.ui.component.AppInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

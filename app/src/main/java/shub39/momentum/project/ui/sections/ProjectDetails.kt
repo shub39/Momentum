@@ -1,4 +1,4 @@
-package shub39.momentum.project.component
+package shub39.momentum.project.ui.sections
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
