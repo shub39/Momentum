@@ -14,14 +14,12 @@ import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.domain.interfaces.ProjectRepository
-import shub39.momentum.core.domain.interfaces.SettingsPrefs
 import shub39.momentum.home.HomeAction
 import shub39.momentum.home.HomeState
 
 @KoinViewModel
 class HomeViewModel(
     private val stateLayer: StateLayer,
-    private val settingsPrefs: SettingsPrefs,
     private val projectRepository: ProjectRepository
 ) : ViewModel() {
     private val _state = stateLayer.homeState
@@ -35,8 +33,6 @@ class HomeViewModel(
 
     fun onAction(action: HomeAction) = viewModelScope.launch {
         when (action) {
-            is HomeAction.OnChangeNotificationPref -> settingsPrefs.updateNotificationPref(action.pref)
-
             is HomeAction.OnChangeProject -> stateLayer.projectState.update {
                 it.copy(
                     project = action.project,
@@ -62,15 +58,6 @@ class HomeViewModel(
             .onEach { projects ->
                 _state.update {
                     it.copy(projects = projects)
-                }
-            }
-            .launchIn(this)
-
-        settingsPrefs
-            .getNotificationPrefFlow()
-            .onEach { it ->
-                _state.update { homeState ->
-                    homeState.copy(sendNotifications = it)
                 }
             }
             .launchIn(this)

@@ -144,15 +144,14 @@ fun ProjectDetails(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // weekly horizontal calendar
                     item {
                         OutlinedCard(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
+                            modifier = Modifier.fillMaxWidth(),
                             shape = MaterialTheme.shapes.large
                         ) {
                             Row(
@@ -256,7 +255,6 @@ fun ProjectDetails(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
                                 .clickable(enabled = canCreateMontage) {
                                     onNavigateToMontage()
                                 },

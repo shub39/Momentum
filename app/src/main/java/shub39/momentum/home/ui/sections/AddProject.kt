@@ -101,6 +101,7 @@ fun AddProject(
                         )
                         onNavigateBack()
                     },
+                    enabled = newProjectTitle.length <= 20 && newProjectDescription.length <= 100 && newProjectTitle.isNotBlank(),
                     modifier = Modifier
                         .widthIn(max = 300.dp)
                         .fillMaxWidth()
