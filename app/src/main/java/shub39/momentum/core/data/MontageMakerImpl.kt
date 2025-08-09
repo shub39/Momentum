@@ -32,7 +32,7 @@ class MontageMakerImpl(
         muxer.setMuxerConfig(muxer.getMuxerConfig().update(montageConfig))
 
         val images = uriStringsToCenteredBitmaps(
-            uriStrings = days.map { it.image },
+            uriStrings = days.sortedBy { it.date }.map { it.image },
             width = montageConfig.videoWidth,
             height = montageConfig.videoHeight
         )
