@@ -1,5 +1,8 @@
 package shub39.momentum.project.ui.sections
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,7 +13,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -95,21 +98,26 @@ fun ProjectMontageView(
 
             HorizontalFloatingToolbar(
                 expanded = true,
-                trailingContent = {
-                    FilledTonalIconButton(
-                        onClick = {
-                            (state.montage as? MontageState.Success)?.let { result ->
-                                fileShareLauncher.launch(
-                                    PlatformFile(result.file)
-                                )
-                            }
-                        },
-                        enabled = state.montage is MontageState.Success
+                floatingActionButton = {
+                    AnimatedVisibility(
+                        visible = state.montage is MontageState.Success,
+                        enter = fadeIn(),
+                        exit = fadeOut()
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Share"
-                        )
+                        FloatingActionButton(
+                            onClick = {
+                                (state.montage as? MontageState.Success)?.let { result ->
+                                    fileShareLauncher.launch(
+                                        PlatformFile(result.file)
+                                    )
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Share"
+                            )
+                        }
                     }
                 },
                 modifier = Modifier
