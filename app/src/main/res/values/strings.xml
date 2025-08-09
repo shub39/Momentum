@@ -33,6 +33,11 @@
     <string name="add_comment">Add a comment on this</string>
     <string name="too_long">That\'s a long comment :/</string>
     <string name="montage">Create Montage</string>
+    <string name="edit_project">Edit Project</string>
+    <string name="edit">Edit</string>
+    <string name="delete_project">Delete Project?</string>
+    <string name="delete_project_caution">All data will be deleted related to this project. Are you sure you want to continue?</string>
+    <string name="delete">Delete</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>
         <item quantity="other">Add %d more days</item>

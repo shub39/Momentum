@@ -39,7 +39,12 @@ class ProjectViewModel(
 
     fun onAction(action: ProjectAction) = viewModelScope.launch {
         when (action) {
-            is ProjectAction.OnUpdateProject -> repository.upsertProject(action.project)
+            is ProjectAction.OnUpdateProject -> {
+                repository.upsertProject(action.project)
+                _state.update {
+                    it.copy(project = action.project)
+                }
+            }
 
             is ProjectAction.OnDeleteProject -> repository.deleteProject(action.project)
 

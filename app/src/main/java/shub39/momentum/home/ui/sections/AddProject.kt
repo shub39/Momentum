@@ -95,8 +95,8 @@ fun AddProject(
                     onClick = {
                         onAction(
                             HomeAction.OnAddProject(
-                                title = newProjectTitle,
-                                description = newProjectDescription
+                                title = newProjectTitle.trim(),
+                                description = newProjectDescription.trim()
                             )
                         )
                         onNavigateBack()
