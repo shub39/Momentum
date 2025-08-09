@@ -10,7 +10,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,12 +23,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
+import io.github.vinceglb.filekit.dialogs.compose.rememberShareFileLauncher
+import io.github.vinceglb.filekit.write
+import kotlinx.coroutines.launch
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
@@ -47,6 +53,18 @@ fun ProjectMontageView(
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+
+    val fileShareLauncher = rememberShareFileLauncher()
+    val fileSaverLauncher = rememberFileSaverLauncher { file ->
+        if (file != null) {
+            (state.montage as? MontageState.Success)?.let { result ->
+                val platformFile = PlatformFile(result.file)
+                scope.launch { file.write(platformFile) }
+            }
+        }
+    }
+
     var showEditSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -77,9 +95,16 @@ fun ProjectMontageView(
 
             HorizontalFloatingToolbar(
                 expanded = true,
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = { /*TODO: Share on social media*/ }
+                trailingContent = {
+                    FilledTonalIconButton(
+                        onClick = {
+                            (state.montage as? MontageState.Success)?.let { result ->
+                                fileShareLauncher.launch(
+                                    PlatformFile(result.file)
+                                )
+                            }
+                        },
+                        enabled = state.montage is MontageState.Success
                     ) {
                         Icon(
                             imageVector = Icons.Default.Share,
@@ -110,7 +135,13 @@ fun ProjectMontageView(
                 }
 
                 IconButton(
-                    onClick = { /*TODO: Save to gallery*/ }
+                    onClick = {
+                        fileSaverLauncher.launch(
+                            suggestedName = state.project?.title ?: "Untitled",
+                            extension = "mp4"
+                        )
+                    },
+                    enabled = state.montage is MontageState.Success
                 ) {
                     Icon(
                         imageVector = Icons.Default.Download,
