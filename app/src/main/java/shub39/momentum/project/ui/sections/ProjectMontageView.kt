@@ -158,6 +158,10 @@ fun ProjectMontageView(
                 }
             }
         }
+
+        if (showEditSheet) {
+
+        }
     }
 }
 
