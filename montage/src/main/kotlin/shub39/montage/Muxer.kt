@@ -1,80 +1,66 @@
 package shub39.montage
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.util.Log
 import androidx.annotation.RawRes
 import java.io.File
 import java.io.IOException
 
 class Muxer(private val context: Context, private val file: File) {
 
-    companion object {
-        private const val TAG = "Muxer"
-    }
-
-    // Initialize a default configuration
     private var muxerConfig: MuxerConfiguration = MuxerConfiguration(file)
     private var muxingCompletionListener: MuxingCompletionListener? = null
 
-    /**
-     * Build the Muxer with a custom [MuxerConfig]
-     *
-     * @param config: muxer configuration object
-     */
     fun setMuxerConfig(config: MuxerConfiguration) {
-        muxerConfig = config
+        this.muxerConfig = config
     }
-
     fun getMuxerConfig() = muxerConfig
 
-    /**
-     * List containing images in any of the following formats:
-     * [Bitmap] [@DrawRes Int] [Canvas]
-     */
-    fun mux(
-        imageList: List<Any>,
-        @RawRes audioTrack: Int? = null
-    ): MuxingResult {
-        // Returns on a callback a finished video
-        Log.d(TAG, "Generating video")
-        val frameBuilder = FrameBuilder(context, muxerConfig, audioTrack)
+    fun setOnMuxingCompletedListener(listener: MuxingCompletionListener) {
+        this.muxingCompletionListener = listener
+    }
 
+    fun mux(imageList: List<Any>, @RawRes audioTrack: Int? = null): MuxingResult {
+        val frameBuilder = FrameBuilder(context, muxerConfig, audioTrack)
         try {
             frameBuilder.start()
         } catch (e: IOException) {
-            Log.e(TAG, "Start Encoder Failed")
-            e.printStackTrace()
             muxingCompletionListener?.onVideoError(e)
             return MuxingResult.MuxingError("Start encoder failed", e)
         }
 
-        for (image in imageList) {
-            frameBuilder.createFrame(image)
+        try {
+            for (image in imageList) {
+                frameBuilder.createFrame(image)
+            }
+
+            frameBuilder.releaseVideoCodec()
+
+            if (audioTrack != null) frameBuilder.muxAudioFrames()
+
+            frameBuilder.releaseAudioExtractor()
+            frameBuilder.releaseMuxer()
+
+            muxingCompletionListener?.onVideoSuccessful(file)
+            return MuxingResult.MuxingSuccess(file)
+        } catch (e: Exception) {
+            try {
+                frameBuilder.releaseVideoCodec()
+            } catch (_: Exception) {
+            }
+            try {
+                frameBuilder.releaseAudioExtractor()
+            } catch (_: Exception) {
+            }
+            try {
+                frameBuilder.releaseMuxer()
+            } catch (_: Exception) {
+            }
+
+            muxingCompletionListener?.onVideoError(e)
+            return MuxingResult.MuxingError("Muxing failed", Exception(e))
         }
-
-        // Release the video codec so we can mux in the audio frames separately
-        frameBuilder.releaseVideoCodec()
-
-        // Add audio
-        if (audioTrack != null) {
-            frameBuilder.muxAudioFrames()
-        }
-
-        // Release everything
-        frameBuilder.releaseAudioExtractor()
-        frameBuilder.releaseMuxer()
-
-        muxingCompletionListener?.onVideoSuccessful(file)
-        return MuxingResult.MuxingSuccess(file)
     }
 
-    fun muxAsync(imageList: List<Any>, @RawRes audioTrack: Int? = null): MuxingResult {
-        return mux(imageList, audioTrack)
-    }
-
-    fun setOnMuxingCompletedListener(muxingCompletionListener: MuxingCompletionListener) {
-        this.muxingCompletionListener = muxingCompletionListener
-    }
+    fun muxAsync(imageList: List<Any>, @RawRes audioTrack: Int? = null): MuxingResult =
+        mux(imageList, audioTrack)
 }

@@ -9,11 +9,12 @@ data class MuxerConfiguration(
     val videoHeight: Int = 1920,
     val mimeType: String = MediaFormat.MIMETYPE_VIDEO_AVC,
     val framesPerImage: Int = 1,
-    val framesPerSecond: Float = 1f,
-    val bitrate: Int = 1500000,
-    val frameMuxer: FrameMuxer = Mp4FrameMuxer(file.absolutePath, framesPerSecond),
+    val framesPerSecond: Float = 30f,
+    val bitrate: Int = 1_500_000,
     val iFrameInterval: Int = 10
-)
+) {
+    fun createFrameMuxer(): FrameMuxer = Mp4FrameMuxer(file.absolutePath, framesPerSecond)
+}
 
 interface MuxingCompletionListener {
     fun onVideoSuccessful(file: File)
@@ -21,12 +22,6 @@ interface MuxingCompletionListener {
 }
 
 sealed interface MuxingResult {
-    data class MuxingSuccess(
-        val file: File
-    ) : MuxingResult
-
-    data class MuxingError(
-        val message: String,
-        val exception: Exception
-    ) : MuxingResult
+    data class MuxingSuccess(val file: File) : MuxingResult
+    data class MuxingError(val message: String, val exception: Exception) : MuxingResult
 }

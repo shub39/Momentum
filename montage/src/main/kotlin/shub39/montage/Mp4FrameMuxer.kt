@@ -10,63 +10,78 @@ import java.util.concurrent.TimeUnit
 
 class Mp4FrameMuxer(
     path: String,
-    private val fps: Float
+    fps: Float
 ) : FrameMuxer {
 
-    private val frameUsec: Long = run {
-        (TimeUnit.SECONDS.toMicros(1L) / fps).toLong()
+    companion object {
+        private const val TAG = "Mp4FrameMuxer"
     }
 
-    private val muxer: MediaMuxer = MediaMuxer(path, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
+    private val frameUsec: Long = (TimeUnit.SECONDS.toMicros(1L) / fps).toLong()
+    private val muxer = MediaMuxer(path, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
 
     private var started = false
-    private var videoTrackIndex = 0
-    private var audioTrackIndex = 0
-    private var videoFrames = 0
+    private var videoTrackIndex: Int = -1
+    private var audioTrackIndex: Int = -1
+    private var videoFrames: Long = 0
     private var finalVideoTime: Long = 0
 
     override fun isStarted(): Boolean = started
 
-    override fun start(
-        videoFormat: MediaFormat,
-        audioExtractor: MediaExtractor?
-    ) {
-        audioExtractor?.selectTrack(0)
-        val audioFormat = audioExtractor?.getTrackFormat(0)
-        videoTrackIndex = muxer.addTrack(videoFormat)
-        audioFormat?.run {
-            audioTrackIndex = muxer.addTrack(audioFormat)
-            Log.e("Audio format: %s", audioFormat.toString())
+    override fun start(videoFormat: MediaFormat, audioExtractor: MediaExtractor?) {
+        audioExtractor?.let {
+            try {
+                it.selectTrack(0)
+                val audioFormat = it.getTrackFormat(0)
+                audioTrackIndex = muxer.addTrack(audioFormat)
+                Log.d(TAG, "Added audio track: $audioFormat")
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to add audio track: ${e.message}")
+            }
         }
-        Log.d("Video format: %s", videoFormat.toString())
+
+        videoTrackIndex = muxer.addTrack(videoFormat)
+        Log.d(TAG, "Added video track: $videoFormat")
+
         muxer.start()
         started = true
     }
 
-    override fun muxVideoFrame(
-        encodedData: ByteBuffer,
-        bufferInfo: MediaCodec.BufferInfo
-    ) {
+    override fun muxVideoFrame(encodedData: ByteBuffer, bufferInfo: MediaCodec.BufferInfo) {
+        if (!started) throw IllegalStateException("Muxer not started")
+
         finalVideoTime = frameUsec * videoFrames++
         bufferInfo.presentationTimeUs = finalVideoTime
+
+        encodedData.position(bufferInfo.offset)
+        encodedData.limit(bufferInfo.offset + bufferInfo.size)
 
         muxer.writeSampleData(videoTrackIndex, encodedData, bufferInfo)
     }
 
-    override fun muxAudioFrame(
-        encodedData: ByteBuffer,
-        audioBufferInfo: MediaCodec.BufferInfo
-    ) {
+    override fun muxAudioFrame(encodedData: ByteBuffer, audioBufferInfo: MediaCodec.BufferInfo) {
+        if (audioTrackIndex < 0) return
+        encodedData.position(audioBufferInfo.offset)
+        encodedData.limit(audioBufferInfo.offset + audioBufferInfo.size)
         muxer.writeSampleData(audioTrackIndex, encodedData, audioBufferInfo)
     }
 
     override fun release() {
-        muxer.stop()
-        muxer.release()
+        try {
+            if (started) {
+                muxer.stop()
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Error stopping muxer: ${e.message}")
+        } finally {
+            try {
+                muxer.release()
+            } catch (e: Exception) {
+                Log.w(TAG, "Error releasing muxer: ${e.message}")
+            }
+            started = false
+        }
     }
 
-    override fun getVideoTime(): Long {
-        return finalVideoTime
-    }
-
+    override fun getVideoTime(): Long = finalVideoTime
 }
