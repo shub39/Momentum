@@ -72,17 +72,6 @@ class ProjectViewModel(
             }
 
             is ProjectAction.OnCreateMontage -> viewModelScope.launch {
-                if (_exoPlayer.value == null) {
-                    _exoPlayer.update {
-                        Builder(action.context)
-                            .build()
-                            .apply {
-                                prepare()
-                                repeatMode = REPEAT_MODE_ALL
-                            }
-                    }
-                }
-
                 _state.update { it.copy(montage = MontageState.Processing) }
 
                 val file = createTempFile(suffix = ".mp4")
@@ -131,6 +120,21 @@ class ProjectViewModel(
                     }
                 }
             }
+
+            is ProjectAction.OnInitializeExoPlayer -> {
+                if (_exoPlayer.value == null) {
+                    _exoPlayer.update {
+                        Builder(action.context)
+                            .build()
+                            .apply {
+                                prepare()
+                                repeatMode = REPEAT_MODE_ALL
+                            }
+                    }
+                }
+            }
+
+            is ProjectAction.OnEditMontageConfig -> _state.update { it.copy(montageConfig = action.config) }
         }
     }
 

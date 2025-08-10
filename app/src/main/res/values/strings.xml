@@ -39,6 +39,7 @@
     <string name="delete_project_caution">All data will be deleted related to this project. Are you sure you want to continue?</string>
     <string name="delete">Delete</string>
     <string name="select_another_image">Image not found! Please select another image</string>
+    <string name="edit_montage">Edit Montage</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>
         <item quantity="other">Add %d more days</item>

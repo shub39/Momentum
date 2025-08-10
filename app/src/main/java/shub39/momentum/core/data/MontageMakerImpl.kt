@@ -46,7 +46,7 @@ class MontageMakerImpl(
             }
 
             is MuxingResult.MuxingSuccess -> {
-                MontageState.Success(result.file)
+                MontageState.Success(result.file, montageConfig)
             }
         }
     }

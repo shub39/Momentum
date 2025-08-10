@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -51,10 +52,11 @@ import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
+import shub39.momentum.project.ui.component.MontageEditSheet
 import shub39.momentum.project.ui.component.VideoPlayer
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectMontageView(
     exoPlayer: ExoPlayer?,
@@ -80,7 +82,8 @@ fun ProjectMontageView(
     var showEditSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        onAction(ProjectAction.OnCreateMontage(state.days, context))
+        onAction(ProjectAction.OnInitializeExoPlayer(context))
+        onAction(ProjectAction.OnCreateMontage(state.days))
     }
 
     DisposableEffect(Unit) {
@@ -207,7 +210,12 @@ fun ProjectMontageView(
         }
 
         if (showEditSheet) {
-
+            MontageEditSheet(
+                state = state,
+                onAction = onAction,
+                onDismissRequest = { showEditSheet = false },
+                buttonEnabled = state.montageConfig != (state.montage as? MontageState.Success)?.config
+            )
         }
     }
 }
