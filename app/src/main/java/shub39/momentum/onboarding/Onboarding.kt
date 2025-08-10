@@ -1,8 +1,12 @@
 package shub39.momentum.onboarding
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @Composable
 fun Onboarding(
@@ -10,13 +14,17 @@ fun Onboarding(
     onAction: (OnboardingAction) -> Unit,
     onNavigateToHome: () -> Unit
 ) {
-    Text(text = "Onboarding")
-    Button(
-        onClick = {
-            onAction(OnboardingAction.OnOnboardingDone)
-            onNavigateToHome()
+    Scaffold { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues)) {
+            Text(text = "Onboarding")
+            Button(
+                onClick = {
+                    onAction(OnboardingAction.OnOnboardingDone)
+                    onNavigateToHome()
+                }
+            ) {
+                Text("Not done yet, skip")
+            }
         }
-    ) {
-        Text("Not done yet, skip")
     }
 }

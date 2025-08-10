@@ -1,8 +1,5 @@
 package shub39.momentum.project.ui.sections
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,6 +72,10 @@ fun ProjectMontageView(
         onAction(ProjectAction.OnCreateMontage(state.days))
     }
 
+    DisposableEffect(Unit) {
+        onDispose { onAction(ProjectAction.OnClearMontageState) }
+    }
+
     Scaffold { padding ->
         Box(
             modifier = Modifier
@@ -85,12 +87,15 @@ fun ProjectMontageView(
                 is MontageState.Error -> Text("Error: ${state.montage.message}")
 
                 is MontageState.Success -> {
-                    VideoPlayer(
-                        file = state.montage.file,
-                        modifier = Modifier
-                            .size(330.dp, 440.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                    )
+                    state.exoPlayer?.let { player ->
+                        VideoPlayer(
+                            exoPlayer = player,
+                            onPlayerAction = { onAction(ProjectAction.OnPlayerAction(it)) },
+                            modifier = Modifier
+                                .size(330.dp, 440.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                        )
+                    }
                 }
 
                 MontageState.Processing -> LoadingIndicator()
@@ -99,25 +104,29 @@ fun ProjectMontageView(
             HorizontalFloatingToolbar(
                 expanded = true,
                 floatingActionButton = {
-                    AnimatedVisibility(
-                        visible = state.montage is MontageState.Success,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        FloatingActionButton(
-                            onClick = {
-                                (state.montage as? MontageState.Success)?.let { result ->
-                                    fileShareLauncher.launch(
-                                        PlatformFile(result.file)
-                                    )
-                                }
+                    FloatingActionButton(
+                        onClick = {
+                            (state.montage as? MontageState.Success)?.let { result ->
+                                fileShareLauncher.launch(
+                                    PlatformFile(result.file)
+                                )
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = "Share"
-                            )
+                        },
+                        containerColor = if (state.montage is MontageState.Success) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.tertiary
+                        },
+                        contentColor = if (state.montage is MontageState.Success) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onTertiary
                         }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share"
+                        )
                     }
                 },
                 modifier = Modifier

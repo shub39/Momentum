@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -51,6 +52,8 @@ fun ProjectGraph(
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    val context = LocalContext.current
+
     AnimatedContent(
         targetState = state.project,
         modifier = Modifier.fillMaxSize(),
@@ -59,17 +62,20 @@ fun ProjectGraph(
         if (project == null) {
             LoadingIndicator()
         } else {
-            LaunchedEffect(project) { onAction(ProjectAction.OnUpdateDays) }
+            LaunchedEffect(project) {
+                onAction(ProjectAction.OnUpdateDays)
+                onAction(ProjectAction.OnInitializeExoplayer(context))
+            }
 
             val navController = rememberNavController()
 
             NavHost(
                 navController = navController,
                 startDestination = ProjectRoutes.ProjectDetails,
-                enterTransition = { fadeIn(tween(300)) },
-                exitTransition = { fadeOut(tween(300)) },
-                popEnterTransition = { fadeIn(tween(300)) },
-                popExitTransition = { fadeOut(tween(300)) },
+                enterTransition = { fadeIn(tween(500)) },
+                exitTransition = { fadeOut(tween(500)) },
+                popEnterTransition = { fadeIn(tween(500)) },
+                popExitTransition = { fadeOut(tween(500)) },
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize()

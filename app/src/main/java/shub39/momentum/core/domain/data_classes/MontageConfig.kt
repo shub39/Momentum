@@ -7,7 +7,7 @@ class MontageConfig(
     val videoHeight: Int = 1024,
     val mimeType: String = MediaFormat.MIMETYPE_VIDEO_AVC,
     val framesPerImage: Int = 1,
-    val framesPerSecond: Float = 10f,
+    val framesPerSecond: Float = 2f,
     val bitrate: Int = 1500000,
     val iFrameInterval: Int = 10
 )

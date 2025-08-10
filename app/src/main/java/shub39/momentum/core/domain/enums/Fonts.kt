@@ -10,5 +10,6 @@ enum class Fonts(
     POPPINS(R.font.poppins, "Poppins"),
     MANROPE(R.font.manrope, "Manrope"),
     MONTSERRAT(R.font.montserrat, "Montserrat"),
-    FIGTREE(R.font.figtree, "Figtree")
+    FIGTREE(R.font.figtree, "Figtree"),
+    QUICKSAND(R.font.quicksand, "Quicksand")
 }

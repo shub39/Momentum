@@ -1,5 +1,6 @@
 package shub39.momentum.project
 
+import androidx.media3.exoplayer.ExoPlayer
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.MontageConfig
 import shub39.momentum.core.domain.data_classes.Project
@@ -10,5 +11,6 @@ data class ProjectState(
     val days: List<Day> = emptyList(),
     val montage: MontageState = MontageState.Processing,
     val montageConfig: MontageConfig = MontageConfig(),
-    val selectedDate: Long? = null
+    val selectedDate: Long? = null,
+    val exoPlayer: ExoPlayer? = null
 )

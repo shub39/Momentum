@@ -1,8 +1,12 @@
 package shub39.momentum.viewmodels
 
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer.Builder
+import androidx.media3.exoplayer.ExoPlayer.REPEAT_MODE_ALL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -14,6 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import shub39.momentum.core.domain.enums.VideoAction
 import shub39.momentum.core.domain.interfaces.MontageMaker
 import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.domain.interfaces.ProjectRepository
@@ -41,9 +46,7 @@ class ProjectViewModel(
         when (action) {
             is ProjectAction.OnUpdateProject -> {
                 repository.upsertProject(action.project)
-                _state.update {
-                    it.copy(project = action.project)
-                }
+                _state.update { it.copy(project = action.project) }
             }
 
             is ProjectAction.OnDeleteProject -> repository.deleteProject(action.project)
@@ -53,28 +56,65 @@ class ProjectViewModel(
             is ProjectAction.OnUpsertDay -> repository.upsertDay(action.day)
 
             is ProjectAction.OnCreateMontage -> {
-                _state.update {
-                    it.copy(montage = MontageState.Processing)
-                }
+                _state.update { it.copy(montage = MontageState.Processing) }
 
                 val file = createTempFile(suffix = ".mp4")
 
                 Log.d("ProjectViewModel", "Starting montage creation")
 
-                val result = montageMaker.createMontage(
+                when (val result = montageMaker.createMontage(
                     days = action.days,
                     file = file.toFile(),
                     montageConfig = _state.value.montageConfig
-                )
+                )) {
+                    is MontageState.Success -> {
+                        _state.value.exoPlayer?.apply {
+                            clearMediaItems()
+                            setMediaItem(MediaItem.fromUri(result.file.toUri()))
+                            prepare()
+                        }
 
-                _state.update {
-                    it.copy(montage = result)
+                        _state.update { it.copy(montage = result) }
+                    }
+
+                    else -> _state.update { it.copy(montage = result) }
                 }
             }
 
             ProjectAction.OnUpdateDays -> refreshDays()
 
             is ProjectAction.OnUpdateSelectedDay -> _state.update { it.copy(selectedDate = action.day) }
+
+            is ProjectAction.OnInitializeExoplayer -> {
+                if (_state.value.exoPlayer == null) {
+                    _state.update {
+                        it.copy(
+                            exoPlayer = Builder(action.context)
+                                .build()
+                                .apply {
+                                    prepare()
+                                    repeatMode = REPEAT_MODE_ALL
+                                }
+                        )
+                    }
+                }
+            }
+
+            ProjectAction.OnClearMontageState -> _state.update { it.copy(montage = MontageState.Processing) }
+
+            is ProjectAction.OnPlayerAction -> {
+                _state.value.exoPlayer?.let {
+                    when (action.playerAction.action) {
+                        VideoAction.PLAY -> it.play()
+                        VideoAction.PAUSE -> it.pause()
+                        VideoAction.SEEK -> {
+                            (action.playerAction.data as? Long)?.let { position ->
+                                it.seekTo(position)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -95,5 +135,10 @@ class ProjectViewModel(
                 }
                 .launchIn(this)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        _state.value.exoPlayer?.release()
     }
 }

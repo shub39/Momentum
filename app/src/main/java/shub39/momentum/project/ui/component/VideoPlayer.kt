@@ -1,6 +1,5 @@
 package shub39.momentum.project.ui.component
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -27,33 +25,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
+import androidx.media3.ui.compose.PlayerSurface
 import kotlinx.coroutines.delay
-import java.io.File
+import kotlinx.coroutines.isActive
+import shub39.momentum.core.domain.data_classes.PlayerAction
+import shub39.momentum.core.domain.enums.VideoAction
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun VideoPlayer(
-    file: File,
+    exoPlayer: ExoPlayer,
+    onPlayerAction: (PlayerAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri(Uri.fromFile(file)))
-            prepare()
-            playWhenReady = true
-            repeatMode = Player.REPEAT_MODE_ALL
-        }
-    }
-
     var isPlaying by remember { mutableStateOf(true) }
     var showControls by remember { mutableStateOf(true) }
     var duration by remember { mutableLongStateOf(0L) }
@@ -61,7 +47,9 @@ fun VideoPlayer(
 
     // Update position periodically
     LaunchedEffect(exoPlayer) {
-        while (true) {
+        delay(300L)
+        onPlayerAction(PlayerAction(action = VideoAction.PLAY))
+        while (isActive) {
             duration = exoPlayer.duration.coerceAtLeast(0L)
             position = exoPlayer.currentPosition.coerceAtLeast(0L)
             delay(500L)
@@ -76,23 +64,12 @@ fun VideoPlayer(
         }
     }
 
-    DisposableEffect(Unit) {
-        onDispose {
-            exoPlayer.release()
-        }
-    }
-
     Box(
         modifier = modifier.clickable { showControls = true }
     ) {
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = {
-                PlayerView(context).apply {
-                    player = exoPlayer
-                    useController = false
-                }
-            }
+        PlayerSurface(
+            player = exoPlayer,
+            modifier = Modifier.fillMaxSize()
         )
 
         if (showControls) {
@@ -112,10 +89,10 @@ fun VideoPlayer(
                 FilledIconButton(
                     onClick = {
                         if (exoPlayer.isPlaying) {
-                            exoPlayer.pause()
+                            onPlayerAction(PlayerAction(action = VideoAction.PAUSE))
                             isPlaying = false
                         } else {
-                            exoPlayer.play()
+                            onPlayerAction(PlayerAction(action = VideoAction.PLAY))
                             isPlaying = true
                         }
                         showControls = true
@@ -131,7 +108,7 @@ fun VideoPlayer(
                     value = if (duration > 0) position / duration.toFloat() else 0f,
                     onValueChange = { sliderValue ->
                         val newPosition = (sliderValue * duration).toLong()
-                        exoPlayer.seekTo(newPosition)
+                        onPlayerAction(PlayerAction(action = VideoAction.SEEK, data = newPosition))
                         position = newPosition
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -139,5 +116,7 @@ fun VideoPlayer(
             }
         }
     }
+
+//    DisposableEffect() { }
 }
 
