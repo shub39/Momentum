@@ -18,8 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -49,11 +49,10 @@ private sealed interface ProjectRoutes {
 @Composable
 fun ProjectGraph(
     state: ProjectState,
+    exoPlayer: ExoPlayer?,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    val context = LocalContext.current
-
     AnimatedContent(
         targetState = state.project,
         modifier = Modifier.fillMaxSize(),
@@ -62,10 +61,7 @@ fun ProjectGraph(
         if (project == null) {
             LoadingIndicator()
         } else {
-            LaunchedEffect(project) {
-                onAction(ProjectAction.OnUpdateDays)
-                onAction(ProjectAction.OnInitializeExoplayer(context))
-            }
+            LaunchedEffect(project) { onAction(ProjectAction.OnUpdateDays) }
 
             val navController = rememberNavController()
 
@@ -105,6 +101,7 @@ fun ProjectGraph(
                 composable<ProjectRoutes.ProjectMontageView> {
                     ProjectMontageView(
                         state = state,
+                        exoPlayer = exoPlayer,
                         onAction = onAction,
                         onNavigateBack = { navController.navigateUp() }
                     )
@@ -145,7 +142,8 @@ private fun Preview() {
         ProjectGraph(
             state = state,
             onAction = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            exoPlayer = null
         )
     }
 }

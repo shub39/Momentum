@@ -1,5 +1,8 @@
 package shub39.momentum.project.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,13 +29,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.PlayerSurface
+import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import shub39.momentum.core.domain.data_classes.PlayerAction
 import shub39.momentum.core.domain.enums.VideoAction
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun VideoPlayer(
@@ -69,10 +75,15 @@ fun VideoPlayer(
     ) {
         PlayerSurface(
             player = exoPlayer,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            surfaceType = SURFACE_TYPE_TEXTURE_VIEW
         )
 
-        if (showControls) {
+        AnimatedVisibility(
+            visible = showControls,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -116,7 +127,5 @@ fun VideoPlayer(
             }
         }
     }
-
-//    DisposableEffect() { }
 }
 

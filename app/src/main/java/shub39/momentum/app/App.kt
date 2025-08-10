@@ -100,9 +100,11 @@ fun App() {
             composable<Screens.ProjectGraph> {
                 val projectViewModel: ProjectViewModel = koinInject()
                 val projectState by projectViewModel.state.collectAsStateWithLifecycle()
+                val exoPlayer by projectViewModel.exoPlayer.collectAsStateWithLifecycle()
 
                 ProjectGraph(
                     state = projectState,
+                    exoPlayer = exoPlayer,
                     onAction = projectViewModel::onAction,
                     onNavigateBack = { navController.navigateUp() }
                 )

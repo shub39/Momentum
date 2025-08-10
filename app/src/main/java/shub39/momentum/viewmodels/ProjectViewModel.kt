@@ -5,11 +5,13 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayer.Builder
 import androidx.media3.exoplayer.ExoPlayer.REPEAT_MODE_ALL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -34,6 +36,14 @@ class ProjectViewModel(
 ) : ViewModel() {
     private var observeDaysJob: Job? = null
 
+    private val _exoPlayer = MutableStateFlow<ExoPlayer?>(null)
+    val exoPlayer = _exoPlayer.asStateFlow()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
     private val _state = stateLayer.projectState
     val state = _state.asStateFlow()
         .stateIn(
@@ -42,20 +52,37 @@ class ProjectViewModel(
             initialValue = ProjectState()
         )
 
-    fun onAction(action: ProjectAction) = viewModelScope.launch {
+    fun onAction(action: ProjectAction) {
         when (action) {
-            is ProjectAction.OnUpdateProject -> {
+            is ProjectAction.OnUpdateProject -> viewModelScope.launch {
                 repository.upsertProject(action.project)
                 _state.update { it.copy(project = action.project) }
             }
 
-            is ProjectAction.OnDeleteProject -> repository.deleteProject(action.project)
+            is ProjectAction.OnDeleteProject -> viewModelScope.launch {
+                repository.deleteProject(action.project)
+            }
 
-            is ProjectAction.OnDeleteDay -> repository.deleteDay(action.day)
+            is ProjectAction.OnDeleteDay -> viewModelScope.launch {
+                repository.deleteDay(action.day)
+            }
 
-            is ProjectAction.OnUpsertDay -> repository.upsertDay(action.day)
+            is ProjectAction.OnUpsertDay -> viewModelScope.launch {
+                repository.upsertDay(action.day)
+            }
 
-            is ProjectAction.OnCreateMontage -> {
+            is ProjectAction.OnCreateMontage -> viewModelScope.launch {
+                if (_exoPlayer.value == null) {
+                    _exoPlayer.update {
+                        Builder(action.context)
+                            .build()
+                            .apply {
+                                prepare()
+                                repeatMode = REPEAT_MODE_ALL
+                            }
+                    }
+                }
+
                 _state.update { it.copy(montage = MontageState.Processing) }
 
                 val file = createTempFile(suffix = ".mp4")
@@ -68,7 +95,7 @@ class ProjectViewModel(
                     montageConfig = _state.value.montageConfig
                 )) {
                     is MontageState.Success -> {
-                        _state.value.exoPlayer?.apply {
+                        _exoPlayer.value?.apply {
                             clearMediaItems()
                             setMediaItem(MediaItem.fromUri(result.file.toUri()))
                             prepare()
@@ -85,25 +112,14 @@ class ProjectViewModel(
 
             is ProjectAction.OnUpdateSelectedDay -> _state.update { it.copy(selectedDate = action.day) }
 
-            is ProjectAction.OnInitializeExoplayer -> {
-                if (_state.value.exoPlayer == null) {
-                    _state.update {
-                        it.copy(
-                            exoPlayer = Builder(action.context)
-                                .build()
-                                .apply {
-                                    prepare()
-                                    repeatMode = REPEAT_MODE_ALL
-                                }
-                        )
-                    }
-                }
+            ProjectAction.OnClearMontageState -> {
+                _exoPlayer.value?.release()
+                _exoPlayer.update { null }
+                _state.update { it.copy(montage = MontageState.Processing) }
             }
 
-            ProjectAction.OnClearMontageState -> _state.update { it.copy(montage = MontageState.Processing) }
-
             is ProjectAction.OnPlayerAction -> {
-                _state.value.exoPlayer?.let {
+                _exoPlayer.value?.let {
                     when (action.playerAction.action) {
                         VideoAction.PLAY -> it.play()
                         VideoAction.PAUSE -> it.pause()
@@ -139,6 +155,6 @@ class ProjectViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        _state.value.exoPlayer?.release()
+        _exoPlayer.value?.release()
     }
 }

@@ -29,17 +29,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.exoplayer.ExoPlayer
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberShareFileLauncher
 import io.github.vinceglb.filekit.write
 import kotlinx.coroutines.launch
 import shub39.momentum.core.domain.data_classes.Day
+import shub39.momentum.core.domain.data_classes.PlayerAction
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
+import shub39.momentum.core.domain.enums.VideoAction
 import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.project.ProjectAction
@@ -50,11 +57,15 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProjectMontageView(
+    exoPlayer: ExoPlayer?,
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    val context = LocalContext.current
+
     val scope = rememberCoroutineScope()
+    val lifeCycleOwner = LocalLifecycleOwner.current
 
     val fileShareLauncher = rememberShareFileLauncher()
     val fileSaverLauncher = rememberFileSaverLauncher { file ->
@@ -69,11 +80,38 @@ fun ProjectMontageView(
     var showEditSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        onAction(ProjectAction.OnCreateMontage(state.days))
+        onAction(ProjectAction.OnCreateMontage(state.days, context))
     }
 
     DisposableEffect(Unit) {
-        onDispose { onAction(ProjectAction.OnClearMontageState) }
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> onAction(
+                    ProjectAction.OnPlayerAction(
+                        PlayerAction(
+                            VideoAction.PAUSE
+                        )
+                    )
+                )
+
+                Lifecycle.Event.ON_RESUME -> onAction(
+                    ProjectAction.OnPlayerAction(
+                        PlayerAction(
+                            VideoAction.PLAY
+                        )
+                    )
+                )
+
+                else -> Unit
+            }
+        }
+
+        lifeCycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifeCycleOwner.lifecycle.removeObserver(observer)
+            onAction(ProjectAction.OnClearMontageState)
+        }
     }
 
     Scaffold { padding ->
@@ -87,7 +125,7 @@ fun ProjectMontageView(
                 is MontageState.Error -> Text("Error: ${state.montage.message}")
 
                 is MontageState.Success -> {
-                    state.exoPlayer?.let { player ->
+                    exoPlayer?.let { player ->
                         VideoPlayer(
                             exoPlayer = player,
                             onPlayerAction = { onAction(ProjectAction.OnPlayerAction(it)) },
@@ -207,7 +245,8 @@ private fun Preview() {
         ProjectMontageView(
             state = state,
             onAction = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            exoPlayer = null
         )
     }
 }
