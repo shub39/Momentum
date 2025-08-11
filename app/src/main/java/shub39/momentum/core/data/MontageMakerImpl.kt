@@ -7,8 +7,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.graphics.Typeface
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +23,6 @@ import shub39.montage.MuxingResult
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 @Single(binds = [MontageMaker::class])
 class MontageMakerImpl(
@@ -59,11 +58,11 @@ class MontageMakerImpl(
     ): List<Bitmap> {
         val paint = Paint().apply {
             color = Color.WHITE
-            textSize = config.videoWidth * 0.05f
-            alpha = 150
+            textSize = config.videoWidth * 0.04f
+            alpha = 255
             isAntiAlias = true
             style = Paint.Style.FILL
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            typeface = ResourcesCompat.getFont(context, config.font.fontRes)
             setShadowLayer(4f, 2f, 2f, Color.BLACK)
         }
 
@@ -95,20 +94,28 @@ class MontageMakerImpl(
                         if (config.waterMark) {
                             val watermark = "Momentum"
                             val paddingX = config.videoWidth * 0.05f
-                            val paddingY = config.videoHeight * 0.05f + paint.descent()
+                            val paddingY =
+                                config.videoHeight * 0.05f + paint.descent() + paint.textSize // Adjusted padding
                             canvas.drawText(watermark, paddingX, paddingY, paint)
                         }
 
                         if (config.showDate) {
                             val date = LocalDate.ofEpochDay(day.date).format(
-                                DateTimeFormatter.ofLocalizedDate(
-                                    FormatStyle.FULL
-                                )
+                                DateTimeFormatter.ofLocalizedDate(config.dateStyle)
                             )
                             val paddingX = config.videoWidth * 0.05f
                             val paddingY =
                                 config.videoHeight - config.videoHeight * 0.05f - paint.descent()
                             canvas.drawText(date, paddingX, paddingY, paint)
+                        }
+
+                        if (config.showMessage && !day.comment.isNullOrBlank()) {
+                            val message = day.comment
+                            val paddingX = config.videoWidth * 0.05f
+                            val paddingY =
+                                config.videoHeight - config.videoHeight * 0.12f - paint.descent()
+
+                            canvas.drawText(message, paddingX, paddingY, paint)
                         }
 
                         canvasBitmap

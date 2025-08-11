@@ -233,7 +233,7 @@ fun DayInfoSheet(
                 isError = comment.length > 100,
                 label = {
                     Text(
-                        text = if (comment.length > 100) {
+                        text = if (comment.length > 50) {
                             stringResource(R.string.too_long)
                         } else {
                             stringResource(R.string.add_comment)
@@ -308,7 +308,7 @@ fun DayInfoSheet(
                             onAction(ProjectAction.OnUpdateSelectedDay(null))
                         },
                         modifier = Modifier.weight(1f),
-                        enabled = (day.image.toUri() != imageFile?.uri || day.isFavorite != isFavorite || day.comment != comment) && comment.length <= 100
+                        enabled = (day.image.toUri() != imageFile?.uri || day.isFavorite != isFavorite || day.comment != comment) && comment.length <= 50
                     ) {
                         Text(
                             text = stringResource(R.string.update_day)

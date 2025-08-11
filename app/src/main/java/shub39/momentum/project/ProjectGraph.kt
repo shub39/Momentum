@@ -108,9 +108,9 @@ fun ProjectGraph(
                 }
             }
 
-            state.selectedDate?.let {
+            if (state.selectedDate != null) {
                 DayInfoSheet(
-                    selectedDate = it,
+                    selectedDate = state.selectedDate,
                     state = state,
                     onAction = onAction
                 )

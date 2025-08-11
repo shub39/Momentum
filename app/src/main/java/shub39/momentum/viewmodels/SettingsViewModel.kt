@@ -17,7 +17,7 @@ import shub39.momentum.settings.SettingsState
 
 @KoinViewModel
 class SettingsViewModel(
-    stateLayer: StateLayer,
+    private val stateLayer: StateLayer,
     private val datastore: SettingsPrefs
 ): ViewModel() {
     private val _state = stateLayer.settingsState
@@ -54,6 +54,14 @@ class SettingsViewModel(
             .onEach { pref ->
                 _state.update {
                     it.copy(theme = it.theme.copy(font = pref))
+                }
+
+                stateLayer.projectState.update {
+                    it.copy(
+                        montageConfig = it.montageConfig.copy(
+                            font = pref
+                        )
+                    )
                 }
             }.launchIn(this)
 

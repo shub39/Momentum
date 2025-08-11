@@ -40,11 +40,13 @@
     <string name="delete">Delete</string>
     <string name="select_another_image">Image not found! Please select another image</string>
     <string name="edit_montage">Edit Montage</string>
-    <string name="save">Save</string>
     <string name="frames_per_sec">Frames per second</string>
     <string name="frames_per_image">Frames per image</string>
     <string name="show_date">Show date</string>
     <string name="show_watermark">Show watermark</string>
+    <string name="show_message">Show message</string>
+    <string name="background_color">Background color</string>
+    <string name="remake">Remake</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>
         <item quantity="other">Add %d more days</item>

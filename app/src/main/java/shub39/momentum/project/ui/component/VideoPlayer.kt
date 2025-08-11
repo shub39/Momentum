@@ -47,7 +47,7 @@ fun VideoPlayer(
     modifier: Modifier = Modifier
 ) {
     var isPlaying by remember { mutableStateOf(true) }
-    var showControls by remember { mutableStateOf(true) }
+    var showControls by remember { mutableStateOf(false) }
     var duration by remember { mutableLongStateOf(0L) }
     var position by remember { mutableLongStateOf(0L) }
 
