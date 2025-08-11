@@ -78,11 +78,10 @@ class FrameBuilder(
                     val bitmap = BitmapFactory.decodeResource(context.resources, image)
                     canvas.drawBitmap(bitmap, 0f, 0f, null)
                 }
-
                 is Bitmap -> canvas.drawBitmap(image, 0f, 0f, null)
-                is Canvas -> {}
                 else -> Log.e(TAG, "Unsupported image type: ${image::class.java}")
             }
+
             postCanvasFrame(canvas)
         }
     }

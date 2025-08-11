@@ -13,7 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -29,8 +29,10 @@ import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.core.presentation.SettingSlider
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,38 +50,55 @@ fun MontageEditSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState
     ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.edit_montage),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+
+            Button(
+                onClick = {
+                    onAction(ProjectAction.OnCreateMontage(state.days))
+                    onDismissRequest()
+                },
+                enabled = buttonEnabled
+            ) {
+                Text(
+                    text = stringResource(R.string.save)
+                )
+            }
+        }
+
         Column(
             modifier = modifier
                 .verticalScroll(scrollState)
-                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .padding(24.dp)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.edit_montage),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-
-                Button(
-                    onClick = {
-                        onAction(ProjectAction.OnCreateMontage(state.days))
-                        onDismissRequest()
-                    },
-                    enabled = buttonEnabled
-                ) {
-                    Text(
-                        text = stringResource(R.string.done)
+            SettingSlider(
+                title = stringResource(R.string.frames_per_image),
+                value = state.montageConfig.framesPerImage.toFloat(),
+                onValueChange = {
+                    onAction(
+                        ProjectAction.OnEditMontageConfig(
+                            state.montageConfig.copy(framesPerImage = it.roundToInt())
+                        )
                     )
-                }
-            }
+                },
+                valueRange = 1f..10f,
+                steps = 8,
+                valueToShow = state.montageConfig.framesPerImage.toString()
+            )
 
-            Slider(
+            SettingSlider(
+                title = stringResource(R.string.frames_per_sec),
                 value = state.montageConfig.framesPerSecond,
                 onValueChange = {
                     onAction(
@@ -88,8 +107,54 @@ fun MontageEditSheet(
                         )
                     )
                 },
-                valueRange = 1f..10f
+                valueRange = 1f..10f,
+                steps = 8,
+                valueToShow = state.montageConfig.framesPerSecond.roundToInt().toString()
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.show_date),
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Switch(
+                    checked = state.montageConfig.showDate,
+                    onCheckedChange = {
+                        onAction(
+                            ProjectAction.OnEditMontageConfig(
+                                state.montageConfig.copy(showDate = it)
+                            )
+                        )
+                    }
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.show_watermark),
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Switch(
+                    checked = state.montageConfig.waterMark,
+                    onCheckedChange = {
+                        onAction(
+                            ProjectAction.OnEditMontageConfig(
+                                state.montageConfig.copy(waterMark = it)
+                            )
+                        )
+                    }
+                )
+            }
         }
     }
 }

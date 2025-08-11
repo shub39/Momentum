@@ -3,6 +3,14 @@ package shub39.montage
 import android.media.MediaFormat
 import java.io.File
 
+enum class SlideAnimation {
+    NONE,
+    FADE_IN,
+    SCALE_IN,
+    SLIDE_LEFT,
+    SLIDE_RIGHT
+}
+
 data class MuxerConfiguration(
     val file: File,
     val videoWidth: Int = 1080,
@@ -11,7 +19,8 @@ data class MuxerConfiguration(
     val framesPerImage: Int = 1,
     val framesPerSecond: Float = 30f,
     val bitrate: Int = 1_500_000,
-    val iFrameInterval: Int = 10
+    val iFrameInterval: Int = 10,
+    val animation: SlideAnimation = SlideAnimation.SLIDE_LEFT,
 ) {
     fun createFrameMuxer(): FrameMuxer = Mp4FrameMuxer(file.absolutePath, framesPerSecond)
 }
