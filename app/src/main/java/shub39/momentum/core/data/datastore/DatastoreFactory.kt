@@ -6,12 +6,15 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import okio.Path.Companion.toPath
 import org.koin.core.annotation.Single
+import shub39.momentum.core.domain.interfaces.SettingsPrefs
 
 @Single
 class DatastoreFactory(
     private val context: Context
 ) {
-    fun getSettingsDatastore(): DataStore<Preferences> = createDataStore (
+    fun settingsPreferences(): SettingsPrefs = SettingsPrefsImpl(settingsDatastoreFile())
+
+    private fun settingsDatastoreFile(): DataStore<Preferences> = createDataStore(
         producePath = { context.filesDir.resolve(SETTINGS_DATASTORE).absolutePath }
     )
 
