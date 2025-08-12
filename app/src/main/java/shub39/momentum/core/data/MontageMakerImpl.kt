@@ -16,6 +16,8 @@ import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.MontageConfig
+import shub39.momentum.core.domain.enums.DateStyle.Companion.toFormatStyle
+import shub39.momentum.core.domain.enums.VideoQuality.Companion.toDimensions
 import shub39.momentum.core.domain.interfaces.MontageMaker
 import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.montage.Muxer
@@ -56,9 +58,11 @@ class MontageMakerImpl(
         days: List<Day>,
         config: MontageConfig
     ): List<Bitmap> {
+        val dimensions = config.videoQuality.toDimensions()
+
         val paint = Paint().apply {
             color = Color.WHITE
-            textSize = config.videoWidth * 0.04f
+            textSize = dimensions.first * 0.04f
             alpha = 255
             isAntiAlias = true
             style = Paint.Style.FILL
@@ -73,47 +77,47 @@ class MontageMakerImpl(
                 contentResolver.openInputStream(uri)?.use { inputStream ->
                     val originalBitmap = BitmapFactory.decodeStream(inputStream)
                     if (originalBitmap != null) {
-                        val canvasBitmap = createBitmap(config.videoWidth, config.videoHeight)
+                        val canvasBitmap = createBitmap(dimensions.first, dimensions.second)
                         val canvas = Canvas(canvasBitmap)
                         canvas.drawColor(config.backgroundColor.toArgb())
 
                         val scale = minOf(
-                            config.videoWidth.toFloat() / originalBitmap.width,
-                            config.videoHeight.toFloat() / originalBitmap.height
+                            dimensions.first.toFloat() / originalBitmap.width,
+                            dimensions.second.toFloat() / originalBitmap.height
                         )
 
                         val scaledWidth = originalBitmap.width * scale
                         val scaledHeight = originalBitmap.height * scale
 
-                        val left = ((config.videoWidth - scaledWidth) / 2f)
-                        val top = ((config.videoHeight - scaledHeight) / 2f)
+                        val left = ((dimensions.first - scaledWidth) / 2f)
+                        val top = ((dimensions.second - scaledHeight) / 2f)
 
                         val dstRect = RectF(left, top, left + scaledWidth, top + scaledHeight)
                         canvas.drawBitmap(originalBitmap, null, dstRect, null)
 
                         if (config.waterMark) {
                             val watermark = "Momentum"
-                            val paddingX = config.videoWidth * 0.05f
+                            val paddingX = dimensions.first * 0.05f
                             val paddingY =
-                                config.videoHeight * 0.05f + paint.descent() + paint.textSize // Adjusted padding
+                                dimensions.second * 0.05f + paint.descent() + paint.textSize // Adjusted padding
                             canvas.drawText(watermark, paddingX, paddingY, paint)
                         }
 
                         if (config.showDate) {
                             val date = LocalDate.ofEpochDay(day.date).format(
-                                DateTimeFormatter.ofLocalizedDate(config.dateStyle)
+                                DateTimeFormatter.ofLocalizedDate(config.dateStyle.toFormatStyle())
                             )
-                            val paddingX = config.videoWidth * 0.05f
+                            val paddingX = dimensions.first * 0.05f
                             val paddingY =
-                                config.videoHeight - config.videoHeight * 0.05f - paint.descent()
+                                dimensions.second - dimensions.second * 0.05f - paint.descent()
                             canvas.drawText(date, paddingX, paddingY, paint)
                         }
 
                         if (config.showMessage && !day.comment.isNullOrBlank()) {
                             val message = day.comment
-                            val paddingX = config.videoWidth * 0.05f
+                            val paddingX = dimensions.first * 0.05f
                             val paddingY =
-                                config.videoHeight - config.videoHeight * 0.12f - paint.descent()
+                                dimensions.second - dimensions.second * 0.12f - paint.descent()
 
                             canvas.drawText(message, paddingX, paddingY, paint)
                         }

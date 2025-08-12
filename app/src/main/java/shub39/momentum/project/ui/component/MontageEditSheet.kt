@@ -3,11 +3,15 @@ package shub39.momentum.project.ui.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Button
@@ -41,6 +45,10 @@ import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
+import shub39.momentum.core.domain.enums.DateStyle
+import shub39.momentum.core.domain.enums.DateStyle.Companion.toFormatStyle
+import shub39.momentum.core.domain.enums.Fonts
+import shub39.momentum.core.domain.enums.VideoQuality
 import shub39.momentum.core.presentation.ColorPickerDialog
 import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.core.presentation.SettingSlider
@@ -48,7 +56,6 @@ import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -79,6 +86,7 @@ fun MontageEditSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
+        sheetGesturesEnabled = false,
         sheetState = sheetState
     ) {
         Row(
@@ -105,158 +113,241 @@ fun MontageEditSheet(
             }
         }
 
-        Column(
+        LazyColumn(
             modifier = modifier
                 .animateContentSize()
-                .padding(24.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .heightIn(max = 400.dp),
+            contentPadding = PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SettingSlider(
-                title = stringResource(R.string.frames_per_image),
-                value = state.montageConfig.framesPerImage.toFloat(),
-                onValueChange = {
-                    onAction(
-                        ProjectAction.OnEditMontageConfig(
-                            state.montageConfig.copy(framesPerImage = it.roundToInt())
-                        )
-                    )
-                },
-                valueRange = 1f..10f,
-                steps = 8,
-                valueToShow = state.montageConfig.framesPerImage.toString()
-            )
-
-            SettingSlider(
-                title = stringResource(R.string.frames_per_sec),
-                value = state.montageConfig.framesPerSecond,
-                onValueChange = {
-                    onAction(
-                        ProjectAction.OnEditMontageConfig(
-                            state.montageConfig.copy(framesPerSecond = it)
-                        )
-                    )
-                },
-                valueRange = 1f..10f,
-                steps = 8,
-                valueToShow = state.montageConfig.framesPerSecond.roundToInt().toString()
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.show_date),
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Switch(
-                    checked = state.montageConfig.showDate,
-                    onCheckedChange = {
+            item {
+                SettingSlider(
+                    title = stringResource(R.string.frames_per_image),
+                    value = state.montageConfig.framesPerImage.toFloat(),
+                    onValueChange = {
                         onAction(
                             ProjectAction.OnEditMontageConfig(
-                                state.montageConfig.copy(showDate = it)
+                                state.montageConfig.copy(framesPerImage = it.roundToInt())
                             )
                         )
-                    }
+                    },
+                    valueRange = 1f..10f,
+                    steps = 8,
+                    valueToShow = state.montageConfig.framesPerImage.toString()
                 )
             }
 
-            AnimatedVisibility(visible = state.montageConfig.showDate) {
+            item {
+                SettingSlider(
+                    title = stringResource(R.string.frames_per_sec),
+                    value = state.montageConfig.framesPerSecond,
+                    onValueChange = {
+                        onAction(
+                            ProjectAction.OnEditMontageConfig(
+                                state.montageConfig.copy(framesPerSecond = it)
+                            )
+                        )
+                    },
+                    valueRange = 1f..10f,
+                    steps = 8,
+                    valueToShow = state.montageConfig.framesPerSecond.roundToInt().toString()
+                )
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.video_quality),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Spacer(modifier = Modifier.size(44.dp))
+                }
+
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    FormatStyle.entries.forEach { style ->
+                    VideoQuality.entries.forEach { quality ->
                         ToggleButton(
-                            checked = state.montageConfig.dateStyle == style,
+                            checked = quality == state.montageConfig.videoQuality,
                             onCheckedChange = {
                                 onAction(
                                     ProjectAction.OnEditMontageConfig(
-                                        state.montageConfig.copy(
-                                            dateStyle = style
-                                        )
+                                        state.montageConfig.copy(videoQuality = quality)
                                     )
                                 )
                             }
                         ) {
-                            Text(
-                                text = LocalDate.now()
-                                    .format(DateTimeFormatter.ofLocalizedDate(style))
-                            )
+                            Text(text = quality.name)
                         }
                     }
                 }
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.show_watermark),
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Switch(
-                    checked = state.montageConfig.waterMark,
-                    onCheckedChange = {
-                        onAction(
-                            ProjectAction.OnEditMontageConfig(
-                                state.montageConfig.copy(waterMark = it)
-                            )
-                        )
-                    }
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.show_message),
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Switch(
-                    checked = state.montageConfig.showMessage,
-                    onCheckedChange = {
-                        onAction(
-                            ProjectAction.OnEditMontageConfig(
-                                state.montageConfig.copy(showMessage = it)
-                            )
-                        )
-                    }
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.background_color),
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                IconButton(
-                    onClick = { showColorPicker = true },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = state.montageConfig.backgroundColor,
-                        contentColor = contentColorFor(state.montageConfig.backgroundColor)
-                    )
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Create,
-                        contentDescription = "Pick color"
+                    Text(
+                        text = stringResource(R.string.show_date),
+                        style = MaterialTheme.typography.titleLarge
                     )
+
+                    Switch(
+                        checked = state.montageConfig.showDate,
+                        onCheckedChange = {
+                            onAction(
+                                ProjectAction.OnEditMontageConfig(
+                                    state.montageConfig.copy(showDate = it)
+                                )
+                            )
+                        }
+                    )
+                }
+
+                AnimatedVisibility(visible = state.montageConfig.showDate) {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        DateStyle.entries.forEach { style ->
+                            ToggleButton(
+                                checked = state.montageConfig.dateStyle == style,
+                                onCheckedChange = {
+                                    onAction(
+                                        ProjectAction.OnEditMontageConfig(
+                                            state.montageConfig.copy(
+                                                dateStyle = style
+                                            )
+                                        )
+                                    )
+                                }
+                            ) {
+                                Text(
+                                    text = LocalDate.now()
+                                        .format(DateTimeFormatter.ofLocalizedDate(style.toFormatStyle()))
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.show_watermark),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Switch(
+                        checked = state.montageConfig.waterMark,
+                        onCheckedChange = {
+                            onAction(
+                                ProjectAction.OnEditMontageConfig(
+                                    state.montageConfig.copy(waterMark = it)
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.show_message),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Switch(
+                        checked = state.montageConfig.showMessage,
+                        onCheckedChange = {
+                            onAction(
+                                ProjectAction.OnEditMontageConfig(
+                                    state.montageConfig.copy(showMessage = it)
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.background_color),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    IconButton(
+                        onClick = { showColorPicker = true },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = state.montageConfig.backgroundColor,
+                            contentColor = contentColorFor(state.montageConfig.backgroundColor)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Create,
+                            contentDescription = "Pick color"
+                        )
+                    }
+                }
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.video_font),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Spacer(modifier = Modifier.size(44.dp))
+                }
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Fonts.entries.forEach { font ->
+                        ToggleButton(
+                            checked = font == state.montageConfig.font,
+                            onCheckedChange = {
+                                onAction(
+                                    ProjectAction.OnEditMontageConfig(
+                                        state.montageConfig.copy(font = font)
+                                    )
+                                )
+                            }
+                        ) {
+                            Text(text = font.displayName)
+                        }
+                    }
                 }
             }
         }

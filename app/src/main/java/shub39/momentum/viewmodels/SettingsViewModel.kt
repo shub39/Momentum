@@ -55,14 +55,6 @@ class SettingsViewModel(
                 _state.update {
                     it.copy(theme = it.theme.copy(font = pref))
                 }
-
-                stateLayer.projectState.update {
-                    it.copy(
-                        montageConfig = it.montageConfig.copy(
-                            font = pref
-                        )
-                    )
-                }
             }.launchIn(this)
 
         datastore.getMaterialYouFlow()

@@ -16,11 +16,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.core.domain.enums.VideoAction
+import shub39.momentum.core.domain.interfaces.MontageConfigPrefs
 import shub39.momentum.core.domain.interfaces.MontageMaker
 import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.domain.interfaces.ProjectRepository
@@ -32,12 +34,14 @@ import kotlin.io.path.createTempFile
 class ProjectViewModel(
     stateLayer: StateLayer,
     private val montageMaker: MontageMaker,
-    private val repository: ProjectRepository
+    private val repository: ProjectRepository,
+    private val montageConfigPrefs: MontageConfigPrefs
 ) : ViewModel() {
     private var observeDaysJob: Job? = null
 
     private val _exoPlayer = MutableStateFlow<ExoPlayer?>(null)
     val exoPlayer = _exoPlayer.asStateFlow()
+        .onStart { observeConfig() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -134,7 +138,19 @@ class ProjectViewModel(
                 }
             }
 
-            is ProjectAction.OnEditMontageConfig -> _state.update { it.copy(montageConfig = action.config) }
+            is ProjectAction.OnEditMontageConfig -> {
+                viewModelScope.launch {
+                    montageConfigPrefs.setFpi(action.config.framesPerImage)
+                    montageConfigPrefs.setFps(action.config.framesPerSecond)
+                    montageConfigPrefs.setVideoQuality(action.config.videoQuality)
+                    montageConfigPrefs.setBackgroundColor(action.config.backgroundColor)
+                    montageConfigPrefs.setWaterMark(action.config.waterMark)
+                    montageConfigPrefs.setShowDate(action.config.showDate)
+                    montageConfigPrefs.setShowMessage(action.config.showMessage)
+                    montageConfigPrefs.setFont(action.config.font)
+                    montageConfigPrefs.setDateStyle(action.config.dateStyle)
+                }
+            }
         }
     }
 
@@ -155,6 +171,71 @@ class ProjectViewModel(
                 }
                 .launchIn(this)
         }
+    }
+
+    private fun observeConfig() = viewModelScope.launch {
+        montageConfigPrefs.getFpiFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(framesPerImage = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getFpsFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(framesPerSecond = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getVideoQualityFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(videoQuality = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getBackgroundColorFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(backgroundColor = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getWaterMarkFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(waterMark = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getShowDateFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(showDate = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getShowMessageFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(showMessage = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getFontFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(font = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getDateStyleFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(dateStyle = pref))
+                }
+            }.launchIn(this)
     }
 
     override fun onCleared() {

@@ -120,6 +120,7 @@ fun ProjectCalendar(
                     Box(
                         modifier = Modifier
                             .size(40.dp)
+                            .padding(2.dp)
                             .clip(CircleShape)
                             .clickable(enabled = possibleDay) {
                                 onAction(ProjectAction.OnUpdateSelectedDay(day.date.toEpochDay()))

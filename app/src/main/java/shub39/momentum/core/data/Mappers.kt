@@ -5,12 +5,13 @@ import shub39.momentum.core.data.database.ProjectEntity
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.MontageConfig
 import shub39.momentum.core.domain.data_classes.Project
+import shub39.momentum.core.domain.enums.VideoQuality.Companion.toDimensions
 import shub39.montage.MuxerConfiguration
 
 fun MuxerConfiguration.update(montageConfig: MontageConfig): MuxerConfiguration {
     return copy(
-        videoWidth = montageConfig.videoWidth,
-        videoHeight = montageConfig.videoHeight,
+        videoWidth = montageConfig.videoQuality.toDimensions().first,
+        videoHeight = montageConfig.videoQuality.toDimensions().second,
         mimeType = montageConfig.mimeType,
         framesPerImage = montageConfig.framesPerImage,
         framesPerSecond = montageConfig.framesPerSecond,

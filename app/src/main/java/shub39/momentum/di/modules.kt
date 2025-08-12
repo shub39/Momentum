@@ -8,6 +8,7 @@ import shub39.momentum.core.data.database.ProjectDBFactory
 import shub39.momentum.core.data.database.ProjectDao
 import shub39.momentum.core.data.database.ProjectDatabase
 import shub39.momentum.core.data.datastore.DatastoreFactory
+import shub39.momentum.core.domain.interfaces.MontageConfigPrefs
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 
 @Module
@@ -32,4 +33,8 @@ class AppModule {
     @Single
     fun getSettingsPrefs(datastoreFactory: DatastoreFactory): SettingsPrefs =
         datastoreFactory.settingsPreferences()
+
+    @Single
+    fun getMontageConfigPrefs(datastoreFactory: DatastoreFactory): MontageConfigPrefs =
+        datastoreFactory.montageConfig()
 }
