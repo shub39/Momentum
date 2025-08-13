@@ -19,10 +19,10 @@ class ProjectRepositoryImpl(
         return projectDao
             .getProjects()
             .map { flow ->
-                flow.map {
+                flow.map { project ->
                     ProjectListData(
-                        project = it.toProject(),
-                        lastDay = daysDao.getLastDayById(it.id)?.toDays()
+                        project = project.toProject(),
+                        last10Days = daysDao.getLastDaysById(project.id).map { it.toDays() }
                     )
                 }
             }

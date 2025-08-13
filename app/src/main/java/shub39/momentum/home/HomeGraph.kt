@@ -21,7 +21,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.materialkolor.PaletteStyle
 import kotlinx.serialization.Serializable
-import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.ProjectListData
 import shub39.momentum.core.domain.data_classes.Theme
@@ -30,7 +29,6 @@ import shub39.momentum.core.domain.enums.Fonts
 import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.home.ui.sections.AddProject
 import shub39.momentum.home.ui.sections.ProjectList
-import java.time.LocalDate
 
 @Serializable
 private sealed interface HomeRoutes {
@@ -94,14 +92,7 @@ private fun Preview() {
                             title = "Project $it",
                             description = "Description for project $it",
                         ),
-                        lastDay = Day(
-                            id = it.toLong(),
-                            projectId = it.toLong(),
-                            image = "",
-                            comment = "",
-                            date = LocalDate.now().toEpochDay(),
-                            isFavorite = false
-                        )
+                        last10Days = emptyList()
                     )
                 }
             )

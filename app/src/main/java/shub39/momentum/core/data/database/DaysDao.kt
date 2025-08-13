@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 sealed interface DaysDao {
-    @Query("SELECT * FROM days_table WHERE projectId=:id ORDER BY date DESC LIMIT 1")
-    suspend fun getLastDayById(id: Long): DayEntity?
+    @Query("SELECT * FROM days_table WHERE projectId=:id ORDER BY date DESC LIMIT 10")
+    suspend fun getLastDaysById(id: Long): List<DayEntity>
 
     @Query("SELECT * FROM days_table")
     fun getDays(): Flow<List<DayEntity>>

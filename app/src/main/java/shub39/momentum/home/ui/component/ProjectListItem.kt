@@ -1,8 +1,8 @@
 package shub39.momentum.home.ui.component
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,12 +17,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,9 +32,6 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.ProjectListData
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,18 +48,22 @@ fun ProjectListItem(
         )
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
-            projectListData.lastDay?.let {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
+            if (projectListData.last10Days.isNotEmpty()) {
+                val carouselState = rememberCarouselState { projectListData.last10Days.size }
+
+                HorizontalMultiBrowseCarousel(
+                    state = carouselState,
+                    modifier = Modifier.height(200.dp),
+                    preferredItemWidth = 200.dp,
+                    itemSpacing = 8.dp,
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp)
                 ) {
+                    val currentDay = projectListData.last10Days[it]
+
                     CoilImage(
-                        imageModel = { it.image },
+                        imageModel = { currentDay.image },
                         failure = {
                             Box(
                                 modifier = Modifier.matchParentSize(),
@@ -80,39 +81,15 @@ fun ProjectListItem(
                         previewPlaceholder = painterResource(R.drawable.ic_launcher_foreground),
                         modifier = Modifier
                             .fillMaxSize()
-                            .clip(MaterialTheme.shapes.medium)
-                            .border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = MaterialTheme.shapes.medium
-                            )
+                            .maskClip(MaterialTheme.shapes.large)
                     )
-
-                    Surface(
-                        shape = MaterialTheme.shapes.small,
-                        color = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = LocalDate.ofEpochDay(it.date).format(
-                                DateTimeFormatter.ofLocalizedDate(
-                                    FormatStyle.MEDIUM
-                                )
-                            ),
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {

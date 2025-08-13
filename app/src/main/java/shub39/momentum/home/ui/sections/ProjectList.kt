@@ -133,14 +133,16 @@ private fun Preview() {
                             title = "Project $it",
                             description = "Description for project $it",
                         ),
-                        lastDay = Day(
-                            id = it.toLong(),
-                            projectId = it.toLong(),
-                            image = "",
-                            comment = "",
-                            date = LocalDate.now().toEpochDay(),
-                            isFavorite = false
-                        )
+                        last10Days = (0..10).map { it1 ->
+                            Day(
+                                id = it1.toLong(),
+                                projectId = it1.toLong(),
+                                image = "",
+                                comment = "",
+                                date = LocalDate.now().toEpochDay(),
+                                isFavorite = false
+                            )
+                        }
                     )
                 }
             )
