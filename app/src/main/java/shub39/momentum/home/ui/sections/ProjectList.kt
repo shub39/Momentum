@@ -66,9 +66,7 @@ fun ProjectList(
                 title = { Text(text = stringResource(R.string.app_name)) },
                 subtitle = {
                     Text(
-                        text = "${state.projects.size} " + stringResource(
-                            R.string.projects
-                        )
+                        text = "${state.projects.size} " + stringResource(R.string.projects)
                     )
                 },
                 actions = {

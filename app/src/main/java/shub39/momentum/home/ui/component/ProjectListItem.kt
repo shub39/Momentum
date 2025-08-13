@@ -99,11 +99,11 @@ fun ProjectListItem(
                         Text(
                             text = LocalDate.ofEpochDay(it.date).format(
                                 DateTimeFormatter.ofLocalizedDate(
-                                    FormatStyle.SHORT
+                                    FormatStyle.MEDIUM
                                 )
                             ),
                             modifier = Modifier
-                                .padding(horizontal = 4.dp, vertical = 3.dp)
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
                         )
                     }
                 }
@@ -122,11 +122,13 @@ fun ProjectListItem(
                         style = MaterialTheme.typography.titleLarge
                     )
 
-                    Text(
-                        text = projectListData.project.description,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    if (projectListData.project.description.isNotBlank()) {
+                        Text(
+                            text = projectListData.project.description,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))

@@ -49,6 +49,8 @@
     <string name="remake">Remake</string>
     <string name="video_quality">Video quality</string>
     <string name="video_font">Video text font</string>
+    <string name="favourites_text">Your favorite images appear here</string>
+    <string name="favourites">Favorites</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>
         <item quantity="other">Add %d more days</item>

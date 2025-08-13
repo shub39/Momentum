@@ -19,17 +19,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -37,6 +41,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -80,6 +85,7 @@ import shub39.momentum.core.presentation.MomentumDialog
 import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
+import shub39.momentum.project.ui.component.FavDayCard
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -144,7 +150,7 @@ fun ProjectDetails(
             ) { paddingValues ->
                 val today = LocalDate.now()
                 val weekState = rememberWeekCalendarState(
-                    startDate = today.minusMonths(12),
+                    startDate = LocalDate.of(2025, 1, 1),
                     endDate = today,
                     firstVisibleWeekDate = today
                 )
@@ -368,6 +374,70 @@ fun ProjectDetails(
                             }
                         }
                     }
+
+                    item {
+                        HorizontalDivider()
+                    }
+
+                    // favorite days
+                    if (state.days.none { it.isFavorite }) {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = 32.dp, vertical = 60.dp)
+                                    .fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.PhotoLibrary,
+                                    contentDescription = "Favorite Images",
+                                    modifier = Modifier.size(100.dp)
+                                )
+
+                                Text(
+                                    text = stringResource(R.string.favourites_text),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    } else {
+                        stickyHeader {
+                            Row(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.favourites),
+                                    style = MaterialTheme.typography.displaySmall
+                                )
+
+                                Icon(
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = "Favorites",
+                                    modifier = Modifier
+                                        .padding(vertical = 16.dp)
+                                        .size(40.dp)
+                                )
+                            }
+                        }
+
+                        items(state.days.filter { it.isFavorite }, key = { it.id }) { day ->
+                            FavDayCard(
+                                day = day,
+                                onClick = {
+                                    onAction(ProjectAction.OnUpdateSelectedDay(day.date))
+                                }
+                            )
+                        }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(60.dp))
+                    }
                 }
             }
 
@@ -524,7 +594,7 @@ private fun Preview() {
                         image = "",
                         comment = it.toString(),
                         date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
-                        isFavorite = false
+                        isFavorite = true
                     )
                 }
             )
