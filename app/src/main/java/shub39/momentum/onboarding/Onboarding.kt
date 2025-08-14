@@ -7,6 +7,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import shub39.momentum.core.domain.data_classes.Theme
+import shub39.momentum.core.domain.enums.AppTheme
+import shub39.momentum.core.presentation.MomentumTheme
 
 @Composable
 fun Onboarding(
@@ -26,5 +30,21 @@ fun Onboarding(
                 Text("Not done yet, skip")
             }
         }
+    }
+}
+
+@Composable
+@Preview
+private fun Preview() {
+    MomentumTheme(
+        theme = Theme(
+            appTheme = AppTheme.DARK
+        )
+    ) {
+        Onboarding(
+            state = OnboardingState(),
+            onAction = {},
+            onNavigateToHome = {}
+        )
     }
 }

@@ -1,10 +1,12 @@
 package shub39.momentum.project
 
+import androidx.compose.runtime.Immutable
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.MontageConfig
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.interfaces.MontageState
 
+@Immutable
 data class ProjectState(
     val project: Project? = null,
     val days: List<Day> = emptyList(),
