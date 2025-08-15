@@ -31,6 +31,7 @@ fun SettingsGraph(
     ) {
         composable<SettingsRoutes.Root> {
             Root(
+                onAction = onAction,
                 onNavigateBack = onNavigateBack,
                 onNavigateToLookAndFeel = { navController.navigate(SettingsRoutes.LookAndFeel) }
             )

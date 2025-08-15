@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -29,11 +30,13 @@ import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.settings.SettingsAction
 import shub39.momentum.settings.ui.component.AppInfo
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Root(
+    onAction: (SettingsAction) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToLookAndFeel: () -> Unit
 ) {
@@ -81,6 +84,24 @@ fun Root(
                     }
                 )
             }
+
+            item {
+                ListItem(
+                    headlineContent = {
+                        Text(text = stringResource(R.string.onboarding))
+                    },
+                    trailingContent = {
+                        IconButton(
+                            onClick = { onAction(SettingsAction.OnOnboardingToggle(false)) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                                contentDescription = "Go"
+                            )
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -95,7 +116,8 @@ private fun Preview() {
     ) {
         Root(
             onNavigateBack = {},
-            onNavigateToLookAndFeel = {}
+            onNavigateToLookAndFeel = {},
+            onAction = {}
         )
     }
 }

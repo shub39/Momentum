@@ -12,6 +12,7 @@ sealed interface SettingsAction {
     data class OnPaletteChange(val style: PaletteStyle): SettingsAction
     data class OnMaterialThemeToggle(val pref: Boolean): SettingsAction
     data class OnFontChange(val fonts: Fonts): SettingsAction
+
     data class OnOnboardingToggle(val done: Boolean): SettingsAction
 
     data object OnShowPaywall : SettingsAction
