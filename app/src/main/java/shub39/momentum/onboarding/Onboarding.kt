@@ -24,6 +24,9 @@ import kotlinx.coroutines.launch
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.onboarding.ui.components.AutoAnimation
+import shub39.momentum.onboarding.ui.components.CameraAnimation
+import shub39.momentum.onboarding.ui.components.PrivateAnimation
 
 @Composable
 fun Onboarding(
@@ -53,6 +56,10 @@ fun Onboarding(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CameraAnimation()
+
+                            Spacer(modifier = Modifier.height(32.dp))
+
                             Text(
                                 text = "Create Montages Easily",
                                 style = MaterialTheme.typography.titleLarge,
@@ -83,6 +90,10 @@ fun Onboarding(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            AutoAnimation()
+
+                            Spacer(modifier = Modifier.height(32.dp))
+
                             Text(
                                 text = "Convenient and Automatic",
                                 style = MaterialTheme.typography.titleLarge,
@@ -90,7 +101,7 @@ fun Onboarding(
                             )
 
                             Text(
-                                text = "Don't even think about storage or editing. Everything stays on your device",
+                                text = "Don't even think about storage or editing.",
                                 textAlign = TextAlign.Center
                             )
 
@@ -113,6 +124,10 @@ fun Onboarding(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            PrivateAnimation()
+
+                            Spacer(modifier = Modifier.height(32.dp))
+
                             Text(
                                 text = "Permissionless and Private",
                                 style = MaterialTheme.typography.titleLarge,
@@ -120,7 +135,7 @@ fun Onboarding(
                             )
 
                             Text(
-                                text = "No invasive permissions, just the bare minimum required to send notifications. Everything is processed on device!",
+                                text = "No invasive permissions, Everything is processed on device!",
                                 textAlign = TextAlign.Center
                             )
 
