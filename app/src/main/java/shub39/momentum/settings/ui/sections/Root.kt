@@ -1,16 +1,17 @@
 package shub39.momentum.settings.ui.sections
 
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -66,13 +67,13 @@ fun Root(
                 top = paddingValues.calculateTopPadding() + 16.dp,
                 bottom = paddingValues.calculateBottomPadding() + 16.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item { AppInfo() }
 
+            item { Spacer(modifier = Modifier.height(12.dp)) }
+
             item {
                 ListItem(
-                    modifier = Modifier.clickable { onNavigateToLookAndFeel() },
                     headlineContent = { Text(text = stringResource(R.string.look_and_feel)) },
                     supportingContent = { Text(text = stringResource(R.string.look_and_feel_info)) },
                     leadingContent = {
@@ -81,14 +82,33 @@ fun Root(
                             contentDescription = "Navigate",
                             modifier = Modifier.size(24.dp)
                         )
+                    },
+                    trailingContent = {
+                        IconButton(
+                            onClick = onNavigateToLookAndFeel
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                                contentDescription = "Go"
+                            )
+                        }
                     }
                 )
             }
 
             item {
                 ListItem(
+                    leadingContent = {
+                        Icon(
+                            imageVector = Icons.Rounded.Star,
+                            contentDescription = "Onboarding"
+                        )
+                    },
                     headlineContent = {
                         Text(text = stringResource(R.string.onboarding))
+                    },
+                    supportingContent = {
+                        Text(text = stringResource(R.string.onboarding_desc))
                     },
                     trailingContent = {
                         IconButton(

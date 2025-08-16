@@ -9,5 +9,6 @@ import kotlinx.serialization.Serializable
 data class ProjectEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
-    val description: String
+    val description: String,
+    val alarm: Pair<Long, List<String>>? = null
 )

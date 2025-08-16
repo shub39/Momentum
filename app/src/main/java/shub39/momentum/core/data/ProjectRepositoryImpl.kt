@@ -22,7 +22,7 @@ class ProjectRepositoryImpl(
                 flow.map { project ->
                     ProjectListData(
                         project = project.toProject(),
-                        last10Days = daysDao.getLastDaysById(project.id).map { it.toDays() }
+                        last10Days = daysDao.getLastDaysById(project.id).map { it.toDay() }
                     )
                 }
             }
@@ -36,10 +36,14 @@ class ProjectRepositoryImpl(
         projectDao.deleteProject(project.toEntity())
     }
 
+    override suspend fun getProjectById(id: Long): Project? {
+        return projectDao.getProjectById(id)?.toProject()
+    }
+
     override fun getDays(): Flow<List<Day>> {
         return daysDao
             .getDays()
-            .map { flow -> flow.map { it.toDays() } }
+            .map { flow -> flow.map { it.toDay() } }
     }
 
     override suspend fun upsertDay(day: Day) {
@@ -48,5 +52,9 @@ class ProjectRepositoryImpl(
 
     override suspend fun deleteDay(day: Day) {
         return daysDao.deleteDay(day.toDayEntity())
+    }
+
+    override suspend fun getLastCompletedDay(projectId: Long): Day? {
+        return daysDao.getLastDaysById(projectId).firstOrNull()?.toDay()
     }
 }

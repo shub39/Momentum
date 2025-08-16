@@ -25,6 +25,7 @@ fun ProjectEntity.toProject(): Project {
         id = id,
         title = title,
         description = description,
+        alarm = alarm
     )
 }
 
@@ -33,10 +34,11 @@ fun Project.toEntity(): ProjectEntity {
         id = id,
         title = title,
         description = description,
+        alarm = alarm
     )
 }
 
-fun DayEntity.toDays(): Day {
+fun DayEntity.toDay(): Day {
     return Day(
         id = id,
         projectId = projectId,

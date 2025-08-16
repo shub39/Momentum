@@ -10,7 +10,11 @@ interface ProjectRepository {
     suspend fun upsertProject(project: Project)
     suspend fun deleteProject(project: Project)
 
+    suspend fun getProjectById(id: Long): Project?
+
     fun getDays(): Flow<List<Day>>
     suspend fun upsertDay(day: Day)
     suspend fun deleteDay(day: Day)
+
+    suspend fun getLastCompletedDay(projectId: Long): Day?
 }

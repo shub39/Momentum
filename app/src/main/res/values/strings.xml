@@ -52,6 +52,8 @@
     <string name="favourites_text">Your favorite images appear here</string>
     <string name="favourites">Favorites</string>
     <string name="onboarding">Onboarding</string>
+    <string name="onboarding_desc">See what\'s in this app</string>
+    <string name="take_a_photo">Reminder to take a photo!</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>
         <item quantity="other">Add %d more days</item>
