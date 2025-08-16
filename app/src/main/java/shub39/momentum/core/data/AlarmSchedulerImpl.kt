@@ -33,8 +33,8 @@ class AlarmSchedulerImpl(
             return
         }
 
-        val time = LocalTime.ofSecondOfDay(project.alarm.first)
-        val days = project.alarm.second.map { DayOfWeek.valueOf(it) }
+        val time = LocalTime.ofSecondOfDay(project.alarm.time)
+        val days = project.alarm.days.map { DayOfWeek.valueOf(it) }
 
         for (day in days) {
             val triggerAtMillis = calculateNextTrigger(day, time)
@@ -65,7 +65,7 @@ class AlarmSchedulerImpl(
     override fun cancel(project: Project) {
         if (project.alarm == null) return
 
-        val days = project.alarm.second.map { DayOfWeek.valueOf(it) }
+        val days = project.alarm.days.map { DayOfWeek.valueOf(it) }
 
         for (day in days) {
             val intent = Intent(context, AlarmReceiver::class.java).apply {

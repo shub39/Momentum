@@ -4,5 +4,5 @@ data class Project(
     val id: Long = 0,
     val title: String,
     val description: String,
-    val alarm: Pair<Long, List<String>>? = null
+    val alarm: AlarmData? = null
 )

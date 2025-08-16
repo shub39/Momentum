@@ -3,6 +3,7 @@ package shub39.momentum.core.data.database
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
+import shub39.momentum.core.domain.data_classes.AlarmData
 
 @Serializable
 @Entity(tableName = "projects_table")
@@ -10,5 +11,5 @@ data class ProjectEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
     val description: String,
-    val alarm: Pair<Long, List<String>>? = null
+    val alarm: AlarmData? = null
 )

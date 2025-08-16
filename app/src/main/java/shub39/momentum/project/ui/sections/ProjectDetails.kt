@@ -1,6 +1,7 @@
 package shub39.momentum.project.ui.sections
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -371,6 +372,27 @@ fun ProjectDetails(
                                     }
                                 }
 
+                            }
+                        }
+                    }
+
+                    // reminder options
+                    item {
+                        Card(
+                            modifier = Modifier
+                                .animateContentSize()
+                                .fillMaxWidth(),
+                            shape = MaterialTheme.shapes.large
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.set_reminder)
+                                )
                             }
                         }
                     }
