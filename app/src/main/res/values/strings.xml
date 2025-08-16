@@ -24,7 +24,6 @@
     <string name="material_theme_desc">Extract colors from your wallpaper</string>
     <string name="seed_color">Seed Color</string>
     <string name="seed_color_desc">Select seed color for App theme</string>
-    <string name="unlock_more_pro">Unlock more with plus</string>
     <string name="palette_style">Palette style</string>
     <string name="select_image">Select Image</string>
     <string name="delete_day">Delete day</string>
@@ -57,6 +56,10 @@
     <string name="set_reminder">Set reminder</string>
     <string name="everyday_at">Everyday at</string>
     <string name="guide_text">Tap on a Day to add a picture for it</string>
+    <string name="foss">You are using the FOSS variant</string>
+    <string name="foss_desc">All features are unlocked. This variant of the app does not support In-App Purchases. If this app added value to your life, Support me by donating on</string>
+    <string name="rush_pro">Momentum Plus</string>
+    <string name="unlock_more_pro">Unlock more with Plus</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>
         <item quantity="other">Add %d more days</item>
