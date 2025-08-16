@@ -12,7 +12,6 @@ class MomentumApp: Application() {
 
         startKoin {
             androidContext(this@MomentumApp)
-//            modules(modules)
             modules(AppModule().module)
         }
     }

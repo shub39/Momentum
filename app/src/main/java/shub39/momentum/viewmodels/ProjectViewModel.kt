@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.core.domain.enums.VideoAction
+import shub39.momentum.core.domain.interfaces.AlarmScheduler
 import shub39.momentum.core.domain.interfaces.MontageConfigPrefs
 import shub39.momentum.core.domain.interfaces.MontageMaker
 import shub39.momentum.core.domain.interfaces.MontageState
@@ -35,7 +36,8 @@ class ProjectViewModel(
     stateLayer: StateLayer,
     private val montageMaker: MontageMaker,
     private val repository: ProjectRepository,
-    private val montageConfigPrefs: MontageConfigPrefs
+    private val montageConfigPrefs: MontageConfigPrefs,
+    private val scheduler: AlarmScheduler
 ) : ViewModel() {
     private var observeDaysJob: Job? = null
 
@@ -61,10 +63,12 @@ class ProjectViewModel(
             is ProjectAction.OnUpdateProject -> viewModelScope.launch {
                 repository.upsertProject(action.project)
                 _state.update { it.copy(project = action.project) }
+                scheduler.schedule(action.project)
             }
 
             is ProjectAction.OnDeleteProject -> viewModelScope.launch {
                 repository.deleteProject(action.project)
+                scheduler.cancel(action.project)
             }
 
             is ProjectAction.OnDeleteDay -> viewModelScope.launch {
@@ -149,6 +153,19 @@ class ProjectViewModel(
                     montageConfigPrefs.setShowMessage(action.config.showMessage)
                     montageConfigPrefs.setFont(action.config.font)
                     montageConfigPrefs.setDateStyle(action.config.dateStyle)
+                }
+            }
+
+            is ProjectAction.OnUpdateReminder -> viewModelScope.launch {
+                val newProject = _state.value.project!!.copy(alarm = action.alarmData)
+
+                repository.upsertProject(newProject)
+                _state.update { it.copy(project = newProject) }
+
+                if (action.alarmData == null) {
+                    scheduler.cancel(newProject)
+                } else {
+                    scheduler.schedule(newProject)
                 }
             }
         }

@@ -1,6 +1,7 @@
 package shub39.momentum.project
 
 import android.content.Context
+import shub39.momentum.core.domain.data_classes.AlarmData
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.MontageConfig
 import shub39.momentum.core.domain.data_classes.PlayerAction
@@ -11,6 +12,8 @@ sealed interface ProjectAction {
     data class OnPlayerAction(val playerAction: PlayerAction) : ProjectAction
 
     data class OnUpdateSelectedDay(val day: Long?) : ProjectAction
+
+    data class OnUpdateReminder(val alarmData: AlarmData? = null) : ProjectAction
 
     data object OnUpdateDays : ProjectAction
     data class OnUpdateProject(val project: Project) : ProjectAction

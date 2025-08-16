@@ -55,6 +55,7 @@
     <string name="onboarding_desc">See what\'s in this app</string>
     <string name="take_a_photo">Reminder to take a photo!</string>
     <string name="set_reminder">Set reminder</string>
+    <string name="everyday_at">Everyday at</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>
         <item quantity="other">Add %d more days</item>

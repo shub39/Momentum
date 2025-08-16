@@ -28,10 +28,7 @@ class AlarmSchedulerImpl(
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun schedule(project: Project) {
-        if (project.alarm == null) {
-            Log.d(TAG, "Alarm is null. This should not happen. What are you doing?")
-            return
-        }
+        if (project.alarm == null) return
 
         val time = LocalTime.ofSecondOfDay(project.alarm.time)
         val days = project.alarm.days.map { DayOfWeek.valueOf(it) }
