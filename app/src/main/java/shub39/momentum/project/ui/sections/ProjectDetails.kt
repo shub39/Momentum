@@ -97,7 +97,6 @@ fun ProjectDetails(
     onNavigateToMontage: () -> Unit,
     onNavigateToCalendar: () -> Unit
 ) {
-
     if (state.project == null) {
         LoadingIndicator()
     } else {
