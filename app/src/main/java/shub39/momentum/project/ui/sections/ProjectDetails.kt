@@ -1,5 +1,6 @@
 package shub39.momentum.project.ui.sections
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -63,6 +64,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
@@ -76,7 +78,6 @@ import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.materialkolor.PaletteStyle
 import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
-import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
@@ -161,7 +162,9 @@ fun ProjectDetails(
                 // weekly horizontal calendar
                 item {
                     OutlinedCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .animateContentSize()
+                            .fillMaxWidth(),
                         shape = MaterialTheme.shapes.large
                     ) {
                         Row(
@@ -268,6 +271,24 @@ fun ProjectDetails(
                                 }
                             }
                         )
+
+                        if (state.days.isEmpty()) {
+                            Row(
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                )
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.guide_text),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -582,16 +603,16 @@ private fun Preview() {
                     title = "Sample Project",
                     description = "A sample project",
                 ),
-                days = (0..3).map {
-                    Day(
-                        id = it.toLong(),
-                        projectId = 1,
-                        image = "",
-                        comment = it.toString(),
-                        date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
-                        isFavorite = true
-                    )
-                }
+//                days = (0..3).map {
+//                    Day(
+//                        id = it.toLong(),
+//                        projectId = 1,
+//                        image = "",
+//                        comment = it.toString(),
+//                        date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
+//                        isFavorite = true
+//                    )
+//                }
             )
         )
     }
@@ -599,6 +620,7 @@ private fun Preview() {
     MomentumTheme(
         theme = Theme(
             appTheme = AppTheme.DARK,
+            seedColor = Color.Red,
             paletteStyle = PaletteStyle.Expressive
         )
     ) {
