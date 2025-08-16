@@ -1,6 +1,5 @@
 package shub39.momentum.project.ui.sections
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -98,478 +97,473 @@ fun ProjectDetails(
     onNavigateToMontage: () -> Unit,
     onNavigateToCalendar: () -> Unit
 ) {
-    AnimatedContent(
-        targetState = state.project,
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) { project ->
-        if (project == null) {
-            LoadingIndicator()
-        } else {
-            var showDeleteDialog by remember { mutableStateOf(false) }
-            var showEditDialog by remember { mutableStateOf(false) }
 
-            val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-            Scaffold(
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                topBar = {
-                    LargeFlexibleTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        title = { Text(text = project.title) },
-                        subtitle = { Text(text = project.description) },
-                        navigationIcon = {
-                            IconButton(
-                                onClick = onNavigateBack
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Navigate Back"
-                                )
-                            }
-                        },
-                        actions = {
-                            IconButton(
-                                onClick = { showDeleteDialog = true }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Delete"
-                                )
-                            }
+    if (state.project == null) {
+        LoadingIndicator()
+    } else {
+        var showDeleteDialog by remember { mutableStateOf(false) }
+        var showEditDialog by remember { mutableStateOf(false) }
 
-                            IconButton(
-                                onClick = { showEditDialog = true }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = "Edit"
-                                )
-                            }
-                        }
-                    )
-                }
-            ) { paddingValues ->
-                val today = LocalDate.now()
-                val weekState = rememberWeekCalendarState(
-                    startDate = LocalDate.of(2025, 1, 1),
-                    endDate = today,
-                    firstVisibleWeekDate = today
-                )
-
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // weekly horizontal calendar
-                    item {
-                        OutlinedCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.large
+        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                LargeFlexibleTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    title = { Text(text = state.project.title) },
+                    subtitle = { Text(text = state.project.description) },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onNavigateBack
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.calendar),
-                                    style = MaterialTheme.typography.titleLarge
-                                )
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Navigate Back"
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = { showDeleteDialog = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete"
+                            )
+                        }
 
-                                Spacer(modifier = Modifier.weight(1f))
-
-                                IconButton(
-                                    onClick = onNavigateToCalendar
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                        contentDescription = "Calendar"
-                                    )
-                                }
-                            }
-
-                            val today = LocalDate.now()
-                            WeekCalendar(
-                                state = weekState,
-                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                                dayContent = { weekDay ->
-                                    val day =
-                                        state.days.find { it.date == weekDay.date.toEpochDay() }
-                                    val possibleDay = weekDay.date <= today
-
-                                    Box(
-                                        modifier = Modifier
-                                            .aspectRatio(1f)
-                                            .padding(2.dp)
-                                            .clip(CircleShape)
-                                            .clickable(enabled = possibleDay) {
-                                                onAction(ProjectAction.OnUpdateSelectedDay(weekDay.date.toEpochDay()))
-                                            },
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        day?.let {
-                                            CoilImage(
-                                                imageModel = { it.image },
-                                                failure = {
-                                                    Box(
-                                                        modifier = Modifier
-                                                            .matchParentSize()
-                                                            .border(
-                                                                width = 2.dp,
-                                                                color = MaterialTheme.colorScheme.error,
-                                                                shape = CircleShape
-                                                            )
-                                                    )
-                                                },
-                                                modifier = Modifier
-                                                    .matchParentSize()
-                                                    .blur(2.dp)
-                                                    .clip(CircleShape)
-                                            )
-
-                                            Box(
-                                                modifier = Modifier
-                                                    .matchParentSize()
-                                                    .background(
-                                                        color = MaterialTheme.colorScheme.background.copy(
-                                                            alpha = 0.5f
-                                                        ),
-                                                        shape = CircleShape
-                                                    )
-                                            )
-                                        }
-
-                                        Column(
-                                            modifier = Modifier.padding(4.dp),
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text(
-                                                text = weekDay.date.dayOfMonth.toString(),
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = if (possibleDay) {
-                                                    MaterialTheme.colorScheme.onBackground
-                                                } else {
-                                                    MaterialTheme.colorScheme.onBackground.copy(
-                                                        alpha = 0.5f
-                                                    )
-                                                },
-                                                fontWeight = FontWeight.Bold,
-                                            )
-
-                                            Text(
-                                                text = weekDay.date.dayOfWeek.toString().take(3),
-                                                color = if (possibleDay) {
-                                                    MaterialTheme.colorScheme.onBackground
-                                                } else {
-                                                    MaterialTheme.colorScheme.onBackground.copy(
-                                                        alpha = 0.5f
-                                                    )
-                                                },
-                                                style = MaterialTheme.typography.bodySmall
-                                            )
-                                        }
-                                    }
-                                }
+                        IconButton(
+                            onClick = { showEditDialog = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit"
                             )
                         }
                     }
+                )
+            }
+        ) { paddingValues ->
+            val today = LocalDate.now()
+            val weekState = rememberWeekCalendarState(
+                startDate = LocalDate.of(2025, 1, 1),
+                endDate = today,
+                firstVisibleWeekDate = today
+            )
 
-                    // montage wait/ creator options
-                    item {
-                        val canCreateMontage = state.days.size >= 5
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable(enabled = canCreateMontage) {
-                                    onNavigateToMontage()
-                                },
-                            shape = MaterialTheme.shapes.large,
-                            colors = if (canCreateMontage) {
-                                CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                )
-                            } else {
-                                CardDefaults.cardColors()
-                            }
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // weekly horizontal calendar
+                item {
+                    OutlinedCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                            Text(
+                                text = stringResource(R.string.calendar),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            IconButton(
+                                onClick = onNavigateToCalendar
                             ) {
-                                Column {
-                                    Text(
-                                        text = stringResource(R.string.montage),
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = "Calendar"
+                                )
+                            }
+                        }
 
-                                    if (!canCreateMontage) {
-                                        val daysLeft = 5 - state.days.size
-                                        Text(
-                                            text = pluralStringResource(
-                                                id = R.plurals.add_more_days,
-                                                count = daysLeft,
-                                                formatArgs = arrayOf(daysLeft)
-                                            )
-                                        )
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.weight(1f))
+                        val today = LocalDate.now()
+                        WeekCalendar(
+                            state = weekState,
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            dayContent = { weekDay ->
+                                val day =
+                                    state.days.find { it.date == weekDay.date.toEpochDay() }
+                                val possibleDay = weekDay.date <= today
 
                                 Box(
-                                    modifier = Modifier.wrapContentSize(),
+                                    modifier = Modifier
+                                        .aspectRatio(1f)
+                                        .padding(2.dp)
+                                        .clip(CircleShape)
+                                        .clickable(enabled = possibleDay) {
+                                            onAction(ProjectAction.OnUpdateSelectedDay(weekDay.date.toEpochDay()))
+                                        },
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    if (canCreateMontage) {
-                                        val infiniteTransition =
-                                            rememberInfiniteTransition(label = "rotation")
-
-                                        val rotation by infiniteTransition.animateFloat(
-                                            initialValue = 0f,
-                                            targetValue = 360f,
-                                            animationSpec = infiniteRepeatable(
-                                                animation = tween(
-                                                    durationMillis = 2000,
-                                                    easing = LinearEasing
-                                                ),
-                                                repeatMode = RepeatMode.Restart
-                                            ),
-                                            label = "infinite rotation"
+                                    day?.let {
+                                        CoilImage(
+                                            imageModel = { it.image },
+                                            failure = {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .matchParentSize()
+                                                        .border(
+                                                            width = 2.dp,
+                                                            color = MaterialTheme.colorScheme.error,
+                                                            shape = CircleShape
+                                                        )
+                                                )
+                                            },
+                                            modifier = Modifier
+                                                .matchParentSize()
+                                                .blur(2.dp)
+                                                .clip(CircleShape)
                                         )
 
                                         Box(
                                             modifier = Modifier
-                                                .size(50.dp)
-                                                .graphicsLayer {
-                                                    rotationZ = rotation
-                                                }
+                                                .matchParentSize()
                                                 .background(
-                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                    shape = VerySunny.toShape()
+                                                    color = MaterialTheme.colorScheme.background.copy(
+                                                        alpha = 0.5f
+                                                    ),
+                                                    shape = CircleShape
                                                 )
                                         )
+                                    }
 
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                            contentDescription = "Create Montage",
-                                            tint = MaterialTheme.colorScheme.primaryContainer
-                                        )
-                                    } else {
-                                        CircularWavyProgressIndicator(
-                                            progress = { state.days.size.toFloat() / 5 },
-                                            modifier = Modifier.size(50.dp)
+                                    Column(
+                                        modifier = Modifier.padding(4.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = weekDay.date.dayOfMonth.toString(),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = if (possibleDay) {
+                                                MaterialTheme.colorScheme.onBackground
+                                            } else {
+                                                MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            },
+                                            fontWeight = FontWeight.Bold,
                                         )
 
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                            contentDescription = "Create Montage"
+                                        Text(
+                                            text = weekDay.date.dayOfWeek.toString().take(3),
+                                            color = if (possibleDay) {
+                                                MaterialTheme.colorScheme.onBackground
+                                            } else {
+                                                MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            },
+                                            style = MaterialTheme.typography.bodySmall
                                         )
                                     }
                                 }
-
                             }
+                        )
+                    }
+                }
+
+                // montage wait/ creator options
+                item {
+                    val canCreateMontage = state.days.size >= 5
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(enabled = canCreateMontage) {
+                                onNavigateToMontage()
+                            },
+                        shape = MaterialTheme.shapes.large,
+                        colors = if (canCreateMontage) {
+                            CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            CardDefaults.cardColors()
+                        }
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                        ) {
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.montage),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                if (!canCreateMontage) {
+                                    val daysLeft = 5 - state.days.size
+                                    Text(
+                                        text = pluralStringResource(
+                                            id = R.plurals.add_more_days,
+                                            count = daysLeft,
+                                            formatArgs = arrayOf(daysLeft)
+                                        )
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Box(
+                                modifier = Modifier.wrapContentSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (canCreateMontage) {
+                                    val infiniteTransition =
+                                        rememberInfiniteTransition(label = "rotation")
+
+                                    val rotation by infiniteTransition.animateFloat(
+                                        initialValue = 0f,
+                                        targetValue = 360f,
+                                        animationSpec = infiniteRepeatable(
+                                            animation = tween(
+                                                durationMillis = 2000,
+                                                easing = LinearEasing
+                                            ),
+                                            repeatMode = RepeatMode.Restart
+                                        ),
+                                        label = "infinite rotation"
+                                    )
+
+                                    Box(
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .graphicsLayer {
+                                                rotationZ = rotation
+                                            }
+                                            .background(
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                shape = VerySunny.toShape()
+                                            )
+                                    )
+
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                        contentDescription = "Create Montage",
+                                        tint = MaterialTheme.colorScheme.primaryContainer
+                                    )
+                                } else {
+                                    CircularWavyProgressIndicator(
+                                        progress = { state.days.size.toFloat() / 5 },
+                                        modifier = Modifier.size(50.dp)
+                                    )
+
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                        contentDescription = "Create Montage"
+                                    )
+                                }
+                            }
+
                         }
                     }
+                }
 
-                    // reminder options
-                    item { AlarmCard(project, onAction) }
+                // reminder options
+                item { AlarmCard(state.project, onAction) }
 
-                    item { HorizontalDivider() }
+                item { HorizontalDivider() }
 
-                    // favorite days
-                    if (state.days.none { it.isFavorite }) {
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .padding(horizontal = 32.dp, vertical = 60.dp)
-                                    .fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.PhotoLibrary,
-                                    contentDescription = "Favorite Images",
-                                    modifier = Modifier.size(100.dp)
-                                )
+                // favorite days
+                if (state.days.none { it.isFavorite }) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = 32.dp, vertical = 60.dp)
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.PhotoLibrary,
+                                contentDescription = "Favorite Images",
+                                modifier = Modifier.size(100.dp)
+                            )
 
-                                Text(
-                                    text = stringResource(R.string.favourites_text),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
+                            Text(
+                                text = stringResource(R.string.favourites_text),
+                                textAlign = TextAlign.Center
+                            )
                         }
-                    } else {
-                        stickyHeader {
-                            Row(
+                    }
+                } else {
+                    stickyHeader {
+                        Row(
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.background)
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = stringResource(R.string.favourites),
+                                style = MaterialTheme.typography.displaySmall
+                            )
+
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = "Favorites",
                                 modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.favourites),
-                                    style = MaterialTheme.typography.displaySmall
-                                )
-
-                                Icon(
-                                    imageVector = Icons.Default.Favorite,
-                                    contentDescription = "Favorites",
-                                    modifier = Modifier
-                                        .padding(vertical = 16.dp)
-                                        .size(40.dp)
-                                )
-                            }
-                        }
-
-                        items(state.days.filter { it.isFavorite }, key = { it.id }) { day ->
-                            FavDayCard(
-                                day = day,
-                                onClick = {
-                                    onAction(ProjectAction.OnUpdateSelectedDay(day.date))
-                                }
+                                    .padding(vertical = 16.dp)
+                                    .size(40.dp)
                             )
                         }
                     }
 
-                    item {
-                        Spacer(modifier = Modifier.height(60.dp))
+                    items(state.days.filter { it.isFavorite }, key = { it.id }) { day ->
+                        FavDayCard(
+                            day = day,
+                            onClick = {
+                                onAction(ProjectAction.OnUpdateSelectedDay(day.date))
+                            }
+                        )
                     }
                 }
+
+                item {
+                    Spacer(modifier = Modifier.height(60.dp))
+                }
             }
+        }
 
-            if (showEditDialog) {
-                var newProjectTitle by remember { mutableStateOf(project.title) }
-                var newProjectDescription by remember { mutableStateOf(project.description) }
+        if (showEditDialog) {
+            var newProjectTitle by remember { mutableStateOf(state.project.title) }
+            var newProjectDescription by remember { mutableStateOf(state.project.description) }
 
-                MomentumDialog(
-                    onDismissRequest = { showEditDialog = false }
+            MomentumDialog(
+                onDismissRequest = { showEditDialog = false }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Column(
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit"
+                    )
+
+                    Text(
+                        text = stringResource(R.string.edit_project),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    OutlinedTextField(
+                        value = newProjectTitle,
+                        onValueChange = { newProjectTitle = it },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        isError = newProjectTitle.length >= 20,
+                        placeholder = { Text(text = stringResource(R.string.title)) },
                         modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit"
-                        )
+                            .widthIn(max = 300.dp)
+                            .fillMaxWidth()
+                    )
 
-                        Text(
-                            text = stringResource(R.string.edit_project),
-                            style = MaterialTheme.typography.titleLarge
-                        )
+                    OutlinedTextField(
+                        value = newProjectDescription,
+                        onValueChange = { newProjectDescription = it },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        isError = newProjectDescription.length >= 100,
+                        placeholder = { Text(text = stringResource(R.string.description)) },
+                        modifier = Modifier
+                            .widthIn(max = 300.dp)
+                            .fillMaxWidth()
+                    )
 
-                        OutlinedTextField(
-                            value = newProjectTitle,
-                            onValueChange = { newProjectTitle = it },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            isError = newProjectTitle.length >= 20,
-                            placeholder = { Text(text = stringResource(R.string.title)) },
-                            modifier = Modifier
-                                .widthIn(max = 300.dp)
-                                .fillMaxWidth()
-                        )
-
-                        OutlinedTextField(
-                            value = newProjectDescription,
-                            onValueChange = { newProjectDescription = it },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            isError = newProjectDescription.length >= 100,
-                            placeholder = { Text(text = stringResource(R.string.description)) },
-                            modifier = Modifier
-                                .widthIn(max = 300.dp)
-                                .fillMaxWidth()
-                        )
-
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Button(
-                                onClick = {
-                                    onAction(
-                                        ProjectAction.OnUpdateProject(
-                                            project = project.copy(
-                                                title = newProjectTitle.trim(),
-                                                description = newProjectDescription.trim()
-                                            )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Button(
+                            onClick = {
+                                onAction(
+                                    ProjectAction.OnUpdateProject(
+                                        project = state.project.copy(
+                                            title = newProjectTitle.trim(),
+                                            description = newProjectDescription.trim()
                                         )
                                     )
-                                    showEditDialog = false
-                                },
-                                enabled = newProjectTitle.length <= 20 &&
-                                        newProjectDescription.length <= 100 &&
-                                        newProjectTitle.isNotBlank() &&
-                                        (newProjectTitle.trim() != project.title.trim() || newProjectDescription.trim() != project.description.trim()),
-                                modifier = Modifier
-                                    .widthIn(max = 300.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(text = stringResource(R.string.edit))
-                            }
+                                )
+                                showEditDialog = false
+                            },
+                            enabled = newProjectTitle.length <= 20 &&
+                                    newProjectDescription.length <= 100 &&
+                                    newProjectTitle.isNotBlank() &&
+                                    (newProjectTitle.trim() != state.project.title.trim() || newProjectDescription.trim() != state.project.description.trim()),
+                            modifier = Modifier
+                                .widthIn(max = 300.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(text = stringResource(R.string.edit))
+                        }
 
-                            TextButton(
-                                onClick = { showEditDialog = false }
-                            ) {
-                                Text(text = stringResource(R.string.cancel))
-                            }
+                        TextButton(
+                            onClick = { showEditDialog = false }
+                        ) {
+                            Text(text = stringResource(R.string.cancel))
                         }
                     }
                 }
             }
+        }
 
-            if (showDeleteDialog) {
-                MomentumDialog(
-                    onDismissRequest = { showDeleteDialog = false }
+        if (showDeleteDialog) {
+            MomentumDialog(
+                onDismissRequest = { showDeleteDialog = false }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Warning,
-                            contentDescription = "Caution"
-                        )
+                    Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = "Caution"
+                    )
 
-                        Text(
-                            text = stringResource(R.string.delete_project),
-                            style = MaterialTheme.typography.titleLarge
-                        )
+                    Text(
+                        text = stringResource(R.string.delete_project),
+                        style = MaterialTheme.typography.titleLarge
+                    )
 
-                        Text(
-                            text = stringResource(R.string.delete_project_caution),
-                            textAlign = TextAlign.Center
-                        )
+                    Text(
+                        text = stringResource(R.string.delete_project_caution),
+                        textAlign = TextAlign.Center
+                    )
 
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Button(
-                                onClick = { showDeleteDialog = false },
-                                modifier = Modifier
-                                    .widthIn(max = 300.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(text = stringResource(R.string.cancel))
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Button(
+                            onClick = { showDeleteDialog = false },
+                            modifier = Modifier
+                                .widthIn(max = 300.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(text = stringResource(R.string.cancel))
+                        }
+
+                        TextButton(
+                            onClick = {
+                                onAction(ProjectAction.OnDeleteProject(state.project))
+                                showDeleteDialog = false
+                                onNavigateBack()
                             }
-
-                            TextButton(
-                                onClick = {
-                                    onAction(ProjectAction.OnDeleteProject(project))
-                                    showDeleteDialog = false
-                                    onNavigateBack()
-                                }
-                            ) {
-                                Text(text = stringResource(R.string.delete))
-                            }
+                        ) {
+                            Text(text = stringResource(R.string.delete))
                         }
                     }
                 }

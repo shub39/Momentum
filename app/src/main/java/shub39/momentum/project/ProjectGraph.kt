@@ -1,6 +1,5 @@
 package shub39.momentum.project
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -8,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.media3.exoplayer.ExoPlayer
@@ -37,10 +34,13 @@ import shub39.momentum.project.ui.sections.ProjectMontageView
 private sealed interface ProjectRoutes {
     @Serializable
     data object ProjectDetails : ProjectRoutes
+
     @Serializable
     data object ProjectCalendarView : ProjectRoutes
+
     @Serializable
     data object ProjectShortsView : ProjectRoutes
+
     @Serializable
     data object ProjectMontageView : ProjectRoutes
 }
@@ -53,69 +53,59 @@ fun ProjectGraph(
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    AnimatedContent(
-        targetState = state.project,
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) { project ->
-        if (project == null) {
-            LoadingIndicator()
-        } else {
-            LaunchedEffect(project) { onAction(ProjectAction.OnUpdateDays) }
+    LaunchedEffect(state.project) { onAction(ProjectAction.OnUpdateDays) }
 
-            val navController = rememberNavController()
+    val navController = rememberNavController()
 
-            NavHost(
-                navController = navController,
-                startDestination = ProjectRoutes.ProjectDetails,
-                enterTransition = { fadeIn(tween(500)) },
-                exitTransition = { fadeOut(tween(500)) },
-                popEnterTransition = { fadeIn(tween(500)) },
-                popExitTransition = { fadeOut(tween(500)) },
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .fillMaxSize()
-            ) {
-                composable<ProjectRoutes.ProjectDetails> {
-                    ProjectDetails(
-                        state = state,
-                        onAction = onAction,
-                        onNavigateBack = onNavigateBack,
-                        onNavigateToCalendar = { navController.navigate(ProjectRoutes.ProjectCalendarView) },
-                        onNavigateToMontage = { navController.navigate(ProjectRoutes.ProjectMontageView) }
-                    )
-                }
-
-                composable<ProjectRoutes.ProjectCalendarView> {
-                    ProjectCalendar(
-                        state = state,
-                        onAction = onAction,
-                        onNavigateBack = { navController.navigateUp() }
-                    )
-                }
-
-                composable<ProjectRoutes.ProjectShortsView> {
-
-                }
-
-                composable<ProjectRoutes.ProjectMontageView> {
-                    ProjectMontageView(
-                        state = state,
-                        exoPlayer = exoPlayer,
-                        onAction = onAction,
-                        onNavigateBack = { navController.navigateUp() }
-                    )
-                }
-            }
-
-            if (state.selectedDate != null) {
-                DayInfoSheet(
-                    selectedDate = state.selectedDate,
-                    state = state,
-                    onAction = onAction
-                )
-            }
+    NavHost(
+        navController = navController,
+        startDestination = ProjectRoutes.ProjectDetails,
+        enterTransition = { fadeIn(tween(500)) },
+        exitTransition = { fadeOut(tween(500)) },
+        popEnterTransition = { fadeIn(tween(500)) },
+        popExitTransition = { fadeOut(tween(500)) },
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .fillMaxSize()
+    ) {
+        composable<ProjectRoutes.ProjectDetails> {
+            ProjectDetails(
+                state = state,
+                onAction = onAction,
+                onNavigateBack = onNavigateBack,
+                onNavigateToCalendar = { navController.navigate(ProjectRoutes.ProjectCalendarView) },
+                onNavigateToMontage = { navController.navigate(ProjectRoutes.ProjectMontageView) }
+            )
         }
+
+        composable<ProjectRoutes.ProjectCalendarView> {
+            ProjectCalendar(
+                state = state,
+                onAction = onAction,
+                onNavigateBack = { navController.navigateUp() }
+            )
+        }
+
+        composable<ProjectRoutes.ProjectShortsView> {
+
+        }
+
+        composable<ProjectRoutes.ProjectMontageView> {
+            ProjectMontageView(
+                state = state,
+                exoPlayer = exoPlayer,
+                onAction = onAction,
+                onNavigateBack = { navController.navigateUp() }
+            )
+        }
+    }
+
+    if (state.selectedDate != null) {
+        DayInfoSheet(
+            selectedDate = state.selectedDate,
+            state = state,
+            onAction = onAction
+        )
     }
 }
 
