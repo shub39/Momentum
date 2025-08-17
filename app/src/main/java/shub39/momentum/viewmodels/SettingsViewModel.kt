@@ -56,9 +56,11 @@ class SettingsViewModel(
 
         when (isSubscribed) {
             SubscriptionResult.NotSubscribed -> datastore.resetAppTheme()
+
             SubscriptionResult.Subscribed -> {
                 _state.update { it.copy(isPlusUser = true) }
                 stateLayer.projectState.update { it.copy(isPlusUser = true) }
+                stateLayer.homeState.update { it.copy(isPlusUser = true) }
             }
 
             else -> {}

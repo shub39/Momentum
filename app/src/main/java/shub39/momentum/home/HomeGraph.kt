@@ -66,7 +66,13 @@ fun HomeGraph(
                 onAction = onAction,
                 onNavigateToProject = onNavigateToProject,
                 onNavigateToSettings = onNavigateToSettings,
-                onNavigateToNewProject = { navController.navigate(HomeRoutes.AddProject) }
+                onNavigateToNewProject = {
+                    if (state.projects.size <= 1 || state.isPlusUser) {
+                        navController.navigate(HomeRoutes.AddProject)
+                    } else {
+                        onAction(HomeAction.OnShowPaywall)
+                    }
+                }
             )
         }
 

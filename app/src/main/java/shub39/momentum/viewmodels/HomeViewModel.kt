@@ -49,6 +49,8 @@ class HomeViewModel(
                     )
                 )
             }
+
+            HomeAction.OnShowPaywall -> stateLayer.settingsState.update { it.copy(showPaywall = true) }
         }
     }
 

@@ -6,4 +6,5 @@ import shub39.momentum.core.domain.data_classes.ProjectListData
 @Immutable
 data class HomeState(
     val projects: List<ProjectListData> = emptyList(),
+    val isPlusUser: Boolean = false
 )
