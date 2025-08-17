@@ -43,7 +43,7 @@ fun PaywallPage(
                 containerColor = Color(0xfff2e3b1)
             ),
             modifier = Modifier
-                .padding(vertical = 32.dp, horizontal = 16.dp)
+                .padding(vertical = 48.dp, horizontal = 16.dp)
                 .align(Alignment.TopEnd)
         ) {
             Icon(

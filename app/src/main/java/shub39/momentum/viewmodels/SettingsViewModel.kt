@@ -44,7 +44,10 @@ class SettingsViewModel(
             is SettingsAction.OnSeedColorChange -> datastore.updateSeedColor(action.color)
             is SettingsAction.OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
             is SettingsAction.OnOnboardingToggle -> datastore.updateOnboardingDone(action.done)
-            SettingsAction.OnShowPaywall -> _state.update { it.copy(showPaywall = !it.showPaywall) }
+            SettingsAction.OnShowPaywall -> {
+                _state.update { it.copy(showPaywall = !it.showPaywall) }
+                checkSubscription()
+            }
         }
     }
 
