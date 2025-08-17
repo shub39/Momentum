@@ -56,6 +56,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,6 +78,7 @@ import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.materialkolor.PaletteStyle
 import com.skydoves.landscapist.coil3.CoilImage
+import kotlinx.coroutines.delay
 import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
@@ -103,6 +105,13 @@ fun ProjectDetails(
     } else {
         var showDeleteDialog by remember { mutableStateOf(false) }
         var showEditDialog by remember { mutableStateOf(false) }
+
+        var showGuide by remember { mutableStateOf(false) }
+
+        LaunchedEffect(state.days) {
+            delay(200)
+            showGuide = state.days.isEmpty()
+        }
 
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         Scaffold(
@@ -272,7 +281,7 @@ fun ProjectDetails(
                             }
                         )
 
-                        if (state.days.isEmpty()) {
+                        if (showGuide) {
                             Row(
                                 modifier = Modifier.padding(
                                     start = 16.dp,
