@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 class BillingHandlerImpl : BillingHandler {
     private val purchases by lazy { Purchases.sharedInstance }
 
-    override suspend fun isProUser(): Boolean {
+    override suspend fun isPlusUser(): Boolean {
         return userResult() is SubscriptionResult.Subscribed
     }
 

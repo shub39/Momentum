@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import shub39.momentum.billing.BillingHandler
+import shub39.momentum.billing.SubscriptionResult
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 import shub39.momentum.settings.SettingsAction
 import shub39.momentum.settings.SettingsState
@@ -18,11 +20,15 @@ import shub39.momentum.settings.SettingsState
 @KoinViewModel
 class SettingsViewModel(
     private val stateLayer: StateLayer,
-    private val datastore: SettingsPrefs
+    private val datastore: SettingsPrefs,
+    private val billingHandler: BillingHandler
 ): ViewModel() {
     private val _state = stateLayer.settingsState
     val state = _state.asStateFlow()
-        .onStart { observeDatastore() }
+        .onStart {
+            checkSubscription()
+            observeDatastore()
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -38,7 +44,21 @@ class SettingsViewModel(
             is SettingsAction.OnSeedColorChange -> datastore.updateSeedColor(action.color)
             is SettingsAction.OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
             is SettingsAction.OnOnboardingToggle -> datastore.updateOnboardingDone(action.done)
-            SettingsAction.OnShowPaywall -> {}
+            SettingsAction.OnShowPaywall -> _state.update { it.copy(showPaywall = !it.showPaywall) }
+        }
+    }
+
+    private suspend fun checkSubscription() {
+        val isSubscribed = billingHandler.userResult()
+
+        when (isSubscribed) {
+            SubscriptionResult.NotSubscribed -> datastore.resetAppTheme()
+            SubscriptionResult.Subscribed -> {
+                _state.update { it.copy(isPlusUser = true) }
+                stateLayer.projectState.update { it.copy(isPlusUser = true) }
+            }
+
+            else -> {}
         }
     }
 

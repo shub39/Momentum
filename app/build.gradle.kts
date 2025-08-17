@@ -66,7 +66,6 @@ android {
 
         debug {
             resValue("string", "app_name", "$appName Debug")
-            applicationIdSuffix = ".debug"
         }
     }
 

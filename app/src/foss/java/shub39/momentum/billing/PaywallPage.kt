@@ -31,7 +31,7 @@ import shub39.momentum.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaywallPage(
-    isProUser: Boolean,
+    isPlusUser: Boolean,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {

@@ -19,6 +19,12 @@ class SettingsPrefsImpl(
     private val dataStore: DataStore<Preferences>
 ) : SettingsPrefs {
 
+    override suspend fun resetAppTheme() {
+        dataStore.edit { prefs ->
+            prefs.clear()
+        }
+    }
+
     companion object {
         private val seedColor = intPreferencesKey("seed_color")
         private val appTheme = stringPreferencesKey("app_theme")
@@ -27,7 +33,6 @@ class SettingsPrefsImpl(
         private val materialTheme = booleanPreferencesKey("material_theme")
         private val onboardingDone = booleanPreferencesKey("onboarding_done")
         private val selectedFont = stringPreferencesKey("font")
-        private val notificationPref = booleanPreferencesKey("notification_pref")
     }
 
     override fun getAppThemePrefFlow(): Flow<AppTheme> = dataStore.data
@@ -91,15 +96,6 @@ class SettingsPrefsImpl(
     override suspend fun updateFonts(font: Fonts) {
         dataStore.edit { settings ->
             settings[selectedFont] = font.name
-        }
-    }
-
-    override fun getNotificationPrefFlow(): Flow<Boolean> = dataStore.data
-        .map { preferences -> preferences[notificationPref] == true }
-
-    override suspend fun updateNotificationPref(pref: Boolean) {
-        dataStore.edit { settings ->
-            settings[notificationPref] = pref
         }
     }
 }

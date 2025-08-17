@@ -19,7 +19,7 @@ import com.revenuecat.purchases.ui.revenuecatui.customercenter.CustomerCenter
 
 @Composable
 fun PaywallPage(
-    isProUser: Boolean,
+    isPlusUser: Boolean,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {

@@ -58,7 +58,7 @@
     <string name="guide_text">Tap on a Day to add a picture for it</string>
     <string name="foss">You are using the FOSS variant</string>
     <string name="foss_desc">All features are unlocked. This variant of the app does not support In-App Purchases. If this app added value to your life, Support me by donating on</string>
-    <string name="rush_pro">Momentum Plus</string>
+    <string name="pro">Momentum Plus</string>
     <string name="unlock_more_pro">Unlock more with Plus</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>

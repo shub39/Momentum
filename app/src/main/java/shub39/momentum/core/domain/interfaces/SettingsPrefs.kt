@@ -7,6 +7,8 @@ import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.domain.enums.Fonts
 
 interface SettingsPrefs {
+    suspend fun resetAppTheme()
+
     fun getAppThemePrefFlow(): Flow<AppTheme>
     suspend fun updateAppThemePref(pref: AppTheme)
 
@@ -27,7 +29,4 @@ interface SettingsPrefs {
 
     fun getFontFlow(): Flow<Fonts>
     suspend fun updateFonts(font: Fonts)
-
-    fun getNotificationPrefFlow(): Flow<Boolean>
-    suspend fun updateNotificationPref(pref: Boolean)
 }

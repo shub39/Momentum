@@ -131,7 +131,7 @@ fun LookAndFeel(
                 )
             }
 
-            if (state.isProUser) {// Font Picker
+            if (state.isPlusUser) {// Font Picker
                 item {
                     ListItem(
                         headlineContent = {
