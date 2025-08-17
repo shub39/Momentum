@@ -20,6 +20,12 @@ class MontageConfigPrefsImpl(
     private val dataStore: DataStore<Preferences>
 ) : MontageConfigPrefs {
 
+    override suspend fun resetPrefs() {
+        dataStore.edit { prefs ->
+            prefs.clear()
+        }
+    }
+
     companion object {
         private val fpiKey = intPreferencesKey("montage_fpi")
         private val fpsKey = floatPreferencesKey("montage_fps")

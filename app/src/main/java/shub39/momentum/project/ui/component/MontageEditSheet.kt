@@ -3,17 +3,20 @@ package shub39.momentum.project.ui.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -52,6 +55,7 @@ import shub39.momentum.core.domain.enums.VideoQuality
 import shub39.momentum.core.presentation.ColorPickerDialog
 import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.core.presentation.SettingSlider
+import shub39.momentum.core.presentation.zigZagBackground
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
 import java.time.LocalDate
@@ -90,7 +94,7 @@ fun MontageEditSheet(
         sheetState = sheetState
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 20.dp),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -99,6 +103,15 @@ fun MontageEditSheet(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
+
+            IconButton(
+                onClick = { onAction(ProjectAction.OnResetMontagePrefs) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Sync,
+                    contentDescription = "Reset"
+                )
+            }
 
             Button(
                 onClick = {
@@ -118,10 +131,11 @@ fun MontageEditSheet(
                 .animateContentSize()
                 .fillMaxWidth()
                 .heightIn(max = 400.dp),
-            contentPadding = PaddingValues(24.dp),
+            contentPadding = PaddingValues(vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // frames per image slider
             item {
                 SettingSlider(
                     title = stringResource(R.string.frames_per_image),
@@ -135,10 +149,12 @@ fun MontageEditSheet(
                     },
                     valueRange = 1f..10f,
                     steps = 8,
-                    valueToShow = state.montageConfig.framesPerImage.toString()
+                    valueToShow = state.montageConfig.framesPerImage.toString(),
+                    modifier = Modifier.padding(horizontal = 24.dp)
                 )
             }
 
+            // fps slider
             item {
                 SettingSlider(
                     title = stringResource(R.string.frames_per_sec),
@@ -152,48 +168,17 @@ fun MontageEditSheet(
                     },
                     valueRange = 1f..10f,
                     steps = 8,
-                    valueToShow = state.montageConfig.framesPerSecond.roundToInt().toString()
+                    valueToShow = state.montageConfig.framesPerSecond.roundToInt().toString(),
+                    modifier = Modifier.padding(horizontal = 24.dp)
                 )
             }
 
+            // show date/ date style
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.video_quality),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-
-                    Spacer(modifier = Modifier.size(44.dp))
-                }
-
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    VideoQuality.entries.forEach { quality ->
-                        ToggleButton(
-                            checked = quality == state.montageConfig.videoQuality,
-                            onCheckedChange = {
-                                onAction(
-                                    ProjectAction.OnEditMontageConfig(
-                                        state.montageConfig.copy(videoQuality = quality)
-                                    )
-                                )
-                            }
-                        ) {
-                            Text(text = quality.name)
-                        }
-                    }
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -216,7 +201,9 @@ fun MontageEditSheet(
 
                 AnimatedVisibility(visible = state.montageConfig.showDate) {
                     FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         DateStyle.entries.forEach { style ->
@@ -242,33 +229,12 @@ fun MontageEditSheet(
                 }
             }
 
+            // show day message
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.show_watermark),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-
-                    Switch(
-                        checked = state.montageConfig.waterMark,
-                        onCheckedChange = {
-                            onAction(
-                                ProjectAction.OnEditMontageConfig(
-                                    state.montageConfig.copy(waterMark = it)
-                                )
-                            )
-                        }
-                    )
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -290,35 +256,12 @@ fun MontageEditSheet(
                 }
             }
 
+            // text font
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.background_color),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-
-                    IconButton(
-                        onClick = { showColorPicker = true },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = state.montageConfig.backgroundColor,
-                            contentColor = contentColorFor(state.montageConfig.backgroundColor)
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Create,
-                            contentDescription = "Pick color"
-                        )
-                    }
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -331,7 +274,9 @@ fun MontageEditSheet(
                 }
 
                 FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Fonts.entries.forEach { font ->
@@ -347,6 +292,140 @@ fun MontageEditSheet(
                         ) {
                             Text(text = font.displayName)
                         }
+                    }
+                }
+            }
+
+            if (!state.isPlusUser) {
+                item {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp)
+                            .zigZagBackground()
+                    ) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { onAction(ProjectAction.OnShowPaywall) }
+                        ) {
+                            Text(
+                                text = stringResource(R.string.unlock_more_pro)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // video quality
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.video_quality),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Spacer(modifier = Modifier.size(44.dp))
+                }
+
+                FlowRow(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    VideoQuality.entries.forEach { quality ->
+                        ToggleButton(
+                            checked = quality == state.montageConfig.videoQuality,
+                            enabled = state.isPlusUser,
+                            onCheckedChange = {
+                                if (state.isPlusUser) {
+                                    onAction(
+                                        ProjectAction.OnEditMontageConfig(
+                                            state.montageConfig.copy(videoQuality = quality)
+                                        )
+                                    )
+                                } else {
+                                    onAction(ProjectAction.OnShowPaywall)
+                                }
+                            }
+                        ) {
+                            Text(text = quality.name)
+                        }
+                    }
+                }
+            }
+
+            // show watermark
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.show_watermark),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Switch(
+                        checked = state.montageConfig.waterMark,
+                        enabled = state.isPlusUser,
+                        onCheckedChange = {
+                            if (state.isPlusUser) {
+                                onAction(
+                                    ProjectAction.OnEditMontageConfig(
+                                        state.montageConfig.copy(waterMark = it)
+                                    )
+                                )
+                            } else {
+                                onAction(ProjectAction.OnShowPaywall)
+                            }
+                        }
+                    )
+                }
+            }
+
+            // set background color
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.background_color),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    IconButton(
+                        onClick = {
+                            if (state.isPlusUser) {
+                                showColorPicker = true
+                            } else {
+                                onAction(ProjectAction.OnShowPaywall)
+                            }
+                        },
+                        enabled = state.isPlusUser,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = state.montageConfig.backgroundColor,
+                            contentColor = contentColorFor(state.montageConfig.backgroundColor)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Create,
+                            contentDescription = "Pick color"
+                        )
                     }
                 }
             }

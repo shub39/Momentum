@@ -26,8 +26,8 @@ class SettingsViewModel(
     private val _state = stateLayer.settingsState
     val state = _state.asStateFlow()
         .onStart {
-            checkSubscription()
             observeDatastore()
+            checkSubscription()
         }
         .stateIn(
             scope = viewModelScope,

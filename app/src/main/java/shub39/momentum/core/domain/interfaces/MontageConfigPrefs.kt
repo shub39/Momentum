@@ -7,6 +7,8 @@ import shub39.momentum.core.domain.enums.Fonts
 import shub39.momentum.core.domain.enums.VideoQuality
 
 interface MontageConfigPrefs {
+    suspend fun resetPrefs()
+
     fun getFpiFlow(): Flow<Int>
     suspend fun setFpi(fpi: Int)
 

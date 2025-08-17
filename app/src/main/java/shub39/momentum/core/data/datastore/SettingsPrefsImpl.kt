@@ -21,7 +21,11 @@ class SettingsPrefsImpl(
 
     override suspend fun resetAppTheme() {
         dataStore.edit { prefs ->
-            prefs.clear()
+            prefs.remove(seedColor)
+            prefs.remove(appTheme)
+            prefs.remove(amoledPref)
+            prefs.remove(paletteStyle)
+            prefs.remove(materialTheme)
         }
     }
 

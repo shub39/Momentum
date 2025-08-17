@@ -8,6 +8,8 @@ import shub39.momentum.core.domain.data_classes.PlayerAction
 import shub39.momentum.core.domain.data_classes.Project
 
 sealed interface ProjectAction {
+    data object OnShowPaywall : ProjectAction
+
     data class OnInitializeExoPlayer(val context: Context) : ProjectAction
     data class OnPlayerAction(val playerAction: PlayerAction) : ProjectAction
 
@@ -24,4 +26,5 @@ sealed interface ProjectAction {
     data class OnCreateMontage(val days: List<Day>) : ProjectAction
     data object OnClearMontageState : ProjectAction
     data class OnEditMontageConfig(val config: MontageConfig) : ProjectAction
+    data object OnResetMontagePrefs : ProjectAction
 }

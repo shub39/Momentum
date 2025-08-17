@@ -33,7 +33,7 @@ import kotlin.io.path.createTempFile
 
 @KoinViewModel
 class ProjectViewModel(
-    stateLayer: StateLayer,
+    private val stateLayer: StateLayer,
     private val montageMaker: MontageMaker,
     private val repository: ProjectRepository,
     private val montageConfigPrefs: MontageConfigPrefs,
@@ -146,13 +146,14 @@ class ProjectViewModel(
                 viewModelScope.launch {
                     montageConfigPrefs.setFpi(action.config.framesPerImage)
                     montageConfigPrefs.setFps(action.config.framesPerSecond)
-                    montageConfigPrefs.setVideoQuality(action.config.videoQuality)
-                    montageConfigPrefs.setBackgroundColor(action.config.backgroundColor)
-                    montageConfigPrefs.setWaterMark(action.config.waterMark)
                     montageConfigPrefs.setShowDate(action.config.showDate)
                     montageConfigPrefs.setShowMessage(action.config.showMessage)
                     montageConfigPrefs.setFont(action.config.font)
                     montageConfigPrefs.setDateStyle(action.config.dateStyle)
+
+                    montageConfigPrefs.setVideoQuality(action.config.videoQuality)
+                    montageConfigPrefs.setBackgroundColor(action.config.backgroundColor)
+                    montageConfigPrefs.setWaterMark(action.config.waterMark)
                 }
             }
 
@@ -168,6 +169,12 @@ class ProjectViewModel(
                     scheduler.schedule(newProject)
                 }
             }
+
+            ProjectAction.OnResetMontagePrefs -> viewModelScope.launch {
+                montageConfigPrefs.resetPrefs()
+            }
+
+            ProjectAction.OnShowPaywall -> stateLayer.settingsState.update { it.copy(showPaywall = true) }
         }
     }
 

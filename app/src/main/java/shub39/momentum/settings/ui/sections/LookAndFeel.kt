@@ -3,6 +3,7 @@ package shub39.momentum.settings.ui.sections
 import android.R.color.system_accent1_200
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -58,6 +59,7 @@ import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.domain.enums.Fonts
 import shub39.momentum.core.presentation.ColorPickerDialog
 import shub39.momentum.core.presentation.MomentumDialog
+import shub39.momentum.core.presentation.zigZagBackground
 import shub39.momentum.settings.SettingsAction
 import shub39.momentum.settings.SettingsState
 import shub39.momentum.settings.ui.component.SelectableMiniPalette
@@ -131,164 +133,176 @@ fun LookAndFeel(
                 )
             }
 
-            if (state.isPlusUser) {// Font Picker
+            if (!state.isPlusUser) {
                 item {
-                    ListItem(
-                        headlineContent = {
-                            Text(text = stringResource(R.string.font))
-                        },
-                        supportingContent = {
-                            Text(text = state.theme.font.displayName)
-                        },
-                        trailingContent = {
-                            FilledTonalIconButton(
-                                onClick = { fontPickerDialog = true }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.FontDownload,
-                                    contentDescription = "Pick Font"
-                                )
-                            }
-
-                        }
-                    )
-                }
-
-                // Amoled variant toggle
-                item {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource(R.string.amoled)
-                            )
-                        },
-                        supportingContent = {
-                            Text(
-                                text = stringResource(R.string.amoled_desc)
-                            )
-                        },
-                        trailingContent = {
-                            Switch(
-                                checked = state.theme.isAmoled,
-                                onCheckedChange = {
-                                    onAction(SettingsAction.OnAmoledSwitch(it))
-                                }
-                            )
-                        }
-                    )
-                }
-
-                // Material you toggle
-                item {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource(R.string.material_theme)
-                            )
-                        },
-                        supportingContent = {
-                            Text(
-                                text = stringResource(R.string.material_theme_desc)
-                            )
-                        },
-                        trailingContent = {
-                            Switch(
-                                checked = state.theme.isMaterialYou,
-                                onCheckedChange = {
-                                    onAction(SettingsAction.OnMaterialThemeToggle(it))
-                                }
-                            )
-                        }
-                    )
-                }
-
-                // Seed color picker
-                item {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource(R.string.seed_color)
-                            )
-                        },
-                        supportingContent = {
-                            Text(
-                                text = stringResource(R.string.seed_color_desc)
-                            )
-                        },
-                        trailingContent = {
-                            IconButton(
-                                onClick = { colorPickerDialog = true },
-                                colors = IconButtonDefaults.iconButtonColors(
-                                    containerColor = state.theme.seedColor,
-                                    contentColor = contentColorFor(state.theme.seedColor)
-                                ),
-                                enabled = !state.theme.isMaterialYou
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Create,
-                                    contentDescription = "Select Color"
-                                )
-                            }
-                        }
-                    )
-                }
-
-                // palette styles
-                item {
-                    Column {
-                        ListItem(
-                            headlineContent = {
-                                Text(
-                                    text = stringResource(R.string.palette_style)
-                                )
-                            }
-                        )
-
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp)
+                            .zigZagBackground()
+                    ) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { onAction(SettingsAction.OnShowPaywall) }
                         ) {
-                            items(PaletteStyle.entries.toList(), key = { it.name }) { style ->
-                                val scheme = rememberDynamicColorScheme(
-                                    primary = if (state.theme.isMaterialYou) {
-                                        colorResource(system_accent1_200)
-                                    } else {
-                                        state.theme.seedColor
-                                    },
-                                    isDark = when (state.theme.appTheme) {
-                                        AppTheme.SYSTEM -> isSystemInDarkTheme()
-                                        AppTheme.LIGHT -> false
-                                        AppTheme.DARK -> true
-                                    },
-                                    isAmoled = state.theme.isAmoled,
-                                    style = style
-                                )
-
-                                SelectableMiniPalette(
-                                    selected = state.theme.paletteStyle == style,
-                                    onClick = {
-                                        onAction(SettingsAction.OnPaletteChange(style = style))
-                                    },
-                                    contentDescription = { style.name },
-                                    accents = listOf(
-                                        TonalPalette.from(scheme.primary),
-                                        TonalPalette.from(scheme.tertiary),
-                                        TonalPalette.from(scheme.secondary)
-                                    )
-                                )
-                            }
+                            Text(
+                                text = stringResource(R.string.unlock_more_pro)
+                            )
                         }
                     }
                 }
-            } else {
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { onAction(SettingsAction.OnShowPaywall) }
-                    ) {
+            }
+
+            // Font Picker
+            item {
+                ListItem(
+                    headlineContent = {
+                        Text(text = stringResource(R.string.font))
+                    },
+                    supportingContent = {
+                        Text(text = state.theme.font.displayName)
+                    },
+                    trailingContent = {
+                        FilledTonalIconButton(
+                            onClick = { fontPickerDialog = true },
+                            enabled = state.isPlusUser
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FontDownload,
+                                contentDescription = "Pick Font"
+                            )
+                        }
+                    }
+                )
+            }
+
+            // Amoled variant toggle
+            item {
+                ListItem(
+                    headlineContent = {
                         Text(
-                            text = stringResource(R.string.unlock_more_pro)
+                            text = stringResource(R.string.amoled)
                         )
+                    },
+                    supportingContent = {
+                        Text(
+                            text = stringResource(R.string.amoled_desc)
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = state.theme.isAmoled,
+                            enabled = state.isPlusUser,
+                            onCheckedChange = {
+                                onAction(SettingsAction.OnAmoledSwitch(it))
+                            }
+                        )
+                    }
+                )
+            }
+
+            // Material you toggle
+            item {
+                ListItem(
+                    headlineContent = {
+                        Text(
+                            text = stringResource(R.string.material_theme)
+                        )
+                    },
+                    supportingContent = {
+                        Text(
+                            text = stringResource(R.string.material_theme_desc)
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = state.theme.isMaterialYou,
+                            enabled = state.isPlusUser,
+                            onCheckedChange = {
+                                onAction(SettingsAction.OnMaterialThemeToggle(it))
+                            }
+                        )
+                    }
+                )
+            }
+
+            // Seed color picker
+            item {
+                ListItem(
+                    headlineContent = {
+                        Text(
+                            text = stringResource(R.string.seed_color)
+                        )
+                    },
+                    supportingContent = {
+                        Text(
+                            text = stringResource(R.string.seed_color_desc)
+                        )
+                    },
+                    trailingContent = {
+                        IconButton(
+                            onClick = { colorPickerDialog = true },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = state.theme.seedColor,
+                                contentColor = contentColorFor(state.theme.seedColor)
+                            ),
+                            enabled = !state.theme.isMaterialYou && state.isPlusUser
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Create,
+                                contentDescription = "Select Color"
+                            )
+                        }
+                    }
+                )
+            }
+
+            // palette styles
+            item {
+                Column {
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = stringResource(R.string.palette_style)
+                            )
+                        }
+                    )
+
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(PaletteStyle.entries.toList(), key = { it.name }) { style ->
+                            val scheme = rememberDynamicColorScheme(
+                                primary = if (state.theme.isMaterialYou) {
+                                    colorResource(system_accent1_200)
+                                } else {
+                                    state.theme.seedColor
+                                },
+                                isDark = when (state.theme.appTheme) {
+                                    AppTheme.SYSTEM -> isSystemInDarkTheme()
+                                    AppTheme.LIGHT -> false
+                                    AppTheme.DARK -> true
+                                },
+                                isAmoled = state.theme.isAmoled,
+                                style = style
+                            )
+
+                            SelectableMiniPalette(
+                                selected = state.theme.paletteStyle == style,
+                                onClick = {
+                                    onAction(SettingsAction.OnPaletteChange(style = style))
+                                },
+                                contentDescription = { style.name },
+                                enabled = state.isPlusUser,
+                                accents = listOf(
+                                    TonalPalette.from(scheme.primary),
+                                    TonalPalette.from(scheme.tertiary),
+                                    TonalPalette.from(scheme.secondary)
+                                )
+                            )
+                        }
                     }
                 }
             }

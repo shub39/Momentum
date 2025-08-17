@@ -30,7 +30,7 @@ fun PaywallPage(
     }
 
     Box(modifier = modifier) {
-        if (!isProUser) {
+        if (!isPlusUser) {
             Paywall(paywallOptions)
         } else {
             CustomerCenter(onDismiss = onDismissRequest)
