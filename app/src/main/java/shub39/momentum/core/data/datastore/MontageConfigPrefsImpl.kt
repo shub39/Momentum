@@ -36,6 +36,7 @@ class MontageConfigPrefsImpl(
         private val showMessageKey = booleanPreferencesKey("montage_show_message")
         private val fontKey = stringPreferencesKey("montage_font")
         private val dateStyleKey = stringPreferencesKey("montage_date_style")
+        private val stabilizeFacesKey = booleanPreferencesKey("stabilize_faces")
     }
 
     override fun getFpiFlow(): Flow<Int> = dataStore.data
@@ -107,5 +108,14 @@ class MontageConfigPrefsImpl(
 
     override suspend fun setDateStyle(style: DateStyle) {
         dataStore.edit { it[dateStyleKey] = style.name }
+    }
+
+    override fun getStabilizeFacesFlow(): Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[stabilizeFacesKey] ?: true
+        }
+
+    override suspend fun setStabilizeFaces(pref: Boolean) {
+        dataStore.edit { it[stabilizeFacesKey] = pref }
     }
 }

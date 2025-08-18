@@ -362,6 +362,38 @@ fun MontageEditSheet(
                 }
             }
 
+            // stabilize faces
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.stabilize_faces),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Switch(
+                        checked = state.montageConfig.stabilizeFaces,
+                        enabled = state.isPlusUser,
+                        onCheckedChange = {
+                            if (state.isPlusUser) {
+                                onAction(
+                                    ProjectAction.OnEditMontageConfig(
+                                        state.montageConfig.copy(stabilizeFaces = it)
+                                    )
+                                )
+                            } else {
+                                onAction(ProjectAction.OnShowPaywall)
+                            }
+                        }
+                    )
+                }
+            }
+
             // show watermark
             item {
                 Row(

@@ -19,5 +19,6 @@ data class MontageConfig(
     val showDate: Boolean = true,
     val showMessage: Boolean = true,
     val font: Fonts = Fonts.FIGTREE,
-    val dateStyle: DateStyle = DateStyle.FULL
+    val dateStyle: DateStyle = DateStyle.FULL,
+    val stabilizeFaces: Boolean = false
 )

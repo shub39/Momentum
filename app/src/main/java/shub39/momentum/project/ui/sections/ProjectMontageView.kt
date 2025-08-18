@@ -1,7 +1,12 @@
 package shub39.momentum.project.ui.sections
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -15,6 +20,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -139,7 +146,35 @@ fun ProjectMontageView(
                     }
                 }
 
-                MontageState.Processing -> LoadingIndicator()
+                is MontageState.Processing -> {
+                    Column(
+                        modifier = Modifier
+                            .padding(32.dp)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val animatedProgress by animateFloatAsState(
+                            targetValue = state.montage.progress
+                        )
+
+                        LoadingIndicator()
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        LinearWavyProgressIndicator(
+                            progress = { animatedProgress }
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = state.montage.status,
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
 
             HorizontalFloatingToolbar(

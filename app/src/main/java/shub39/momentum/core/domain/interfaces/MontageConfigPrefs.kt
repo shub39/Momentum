@@ -35,4 +35,7 @@ interface MontageConfigPrefs {
 
     fun getDateStyleFlow(): Flow<DateStyle>
     suspend fun setDateStyle(style: DateStyle)
+
+    fun getStabilizeFacesFlow(): Flow<Boolean>
+    suspend fun setStabilizeFaces(pref: Boolean)
 }

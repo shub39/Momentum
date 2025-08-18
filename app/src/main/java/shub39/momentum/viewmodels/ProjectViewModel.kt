@@ -14,6 +14,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -80,29 +81,25 @@ class ProjectViewModel(
             }
 
             is ProjectAction.OnCreateMontage -> viewModelScope.launch {
-                _state.update { it.copy(montage = MontageState.Processing) }
-
-                val file = createTempFile(suffix = ".mp4")
-
-                Log.d("ProjectViewModel", "Starting montage creation")
-
-                when (val result = montageMaker.createMontage(
+                montageMaker.createMontageFlow(
                     days = action.days,
-                    file = file.toFile(),
-                    montageConfig = _state.value.montageConfig
-                )) {
-                    is MontageState.Success -> {
-                        _exoPlayer.value?.apply {
-                            clearMediaItems()
-                            setMediaItem(MediaItem.fromUri(result.file.toUri()))
-                            prepare()
+                    file = createTempFile(suffix = ".mp4").toFile(),
+                    config = _state.value.montageConfig
+                )
+                    .flowOn(Dispatchers.Default)
+                    .collect { state ->
+                        Log.d("ProjectViewModel", "Montage state: $state")
+
+                        if (state is MontageState.Success) {
+                            _exoPlayer.value?.apply {
+                                clearMediaItems()
+                                setMediaItem(MediaItem.fromUri(state.file.toUri()))
+                                prepare()
+                            }
                         }
 
-                        _state.update { it.copy(montage = result) }
+                        _state.update { it.copy(montage = state) }
                     }
-
-                    else -> _state.update { it.copy(montage = result) }
-                }
             }
 
             ProjectAction.OnUpdateDays -> refreshDays()
@@ -112,7 +109,7 @@ class ProjectViewModel(
             ProjectAction.OnClearMontageState -> {
                 _exoPlayer.value?.release()
                 _exoPlayer.update { null }
-                _state.update { it.copy(montage = MontageState.Processing) }
+                _state.update { it.copy(montage = MontageState.Processing()) }
             }
 
             is ProjectAction.OnPlayerAction -> {
@@ -152,6 +149,7 @@ class ProjectViewModel(
                     montageConfigPrefs.setDateStyle(action.config.dateStyle)
 
                     montageConfigPrefs.setVideoQuality(action.config.videoQuality)
+                    montageConfigPrefs.setStabilizeFaces(action.config.stabilizeFaces)
                     montageConfigPrefs.setBackgroundColor(action.config.backgroundColor)
                     montageConfigPrefs.setWaterMark(action.config.waterMark)
                 }
@@ -258,6 +256,13 @@ class ProjectViewModel(
             .onEach { pref ->
                 _state.update {
                     it.copy(montageConfig = it.montageConfig.copy(dateStyle = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getStabilizeFacesFlow()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(stabilizeFaces = pref))
                 }
             }.launchIn(this)
     }

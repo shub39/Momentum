@@ -9,8 +9,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1006
-val appVersionName = "1.0.06"
+val appVersionCode = 1007
+val appVersionName = "1.0.07"
 val appNameSpace = "shub39.momentum"
 
 android {
@@ -123,6 +123,8 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
+
+    implementation(libs.face.detection)
 }
 
 ksp {

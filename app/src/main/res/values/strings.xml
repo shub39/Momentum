@@ -60,6 +60,9 @@
     <string name="foss_desc">All features are unlocked. This variant of the app does not support In-App Purchases. If this app added value to your life, Support me by donating on</string>
     <string name="pro">Momentum Plus</string>
     <string name="unlock_more_pro">Unlock more with Plus</string>
+    <string name="processing_images">Processing Images</string>
+    <string name="assembling_video">Assembling Video</string>
+    <string name="stabilize_faces">Stabilize Faces</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>
         <item quantity="other">Add %d more days</item>

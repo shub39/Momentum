@@ -11,9 +11,15 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.google.android.gms.tasks.Tasks
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetector
+import com.google.mlkit.vision.face.FaceDetectorOptions
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.annotation.Single
+import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.MontageConfig
 import shub39.momentum.core.domain.enums.DateStyle.Companion.toFormatStyle
@@ -30,34 +36,52 @@ import java.time.format.DateTimeFormatter
 class MontageMakerImpl(
     private val context: Context
 ) : MontageMaker {
-    override suspend fun createMontage(
+
+    override suspend fun createMontageFlow(
         days: List<Day>,
         file: File,
-        montageConfig: MontageConfig
-    ): MontageState = withContext(Dispatchers.Default) {
+        config: MontageConfig
+    ): Flow<MontageState> = flow {
         val muxer = Muxer(context, file)
-        muxer.setMuxerConfig(muxer.getMuxerConfig().update(montageConfig))
+        muxer.setMuxerConfig(muxer.getMuxerConfig().update(config))
 
-        val images = daysToBitmaps(days.sortedBy { it.date }, montageConfig)
+        val detectorOptions = FaceDetectorOptions.Builder()
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+            .build()
+        val faceDetector = FaceDetection.getClient(detectorOptions)
 
-        return@withContext when (val result = muxer.muxAsync(images)) {
+        val sortedDays = days.sortedBy { it.date }
+        val total = sortedDays.size
+
+        val images = mutableListOf<Bitmap>()
+
+        sortedDays.forEachIndexed { index, day ->
+            val bitmap = processDay(day, config, faceDetector)
+            if (bitmap != null) images.add(bitmap)
+
+            val fraction = (index + 1).toFloat() / total
+            val progress = 0.8f * fraction
+            emit(MontageState.Processing(progress, context.getString(R.string.processing_images)))
+        }
+
+        emit(MontageState.Processing(0.9f, context.getString(R.string.assembling_video)))
+
+        when (val result = muxer.muxAsync(images)) {
             is MuxingResult.MuxingError -> {
-                MontageState.Error(
-                    message = result.message,
-                    exception = result.exception
-                )
+                emit(MontageState.Error(result.message, result.exception))
             }
-
             is MuxingResult.MuxingSuccess -> {
-                MontageState.Success(result.file, montageConfig)
+                emit(MontageState.Processing(1f, "Done"))
+                emit(MontageState.Success(result.file, config))
             }
         }
     }
 
-    private fun daysToBitmaps(
-        days: List<Day>,
-        config: MontageConfig
-    ): List<Bitmap> {
+    private fun processDay(
+        day: Day,
+        config: MontageConfig,
+        faceDetector: FaceDetector
+    ): Bitmap? {
         val dimensions = config.videoQuality.toDimensions()
 
         val paint = Paint().apply {
@@ -71,64 +95,106 @@ class MontageMakerImpl(
         }
 
         val contentResolver = context.contentResolver
-        return days.mapNotNull { day ->
-            try {
-                val uri = day.image.toUri()
-                contentResolver.openInputStream(uri)?.use { inputStream ->
-                    val originalBitmap = BitmapFactory.decodeStream(inputStream)
-                    if (originalBitmap != null) {
-                        val canvasBitmap = createBitmap(dimensions.first, dimensions.second)
-                        val canvas = Canvas(canvasBitmap)
-                        canvas.drawColor(config.backgroundColor.toArgb())
 
+        return try {
+            val uri = day.image.toUri()
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                val originalBitmap = BitmapFactory.decodeStream(inputStream)
+                if (originalBitmap != null) {
+                    val canvasBitmap = createBitmap(dimensions.first, dimensions.second)
+                    val canvas = Canvas(canvasBitmap)
+                    canvas.drawColor(config.backgroundColor.toArgb())
+
+                    // --- Face stabilization ---
+                    val dstRect: RectF = if (config.stabilizeFaces) {
+                        val image = InputImage.fromBitmap(originalBitmap, 0)
+                        val faces = Tasks.await(faceDetector.process(image))
+
+                        if (faces.isNotEmpty()) {
+                            val face = faces.maxByOrNull {
+                                it.boundingBox.width() * it.boundingBox.height()
+                            }!!
+                            val faceBox = face.boundingBox
+                            val targetFaceHeight = dimensions.second * 0.3f
+                            val scale = targetFaceHeight / faceBox.height().toFloat()
+
+                            val faceCenterX = faceBox.centerX() * scale
+                            val faceCenterY = faceBox.centerY() * scale
+
+                            val targetCenterX = dimensions.first / 2f
+                            val targetCenterY = dimensions.second / 2f
+
+                            val offsetX = targetCenterX - faceCenterX
+                            val offsetY = targetCenterY - faceCenterY
+
+                            RectF(
+                                offsetX,
+                                offsetY,
+                                offsetX + originalBitmap.width * scale,
+                                offsetY + originalBitmap.height * scale
+                            )
+                        } else {
+                            // fallback
+                            val scale = minOf(
+                                dimensions.first.toFloat() / originalBitmap.width,
+                                dimensions.second.toFloat() / originalBitmap.height
+                            )
+                            val left = (dimensions.first - originalBitmap.width * scale) / 2f
+                            val top = (dimensions.second - originalBitmap.height * scale) / 2f
+                            RectF(
+                                left,
+                                top,
+                                left + originalBitmap.width * scale,
+                                top + originalBitmap.height * scale
+                            )
+                        }
+                    } else {
                         val scale = minOf(
                             dimensions.first.toFloat() / originalBitmap.width,
                             dimensions.second.toFloat() / originalBitmap.height
                         )
+                        val left = (dimensions.first - originalBitmap.width * scale) / 2f
+                        val top = (dimensions.second - originalBitmap.height * scale) / 2f
+                        RectF(
+                            left,
+                            top,
+                            left + originalBitmap.width * scale,
+                            top + originalBitmap.height * scale
+                        )
+                    }
 
-                        val scaledWidth = originalBitmap.width * scale
-                        val scaledHeight = originalBitmap.height * scale
+                    canvas.drawBitmap(originalBitmap, null, dstRect, null)
 
-                        val left = ((dimensions.first - scaledWidth) / 2f)
-                        val top = ((dimensions.second - scaledHeight) / 2f)
+                    // --- Watermark, date, message ---
+                    if (config.waterMark) {
+                        val watermark = "Momentum"
+                        val paddingX = dimensions.first * 0.05f
+                        val paddingY = dimensions.second * 0.05f + paint.descent() + paint.textSize
+                        canvas.drawText(watermark, paddingX, paddingY, paint)
+                    }
+                    if (config.showDate) {
+                        val date = LocalDate.ofEpochDay(day.date).format(
+                            DateTimeFormatter.ofLocalizedDate(config.dateStyle.toFormatStyle())
+                        )
+                        val paddingX = dimensions.first * 0.05f
+                        val paddingY =
+                            dimensions.second - dimensions.second * 0.05f - paint.descent()
+                        canvas.drawText(date, paddingX, paddingY, paint)
+                    }
+                    if (config.showMessage && !day.comment.isNullOrBlank()) {
+                        val message = day.comment
+                        val paddingX = dimensions.first * 0.05f
+                        val paddingY =
+                            dimensions.second - dimensions.second * 0.12f - paint.descent()
+                        canvas.drawText(message, paddingX, paddingY, paint)
+                    }
 
-                        val dstRect = RectF(left, top, left + scaledWidth, top + scaledHeight)
-                        canvas.drawBitmap(originalBitmap, null, dstRect, null)
-
-                        if (config.waterMark) {
-                            val watermark = "Momentum"
-                            val paddingX = dimensions.first * 0.05f
-                            val paddingY =
-                                dimensions.second * 0.05f + paint.descent() + paint.textSize // Adjusted padding
-                            canvas.drawText(watermark, paddingX, paddingY, paint)
-                        }
-
-                        if (config.showDate) {
-                            val date = LocalDate.ofEpochDay(day.date).format(
-                                DateTimeFormatter.ofLocalizedDate(config.dateStyle.toFormatStyle())
-                            )
-                            val paddingX = dimensions.first * 0.05f
-                            val paddingY =
-                                dimensions.second - dimensions.second * 0.05f - paint.descent()
-                            canvas.drawText(date, paddingX, paddingY, paint)
-                        }
-
-                        if (config.showMessage && !day.comment.isNullOrBlank()) {
-                            val message = day.comment
-                            val paddingX = dimensions.first * 0.05f
-                            val paddingY =
-                                dimensions.second - dimensions.second * 0.12f - paint.descent()
-
-                            canvas.drawText(message, paddingX, paddingY, paint)
-                        }
-
-                        canvasBitmap
-                    } else null
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
+                    canvasBitmap
+                } else null
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 }
