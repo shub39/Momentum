@@ -39,7 +39,6 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", vers
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 
 # Purchases
-face-detection = { module = "com.google.mlkit:face-detection", version.ref = "faceDetection" }
 purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "purchases" }
 purchases-ui = { module = "com.revenuecat.purchases:purchases-ui", version.ref = "purchases" }
 
@@ -59,6 +58,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
+face-detection = { module = "com.google.mlkit:face-detection", version.ref = "faceDetection" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
