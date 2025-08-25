@@ -9,8 +9,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1007
-val appVersionName = "1.0.07"
+val appVersionCode = 1008
+val appVersionName = "1.0.08"
 val appNameSpace = "shub39.momentum"
 
 android {
@@ -31,7 +31,7 @@ android {
         abi {
             isEnable = true
             reset()
-            include("arm64-v8a")
+            include("arm64-v8a", "x86_64")
             isUniversalApk = false
         }
     }
