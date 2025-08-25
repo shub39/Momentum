@@ -46,7 +46,8 @@ import java.time.format.FormatStyle
 @Composable
 fun AlarmCard(
     project: Project,
-    onAction: (ProjectAction) -> Unit
+    onAction: (ProjectAction) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
@@ -59,7 +60,7 @@ fun AlarmCard(
     }
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .animateContentSize()
             .fillMaxWidth(),
         shape = MaterialTheme.shapes.large

@@ -45,6 +45,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialShapes.Companion.VerySunny
 import androidx.compose.material3.MaterialTheme
@@ -80,6 +81,7 @@ import com.materialkolor.PaletteStyle
 import com.skydoves.landscapist.coil3.CoilImage
 import kotlinx.coroutines.delay
 import shub39.momentum.R
+import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
@@ -164,7 +166,7 @@ fun ProjectDetails(
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -173,6 +175,7 @@ fun ProjectDetails(
                     OutlinedCard(
                         modifier = Modifier
                             .animateContentSize()
+                            .padding(horizontal = 16.dp)
                             .fillMaxWidth(),
                         shape = MaterialTheme.shapes.large
                     ) {
@@ -307,6 +310,7 @@ fun ProjectDetails(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
                             .clickable(enabled = canCreateMontage) {
                                 onNavigateToMontage()
                             },
@@ -401,7 +405,13 @@ fun ProjectDetails(
                 }
 
                 // reminder options
-                item { AlarmCard(state.project, onAction) }
+                item {
+                    AlarmCard(
+                        project = state.project,
+                        onAction = onAction,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
 
                 item { HorizontalDivider() }
 
@@ -429,26 +439,21 @@ fun ProjectDetails(
                     }
                 } else {
                     stickyHeader {
-                        Row(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.background)
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = stringResource(R.string.favourites),
-                                style = MaterialTheme.typography.displaySmall
-                            )
-
-                            Icon(
-                                imageVector = Icons.Default.Favorite,
-                                contentDescription = "Favorites",
-                                modifier = Modifier
-                                    .padding(vertical = 16.dp)
-                                    .size(40.dp)
-                            )
-                        }
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = stringResource(R.string.favourites),
+                                    style = MaterialTheme.typography.titleLargeEmphasized
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = "Favorites",
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+                        )
                     }
 
                     items(state.days.filter { it.isFavorite }, key = { it.id }) { day ->
@@ -456,7 +461,8 @@ fun ProjectDetails(
                             day = day,
                             onClick = {
                                 onAction(ProjectAction.OnUpdateSelectedDay(day.date))
-                            }
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
                 }
@@ -612,16 +618,16 @@ private fun Preview() {
                     title = "Sample Project",
                     description = "A sample project",
                 ),
-//                days = (0..3).map {
-//                    Day(
-//                        id = it.toLong(),
-//                        projectId = 1,
-//                        image = "",
-//                        comment = it.toString(),
-//                        date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
-//                        isFavorite = true
-//                    )
-//                }
+                days = (0..3).map {
+                    Day(
+                        id = it.toLong(),
+                        projectId = 1,
+                        image = "",
+                        comment = it.toString(),
+                        date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
+                        isFavorite = true
+                    )
+                }
             )
         )
     }
