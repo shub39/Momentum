@@ -43,7 +43,6 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                     reminderNotification(context, project)
                 }
 
-                scheduler.cancel(project)
                 scheduler.schedule(project)
             }
         }
