@@ -26,8 +26,11 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
     val receiverScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onReceive(context: Context, intent: Intent?) {
+        Log.d(TAG, "Received Intent")
         if (intent != null && intent.action == AlarmSchedulerImpl.ACTION) {
             receiverScope.launch {
+                Log.d(TAG, "Processing Notification")
+
                 val projectRepo = get<ProjectRepository>()
                 val scheduler = get<AlarmScheduler>()
 
@@ -35,12 +38,12 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                 if (projectId < 0L) return@launch
 
                 val project = projectRepo.getProjectById(projectId) ?: return@launch
-                val lastDay = projectRepo.getLastCompletedDay(projectId) ?: return@launch
+                val lastDay = projectRepo.getLastCompletedDay(projectId)
 
-                if (LocalDate.ofEpochDay(lastDay.date) == LocalDate.now()) {
-                    Log.d(TAG, "Already done")
-                } else {
+                if (lastDay == null || LocalDate.ofEpochDay(lastDay.date) == LocalDate.now()) {
                     reminderNotification(context, project)
+                } else {
+                    Log.d(TAG, "Already done")
                 }
 
                 scheduler.schedule(project)

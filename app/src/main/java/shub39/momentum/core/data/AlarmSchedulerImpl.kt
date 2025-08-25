@@ -29,12 +29,15 @@ class AlarmSchedulerImpl(
         if (project.alarm == null) return
 
         val time = LocalTime.ofSecondOfDay(project.alarm.time)
+        val now = LocalDateTime.now()
+        val today = now.toLocalDate()
 
-        val triggerAtMillis = LocalDateTime.now()
-            .withHour(time.hour)
-            .withMinute(time.minute)
+        val scheduledDate = if (time.isAfter(now.toLocalTime())) today else today.plusDays(1)
+
+        val nextDateTime = LocalDateTime.of(scheduledDate, time)
             .atZone(ZoneId.systemDefault())
-            .toEpochSecond()
+
+        cancel(project)
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             action = ACTION
@@ -50,11 +53,11 @@ class AlarmSchedulerImpl(
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            triggerAtMillis,
+            nextDateTime.toEpochSecond() * 1000,
             pendingIntent
         )
 
-        Log.d(TAG, "Scheduled alarm for ${project.title} at $time (epoch=$triggerAtMillis)")
+        Log.d(TAG, "Scheduled alarm for ${project.title} at $nextDateTime)")
     }
 
     override fun cancel(project: Project) {
