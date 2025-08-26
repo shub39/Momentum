@@ -17,7 +17,7 @@
 
 ## Features ✨
 
-> - [x] Daily reminders
 >- [x] Montage maker with customisations
 >- [x] Auto face stabilisation
 >- [x] Calendar View
+>- [x] Daily reminders
