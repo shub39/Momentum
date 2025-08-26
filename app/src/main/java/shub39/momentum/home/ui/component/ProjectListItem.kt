@@ -37,11 +37,13 @@ import shub39.momentum.core.domain.data_classes.ProjectListData
 @Composable
 fun ProjectListItem(
     projectListData: ProjectListData,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.large,
+        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
             contentColor = MaterialTheme.colorScheme.onSurface

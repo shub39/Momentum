@@ -81,6 +81,7 @@ import com.materialkolor.PaletteStyle
 import com.skydoves.landscapist.coil3.CoilImage
 import kotlinx.coroutines.delay
 import shub39.momentum.R
+import shub39.momentum.core.domain.data_classes.AlarmData
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.Theme
@@ -308,12 +309,14 @@ fun ProjectDetails(
                 item {
                     val canCreateMontage = state.days.size >= 5
                     Card(
+                        onClick = {
+                            if (canCreateMontage) {
+                                onNavigateToMontage()
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .clickable(enabled = canCreateMontage) {
-                                onNavigateToMontage()
-                            },
+                            .padding(horizontal = 16.dp),
                         shape = MaterialTheme.shapes.large,
                         colors = if (canCreateMontage) {
                             CardDefaults.cardColors(
@@ -617,6 +620,7 @@ private fun Preview() {
                     id = 1,
                     title = "Sample Project",
                     description = "A sample project",
+                    alarm = AlarmData(1L, emptyList())
                 ),
                 days = (0..3).map {
                     Day(

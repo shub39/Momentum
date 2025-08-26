@@ -6,6 +6,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -59,10 +61,29 @@ fun AlarmCard(
         else Toast.makeText(context, "Notification permission denied", Toast.LENGTH_SHORT).show()
     }
 
+    val contentColor by animateColorAsState(
+        targetValue = if (project.alarm != null) {
+            MaterialTheme.colorScheme.onSecondaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        }
+    )
+    val containerColor by animateColorAsState(
+        targetValue = if (project.alarm != null) {
+            MaterialTheme.colorScheme.secondaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceContainer
+        }
+    )
+
     Card(
         modifier = modifier
             .animateContentSize()
             .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            contentColor = contentColor,
+            containerColor = containerColor
+        ),
         shape = MaterialTheme.shapes.large
     ) {
         Row(

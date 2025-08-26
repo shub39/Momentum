@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Landscape
+import androidx.compose.material.icons.rounded.Landscape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +22,7 @@ import shub39.momentum.R
 
 @Composable
 fun Empty(
-    imageVector: ImageVector = Icons.Default.Landscape
+    imageVector: ImageVector = Icons.Rounded.Landscape
 ) {
     Column(
         modifier = Modifier
