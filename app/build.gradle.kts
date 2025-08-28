@@ -9,8 +9,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1100
-val appVersionName = "1.1.0"
+val appVersionCode = 1101
+val appVersionName = "1.1.1"
 val appNameSpace = "shub39.momentum"
 
 android {

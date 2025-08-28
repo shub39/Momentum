@@ -8,6 +8,9 @@
 > [<img src="https://ziadoua.github.io/m3-Markdown-Badges/badges/AndroidStudio/androidstudio3.svg">]()
 > [<img src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Kotlin/kotlin1.svg">]()
 
+> ### Get On
+> [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=shub39.momentum.play&pcampaignid=web_share)
+
 ## Screenshots 📱
 
 | ![Image 1](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![Image 2](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) |
@@ -22,7 +25,6 @@
 >- [x] Daily reminders
 
 ## Motivation 💭
-
 I always wanted a simple app to make making montages
 like [this](https://www.youtube.com/watch?v=65nfbW-27ps&t=21s&pp=ygURYWdlIDEyIHRvIG1hcnJpZWQ%3D)
 effortless and convenient. This has been brewing in my mind
@@ -31,6 +33,5 @@ This app is offline first and privacy friendly,
 everything stays on your device.
 
 ## References and Inspiration 💡
-
 - [Agelapse](https://github.com/hugocornellier/agelapse) by Hugo Cornellier
 - [Daily You](https://github.com/Demizo/Daily_You)

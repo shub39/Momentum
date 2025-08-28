@@ -112,7 +112,7 @@ class MontageConfigPrefsImpl(
 
     override fun getStabilizeFacesFlow(): Flow<Boolean> = dataStore.data
         .map { preferences ->
-            preferences[stabilizeFacesKey] ?: true
+            preferences[stabilizeFacesKey] ?: false
         }
 
     override suspend fun setStabilizeFaces(pref: Boolean) {
