@@ -40,7 +40,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                 val project = projectRepo.getProjectById(projectId) ?: return@launch
                 val lastDay = projectRepo.getLastCompletedDay(projectId)
 
-                if (lastDay == null || LocalDate.ofEpochDay(lastDay.date) == LocalDate.now()) {
+                if (lastDay == null || LocalDate.ofEpochDay(lastDay.date) != LocalDate.now()) {
                     reminderNotification(context, project)
                 } else {
                     Log.d(TAG, "Already done")
