@@ -8,8 +8,8 @@ import shub39.momentum.core.domain.enums.VideoQuality
 
 data class MontageConfig(
     val mimeType: String = MediaFormat.MIMETYPE_VIDEO_AVC,
-    val bitrate: Int = 1500000,
-    val iFrameInterval: Int = 10,
+    val bitrate: Int = 5_000_000,
+    val iFrameInterval: Int = 1,
 
     val framesPerImage: Int = 1,
     val framesPerSecond: Float = 1f,

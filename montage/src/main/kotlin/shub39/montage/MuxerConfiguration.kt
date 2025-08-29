@@ -18,8 +18,8 @@ data class MuxerConfiguration(
     val mimeType: String = MediaFormat.MIMETYPE_VIDEO_AVC,
     val framesPerImage: Int = 1,
     val framesPerSecond: Float = 30f,
-    val bitrate: Int = 1_500_000,
-    val iFrameInterval: Int = 10,
+    val bitrate: Int = 5_000_000,
+    val iFrameInterval: Int = 1,
     val animation: SlideAnimation = SlideAnimation.SLIDE_LEFT,
 ) {
     fun createFrameMuxer(): FrameMuxer = Mp4FrameMuxer(file.absolutePath, framesPerSecond)
