@@ -1,4 +1,4 @@
-package shub39.momentum.billing
+package shub39.momentum.billing.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -32,24 +32,24 @@ fun PaywallPage(
     Box(modifier = modifier) {
         if (!isPlusUser) {
             Paywall(paywallOptions)
+
+            IconButton(
+                onClick = onDismissRequest,
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color(0xFF282828),
+                    containerColor = Color(0xfff2e3b1)
+                ),
+                modifier = Modifier
+                    .padding(vertical = 48.dp, horizontal = 16.dp)
+                    .align(Alignment.TopEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close"
+                )
+            }
         } else {
             CustomerCenter(onDismiss = onDismissRequest)
-        }
-
-        IconButton(
-            onClick = onDismissRequest,
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = Color(0xFF282828),
-                containerColor = Color(0xfff2e3b1)
-            ),
-            modifier = Modifier
-                .padding(vertical = 48.dp, horizontal = 16.dp)
-                .align(Alignment.TopEnd)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Close"
-            )
         }
     }
 }

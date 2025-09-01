@@ -1,11 +1,13 @@
-package shub39.momentum.billing
+package shub39.momentum.billing.data
 
-import org.koin.core.annotation.Single
 import com.revenuecat.purchases.CacheFetchPolicy
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.awaitCustomerInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.core.annotation.Single
+import shub39.momentum.billing.domain.BillingHandler
+import shub39.momentum.billing.domain.SubscriptionResult
 
 @Single(binds = [BillingHandler::class])
 class BillingHandlerImpl : BillingHandler {

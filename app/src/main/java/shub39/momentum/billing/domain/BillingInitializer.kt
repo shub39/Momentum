@@ -1,4 +1,4 @@
-package shub39.momentum.billing
+package shub39.momentum.billing.domain
 
 import android.content.Context
 

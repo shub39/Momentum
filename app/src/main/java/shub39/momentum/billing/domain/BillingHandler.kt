@@ -1,4 +1,4 @@
-package shub39.momentum.billing
+package shub39.momentum.billing.domain
 
 interface BillingHandler {
     suspend fun isPlusUser(): Boolean

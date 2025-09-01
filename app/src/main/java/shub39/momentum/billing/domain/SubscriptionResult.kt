@@ -1,4 +1,4 @@
-package shub39.momentum.billing
+package shub39.momentum.billing.domain
 
 sealed interface SubscriptionResult {
     data object Subscribed : SubscriptionResult

@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import shub39.momentum.billing.BillingHandler
-import shub39.momentum.billing.SubscriptionResult
+import shub39.momentum.billing.domain.BillingHandler
+import shub39.momentum.billing.domain.SubscriptionResult
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
 import shub39.momentum.settings.SettingsAction
 import shub39.momentum.settings.SettingsState
