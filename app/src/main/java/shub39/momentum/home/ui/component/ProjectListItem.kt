@@ -27,11 +27,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
+import shub39.momentum.core.domain.data_classes.Day
+import shub39.momentum.core.domain.data_classes.Project
 import shub39.momentum.core.domain.data_classes.ProjectListData
+import shub39.momentum.core.domain.data_classes.Theme
+import shub39.momentum.core.domain.enums.AppTheme
+import shub39.momentum.core.presentation.MomentumTheme
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,8 +104,9 @@ fun ProjectListItem(
                 Column {
                     Text(
                         text = projectListData.project.title,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
                     )
 
                     if (projectListData.project.description.isNotBlank()) {
@@ -118,5 +126,36 @@ fun ProjectListItem(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    MomentumTheme(
+        theme = Theme(
+            appTheme = AppTheme.DARK
+        )
+    ) {
+        ProjectListItem(
+            projectListData = ProjectListData(
+                project = Project(
+                    id = 1,
+                    title = "Project 1",
+                    description = "Description for project 1"
+                ),
+                last10Days = (0..10).map { it1 ->
+                    Day(
+                        id = it1.toLong(),
+                        projectId = it1.toLong(),
+                        image = "",
+                        comment = "",
+                        date = LocalDate.now().toEpochDay(),
+                        isFavorite = false
+                    )
+                }
+            ),
+            onClick = {}
+        )
     }
 }

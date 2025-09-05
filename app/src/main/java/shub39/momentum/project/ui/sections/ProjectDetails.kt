@@ -1,44 +1,25 @@
 package shub39.momentum.project.ui.sections
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
@@ -47,15 +28,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LoadingIndicator
-import androidx.compose.material3.MaterialShapes.Companion.VerySunny
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,21 +42,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.materialkolor.PaletteStyle
-import com.skydoves.landscapist.coil3.CoilImage
 import kotlinx.coroutines.delay
 import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.AlarmData
@@ -91,7 +62,9 @@ import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
 import shub39.momentum.project.ui.component.AlarmCard
+import shub39.momentum.project.ui.component.CreateMontageButton
 import shub39.momentum.project.ui.component.FavDayCard
+import shub39.momentum.project.ui.component.WeeklyHorizontalCalendar
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -173,238 +146,21 @@ fun ProjectDetails(
             ) {
                 // weekly horizontal calendar
                 item {
-                    OutlinedCard(
-                        modifier = Modifier
-                            .animateContentSize()
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth(),
-                        shape = MaterialTheme.shapes.large
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.calendar),
-                                style = MaterialTheme.typography.titleLarge
-                            )
-
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            IconButton(
-                                onClick = onNavigateToCalendar
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                    contentDescription = "Calendar"
-                                )
-                            }
-                        }
-
-                        val today = LocalDate.now()
-                        WeekCalendar(
-                            state = weekState,
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                            dayContent = { weekDay ->
-                                val day =
-                                    state.days.find { it.date == weekDay.date.toEpochDay() }
-                                val possibleDay = weekDay.date <= today
-
-                                Box(
-                                    modifier = Modifier
-                                        .aspectRatio(1f)
-                                        .padding(2.dp)
-                                        .clip(CircleShape)
-                                        .clickable(enabled = possibleDay) {
-                                            onAction(ProjectAction.OnUpdateSelectedDay(weekDay.date.toEpochDay()))
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    day?.let {
-                                        CoilImage(
-                                            imageModel = { it.image },
-                                            failure = {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .matchParentSize()
-                                                        .border(
-                                                            width = 2.dp,
-                                                            color = MaterialTheme.colorScheme.error,
-                                                            shape = CircleShape
-                                                        )
-                                                )
-                                            },
-                                            modifier = Modifier
-                                                .matchParentSize()
-                                                .blur(2.dp)
-                                                .clip(CircleShape)
-                                        )
-
-                                        Box(
-                                            modifier = Modifier
-                                                .matchParentSize()
-                                                .background(
-                                                    color = MaterialTheme.colorScheme.background.copy(
-                                                        alpha = 0.5f
-                                                    ),
-                                                    shape = CircleShape
-                                                )
-                                        )
-                                    }
-
-                                    Column(
-                                        modifier = Modifier.padding(4.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = weekDay.date.dayOfMonth.toString(),
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = if (possibleDay) {
-                                                MaterialTheme.colorScheme.onBackground
-                                            } else {
-                                                MaterialTheme.colorScheme.onBackground.copy(
-                                                    alpha = 0.5f
-                                                )
-                                            },
-                                            fontWeight = FontWeight.Bold,
-                                        )
-
-                                        Text(
-                                            text = weekDay.date.dayOfWeek.toString().take(3),
-                                            color = if (possibleDay) {
-                                                MaterialTheme.colorScheme.onBackground
-                                            } else {
-                                                MaterialTheme.colorScheme.onBackground.copy(
-                                                    alpha = 0.5f
-                                                )
-                                            },
-                                            style = MaterialTheme.typography.bodySmall
-                                        )
-                                    }
-                                }
-                            }
-                        )
-
-                        if (showGuide) {
-                            Row(
-                                modifier = Modifier.padding(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    bottom = 16.dp
-                                )
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.guide_text),
-                                    modifier = Modifier.fillMaxWidth(),
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
-                    }
+                    WeeklyHorizontalCalendar(
+                        onNavigateToCalendar = onNavigateToCalendar,
+                        weekState = weekState,
+                        days = state.days,
+                        onAction = onAction,
+                        showGuide = showGuide
+                    )
                 }
 
                 // montage wait/ creator options
                 item {
-                    val canCreateMontage = state.days.size >= 5
-                    Card(
-                        onClick = {
-                            if (canCreateMontage) {
-                                onNavigateToMontage()
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        shape = MaterialTheme.shapes.large,
-                        colors = if (canCreateMontage) {
-                            CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            )
-                        } else {
-                            CardDefaults.cardColors()
-                        }
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                        ) {
-                            Column {
-                                Text(
-                                    text = stringResource(R.string.montage),
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                if (!canCreateMontage) {
-                                    val daysLeft = 5 - state.days.size
-                                    Text(
-                                        text = pluralStringResource(
-                                            id = R.plurals.add_more_days,
-                                            count = daysLeft,
-                                            formatArgs = arrayOf(daysLeft)
-                                        )
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            Box(
-                                modifier = Modifier.wrapContentSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (canCreateMontage) {
-                                    val infiniteTransition =
-                                        rememberInfiniteTransition(label = "rotation")
-
-                                    val rotation by infiniteTransition.animateFloat(
-                                        initialValue = 0f,
-                                        targetValue = 360f,
-                                        animationSpec = infiniteRepeatable(
-                                            animation = tween(
-                                                durationMillis = 2000,
-                                                easing = LinearEasing
-                                            ),
-                                            repeatMode = RepeatMode.Restart
-                                        ),
-                                        label = "infinite rotation"
-                                    )
-
-                                    Box(
-                                        modifier = Modifier
-                                            .size(50.dp)
-                                            .graphicsLayer {
-                                                rotationZ = rotation
-                                            }
-                                            .background(
-                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                shape = VerySunny.toShape()
-                                            )
-                                    )
-
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                        contentDescription = "Create Montage",
-                                        tint = MaterialTheme.colorScheme.primaryContainer
-                                    )
-                                } else {
-                                    CircularWavyProgressIndicator(
-                                        progress = { state.days.size.toFloat() / 5 },
-                                        modifier = Modifier.size(50.dp)
-                                    )
-
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                        contentDescription = "Create Montage"
-                                    )
-                                }
-                            }
-
-                        }
-                    }
+                    CreateMontageButton(
+                        daysSize = state.days.size,
+                        onNavigateToMontage = onNavigateToMontage
+                    )
                 }
 
                 // reminder options
@@ -462,9 +218,7 @@ fun ProjectDetails(
                     items(state.days.filter { it.isFavorite }, key = { it.id }) { day ->
                         FavDayCard(
                             day = day,
-                            onClick = {
-                                onAction(ProjectAction.OnUpdateSelectedDay(day.date))
-                            },
+                            onClick = { onAction(ProjectAction.OnUpdateSelectedDay(day.date)) },
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
