@@ -1,6 +1,5 @@
 package shub39.momentum.project.ui.component
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -43,14 +42,12 @@ fun WeeklyHorizontalCalendar(
     weekState: WeekCalendarState,
     days: List<Day>,
     onAction: (ProjectAction) -> Unit,
-    showGuide: Boolean
+    showGuide: Boolean,
+    modifier: Modifier = Modifier
 ) {
     OutlinedCard(
-        modifier = Modifier
-            .animateContentSize()
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth(),
-        shape = MaterialTheme.shapes.large
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -58,7 +55,9 @@ fun WeeklyHorizontalCalendar(
         ) {
             Text(
                 text = stringResource(R.string.calendar),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
 
             Spacer(modifier = Modifier.weight(1f))

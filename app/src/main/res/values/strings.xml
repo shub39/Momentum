@@ -67,4 +67,5 @@
         <item quantity="one">Add %d more day</item>
         <item quantity="other">Add %d more days</item>
     </plurals>
+    <string name="days">Days</string>
 </resources>

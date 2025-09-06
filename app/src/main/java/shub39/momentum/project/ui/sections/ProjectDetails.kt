@@ -1,5 +1,6 @@
 package shub39.momentum.project.ui.sections
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -151,7 +152,10 @@ fun ProjectDetails(
                         weekState = weekState,
                         days = state.days,
                         onAction = onAction,
-                        showGuide = showGuide
+                        showGuide = showGuide,
+                        modifier = Modifier
+                            .animateContentSize()
+                            .padding(horizontal = 16.dp)
                     )
                 }
 
@@ -159,7 +163,8 @@ fun ProjectDetails(
                 item {
                     CreateMontageButton(
                         daysSize = state.days.size,
-                        onNavigateToMontage = onNavigateToMontage
+                        onNavigateToMontage = onNavigateToMontage,
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
 
@@ -172,7 +177,11 @@ fun ProjectDetails(
                     )
                 }
 
-                item { HorizontalDivider() }
+                item {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
+                }
 
                 // favorite days
                 if (state.days.none { it.isFavorite }) {
@@ -376,7 +385,7 @@ private fun Preview() {
                     description = "A sample project",
                     alarm = AlarmData(1L, emptyList())
                 ),
-                days = (0..3).map {
+                days = (0..5).map {
                     Day(
                         id = it.toLong(),
                         projectId = 1,
@@ -393,7 +402,7 @@ private fun Preview() {
     MomentumTheme(
         theme = Theme(
             appTheme = AppTheme.DARK,
-            seedColor = Color.Red,
+            seedColor = Color.Yellow,
             paletteStyle = PaletteStyle.Expressive
         )
     ) {

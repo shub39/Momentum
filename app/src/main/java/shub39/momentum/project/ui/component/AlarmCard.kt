@@ -8,15 +8,18 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -33,18 +36,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.AlarmData
 import shub39.momentum.core.domain.data_classes.Project
+import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.project.ProjectAction
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AlarmCard(
     project: Project,
@@ -61,19 +66,17 @@ fun AlarmCard(
         else Toast.makeText(context, "Notification permission denied", Toast.LENGTH_SHORT).show()
     }
 
-    val contentColor by animateColorAsState(
-        targetValue = if (project.alarm != null) {
-            MaterialTheme.colorScheme.onSecondaryContainer
-        } else {
-            MaterialTheme.colorScheme.onSurface
-        }
-    )
+    val contentColor = MaterialTheme.colorScheme.onSurface
     val containerColor by animateColorAsState(
         targetValue = if (project.alarm != null) {
-            MaterialTheme.colorScheme.secondaryContainer
+            MaterialTheme.colorScheme.surfaceContainerHigh
         } else {
-            MaterialTheme.colorScheme.surfaceContainer
+            MaterialTheme.colorScheme.surfaceContainerLow
         }
+    )
+
+    val roundness by animateDpAsState(
+        targetValue = if (project.alarm != null) 16.dp else 100.dp
     )
 
     Card(
@@ -84,11 +87,11 @@ fun AlarmCard(
             contentColor = contentColor,
             containerColor = containerColor
         ),
-        shape = MaterialTheme.shapes.large
+        shape = RoundedCornerShape(roundness)
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(16.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -96,8 +99,9 @@ fun AlarmCard(
             Column {
                 Text(
                     text = stringResource(R.string.set_reminder),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
                 )
 
                 project.alarm?.let {
@@ -108,7 +112,8 @@ fun AlarmCard(
                                     FormatStyle.SHORT
                                 )
                             )
-                        }"
+                        }",
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }
@@ -166,5 +171,21 @@ fun AlarmCard(
                 state = timePickerState,
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    MomentumTheme {
+        AlarmCard(
+            project = Project(
+                id = 1,
+                title = "Project1",
+                description = "Desc",
+                alarm = AlarmData(time = 1L, days = listOf())
+            ),
+            onAction = {}
+        )
     }
 }

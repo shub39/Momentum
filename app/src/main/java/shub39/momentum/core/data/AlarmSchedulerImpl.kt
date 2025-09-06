@@ -26,10 +26,9 @@ class AlarmSchedulerImpl(
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun schedule(project: Project) {
-        if (project.alarm == null) {
-            cancel(project)
-            return
-        }
+        if (project.alarm == null) return
+
+        cancel(project)
 
         val time = LocalTime.ofSecondOfDay(project.alarm.time)
         val now = LocalDateTime.now()
@@ -39,8 +38,6 @@ class AlarmSchedulerImpl(
 
         val nextDateTime = LocalDateTime.of(scheduledDate, time)
             .atZone(ZoneId.systemDefault())
-
-        cancel(project)
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             action = ACTION

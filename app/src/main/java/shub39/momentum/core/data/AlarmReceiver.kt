@@ -26,28 +26,37 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
     val receiverScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onReceive(context: Context, intent: Intent?) {
+        val pendingResult = goAsync()
+
         Log.d(TAG, "Received Intent")
-        if (intent != null && intent.action == AlarmSchedulerImpl.ACTION) {
-            receiverScope.launch {
-                Log.d(TAG, "Processing Notification")
 
-                val projectRepo = get<ProjectRepository>()
-                val scheduler = get<AlarmScheduler>()
+        try {
+            if (intent != null && intent.action == AlarmSchedulerImpl.ACTION) {
+                receiverScope.launch {
+                    Log.d(TAG, "Processing Notification")
 
-                val projectId = intent.getLongExtra("project_id", -1)
-                if (projectId < 0L) return@launch
+                    val projectRepo = get<ProjectRepository>()
+                    val scheduler = get<AlarmScheduler>()
 
-                val project = projectRepo.getProjectById(projectId) ?: return@launch
-                val lastDay = projectRepo.getLastCompletedDay(projectId)
+                    val projectId = intent.getLongExtra("project_id", -1)
+                    if (projectId < 0L) return@launch
 
-                if (lastDay == null || LocalDate.ofEpochDay(lastDay.date) != LocalDate.now()) {
-                    reminderNotification(context, project)
-                } else {
-                    Log.d(TAG, "Already done")
+                    val project = projectRepo.getProjectById(projectId) ?: return@launch
+                    val lastDay = projectRepo.getLastCompletedDay(projectId)
+
+                    if (lastDay == null || LocalDate.ofEpochDay(lastDay.date) != LocalDate.now()) {
+                        reminderNotification(context, project)
+                    } else {
+                        Log.d(TAG, "Already done")
+                    }
+
+                    scheduler.schedule(project)
                 }
-
-                scheduler.schedule(project)
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error processing intent", e)
+        } finally {
+            pendingResult.finish()
         }
     }
 }
