@@ -139,16 +139,16 @@ fun CreateMontageButton(
                     Box(
                         modifier = Modifier
                             .size(50.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.secondary,
-                                shape = VerySunny.toShape()
-                            )
                             .then(
                                 if (canCreateMontage) {
                                     Modifier.graphicsLayer {
                                         rotationZ = rotation
                                     }
                                 } else Modifier
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.secondary,
+                                shape = VerySunny.toShape()
                             )
                     )
 

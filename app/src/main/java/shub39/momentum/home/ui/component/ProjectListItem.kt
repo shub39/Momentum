@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Warning
@@ -49,7 +50,7 @@ fun ProjectListItem(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(32.dp),
         onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -90,7 +91,7 @@ fun ProjectListItem(
                         previewPlaceholder = painterResource(R.drawable.ic_launcher_foreground),
                         modifier = Modifier
                             .fillMaxSize()
-                            .maskClip(MaterialTheme.shapes.large)
+                            .maskClip(RoundedCornerShape(16.dp))
                     )
                 }
             }
