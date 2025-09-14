@@ -5,8 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.RectF
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
@@ -105,8 +105,9 @@ class MontageMakerImpl(
                     val canvas = Canvas(canvasBitmap)
                     canvas.drawColor(config.backgroundColor.toArgb())
 
-                    // --- Face stabilization ---
-                    val dstRect: RectF = if (config.stabilizeFaces) {
+                    val matrix = Matrix()
+
+                    if (config.stabilizeFaces) {
                         val image = InputImage.fromBitmap(originalBitmap, 0)
                         val faces = Tasks.await(faceDetector.process(image))
 
@@ -114,56 +115,49 @@ class MontageMakerImpl(
                             val face = faces.maxByOrNull {
                                 it.boundingBox.width() * it.boundingBox.height()
                             }!!
+
                             val faceBox = face.boundingBox
                             val targetFaceHeight = dimensions.second * 0.3f
                             val scale = targetFaceHeight / faceBox.height().toFloat()
 
-                            val faceCenterX = faceBox.centerX() * scale
-                            val faceCenterY = faceBox.centerY() * scale
+                            val faceCenterX = faceBox.centerX().toFloat()
+                            val faceCenterY = faceBox.centerY().toFloat()
 
                             val targetCenterX = dimensions.first / 2f
                             val targetCenterY = dimensions.second / 2f
 
-                            val offsetX = targetCenterX - faceCenterX
-                            val offsetY = targetCenterY - faceCenterY
-
-                            RectF(
-                                offsetX,
-                                offsetY,
-                                offsetX + originalBitmap.width * scale,
-                                offsetY + originalBitmap.height * scale
-                            )
+                            // --- Build transform ---
+                            matrix.postTranslate(
+                                -faceCenterX,
+                                -faceCenterY
+                            ) // move face center to (0,0)
+                            matrix.postScale(scale, scale)                   // scale to target size
+                            matrix.postRotate(-face.headEulerAngleZ)         // straighten roll
+                            matrix.postTranslate(targetCenterX, targetCenterY) // center face
                         } else {
-                            // fallback
+                            // Fallback if no faces
                             val scale = minOf(
                                 dimensions.first.toFloat() / originalBitmap.width,
                                 dimensions.second.toFloat() / originalBitmap.height
                             )
-                            val left = (dimensions.first - originalBitmap.width * scale) / 2f
-                            val top = (dimensions.second - originalBitmap.height * scale) / 2f
-                            RectF(
-                                left,
-                                top,
-                                left + originalBitmap.width * scale,
-                                top + originalBitmap.height * scale
-                            )
+                            val dx = (dimensions.first - originalBitmap.width * scale) / 2f
+                            val dy = (dimensions.second - originalBitmap.height * scale) / 2f
+                            matrix.postScale(scale, scale)
+                            matrix.postTranslate(dx, dy)
                         }
                     } else {
+                        // No stabilization, just fit into canvas
                         val scale = minOf(
                             dimensions.first.toFloat() / originalBitmap.width,
                             dimensions.second.toFloat() / originalBitmap.height
                         )
-                        val left = (dimensions.first - originalBitmap.width * scale) / 2f
-                        val top = (dimensions.second - originalBitmap.height * scale) / 2f
-                        RectF(
-                            left,
-                            top,
-                            left + originalBitmap.width * scale,
-                            top + originalBitmap.height * scale
-                        )
+                        val dx = (dimensions.first - originalBitmap.width * scale) / 2f
+                        val dy = (dimensions.second - originalBitmap.height * scale) / 2f
+                        matrix.postScale(scale, scale)
+                        matrix.postTranslate(dx, dy)
                     }
 
-                    canvas.drawBitmap(originalBitmap, null, dstRect, null)
+                    canvas.drawBitmap(originalBitmap, matrix, null)
 
                     // --- Watermark, date, message ---
                     if (config.waterMark) {

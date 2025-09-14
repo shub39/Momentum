@@ -1,5 +1,6 @@
 package shub39.momentum.core.presentation
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
@@ -15,7 +16,7 @@ fun MomentumTheme(
     content: @Composable () -> Unit
 ) {
     DynamicMaterialExpressiveTheme(
-        seedColor = if (theme.isMaterialYou) {
+        seedColor = if (theme.isMaterialYou && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             colorResource(android.R.color.system_accent1_200)
         } else {
             theme.seedColor

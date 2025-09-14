@@ -1,6 +1,7 @@
 package shub39.momentum.settings.ui.sections
 
 import android.R.color.system_accent1_200
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -203,28 +204,30 @@ fun LookAndFeel(
             }
 
             // Material you toggle
-            item {
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            text = stringResource(R.string.material_theme)
-                        )
-                    },
-                    supportingContent = {
-                        Text(
-                            text = stringResource(R.string.material_theme_desc)
-                        )
-                    },
-                    trailingContent = {
-                        Switch(
-                            checked = state.theme.isMaterialYou,
-                            enabled = state.isPlusUser,
-                            onCheckedChange = {
-                                onAction(SettingsAction.OnMaterialThemeToggle(it))
-                            }
-                        )
-                    }
-                )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                item {
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = stringResource(R.string.material_theme)
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(R.string.material_theme_desc)
+                            )
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = state.theme.isMaterialYou,
+                                enabled = state.isPlusUser,
+                                onCheckedChange = {
+                                    onAction(SettingsAction.OnMaterialThemeToggle(it))
+                                }
+                            )
+                        }
+                    )
+                }
             }
 
             // Seed color picker
@@ -275,7 +278,7 @@ fun LookAndFeel(
                     ) {
                         items(PaletteStyle.entries.toList(), key = { it.name }) { style ->
                             val scheme = rememberDynamicColorScheme(
-                                primary = if (state.theme.isMaterialYou) {
+                                primary = if (state.theme.isMaterialYou && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                     colorResource(system_accent1_200)
                                 } else {
                                     state.theme.seedColor
