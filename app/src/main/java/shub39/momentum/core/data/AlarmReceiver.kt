@@ -6,7 +6,6 @@ import android.content.Intent
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
 import org.koin.core.component.KoinComponent
@@ -23,16 +22,14 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         private const val TAG = "AlarmReceiver"
     }
 
-    val receiverScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
     override fun onReceive(context: Context, intent: Intent?) {
         val pendingResult = goAsync()
 
         Log.d(TAG, "Received Intent")
 
-        try {
-            if (intent != null && intent.action == AlarmSchedulerImpl.ACTION) {
-                receiverScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (intent != null && intent.action == AlarmSchedulerImpl.ACTION) {
                     Log.d(TAG, "Processing Notification")
 
                     val projectRepo = get<ProjectRepository>()
@@ -52,11 +49,11 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
 
                     scheduler.schedule(project)
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error processing intent", e)
+            } finally {
+                pendingResult.finish()
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error processing intent", e)
-        } finally {
-            pendingResult.finish()
         }
     }
 }

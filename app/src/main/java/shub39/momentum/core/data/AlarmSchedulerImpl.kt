@@ -26,9 +26,8 @@ class AlarmSchedulerImpl(
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun schedule(project: Project) {
-        if (project.alarm == null) return
-
         cancel(project)
+        if (project.alarm == null) return
 
         val time = LocalTime.ofSecondOfDay(project.alarm.time)
         val now = LocalDateTime.now()
