@@ -1,6 +1,7 @@
 package shub39.momentum.project.ui.sections
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -68,7 +71,10 @@ import shub39.momentum.project.ui.component.FavDayCard
 import shub39.momentum.project.ui.component.WeeklyHorizontalCalendar
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun ProjectDetails(
     state: ProjectState,
@@ -138,6 +144,9 @@ fun ProjectDetails(
             )
 
             LazyColumn(
+                state = rememberLazyListState(
+                    cacheWindow = LazyLayoutCacheWindow(ahead = 500.dp, behind = 500.dp)
+                ),
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize(),

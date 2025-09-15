@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Card
@@ -39,16 +40,14 @@ fun FavDayCard(
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(32.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
     ) {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             CoilImage(
                 imageModel = { day.image },
@@ -66,26 +65,30 @@ fun FavDayCard(
                 },
                 previewPlaceholder = getPlaceholder(),
                 modifier = Modifier
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(RoundedCornerShape(32.dp))
                     .heightIn(max = 300.dp)
                     .fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Text(
-                text = LocalDate.ofEpochDay(day.date).format(
-                    DateTimeFormatter.ofLocalizedDate(
-                        FormatStyle.LONG
-                    )
-                ),
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            if (!day.comment.isNullOrBlank()) {
+            Column(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+            ) {
                 Text(
-                    text = day.comment
+                    text = LocalDate.ofEpochDay(day.date).format(
+                        DateTimeFormatter.ofLocalizedDate(
+                            FormatStyle.LONG
+                        )
+                    ),
+                    style = MaterialTheme.typography.titleLarge
                 )
+
+                if (!day.comment.isNullOrBlank()) {
+                    Text(
+                        text = day.comment
+                    )
+                }
             }
         }
     }
