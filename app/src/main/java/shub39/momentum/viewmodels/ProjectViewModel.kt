@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.core.domain.enums.VideoAction
 import shub39.momentum.core.domain.interfaces.AlarmScheduler
+import shub39.momentum.core.domain.interfaces.FaceDetector
 import shub39.momentum.core.domain.interfaces.MontageConfigPrefs
 import shub39.momentum.core.domain.interfaces.MontageMaker
 import shub39.momentum.core.domain.interfaces.MontageState
@@ -36,6 +37,7 @@ import kotlin.io.path.createTempFile
 class ProjectViewModel(
     private val stateLayer: StateLayer,
     private val montageMaker: MontageMaker,
+    private val faceDetector: FaceDetector,
     private val repository: ProjectRepository,
     private val montageConfigPrefs: MontageConfigPrefs,
     private val scheduler: AlarmScheduler
@@ -44,7 +46,6 @@ class ProjectViewModel(
 
     private val _exoPlayer = MutableStateFlow<ExoPlayer?>(null)
     val exoPlayer = _exoPlayer.asStateFlow()
-        .onStart { observeConfig() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -53,6 +54,7 @@ class ProjectViewModel(
 
     private val _state = stateLayer.projectState
     val state = _state.asStateFlow()
+        .onStart { observeConfig() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -77,7 +79,8 @@ class ProjectViewModel(
             }
 
             is ProjectAction.OnUpsertDay -> viewModelScope.launch {
-                repository.upsertDay(action.day)
+                val faceData = faceDetector.getFaceDataFromUri(action.day.image.toUri())
+                repository.upsertDay(action.day.copy(faceData = faceData))
             }
 
             is ProjectAction.OnCreateMontage -> viewModelScope.launch {
@@ -102,7 +105,10 @@ class ProjectViewModel(
                     }
             }
 
-            ProjectAction.OnUpdateDays -> refreshDays()
+            ProjectAction.OnUpdateDays -> viewModelScope.launch {
+                refreshDays()
+                processDays()
+            }
 
             is ProjectAction.OnUpdateSelectedDay -> _state.update { it.copy(selectedDate = action.day) }
 
@@ -195,6 +201,15 @@ class ProjectViewModel(
         }
     }
 
+    private suspend fun processDays() {
+        state.value.days.forEach { day ->
+            if (day.faceData == null) {
+                val faceData = faceDetector.getFaceDataFromUri(day.image.toUri())
+                repository.upsertDay(day.copy(faceData = faceData))
+            }
+        }
+    }
+
     private fun observeConfig() = viewModelScope.launch {
         montageConfigPrefs.getFpiFlow()
             .onEach { pref ->
@@ -265,6 +280,10 @@ class ProjectViewModel(
                     it.copy(montageConfig = it.montageConfig.copy(stabilizeFaces = pref))
                 }
             }.launchIn(this)
+    }
+
+    fun checkDays() {
+
     }
 
     override fun onCleared() {

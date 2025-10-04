@@ -11,17 +11,14 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
-import com.google.android.gms.tasks.Tasks
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.face.FaceDetection
-import com.google.mlkit.vision.face.FaceDetector
-import com.google.mlkit.vision.face.FaceDetectorOptions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.koin.core.annotation.Single
 import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.Day
 import shub39.momentum.core.domain.data_classes.MontageConfig
+import shub39.momentum.core.domain.data_classes.isValid
+import shub39.momentum.core.domain.data_classes.toRect
 import shub39.momentum.core.domain.enums.DateStyle.Companion.toFormatStyle
 import shub39.momentum.core.domain.enums.VideoQuality.Companion.toDimensions
 import shub39.momentum.core.domain.interfaces.MontageMaker
@@ -45,18 +42,13 @@ class MontageMakerImpl(
         val muxer = Muxer(context, file)
         muxer.setMuxerConfig(muxer.getMuxerConfig().update(config))
 
-        val detectorOptions = FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-            .build()
-        val faceDetector = FaceDetection.getClient(detectorOptions)
-
         val sortedDays = days.sortedBy { it.date }
         val total = sortedDays.size
 
         val images = mutableListOf<Bitmap>()
 
         sortedDays.forEachIndexed { index, day ->
-            val bitmap = processDay(day, config, faceDetector)
+            val bitmap = processDay(day, config)
             if (bitmap != null) images.add(bitmap)
 
             val fraction = (index + 1).toFloat() / total
@@ -70,6 +62,7 @@ class MontageMakerImpl(
             is MuxingResult.MuxingError -> {
                 emit(MontageState.Error(result.message, result.exception))
             }
+
             is MuxingResult.MuxingSuccess -> {
                 emit(MontageState.Processing(1f, "Done"))
                 emit(MontageState.Success(result.file, config))
@@ -80,7 +73,6 @@ class MontageMakerImpl(
     private fun processDay(
         day: Day,
         config: MontageConfig,
-        faceDetector: FaceDetector
     ): Bitmap? {
         val dimensions = config.videoQuality.toDimensions()
 
@@ -107,44 +99,25 @@ class MontageMakerImpl(
 
                     val matrix = Matrix()
 
-                    if (config.stabilizeFaces) {
-                        val image = InputImage.fromBitmap(originalBitmap, 0)
-                        val faces = Tasks.await(faceDetector.process(image))
+                    if (config.stabilizeFaces && day.faceData.isValid()) {
+                        val faceBox = day.faceData?.toRect()!!
+                        val targetFaceHeight = dimensions.second * 0.3f
+                        val scale = targetFaceHeight / faceBox.height().toFloat()
 
-                        if (faces.isNotEmpty()) {
-                            val face = faces.maxByOrNull {
-                                it.boundingBox.width() * it.boundingBox.height()
-                            }!!
+                        val faceCenterX = faceBox.centerX().toFloat()
+                        val faceCenterY = faceBox.centerY().toFloat()
 
-                            val faceBox = face.boundingBox
-                            val targetFaceHeight = dimensions.second * 0.3f
-                            val scale = targetFaceHeight / faceBox.height().toFloat()
+                        val targetCenterX = dimensions.first / 2f
+                        val targetCenterY = dimensions.second / 2f
 
-                            val faceCenterX = faceBox.centerX().toFloat()
-                            val faceCenterY = faceBox.centerY().toFloat()
-
-                            val targetCenterX = dimensions.first / 2f
-                            val targetCenterY = dimensions.second / 2f
-
-                            // --- Build transform ---
-                            matrix.postTranslate(
-                                -faceCenterX,
-                                -faceCenterY
-                            ) // move face center to (0,0)
-                            matrix.postScale(scale, scale)                   // scale to target size
-                            matrix.postRotate(-face.headEulerAngleZ)         // straighten roll
-                            matrix.postTranslate(targetCenterX, targetCenterY) // center face
-                        } else {
-                            // Fallback if no faces
-                            val scale = minOf(
-                                dimensions.first.toFloat() / originalBitmap.width,
-                                dimensions.second.toFloat() / originalBitmap.height
-                            )
-                            val dx = (dimensions.first - originalBitmap.width * scale) / 2f
-                            val dy = (dimensions.second - originalBitmap.height * scale) / 2f
-                            matrix.postScale(scale, scale)
-                            matrix.postTranslate(dx, dy)
-                        }
+                        // --- Build transform ---
+                        matrix.postTranslate(
+                            -faceCenterX,
+                            -faceCenterY
+                        ) // move face center to (0,0)
+                        matrix.postScale(scale, scale)                      // scale to target size
+                        matrix.postRotate(-day.faceData.headAngle)          // straighten roll
+                        matrix.postTranslate(targetCenterX, targetCenterY)  // center face
                     } else {
                         // No stabilization, just fit into canvas
                         val scale = minOf(
