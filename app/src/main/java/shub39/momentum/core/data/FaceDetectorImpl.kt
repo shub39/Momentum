@@ -26,14 +26,14 @@ class FaceDetectorImpl(
     override suspend fun getFaceDataFromUri(uri: Uri): FaceData {
         val imageStream = contentResolver.openInputStream(uri)
         val imageBitmap = BitmapFactory.decodeStream(imageStream)
-        if (imageBitmap == null) return FaceData() // null means invalid image or some kind of error
+        if (imageBitmap == null) return FaceData()
 
         val inputImage = InputImage.fromBitmap(imageBitmap, 0)
         val faces = withContext(Dispatchers.Default) {
             Tasks.await(faceDetector.process(inputImage))
         }
 
-        if (faces.isEmpty()) return FaceData() // meaning no faces :'(
+        if (faces.isEmpty()) return FaceData() // default values meaning no faces :'(
 
         val face = faces.maxByOrNull {
             it.boundingBox.width() * it.boundingBox.height()

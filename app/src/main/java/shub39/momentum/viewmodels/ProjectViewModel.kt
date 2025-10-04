@@ -11,6 +11,7 @@ import androidx.media3.exoplayer.ExoPlayer.REPEAT_MODE_ALL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -107,6 +108,7 @@ class ProjectViewModel(
 
             ProjectAction.OnUpdateDays -> viewModelScope.launch {
                 refreshDays()
+                delay(1000)
                 processDays()
             }
 
@@ -280,10 +282,6 @@ class ProjectViewModel(
                     it.copy(montageConfig = it.montageConfig.copy(stabilizeFaces = pref))
                 }
             }.launchIn(this)
-    }
-
-    fun checkDays() {
-
     }
 
     override fun onCleared() {
