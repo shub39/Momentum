@@ -1,5 +1,6 @@
 package shub39.momentum.core.data.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -9,8 +10,11 @@ import androidx.room.TypeConverters
         ProjectEntity::class,
         DayEntity::class
     ],
-    version = 1,
-    exportSchema = false,
+    version = ProjectDatabase.SCHEMA_VERSION,
+    exportSchema = true,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
+    ]
 )
 @TypeConverters(Converters::class)
 abstract class ProjectDatabase : RoomDatabase() {
@@ -19,5 +23,6 @@ abstract class ProjectDatabase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME = "project_db"
+        const val SCHEMA_VERSION = 2
     }
 }

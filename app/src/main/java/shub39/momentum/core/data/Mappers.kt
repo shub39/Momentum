@@ -45,7 +45,8 @@ fun DayEntity.toDay(): Day {
         date = date,
         image = image,
         comment = comment,
-        isFavorite = isFavorite
+        isFavorite = isFavorite,
+        faceData = faceData
     )
 }
 
@@ -56,6 +57,7 @@ fun Day.toDayEntity(): DayEntity {
         date = date,
         image = image,
         comment = comment,
-        isFavorite = isFavorite
+        isFavorite = isFavorite,
+        faceData = faceData
     )
 }

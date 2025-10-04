@@ -1,10 +1,12 @@
 package shub39.momentum.core.data.database
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
+import shub39.momentum.core.domain.data_classes.FaceData
 
 @Serializable
 @Entity(
@@ -25,5 +27,6 @@ data class DayEntity(
     val image: String,
     val comment: String?,
     val date: Long,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+    @ColumnInfo(name = "faceData", defaultValue = "NULL") val faceData: FaceData? = null
 )

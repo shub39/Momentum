@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.room)
 }
 
 val appName = "Momentum"
@@ -29,6 +30,10 @@ android {
         compilerOptions {
             jvmToolchain(17)
         }
+    }
+
+    sourceSets {
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
     }
 
     buildTypes {
@@ -105,12 +110,24 @@ dependencies {
     implementation(libs.androidx.media3.ui)
 
     implementation(libs.face.detection)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.room.testing)
+    testImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.truth)
 }
 
 ksp {
     arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
     arg("KOIN_CONFIG_CHECK", "true")
     arg("KOIN_DEFAULT_MODULE", "true")
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 java {
