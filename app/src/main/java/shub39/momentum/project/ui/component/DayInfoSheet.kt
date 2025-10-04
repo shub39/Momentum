@@ -65,7 +65,7 @@ import com.skydoves.landscapist.coil3.CoilImage
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
-import io.github.vinceglb.filekit.dialogs.uri
+import io.github.vinceglb.filekit.path
 import kotlinx.coroutines.launch
 import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.Day
@@ -108,7 +108,7 @@ fun DayInfoSheet(
         if (image != null) {
             imageFile = image
             context.contentResolver.takePersistableUriPermission(
-                image.uri,
+                image.path.toUri(),
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
         }
@@ -149,7 +149,7 @@ fun DayInfoSheet(
             ) {
                 if (imageFile != null) {
                     CoilImage(
-                        imageModel = { imageFile!!.uri },
+                        imageModel = { imageFile!!.path.toUri() },
                         loading = { LoadingIndicator() },
                         failure = {
                             Column(
@@ -265,7 +265,7 @@ fun DayInfoSheet(
                                 ProjectAction.OnUpsertDay(
                                     Day(
                                         projectId = state.project?.id!!,
-                                        image = imageFile!!.uri.toString(),
+                                        image = imageFile!!.path.toUri().toString(),
                                         comment = comment,
                                         date = selectedDate,
                                         isFavorite = isFavorite
@@ -299,7 +299,7 @@ fun DayInfoSheet(
                             onAction(
                                 ProjectAction.OnUpsertDay(
                                     day.copy(
-                                        image = imageFile!!.uri.toString(),
+                                        image = imageFile!!.path.toUri().toString(),
                                         comment = comment,
                                         isFavorite = isFavorite
                                     )
@@ -308,7 +308,7 @@ fun DayInfoSheet(
                             onAction(ProjectAction.OnUpdateSelectedDay(null))
                         },
                         modifier = Modifier.weight(1f),
-                        enabled = (day.image.toUri() != imageFile?.uri || day.isFavorite != isFavorite || day.comment != comment) && comment.length <= 50
+                        enabled = (day.image.toUri() != imageFile?.path?.toUri() || day.isFavorite != isFavorite || day.comment != comment) && comment.length <= 50
                     ) {
                         Text(
                             text = stringResource(R.string.update_day)
