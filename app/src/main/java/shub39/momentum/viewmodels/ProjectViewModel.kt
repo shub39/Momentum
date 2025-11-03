@@ -160,6 +160,7 @@ class ProjectViewModel(
                     montageConfigPrefs.setStabilizeFaces(action.config.stabilizeFaces)
                     montageConfigPrefs.setBackgroundColor(action.config.backgroundColor)
                     montageConfigPrefs.setWaterMark(action.config.waterMark)
+                    montageConfigPrefs.setCensorPref(action.config.censorFaces)
                 }
             }
 
@@ -280,6 +281,13 @@ class ProjectViewModel(
             .onEach { pref ->
                 _state.update {
                     it.copy(montageConfig = it.montageConfig.copy(stabilizeFaces = pref))
+                }
+            }.launchIn(this)
+
+        montageConfigPrefs.getCensorPref()
+            .onEach { pref ->
+                _state.update {
+                    it.copy(montageConfig = it.montageConfig.copy(censorFaces = pref))
                 }
             }.launchIn(this)
     }

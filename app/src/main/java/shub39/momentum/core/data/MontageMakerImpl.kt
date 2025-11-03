@@ -10,6 +10,7 @@ import android.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
+import androidx.core.graphics.toRectF
 import androidx.core.net.toUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -154,6 +155,20 @@ class MontageMakerImpl(
                         val paddingY =
                             dimensions.second - dimensions.second * 0.12f - paint.descent()
                         canvas.drawText(message, paddingX, paddingY, paint)
+                    }
+
+                    // censor face
+                    if (config.censorFaces && config.stabilizeFaces && day.faceData.isValid()) {
+                        val faceBox = day.faceData?.toRect()!!
+                        val faceRectF = faceBox.toRectF()
+                        matrix.mapRect(faceRectF)
+
+                        val censorPaint = Paint().apply {
+                            isAntiAlias = true
+                            style = Paint.Style.FILL
+                            color = config.backgroundColor.toArgb()
+                        }
+                        canvas.drawRect(faceRectF, censorPaint)
                     }
 
                     canvasBitmap

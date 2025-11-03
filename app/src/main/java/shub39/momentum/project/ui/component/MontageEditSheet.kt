@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import shub39.momentum.R
 import shub39.momentum.core.domain.data_classes.Day
+import shub39.momentum.core.domain.data_classes.MontageConfig
 import shub39.momentum.core.domain.data_classes.Theme
 import shub39.momentum.core.domain.enums.AppTheme
 import shub39.momentum.core.domain.enums.DateStyle
@@ -394,6 +395,43 @@ fun MontageEditSheet(
                 }
             }
 
+            // censor faces, adding this for myself lol
+            item {
+                AnimatedVisibility(
+                    visible = state.montageConfig.stabilizeFaces,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.censor_faces),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Switch(
+                            checked = state.montageConfig.censorFaces,
+                            enabled = state.isPlusUser && state.montageConfig.stabilizeFaces,
+                            onCheckedChange = {
+                                if (state.isPlusUser) {
+                                    onAction(
+                                        ProjectAction.OnEditMontageConfig(
+                                            state.montageConfig.copy(censorFaces = it)
+                                        )
+                                    )
+                                } else {
+                                    onAction(ProjectAction.OnShowPaywall)
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
             // show watermark
             item {
                 Row(
@@ -485,7 +523,9 @@ private fun Preview() {
                         date = 1,
                         isFavorite = false
                     )
-                )
+                ),
+                isPlusUser = true,
+                montageConfig = MontageConfig(stabilizeFaces = true)
             ),
             onAction = {},
             buttonEnabled = false,

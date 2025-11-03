@@ -68,4 +68,5 @@
         <item quantity="other">Add %d more days</item>
     </plurals>
     <string name="days">Days</string>
+    <string name="censor_faces">Censor Faces</string>
 </resources>
