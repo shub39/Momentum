@@ -38,4 +38,7 @@ interface MontageConfigPrefs {
 
     fun getStabilizeFacesFlow(): Flow<Boolean>
     suspend fun setStabilizeFaces(pref: Boolean)
+
+    fun getCensorPref(): Flow<Boolean>
+    suspend fun setCensorPref(pref: Boolean)
 }

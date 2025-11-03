@@ -25,8 +25,7 @@ class FaceDetectorImpl(
 
     override suspend fun getFaceDataFromUri(uri: Uri): FaceData {
         val imageStream = contentResolver.openInputStream(uri)
-        val imageBitmap = BitmapFactory.decodeStream(imageStream)
-        if (imageBitmap == null) return FaceData()
+        val imageBitmap = BitmapFactory.decodeStream(imageStream) ?: return FaceData()
 
         val inputImage = InputImage.fromBitmap(imageBitmap, 0)
         val faces = withContext(Dispatchers.Default) {
