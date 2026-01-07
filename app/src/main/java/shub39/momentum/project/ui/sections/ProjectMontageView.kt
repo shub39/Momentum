@@ -183,9 +183,7 @@ fun ProjectMontageView(
                     FloatingActionButton(
                         onClick = {
                             (state.montage as? MontageState.Success)?.let { result ->
-                                fileShareLauncher.launch(
-                                    PlatformFile(result.file)
-                                )
+                                fileShareLauncher.launch(PlatformFile(result.file))
                             }
                         },
                         containerColor = if (state.montage is MontageState.Success) {

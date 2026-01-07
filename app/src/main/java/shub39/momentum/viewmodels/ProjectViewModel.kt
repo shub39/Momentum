@@ -32,7 +32,8 @@ import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
-import kotlin.io.path.createTempFile
+import java.io.File
+import kotlin.time.Clock
 
 @KoinViewModel
 class ProjectViewModel(
@@ -41,7 +42,8 @@ class ProjectViewModel(
     private val faceDetector: FaceDetector,
     private val repository: ProjectRepository,
     private val montageConfigPrefs: MontageConfigPrefs,
-    private val scheduler: AlarmScheduler
+    private val scheduler: AlarmScheduler,
+    private val cacheDir: File
 ) : ViewModel() {
     private var observeDaysJob: Job? = null
 
@@ -87,7 +89,11 @@ class ProjectViewModel(
             is ProjectAction.OnCreateMontage -> viewModelScope.launch {
                 montageMaker.createMontageFlow(
                     days = action.days,
-                    file = createTempFile(suffix = ".mp4").toFile(),
+                    file = File.createTempFile(
+                        "montage_${_state.value.project?.title}_${
+                            Clock.System.now().toEpochMilliseconds()
+                        }", ".mp4", cacheDir
+                    ),
                     config = _state.value.montageConfig
                 )
                     .flowOn(Dispatchers.Default)

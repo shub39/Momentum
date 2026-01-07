@@ -1,5 +1,6 @@
 package shub39.momentum.di
 
+import android.content.Context
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
@@ -10,6 +11,7 @@ import shub39.momentum.core.data.database.ProjectDatabase
 import shub39.momentum.core.data.datastore.DatastoreFactory
 import shub39.momentum.core.domain.interfaces.MontageConfigPrefs
 import shub39.momentum.core.domain.interfaces.SettingsPrefs
+import java.io.File
 
 @Module
 @ComponentScan("shub39.momentum")
@@ -37,4 +39,7 @@ class AppModule {
     @Single
     fun getMontageConfigPrefs(datastoreFactory: DatastoreFactory): MontageConfigPrefs =
         datastoreFactory.montageConfig()
+
+    @Single
+    fun getCacheDir(context: Context): File = context.cacheDir
 }
