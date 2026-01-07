@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import shub39.momentum.core.data.ImageHandler
 import shub39.momentum.core.domain.enums.VideoAction
 import shub39.momentum.core.domain.interfaces.AlarmScheduler
 import shub39.momentum.core.domain.interfaces.FaceDetector
@@ -32,7 +33,6 @@ import shub39.momentum.core.domain.interfaces.MontageState
 import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
-import java.io.File
 
 @KoinViewModel
 class ProjectViewModel(
@@ -42,7 +42,7 @@ class ProjectViewModel(
     private val repository: ProjectRepository,
     private val montageConfigPrefs: MontageConfigPrefs,
     private val scheduler: AlarmScheduler,
-    private val cacheDir: File
+    private val imageHandler: ImageHandler
 ) : ViewModel() {
     private var observeDaysJob: Job? = null
 
@@ -77,20 +77,25 @@ class ProjectViewModel(
             }
 
             is ProjectAction.OnDeleteDay -> viewModelScope.launch {
+                imageHandler.deleteDayImage(action.day)
                 repository.deleteDay(action.day)
             }
 
             is ProjectAction.OnUpsertDay -> viewModelScope.launch {
                 val faceData = faceDetector.getFaceDataFromUri(action.day.image.toUri())
-                repository.upsertDay(action.day.copy(faceData = faceData))
+                val copiedImageUri = imageHandler.copyImageToAppData(action.day)
+
+                repository.upsertDay(
+                    action.day.copy(
+                        faceData = faceData,
+                        image = copiedImageUri.toString()
+                    )
+                )
             }
 
             is ProjectAction.OnCreateMontage -> viewModelScope.launch {
                 montageMaker.createMontageFlow(
                     days = action.days,
-                    file = File.createTempFile(
-                        "montage_${_state.value.project?.title}", ".mp4", cacheDir
-                    ),
                     config = _state.value.montageConfig
                 )
                     .flowOn(Dispatchers.Default)

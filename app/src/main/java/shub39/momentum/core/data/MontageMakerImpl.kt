@@ -38,9 +38,9 @@ class MontageMakerImpl(
 
     override suspend fun createMontageFlow(
         days: List<Day>,
-        file: File,
         config: MontageConfig
     ): Flow<MontageState> = flow {
+        val file = File(context.cacheDir, "temp.mp4")
         val muxer = Muxer(context, file)
         muxer.setMuxerConfig(muxer.getMuxerConfig().update(config))
 

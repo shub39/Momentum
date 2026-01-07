@@ -1,6 +1,5 @@
 package shub39.momentum.project.ui.component
 
-import android.content.Intent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,7 +51,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -91,7 +89,6 @@ fun DayInfoSheet(
     val coroutineScope = rememberCoroutineScope()
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
-    val context = LocalContext.current
     val day = state.days.find { it.date == selectedDate }
 
     var isFavorite by remember { mutableStateOf(day?.isFavorite ?: false) }
@@ -107,10 +104,6 @@ fun DayInfoSheet(
     ) { image ->
         if (image != null) {
             imageFile = image
-            context.contentResolver.takePersistableUriPermission(
-                image.path.toUri(),
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
         }
     }
 
