@@ -33,7 +33,6 @@ import shub39.momentum.core.domain.interfaces.ProjectRepository
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
 import java.io.File
-import kotlin.time.Clock
 
 @KoinViewModel
 class ProjectViewModel(
@@ -90,9 +89,7 @@ class ProjectViewModel(
                 montageMaker.createMontageFlow(
                     days = action.days,
                     file = File.createTempFile(
-                        "montage_${_state.value.project?.title}_${
-                            Clock.System.now().toEpochMilliseconds()
-                        }", ".mp4", cacheDir
+                        "montage_${_state.value.project?.title}", ".mp4", cacheDir
                     ),
                     config = _state.value.montageConfig
                 )

@@ -118,6 +118,8 @@ dependencies {
     androidTestImplementation(libs.androidx.room.testing)
     testImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.truth)
+
+    implementation("androidx.exifinterface:exifinterface:1.4.2")
 }
 
 ksp {

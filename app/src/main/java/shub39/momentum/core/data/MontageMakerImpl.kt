@@ -12,6 +12,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toRectF
 import androidx.core.net.toUri
+import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.koin.core.annotation.Single
@@ -91,92 +92,123 @@ class MontageMakerImpl(
 
         return try {
             val uri = day.image.toUri()
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                val originalBitmap = BitmapFactory.decodeStream(inputStream)
-                if (originalBitmap != null) {
-                    val canvasBitmap = createBitmap(dimensions.first, dimensions.second)
-                    val canvas = Canvas(canvasBitmap)
-                    canvas.drawColor(config.backgroundColor.toArgb())
-
-                    val matrix = Matrix()
-
-                    if (config.stabilizeFaces && day.faceData.isValid()) {
-                        val faceBox = day.faceData?.toRect()!!
-                        val targetFaceHeight = dimensions.second * 0.3f
-                        val scale = targetFaceHeight / faceBox.height().toFloat()
-
-                        val faceCenterX = faceBox.centerX().toFloat()
-                        val faceCenterY = faceBox.centerY().toFloat()
-
-                        val targetCenterX = dimensions.first / 2f
-                        val targetCenterY = dimensions.second / 2f
-
-                        // --- Build transform ---
-                        matrix.postTranslate(
-                            -faceCenterX,
-                            -faceCenterY
-                        ) // move face center to (0,0)
-                        matrix.postScale(scale, scale)                      // scale to target size
-                        matrix.postRotate(-day.faceData.headAngle)          // straighten roll
-                        matrix.postTranslate(targetCenterX, targetCenterY)  // center face
-                    } else {
-                        // No stabilization, just fit into canvas
-                        val scale = minOf(
-                            dimensions.first.toFloat() / originalBitmap.width,
-                            dimensions.second.toFloat() / originalBitmap.height
-                        )
-                        val dx = (dimensions.first - originalBitmap.width * scale) / 2f
-                        val dy = (dimensions.second - originalBitmap.height * scale) / 2f
-                        matrix.postScale(scale, scale)
-                        matrix.postTranslate(dx, dy)
-                    }
-
-                    canvas.drawBitmap(originalBitmap, matrix, null)
-
-                    // --- Watermark, date, message ---
-                    if (config.waterMark) {
-                        val watermark = "Momentum"
-                        val paddingX = dimensions.first * 0.05f
-                        val paddingY = dimensions.second * 0.05f + paint.descent() + paint.textSize
-                        canvas.drawText(watermark, paddingX, paddingY, paint)
-                    }
-                    if (config.showDate) {
-                        val date = LocalDate.ofEpochDay(day.date).format(
-                            DateTimeFormatter.ofLocalizedDate(config.dateStyle.toFormatStyle())
-                        )
-                        val paddingX = dimensions.first * 0.05f
-                        val paddingY =
-                            dimensions.second - dimensions.second * 0.05f - paint.descent()
-                        canvas.drawText(date, paddingX, paddingY, paint)
-                    }
-                    if (config.showMessage && !day.comment.isNullOrBlank()) {
-                        val message = day.comment
-                        val paddingX = dimensions.first * 0.05f
-                        val paddingY =
-                            dimensions.second - dimensions.second * 0.12f - paint.descent()
-                        canvas.drawText(message, paddingX, paddingY, paint)
-                    }
-
-                    // censor face
-                    if (config.censorFaces && config.stabilizeFaces && day.faceData.isValid()) {
-                        val faceBox = day.faceData?.toRect()!!
-                        val faceRectF = faceBox.toRectF()
-                        matrix.mapRect(faceRectF)
-
-                        val censorPaint = Paint().apply {
-                            isAntiAlias = true
-                            style = Paint.Style.FILL
-                            color = config.backgroundColor.toArgb()
+            contentResolver.openInputStream(uri)?.use { exifStream ->
+                val exif = ExifInterface(exifStream)
+                val orientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED
+                )
+                contentResolver.openInputStream(uri)?.use { bitmapSteam ->
+                    val decodedBitmap = BitmapFactory.decodeStream(bitmapSteam)
+                    val originalBitmap = when (orientation) {
+                        ExifInterface.ORIENTATION_ROTATE_90 -> {
+                            rotateBitmap(decodedBitmap, 90f)
                         }
-                        canvas.drawRect(faceRectF, censorPaint)
-                    }
 
-                    canvasBitmap
-                } else null
+                        ExifInterface.ORIENTATION_ROTATE_180 -> {
+                            rotateBitmap(decodedBitmap, 180f)
+                        }
+
+                        ExifInterface.ORIENTATION_ROTATE_270 -> {
+                            rotateBitmap(decodedBitmap, 270f)
+                        }
+
+                        else -> decodedBitmap
+                    }
+                    if (originalBitmap != null) {
+                        val canvasBitmap = createBitmap(dimensions.first, dimensions.second)
+                        val canvas = Canvas(canvasBitmap)
+                        canvas.drawColor(config.backgroundColor.toArgb())
+
+                        val matrix = Matrix()
+
+                        if (config.stabilizeFaces && day.faceData.isValid()) {
+                            val faceBox = day.faceData?.toRect()!!
+                            val targetFaceHeight = dimensions.second * 0.3f
+                            val scale = targetFaceHeight / faceBox.height().toFloat()
+
+                            val faceCenterX = faceBox.centerX().toFloat()
+                            val faceCenterY = faceBox.centerY().toFloat()
+
+                            val targetCenterX = dimensions.first / 2f
+                            val targetCenterY = dimensions.second / 2f
+
+                            // --- Build transform ---
+                            matrix.postTranslate(
+                                -faceCenterX,
+                                -faceCenterY
+                            ) // move face center to (0,0)
+                            matrix.postScale(
+                                scale,
+                                scale
+                            )                      // scale to target size
+                            matrix.postRotate(-day.faceData.headAngle)          // straighten roll
+                            matrix.postTranslate(targetCenterX, targetCenterY)  // center face
+                        } else {
+                            // No stabilization, just fit into canvas
+                            val scale = minOf(
+                                dimensions.first.toFloat() / originalBitmap.width,
+                                dimensions.second.toFloat() / originalBitmap.height
+                            )
+                            val dx = (dimensions.first - originalBitmap.width * scale) / 2f
+                            val dy = (dimensions.second - originalBitmap.height * scale) / 2f
+                            matrix.postScale(scale, scale)
+                            matrix.postTranslate(dx, dy)
+                        }
+
+                        canvas.drawBitmap(originalBitmap, matrix, null)
+
+                        // --- Watermark, date, message ---
+                        if (config.waterMark) {
+                            val watermark = "Momentum"
+                            val paddingX = dimensions.first * 0.05f
+                            val paddingY =
+                                dimensions.second * 0.05f + paint.descent() + paint.textSize
+                            canvas.drawText(watermark, paddingX, paddingY, paint)
+                        }
+                        if (config.showDate) {
+                            val date = LocalDate.ofEpochDay(day.date).format(
+                                DateTimeFormatter.ofLocalizedDate(config.dateStyle.toFormatStyle())
+                            )
+                            val paddingX = dimensions.first * 0.05f
+                            val paddingY =
+                                dimensions.second - dimensions.second * 0.05f - paint.descent()
+                            canvas.drawText(date, paddingX, paddingY, paint)
+                        }
+                        if (config.showMessage && !day.comment.isNullOrBlank()) {
+                            val message = day.comment
+                            val paddingX = dimensions.first * 0.05f
+                            val paddingY =
+                                dimensions.second - dimensions.second * 0.12f - paint.descent()
+                            canvas.drawText(message, paddingX, paddingY, paint)
+                        }
+
+                        // censor face
+                        if (config.censorFaces && config.stabilizeFaces && day.faceData.isValid()) {
+                            val faceBox = day.faceData?.toRect()!!
+                            val faceRectF = faceBox.toRectF()
+                            matrix.mapRect(faceRectF)
+
+                            val censorPaint = Paint().apply {
+                                isAntiAlias = true
+                                style = Paint.Style.FILL
+                                color = config.backgroundColor.toArgb()
+                            }
+                            canvas.drawRect(faceRectF, censorPaint)
+                        }
+
+                        canvasBitmap
+                    } else null
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
+    }
+
+    private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
+        val matrix = Matrix().apply { postRotate(degrees) }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 }
