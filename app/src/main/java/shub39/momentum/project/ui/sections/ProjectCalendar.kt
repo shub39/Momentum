@@ -77,7 +77,7 @@ fun ProjectCalendar(
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = state.project?.title!!) },
+                title = { Text(text = state.project?.title ?: "") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(

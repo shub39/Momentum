@@ -86,6 +86,8 @@ class FrameBuilder(
             }
 
             postCanvasFrame(canvas)
+
+            Thread.sleep(1)
         }
     }
 
@@ -102,12 +104,17 @@ class FrameBuilder(
     }
 
     private fun drainCodec(endOfStream: Boolean) {
-        if (endOfStream) mediaCodec.signalEndOfInputStream()
+        if (endOfStream) {
+            try {
+                mediaCodec.signalEndOfInputStream()
+            } catch (e: IllegalStateException) {
+                Log.e(TAG, "Codec already released", e)
+                return
+            }
+        }
 
         while (true) {
-            val encoderStatus = mediaCodec.dequeueOutputBuffer(bufferInfo, TIMEOUT_USEC)
-
-            when (encoderStatus) {
+            when (val encoderStatus = mediaCodec.dequeueOutputBuffer(bufferInfo, TIMEOUT_USEC)) {
                 MediaCodec.INFO_TRY_AGAIN_LATER -> {
                     if (!endOfStream) return
                 }

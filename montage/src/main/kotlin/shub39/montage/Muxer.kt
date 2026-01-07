@@ -13,6 +13,7 @@ class Muxer(private val context: Context, private val file: File) {
     fun setMuxerConfig(config: MuxerConfiguration) {
         this.muxerConfig = config
     }
+
     fun getMuxerConfig() = muxerConfig
 
     fun setOnMuxingCompletedListener(listener: MuxingCompletionListener) {
