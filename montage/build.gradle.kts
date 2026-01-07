@@ -10,6 +10,7 @@ android {
     kotlin {
         compilerOptions {
             jvmToolchain(17)
+            freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
         }
     }
 

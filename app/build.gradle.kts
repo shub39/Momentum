@@ -108,6 +108,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.exifinterface)
 
     implementation(libs.face.detection)
 
@@ -118,8 +119,6 @@ dependencies {
     androidTestImplementation(libs.androidx.room.testing)
     testImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.truth)
-
-    implementation("androidx.exifinterface:exifinterface:1.4.2")
 }
 
 ksp {
