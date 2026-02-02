@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -144,9 +143,7 @@ fun ProjectDetails(
             )
 
             LazyColumn(
-                state = rememberLazyListState(
-                    cacheWindow = LazyLayoutCacheWindow(ahead = 500.dp, behind = 500.dp)
-                ),
+                state = rememberLazyListState(),
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize(),
