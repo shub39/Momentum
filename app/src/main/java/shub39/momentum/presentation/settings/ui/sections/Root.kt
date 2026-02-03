@@ -50,11 +50,13 @@ import shub39.momentum.presentation.shared.MomentumTheme
 fun Root(
     onAction: (SettingsAction) -> Unit,
     onNavigateBack: () -> Unit,
-    onNavigateToLookAndFeel: () -> Unit
+    onNavigateToLookAndFeel: () -> Unit,
+    onNavigateToPaywall: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumFlexibleTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -81,7 +83,7 @@ fun Root(
         ) {
             item {
                 Card(
-                    onClick = { onAction(SettingsAction.OnShowPaywall) },
+                    onClick = onNavigateToPaywall,
                     modifier = Modifier.padding(16.dp),
                     shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
@@ -188,7 +190,8 @@ private fun Preview() {
         Root(
             onNavigateBack = {},
             onNavigateToLookAndFeel = {},
-            onAction = {}
+            onAction = {},
+            onNavigateToPaywall = {}
         )
     }
 }

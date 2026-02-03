@@ -42,21 +42,24 @@ private sealed interface HomeRoutes {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun HomeGraph(
-    state: shub39.momentum.presentation.home.HomeState,
-    onAction: (shub39.momentum.presentation.home.HomeAction) -> Unit,
+    state: HomeState,
+    onAction: (HomeAction) -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToProject: () -> Unit
+    onNavigateToProject: () -> Unit,
+    isPlusUser: Boolean,
+    onNavigateToPaywall: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = _root_ide_package_.shub39.momentum.presentation.home.HomeRoutes.ProjectList,
+        startDestination = HomeRoutes.ProjectList,
         enterTransition = { fadeIn(tween(300)) },
         exitTransition = { fadeOut(tween(300)) },
         popEnterTransition = { fadeIn(tween(300)) },
         popExitTransition = { fadeOut(tween(300)) },
-        modifier = Modifier
+        modifier = modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
     ) {
@@ -67,10 +70,10 @@ fun HomeGraph(
                 onNavigateToProject = onNavigateToProject,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToNewProject = {
-                    if (state.projects.size <= 1 || state.isPlusUser) {
+                    if (state.projects.size <= 3 || isPlusUser) {
                         navController.navigate(HomeRoutes.AddProject)
                     } else {
-                        onAction(HomeAction.OnShowPaywall)
+                        onNavigateToPaywall()
                     }
                 }
             )
@@ -117,7 +120,9 @@ private fun Preview() {
             state = state,
             onAction = {},
             onNavigateToSettings = {},
-            onNavigateToProject = {}
+            onNavigateToProject = {},
+            isPlusUser = true,
+            onNavigateToPaywall = {}
         )
     }
 }

@@ -2,6 +2,7 @@ package shub39.momentum.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
@@ -15,10 +16,9 @@ import shub39.momentum.presentation.onboarding.OnboardingState
 
 @KoinViewModel
 class OnboardingViewModel(
-    private val stateLayer: StateLayer,
     private val datastore: SettingsPrefs
 ) : ViewModel() {
-    private val _state = stateLayer.onboardingState
+    private val _state = MutableStateFlow(OnboardingState())
     val state = _state.asStateFlow()
         .onStart { }
         .stateIn(

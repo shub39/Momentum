@@ -69,7 +69,10 @@ fun ProjectMontageView(
     exoPlayer: ExoPlayer?,
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    isPlusUser: Boolean,
+    onNavigateToPaywall: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
@@ -124,7 +127,7 @@ fun ProjectMontageView(
         }
     }
 
-    Scaffold { padding ->
+    Scaffold(modifier = modifier) { padding ->
         Box(
             modifier = Modifier
                 .padding(padding)
@@ -247,7 +250,9 @@ fun ProjectMontageView(
                 state = state,
                 onAction = onAction,
                 onDismissRequest = { showEditSheet = false },
-                buttonEnabled = state.montageConfig != (state.montage as? MontageState.Success)?.config
+                buttonEnabled = state.montageConfig != (state.montage as? MontageState.Success)?.config,
+                isPlusUser = isPlusUser,
+                onNavigateToPaywall = onNavigateToPaywall
             )
         }
     }
@@ -287,7 +292,9 @@ private fun Preview() {
             state = state,
             onAction = {},
             onNavigateBack = {},
-            exoPlayer = null
+            exoPlayer = null,
+            isPlusUser = true,
+            onNavigateToPaywall = {}
         )
     }
 }

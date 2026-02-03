@@ -70,6 +70,8 @@ fun MontageEditSheet(
     onAction: (ProjectAction) -> Unit,
     onDismissRequest: () -> Unit,
     buttonEnabled: Boolean,
+    isPlusUser: Boolean,
+    onNavigateToPaywall: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 ) {
@@ -297,7 +299,7 @@ fun MontageEditSheet(
                 }
             }
 
-            if (!state.isPlusUser) {
+            if (!isPlusUser) {
                 item {
                     Box(
                         contentAlignment = Alignment.Center,
@@ -308,7 +310,7 @@ fun MontageEditSheet(
                     ) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
-                            onClick = { onAction(ProjectAction.OnShowPaywall) }
+                            onClick = onNavigateToPaywall
                         ) {
                             Text(
                                 text = stringResource(R.string.unlock_more_pro)
@@ -344,16 +346,16 @@ fun MontageEditSheet(
                     VideoQuality.entries.forEach { quality ->
                         ToggleButton(
                             checked = quality == state.montageConfig.videoQuality,
-                            enabled = state.isPlusUser,
+                            enabled = isPlusUser,
                             onCheckedChange = {
-                                if (state.isPlusUser) {
+                                if (isPlusUser) {
                                     onAction(
                                         ProjectAction.OnEditMontageConfig(
                                             state.montageConfig.copy(videoQuality = quality)
                                         )
                                     )
                                 } else {
-                                    onAction(ProjectAction.OnShowPaywall)
+                                    onNavigateToPaywall()
                                 }
                             }
                         ) {
@@ -379,16 +381,16 @@ fun MontageEditSheet(
 
                     Switch(
                         checked = state.montageConfig.stabilizeFaces,
-                        enabled = state.isPlusUser,
+                        enabled = isPlusUser,
                         onCheckedChange = {
-                            if (state.isPlusUser) {
+                            if (isPlusUser) {
                                 onAction(
                                     ProjectAction.OnEditMontageConfig(
                                         state.montageConfig.copy(stabilizeFaces = it)
                                     )
                                 )
                             } else {
-                                onAction(ProjectAction.OnShowPaywall)
+                                onNavigateToPaywall()
                             }
                         }
                     )
@@ -415,16 +417,16 @@ fun MontageEditSheet(
 
                         Switch(
                             checked = state.montageConfig.censorFaces,
-                            enabled = state.isPlusUser && state.montageConfig.stabilizeFaces,
+                            enabled = isPlusUser && state.montageConfig.stabilizeFaces,
                             onCheckedChange = {
-                                if (state.isPlusUser) {
+                                if (isPlusUser) {
                                     onAction(
                                         ProjectAction.OnEditMontageConfig(
                                             state.montageConfig.copy(censorFaces = it)
                                         )
                                     )
                                 } else {
-                                    onAction(ProjectAction.OnShowPaywall)
+                                    onNavigateToPaywall()
                                 }
                             }
                         )
@@ -448,16 +450,16 @@ fun MontageEditSheet(
 
                     Switch(
                         checked = state.montageConfig.waterMark,
-                        enabled = state.isPlusUser,
+                        enabled = isPlusUser,
                         onCheckedChange = {
-                            if (state.isPlusUser) {
+                            if (isPlusUser) {
                                 onAction(
                                     ProjectAction.OnEditMontageConfig(
                                         state.montageConfig.copy(waterMark = it)
                                     )
                                 )
                             } else {
-                                onAction(ProjectAction.OnShowPaywall)
+                                onNavigateToPaywall()
                             }
                         }
                     )
@@ -480,13 +482,13 @@ fun MontageEditSheet(
 
                     IconButton(
                         onClick = {
-                            if (state.isPlusUser) {
+                            if (isPlusUser) {
                                 showColorPicker = true
                             } else {
-                                onAction(ProjectAction.OnShowPaywall)
+                                onNavigateToPaywall()
                             }
                         },
-                        enabled = state.isPlusUser,
+                        enabled = isPlusUser,
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = state.montageConfig.backgroundColor,
                             contentColor = contentColorFor(state.montageConfig.backgroundColor)
@@ -524,7 +526,6 @@ private fun Preview() {
                         isFavorite = false
                     )
                 ),
-                isPlusUser = true,
                 montageConfig = MontageConfig(stabilizeFaces = true)
             ),
             onAction = {},
@@ -532,7 +533,9 @@ private fun Preview() {
             onDismissRequest = {},
             sheetState = rememberStandardBottomSheetState(
                 initialValue = SheetValue.Expanded
-            )
+            ),
+            isPlusUser = true,
+            onNavigateToPaywall = { },
         )
     }
 }

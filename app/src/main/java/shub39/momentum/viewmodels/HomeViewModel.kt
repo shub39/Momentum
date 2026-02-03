@@ -19,7 +19,7 @@ import shub39.momentum.presentation.home.HomeState
 
 @KoinViewModel
 class HomeViewModel(
-    private val stateLayer: StateLayer,
+    private val stateLayer: SharedState,
     private val projectRepository: ProjectRepository
 ) : ViewModel() {
     private val _state = stateLayer.homeState
@@ -49,8 +49,6 @@ class HomeViewModel(
                     )
                 )
             }
-
-            HomeAction.OnShowPaywall -> stateLayer.settingsState.update { it.copy(showPaywall = true) }
         }
     }
 

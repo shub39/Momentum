@@ -36,7 +36,7 @@ import shub39.momentum.presentation.project.ProjectState
 
 @KoinViewModel
 class ProjectViewModel(
-    private val stateLayer: StateLayer,
+    sharedState: SharedState,
     private val montageMaker: MontageMaker,
     private val faceDetector: FaceDetector,
     private val repository: ProjectRepository,
@@ -54,7 +54,7 @@ class ProjectViewModel(
             initialValue = null
         )
 
-    private val _state = stateLayer.projectState
+    private val _state = sharedState.projectState
     val state = _state.asStateFlow()
         .onStart { observeConfig() }
         .stateIn(
@@ -188,8 +188,6 @@ class ProjectViewModel(
             ProjectAction.OnResetMontagePrefs -> viewModelScope.launch {
                 montageConfigPrefs.resetPrefs()
             }
-
-            ProjectAction.OnShowPaywall -> stateLayer.settingsState.update { it.copy(showPaywall = true) }
         }
     }
 

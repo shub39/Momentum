@@ -1,6 +1,7 @@
 package shub39.momentum.presentation.settings
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -21,19 +22,24 @@ private sealed interface SettingsRoutes {
 fun SettingsGraph(
     state: SettingsState,
     onAction: (SettingsAction) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    isPlusUser: Boolean,
+    onNavigateToPaywall: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = SettingsRoutes.Root
+        startDestination = SettingsRoutes.Root,
+        modifier = modifier
     ) {
         composable<SettingsRoutes.Root> {
             Root(
                 onAction = onAction,
                 onNavigateBack = onNavigateBack,
-                onNavigateToLookAndFeel = { navController.navigate(SettingsRoutes.LookAndFeel) }
+                onNavigateToLookAndFeel = { navController.navigate(SettingsRoutes.LookAndFeel) },
+                onNavigateToPaywall = onNavigateToPaywall
             )
         }
 
@@ -41,7 +47,9 @@ fun SettingsGraph(
             LookAndFeel(
                 state = state,
                 onAction = onAction,
-                onNavigateBack = { navController.navigateUp() }
+                onNavigateBack = { navController.navigateUp() },
+                isPlusUser = isPlusUser,
+                onNavigateToPaywall = onNavigateToPaywall
             )
         }
     }

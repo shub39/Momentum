@@ -51,7 +51,10 @@ fun ProjectGraph(
     state: ProjectState,
     exoPlayer: ExoPlayer?,
     onAction: (ProjectAction) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    isPlusUser: Boolean,
+    onNavigateToPaywall: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LaunchedEffect(state.project) { onAction(ProjectAction.OnUpdateDays) }
 
@@ -64,7 +67,7 @@ fun ProjectGraph(
         exitTransition = { fadeOut(tween(500)) },
         popEnterTransition = { fadeIn(tween(500)) },
         popExitTransition = { fadeOut(tween(500)) },
-        modifier = Modifier
+        modifier = modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
     ) {
@@ -87,7 +90,7 @@ fun ProjectGraph(
         }
 
         composable<ProjectRoutes.ProjectShortsView> {
-
+            // maybe someday
         }
 
         composable<ProjectRoutes.ProjectMontageView> {
@@ -95,7 +98,9 @@ fun ProjectGraph(
                 state = state,
                 exoPlayer = exoPlayer,
                 onAction = onAction,
-                onNavigateBack = { navController.navigateUp() }
+                onNavigateBack = { navController.navigateUp() },
+                isPlusUser = isPlusUser,
+                onNavigateToPaywall = onNavigateToPaywall
             )
         }
     }
@@ -133,7 +138,9 @@ private fun Preview() {
             state = state,
             onAction = {},
             onNavigateBack = {},
-            exoPlayer = null
+            exoPlayer = null,
+            isPlusUser = true,
+            onNavigateToPaywall = {}
         )
     }
 }

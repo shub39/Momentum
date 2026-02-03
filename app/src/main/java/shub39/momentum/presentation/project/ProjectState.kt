@@ -15,5 +15,4 @@ data class ProjectState(
     val montage: MontageState = MontageState.Processing(),
     val montageConfig: MontageConfig = MontageConfig(),
     val selectedDate: Long? = null,
-    val isPlusUser: Boolean = false,
 )

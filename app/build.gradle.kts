@@ -71,6 +71,7 @@ dependencies {
 
     implementation(libs.purchases.ui)
     implementation(libs.purchases)
+
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)

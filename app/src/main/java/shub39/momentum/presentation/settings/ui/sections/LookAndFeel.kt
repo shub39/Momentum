@@ -71,7 +71,10 @@ import shub39.momentum.presentation.shared.zigZagBackground
 fun LookAndFeel(
     state: SettingsState,
     onAction: (SettingsAction) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    isPlusUser: Boolean,
+    onNavigateToPaywall: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var colorPickerDialog by remember { mutableStateOf(false) }
     var fontPickerDialog by remember { mutableStateOf(false) }
@@ -79,7 +82,7 @@ fun LookAndFeel(
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -135,7 +138,7 @@ fun LookAndFeel(
                 )
             }
 
-            if (!state.isPlusUser) {
+            if (!isPlusUser) {
                 item {
                     Box(
                         contentAlignment = Alignment.Center,
@@ -146,7 +149,7 @@ fun LookAndFeel(
                     ) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
-                            onClick = { onAction(SettingsAction.OnShowPaywall) }
+                            onClick = onNavigateToPaywall
                         ) {
                             Text(
                                 text = stringResource(R.string.unlock_more_pro)
@@ -168,7 +171,7 @@ fun LookAndFeel(
                     trailingContent = {
                         FilledTonalIconButton(
                             onClick = { fontPickerDialog = true },
-                            enabled = state.isPlusUser
+                            enabled = isPlusUser
                         ) {
                             Icon(
                                 imageVector = Icons.Default.FontDownload,
@@ -195,7 +198,7 @@ fun LookAndFeel(
                     trailingContent = {
                         Switch(
                             checked = state.theme.isAmoled,
-                            enabled = state.isPlusUser,
+                            enabled = isPlusUser,
                             onCheckedChange = {
                                 onAction(SettingsAction.OnAmoledSwitch(it))
                             }
@@ -221,7 +224,7 @@ fun LookAndFeel(
                         trailingContent = {
                             Switch(
                                 checked = state.theme.isMaterialYou,
-                                enabled = state.isPlusUser,
+                                enabled = isPlusUser,
                                 onCheckedChange = {
                                     onAction(SettingsAction.OnMaterialThemeToggle(it))
                                 }
@@ -255,7 +258,7 @@ fun LookAndFeel(
                                     containerColor = state.theme.seedColor,
                                     contentColor = contentColorFor(state.theme.seedColor)
                                 ),
-                                enabled = !state.theme.isMaterialYou && state.isPlusUser
+                                enabled = !state.theme.isMaterialYou && isPlusUser
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Create,
@@ -304,7 +307,7 @@ fun LookAndFeel(
                                     onAction(SettingsAction.OnPaletteChange(style = style))
                                 },
                                 contentDescription = { style.name },
-                                enabled = state.isPlusUser,
+                                enabled = isPlusUser,
                                 accents = listOf(
                                     TonalPalette.from(scheme.primary),
                                     TonalPalette.from(scheme.tertiary),

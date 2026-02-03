@@ -8,8 +8,6 @@ import shub39.momentum.domain.data_classes.PlayerAction
 import shub39.momentum.domain.data_classes.Project
 
 sealed interface ProjectAction {
-    data object OnShowPaywall : ProjectAction
-
     data class OnInitializeExoPlayer(val context: Context) : ProjectAction
     data class OnPlayerAction(val playerAction: PlayerAction) : ProjectAction
 

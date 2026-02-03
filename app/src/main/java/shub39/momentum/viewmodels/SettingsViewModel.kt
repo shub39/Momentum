@@ -2,6 +2,7 @@ package shub39.momentum.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -11,23 +12,18 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import shub39.momentum.billing.domain.BillingHandler
-import shub39.momentum.billing.domain.SubscriptionResult
 import shub39.momentum.domain.interfaces.SettingsPrefs
 import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.SettingsState
 
 @KoinViewModel
 class SettingsViewModel(
-    private val stateLayer: StateLayer,
     private val datastore: SettingsPrefs,
-    private val billingHandler: BillingHandler
 ): ViewModel() {
-    private val _state = stateLayer.settingsState
+    private val _state = MutableStateFlow(SettingsState())
     val state = _state.asStateFlow()
         .onStart {
             observeDatastore()
-            checkSubscription()
         }
         .stateIn(
             scope = viewModelScope,
@@ -44,26 +40,6 @@ class SettingsViewModel(
             is SettingsAction.OnSeedColorChange -> datastore.updateSeedColor(action.color)
             is SettingsAction.OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
             is SettingsAction.OnOnboardingToggle -> datastore.updateOnboardingDone(action.done)
-            SettingsAction.OnShowPaywall -> {
-                _state.update { it.copy(showPaywall = !it.showPaywall) }
-                checkSubscription()
-            }
-        }
-    }
-
-    private suspend fun checkSubscription() {
-        val isSubscribed = billingHandler.userResult()
-
-        when (isSubscribed) {
-            SubscriptionResult.NotSubscribed -> datastore.resetAppTheme()
-
-            SubscriptionResult.Subscribed -> {
-                _state.update { it.copy(isPlusUser = true) }
-                stateLayer.projectState.update { it.copy(isPlusUser = true) }
-                stateLayer.homeState.update { it.copy(isPlusUser = true) }
-            }
-
-            else -> {}
         }
     }
 
