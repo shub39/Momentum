@@ -13,12 +13,12 @@ val appNameSpace = "shub39.momentum"
 
 android {
     namespace = appNameSpace
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = appNameSpace
-        minSdk = 27
-        targetSdk = 36
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.compileSdk.get().toInt()
         versionCode = appVersionCode
         versionName = appVersionName
 
@@ -88,21 +88,17 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling)
-
     implementation(libs.koin.core)
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.compose.viewmodel.navigation)
     ksp(libs.koin.ksp.compiler)
     api(libs.koin.annotations)
-
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.exifinterface)
-
     implementation(libs.face.detection)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

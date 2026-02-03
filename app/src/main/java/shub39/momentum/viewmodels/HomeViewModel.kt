@@ -11,15 +11,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import shub39.momentum.core.domain.data_classes.Project
-import shub39.momentum.core.domain.interfaces.MontageState
-import shub39.momentum.core.domain.interfaces.ProjectRepository
-import shub39.momentum.home.HomeAction
-import shub39.momentum.home.HomeState
+import shub39.momentum.domain.data_classes.Project
+import shub39.momentum.domain.interfaces.MontageState
+import shub39.momentum.domain.interfaces.ProjectRepository
+import shub39.momentum.presentation.home.HomeAction
+import shub39.momentum.presentation.home.HomeState
 
 @KoinViewModel
 class HomeViewModel(
-    private val stateLayer: StateLayer,
+    private val stateLayer: SharedState,
     private val projectRepository: ProjectRepository
 ) : ViewModel() {
     private val _state = stateLayer.homeState
@@ -49,8 +49,6 @@ class HomeViewModel(
                     )
                 )
             }
-
-            HomeAction.OnShowPaywall -> stateLayer.settingsState.update { it.copy(showPaywall = true) }
         }
     }
 

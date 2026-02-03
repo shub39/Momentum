@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "shub39.montage"
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 27
+        minSdk = libs.versions.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 }

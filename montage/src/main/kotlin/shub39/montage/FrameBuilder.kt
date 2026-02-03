@@ -19,7 +19,7 @@ import java.nio.ByteBuffer
 class FrameBuilder(
     private val context: Context,
     private val muxerConfig: MuxerConfiguration,
-    @RawRes private val audioTrackResource: Int?
+    @param:RawRes private val audioTrackResource: Int?
 ) {
 
     companion object {
