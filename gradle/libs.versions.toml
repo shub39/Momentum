@@ -1,5 +1,7 @@
 [versions]
 agp = "9.0.0"
+minSdk = "27"
+compileSdk = "36"
 calendar = "2.10.0"
 exifinterface = "1.4.2"
 faceDetection = "16.1.7"
