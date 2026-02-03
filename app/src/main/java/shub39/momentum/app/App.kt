@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,6 +54,12 @@ fun App() {
     val mainViewModel: MainAppViewModel = koinInject()
     val state by mainViewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(state.isOnboardingDone) {
+        if (!state.isOnboardingDone) {
+            navController.navigate(Screens.Onboarding)
+        }
+    }
+
     MomentumTheme(theme = state.theme) {
         NavHost(
             navController = navController,
@@ -75,7 +82,7 @@ fun App() {
                     onNavigateToSettings = { navController.navigate(Screens.SettingsGraph) },
                     onNavigateToProject = { navController.navigate(Screens.ProjectGraph) },
                     isPlusUser = state.isPlusUser,
-                    onNavigateToPaywall = { }
+                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) }
                 )
             }
 
