@@ -21,10 +21,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
-import shub39.momentum.core.domain.data_classes.Project
-import shub39.momentum.core.domain.data_classes.Theme
-import shub39.momentum.core.domain.enums.AppTheme
-import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.domain.data_classes.Project
+import shub39.momentum.domain.data_classes.Theme
+import shub39.momentum.domain.enums.AppTheme
+import shub39.momentum.presentation.MomentumTheme
 import shub39.momentum.project.ui.component.DayInfoSheet
 import shub39.momentum.project.ui.sections.ProjectCalendar
 import shub39.momentum.project.ui.sections.ProjectDetails

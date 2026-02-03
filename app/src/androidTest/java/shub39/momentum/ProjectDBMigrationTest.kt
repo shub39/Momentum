@@ -10,7 +10,6 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import shub39.momentum.core.data.database.ProjectDatabase
 
 private const val DB_NAME = "projects_test.db"
 
@@ -19,7 +18,7 @@ class ProjectDBMigrationTest {
     @get:Rule
     val helper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        ProjectDatabase::class.java,
+        _root_ide_package_.shub39.momentum.data.database.ProjectDatabase::class.java,
         listOf(),
         FrameworkSQLiteOpenHelperFactory()
     )
@@ -77,7 +76,7 @@ class ProjectDBMigrationTest {
         // Open the database with the latest version to run all migrations.
         Room.databaseBuilder(
             InstrumentationRegistry.getInstrumentation().targetContext,
-            ProjectDatabase::class.java,
+            _root_ide_package_.shub39.momentum.data.database.ProjectDatabase::class.java,
             DB_NAME
         ).build().apply {
             openHelper.writableDatabase.close()

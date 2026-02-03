@@ -40,9 +40,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".core.data.AlarmReceiver" />
+        <receiver android:name=".data.AlarmReceiver" />
         <receiver
-            android:name=".core.data.BootReceiver"
+            android:name=".data.BootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

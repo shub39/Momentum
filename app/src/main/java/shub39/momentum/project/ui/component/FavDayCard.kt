@@ -24,9 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
-import shub39.momentum.core.domain.data_classes.Day
-import shub39.momentum.core.presentation.MomentumTheme
-import shub39.momentum.core.presentation.getPlaceholder
+import shub39.momentum.domain.data_classes.Day
+import shub39.momentum.presentation.MomentumTheme
+import shub39.momentum.presentation.getPlaceholder
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle

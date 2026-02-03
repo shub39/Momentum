@@ -1,7 +1,7 @@
 package shub39.momentum.home
 
 import androidx.compose.runtime.Immutable
-import shub39.momentum.core.domain.data_classes.ProjectListData
+import shub39.momentum.domain.data_classes.ProjectListData
 
 @Immutable
 data class HomeState(

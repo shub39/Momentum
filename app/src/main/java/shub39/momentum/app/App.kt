@@ -18,9 +18,9 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 import shub39.momentum.billing.presentation.PaywallPage
-import shub39.momentum.core.presentation.MomentumTheme
 import shub39.momentum.home.HomeGraph
 import shub39.momentum.onboarding.Onboarding
+import shub39.momentum.presentation.MomentumTheme
 import shub39.momentum.project.ProjectGraph
 import shub39.momentum.settings.SettingsAction
 import shub39.momentum.settings.SettingsGraph

@@ -2,8 +2,8 @@ package shub39.momentum.settings
 
 import androidx.compose.ui.graphics.Color
 import com.materialkolor.PaletteStyle
-import shub39.momentum.core.domain.enums.AppTheme
-import shub39.momentum.core.domain.enums.Fonts
+import shub39.momentum.domain.enums.AppTheme
+import shub39.momentum.domain.enums.Fonts
 
 sealed interface SettingsAction {
     data class OnSeedColorChange(val color: Color): SettingsAction

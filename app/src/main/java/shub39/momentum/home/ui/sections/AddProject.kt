@@ -31,11 +31,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.materialkolor.PaletteStyle
 import shub39.momentum.R
-import shub39.momentum.core.domain.data_classes.Theme
-import shub39.momentum.core.domain.enums.AppTheme
-import shub39.momentum.core.domain.enums.Fonts
-import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.domain.data_classes.Theme
+import shub39.momentum.domain.enums.AppTheme
+import shub39.momentum.domain.enums.Fonts
 import shub39.momentum.home.HomeAction
+import shub39.momentum.presentation.MomentumTheme
 
 @Composable
 fun AddProject(

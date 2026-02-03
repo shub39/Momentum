@@ -66,10 +66,10 @@ import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.path
 import kotlinx.coroutines.launch
 import shub39.momentum.R
-import shub39.momentum.core.domain.data_classes.Day
-import shub39.momentum.core.domain.data_classes.Theme
-import shub39.momentum.core.domain.enums.AppTheme
-import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.domain.data_classes.Day
+import shub39.momentum.domain.data_classes.Theme
+import shub39.momentum.domain.enums.AppTheme
+import shub39.momentum.presentation.MomentumTheme
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
 import java.time.LocalDate

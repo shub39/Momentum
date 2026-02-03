@@ -23,14 +23,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import shub39.momentum.core.data.ImageHandler
-import shub39.momentum.core.domain.enums.VideoAction
-import shub39.momentum.core.domain.interfaces.AlarmScheduler
-import shub39.momentum.core.domain.interfaces.FaceDetector
-import shub39.momentum.core.domain.interfaces.MontageConfigPrefs
-import shub39.momentum.core.domain.interfaces.MontageMaker
-import shub39.momentum.core.domain.interfaces.MontageState
-import shub39.momentum.core.domain.interfaces.ProjectRepository
+import shub39.momentum.data.ImageHandler
+import shub39.momentum.domain.enums.VideoAction
+import shub39.momentum.domain.interfaces.AlarmScheduler
+import shub39.momentum.domain.interfaces.FaceDetector
+import shub39.momentum.domain.interfaces.MontageConfigPrefs
+import shub39.momentum.domain.interfaces.MontageMaker
+import shub39.momentum.domain.interfaces.MontageState
+import shub39.momentum.domain.interfaces.ProjectRepository
 import shub39.momentum.project.ProjectAction
 import shub39.momentum.project.ProjectState
 

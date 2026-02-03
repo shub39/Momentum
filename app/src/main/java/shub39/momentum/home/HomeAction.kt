@@ -1,6 +1,6 @@
 package shub39.momentum.home
 
-import shub39.momentum.core.domain.data_classes.Project
+import shub39.momentum.domain.data_classes.Project
 
 sealed interface HomeAction {
     data object OnShowPaywall : HomeAction

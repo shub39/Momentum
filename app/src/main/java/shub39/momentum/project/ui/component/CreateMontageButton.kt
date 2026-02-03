@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import shub39.momentum.R
-import shub39.momentum.core.presentation.MomentumTheme
+import shub39.momentum.presentation.MomentumTheme
 
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

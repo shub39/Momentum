@@ -35,8 +35,8 @@ import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import shub39.momentum.core.domain.data_classes.PlayerAction
-import shub39.momentum.core.domain.enums.VideoAction
+import shub39.momentum.domain.data_classes.PlayerAction
+import shub39.momentum.domain.enums.VideoAction
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
