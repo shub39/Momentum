@@ -14,8 +14,8 @@ import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.domain.data_classes.Project
 import shub39.momentum.domain.interfaces.MontageState
 import shub39.momentum.domain.interfaces.ProjectRepository
-import shub39.momentum.home.HomeAction
-import shub39.momentum.home.HomeState
+import shub39.momentum.presentation.home.HomeAction
+import shub39.momentum.presentation.home.HomeState
 
 @KoinViewModel
 class HomeViewModel(

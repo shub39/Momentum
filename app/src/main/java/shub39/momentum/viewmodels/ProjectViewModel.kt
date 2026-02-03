@@ -31,8 +31,8 @@ import shub39.momentum.domain.interfaces.MontageConfigPrefs
 import shub39.momentum.domain.interfaces.MontageMaker
 import shub39.momentum.domain.interfaces.MontageState
 import shub39.momentum.domain.interfaces.ProjectRepository
-import shub39.momentum.project.ProjectAction
-import shub39.momentum.project.ProjectState
+import shub39.momentum.presentation.project.ProjectAction
+import shub39.momentum.presentation.project.ProjectState
 
 @KoinViewModel
 class ProjectViewModel(

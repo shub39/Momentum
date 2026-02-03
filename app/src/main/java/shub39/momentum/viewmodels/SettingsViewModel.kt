@@ -14,8 +14,8 @@ import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.billing.domain.BillingHandler
 import shub39.momentum.billing.domain.SubscriptionResult
 import shub39.momentum.domain.interfaces.SettingsPrefs
-import shub39.momentum.settings.SettingsAction
-import shub39.momentum.settings.SettingsState
+import shub39.momentum.presentation.settings.SettingsAction
+import shub39.momentum.presentation.settings.SettingsState
 
 @KoinViewModel
 class SettingsViewModel(

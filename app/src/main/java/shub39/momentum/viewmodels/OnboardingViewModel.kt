@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.domain.interfaces.SettingsPrefs
-import shub39.momentum.onboarding.OnboardingAction
-import shub39.momentum.onboarding.OnboardingState
+import shub39.momentum.presentation.onboarding.OnboardingAction
+import shub39.momentum.presentation.onboarding.OnboardingState
 
 @KoinViewModel
 class OnboardingViewModel(
