@@ -6,7 +6,6 @@ import com.revenuecat.purchases.awaitCustomerInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
-import shub39.momentum.BuildConfig
 import shub39.momentum.billing.domain.BillingHandler
 import shub39.momentum.billing.domain.SubscriptionResult
 
@@ -19,8 +18,6 @@ class BillingHandlerImpl : BillingHandler {
     }
 
     override suspend fun userResult(): SubscriptionResult {
-        if (BuildConfig.DEBUG) return SubscriptionResult.Subscribed
-
         try {
             val userInfo = withContext(Dispatchers.IO) {
                 purchases.awaitCustomerInfo(fetchPolicy = CacheFetchPolicy.NOT_STALE_CACHED_OR_CURRENT)
