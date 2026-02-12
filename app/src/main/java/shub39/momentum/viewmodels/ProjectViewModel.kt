@@ -85,6 +85,8 @@ class ProjectViewModel(
                 val faceData = faceDetector.getFaceDataFromUri(action.day.image.toUri())
                 val copiedImageUri = imageHandler.copyImageToAppData(action.day)
 
+                Log.d("ProjectViewModel", "faceData : $faceData")
+
                 repository.upsertDay(
                     action.day.copy(
                         faceData = faceData,
