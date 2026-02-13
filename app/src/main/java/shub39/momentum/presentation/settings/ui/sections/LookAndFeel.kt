@@ -260,6 +260,7 @@ fun LookAndFeel(
                                     onCheckedChange = {
                                         onAction(SettingsAction.OnFontChange(font))
                                     },
+                                    enabled = isPlusUser,
                                     colors = ToggleButtonDefaults.toggleButtonColors(
                                         containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                                     )
@@ -381,7 +382,7 @@ fun LookAndFeel(
                                             color = scheme.tertiary,
                                             shape = if (selected) MaterialShapes.VerySunny.toShape() else CircleShape
                                         )
-                                        .clickable {
+                                        .clickable(enabled = isPlusUser) {
                                             onAction(SettingsAction.OnPaletteChange(style))
                                         },
                                     contentAlignment = Alignment.Center

@@ -46,8 +46,9 @@ class FaceDetectorImpl(
     }
 
     override suspend fun getFaceDataFromUri(uri: Uri): FaceData = withContext(Dispatchers.Default) {
-        val imageStream = contentResolver.openInputStream(uri)
-        val imageBitmap = BitmapFactory.decodeStream(imageStream)
+        val imageBitmap = contentResolver.openInputStream(uri)?.use { stream ->
+            BitmapFactory.decodeStream(stream)
+        }
         if (imageBitmap == null) {
             Log.e(TAG, "Could not decode image from Uri")
             return@withContext FaceData()
@@ -59,8 +60,12 @@ class FaceDetectorImpl(
             return@withContext FaceData()
         }
 
-        val result = faceLandmarker.detect(mpImage)
-        val landmarks = result.faceLandmarks().firstOrNull()
+        val landmarks = try {
+            faceLandmarker.detect(mpImage).faceLandmarks().firstOrNull()
+        } catch (e: Exception) {
+            Log.e(TAG, "Face Detection Failed", e)
+            null
+        }
         if (landmarks == null) {
             Log.e(TAG, "Could not extract landmarks")
             return@withContext FaceData()

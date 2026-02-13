@@ -30,7 +30,7 @@ fun Empty(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            painter = painterResource(R.drawable.landscape),
+            painter = painterResource(imageRes),
             contentDescription = "Empty Indicator",
             modifier = Modifier.size(150.dp)
         )

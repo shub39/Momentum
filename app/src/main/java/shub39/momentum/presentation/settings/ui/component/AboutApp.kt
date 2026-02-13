@@ -108,7 +108,7 @@ fun AboutApp(
             }
 
             Button(
-                onClick = { uriHandler.openUri("https://play.google.com/store/apps/details?id=com.shub39.momentum.play") }
+                onClick = { uriHandler.openUri("https://play.google.com/store/apps/details?id=shub39.momentum.play") }
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
