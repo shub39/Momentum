@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -78,8 +80,8 @@ fun Root(
             contentPadding = PaddingValues(
                 top = paddingValues.calculateTopPadding() + 16.dp,
                 bottom = paddingValues.calculateBottomPadding() + 60.dp,
-                start = paddingValues.calculateLeftPadding(LocalLayoutDirection.current) + 16.dp,
-                end = paddingValues.calculateRightPadding(LocalLayoutDirection.current) + 16.dp
+                start = paddingValues.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
+                end = paddingValues.calculateEndPadding(LocalLayoutDirection.current) + 16.dp
             ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {

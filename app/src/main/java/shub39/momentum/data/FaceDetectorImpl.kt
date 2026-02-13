@@ -71,42 +71,47 @@ class FaceDetectorImpl(
             return@withContext FaceData()
         }
 
-        var minX = 1.0f
-        var minY = 1.0f
-        var maxX = 0.0f
-        var maxY = 0.0f
+        try {
+            var minX = 1.0f
+            var minY = 1.0f
+            var maxX = 0.0f
+            var maxY = 0.0f
 
-        for (landmark in landmarks) {
-            minX = minOf(minX, landmark.x())
-            minY = minOf(minY, landmark.y())
-            maxX = maxOf(maxX, landmark.x())
-            maxY = maxOf(maxY, landmark.y())
-        }
+            for (landmark in landmarks) {
+                minX = minOf(minX, landmark.x())
+                minY = minOf(minY, landmark.y())
+                maxX = maxOf(maxX, landmark.x())
+                maxY = maxOf(maxY, landmark.y())
+            }
 
-        val width = imageBitmap.width
-        val height = imageBitmap.height
+            val width = imageBitmap.width
+            val height = imageBitmap.height
 
-        val left = (minX * width).toInt()
-        val top = (minY * height).toInt()
-        val right = (maxX * width).toInt()
-        val bottom = (maxY * height).toInt()
+            val left = (minX * width).toInt()
+            val top = (minY * height).toInt()
+            val right = (maxX * width).toInt()
+            val bottom = (maxY * height).toInt()
 
-        val leftEye = landmarks[33]
-        val rightEye = landmarks[263]
+            val leftEye = landmarks[33]
+            val rightEye = landmarks[263]
 
-        val headAngle = Math.toDegrees(
-            atan2(
-                ((rightEye.y() - leftEye.y()) * height).toDouble(),
-                ((rightEye.x() - leftEye.x()) * width).toDouble()
+            val headAngle = Math.toDegrees(
+                atan2(
+                    ((rightEye.y() - leftEye.y()) * height).toDouble(),
+                    ((rightEye.x() - leftEye.x()) * width).toDouble()
+                )
+            ).toFloat()
+
+            FaceData(
+                left = left,
+                top = top,
+                right = right,
+                bottom = bottom,
+                headAngle = headAngle
             )
-        ).toFloat()
-
-        FaceData(
-            left = left,
-            top = top,
-            right = right,
-            bottom = bottom,
-            headAngle = headAngle
-        )
+        } catch (e: Exception) {
+            Log.e(TAG, "Unexpected Error while extracting face", e)
+            return@withContext FaceData()
+        }
     }
 }
