@@ -1,0 +1,5 @@
+-dontwarn com.google.mediapipe.**
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite { *; }
+-keep class com.google.mediapipe.** { *; }
+-keep class com.google.mediapipe.proto.** { *; }
+-keep class com.google.common.flogger.** { *; }
