@@ -12,9 +12,10 @@ import shub39.momentum.domain.enums.Fonts
 @Composable
 fun provideTypography(
     scale: Float = 1f,
-    font: Fonts = Fonts.MANROPE
+    font: Fonts = Fonts.FIGTREE
 ): Typography {
-    val selectedFont = FontFamily(Font(font.fontRes))
+    val selectedFont = font.fontRes?.let { FontFamily(Font(it)) }
+        ?: FontFamily.Default
 
     return Typography(
         displayLarge = TextStyle(

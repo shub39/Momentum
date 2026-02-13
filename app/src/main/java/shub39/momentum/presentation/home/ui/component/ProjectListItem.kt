@@ -119,7 +119,7 @@ fun ProjectListItem(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Icon(
-                    painter = painterResource(R.drawable.arrow_back),
+                    painter = painterResource(R.drawable.arrow_forward),
                     contentDescription = "Navigate to project"
                 )
             }

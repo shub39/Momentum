@@ -70,7 +70,6 @@ import shub39.momentum.presentation.shared.endItemShape
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
 import shub39.momentum.presentation.shared.middleItemShape
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -266,10 +265,7 @@ fun LookAndFeel(
                                     )
                                 ) {
                                     Text(
-                                        text = font.name.lowercase()
-                                            .replaceFirstChar {
-                                                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-                                            }.replace("_", " "),
+                                        text = font.displayName,
                                         fontFamily = font.fontRes?.let { FontFamily(Font(it)) }
                                             ?: FontFamily.Default
                                     )
