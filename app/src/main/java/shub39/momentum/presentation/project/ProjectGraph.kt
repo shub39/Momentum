@@ -20,11 +20,12 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import shub39.momentum.domain.data_classes.Project
 import shub39.momentum.domain.data_classes.Theme
 import shub39.momentum.domain.enums.AppTheme
-import shub39.momentum.presentation.project.ui.component.DayInfoSheet
+import shub39.momentum.presentation.project.ui.sections.DayInfo
 import shub39.momentum.presentation.project.ui.sections.ProjectCalendar
 import shub39.momentum.presentation.project.ui.sections.ProjectDetails
 import shub39.momentum.presentation.project.ui.sections.ProjectMontageView
@@ -43,6 +44,9 @@ private sealed interface ProjectRoutes {
 
     @Serializable
     data object ProjectMontageView : ProjectRoutes
+
+    @Serializable
+    data class DayInfoView(val selectedDate: Long) : ProjectRoutes
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -77,12 +81,25 @@ fun ProjectGraph(
                 onAction = onAction,
                 onNavigateBack = onNavigateBack,
                 onNavigateToCalendar = { navController.navigate(ProjectRoutes.ProjectCalendarView) },
-                onNavigateToMontage = { navController.navigate(ProjectRoutes.ProjectMontageView) }
+                onNavigateToMontage = { navController.navigate(ProjectRoutes.ProjectMontageView) },
+                onNavigateToDayInfo = { navController.navigate(ProjectRoutes.DayInfoView(it)) }
             )
         }
 
         composable<ProjectRoutes.ProjectCalendarView> {
             ProjectCalendar(
+                state = state,
+                onAction = onAction,
+                onNavigateBack = { navController.navigateUp() },
+                onNavigateToDayInfo = { navController.navigate(ProjectRoutes.DayInfoView(it)) }
+            )
+        }
+
+        composable<ProjectRoutes.DayInfoView> {
+            val selectedDate = it.toRoute<ProjectRoutes.DayInfoView>().selectedDate
+
+            DayInfo(
+                selectedDate = selectedDate,
                 state = state,
                 onAction = onAction,
                 onNavigateBack = { navController.navigateUp() }
@@ -103,14 +120,6 @@ fun ProjectGraph(
                 onNavigateToPaywall = onNavigateToPaywall
             )
         }
-    }
-
-    if (state.selectedDate != null) {
-        DayInfoSheet(
-            selectedDate = state.selectedDate,
-            state = state,
-            onAction = onAction
-        )
     }
 }
 

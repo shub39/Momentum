@@ -74,7 +74,8 @@ fun ProjectDetails(
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToMontage: () -> Unit,
-    onNavigateToCalendar: () -> Unit
+    onNavigateToCalendar: () -> Unit,
+    onNavigateToDayInfo: (Long) -> Unit
 ) {
     if (state.project == null) {
         LoadingIndicator()
@@ -151,7 +152,7 @@ fun ProjectDetails(
                         onNavigateToCalendar = onNavigateToCalendar,
                         weekState = weekState,
                         days = state.days,
-                        onAction = onAction,
+                        onNavigateToDayInfo = onNavigateToDayInfo,
                         showGuide = showGuide,
                         modifier = Modifier
                             .animateContentSize()
@@ -227,7 +228,7 @@ fun ProjectDetails(
                     items(state.days.filter { it.isFavorite }, key = { it.id }) { day ->
                         FavDayCard(
                             day = day,
-                            onClick = { onAction(ProjectAction.OnUpdateSelectedDay(day.date)) },
+                            onClick = { onNavigateToDayInfo(day.date) },
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
@@ -411,7 +412,8 @@ private fun Preview() {
             onAction = {},
             onNavigateBack = {},
             onNavigateToMontage = {},
-            onNavigateToCalendar = {}
+            onNavigateToCalendar = {},
+            onNavigateToDayInfo = {}
         )
     }
 }

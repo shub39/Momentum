@@ -11,8 +11,6 @@ sealed interface ProjectAction {
     data class OnInitializeExoPlayer(val context: Context) : ProjectAction
     data class OnPlayerAction(val playerAction: PlayerAction) : ProjectAction
 
-    data class OnUpdateSelectedDay(val day: Long?) : ProjectAction
-
     data class OnUpdateReminder(val alarmData: AlarmData? = null) : ProjectAction
 
     data object OnUpdateDays : ProjectAction

@@ -122,8 +122,6 @@ class ProjectViewModel(
                 processDays()
             }
 
-            is ProjectAction.OnUpdateSelectedDay -> _state.update { it.copy(selectedDate = action.day) }
-
             ProjectAction.OnClearMontageState -> {
                 _exoPlayer.value?.release()
                 _exoPlayer.update { null }

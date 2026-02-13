@@ -14,5 +14,4 @@ data class ProjectState(
     val days: List<Day> = emptyList(),
     val montage: MontageState = MontageState.Processing(),
     val montageConfig: MontageConfig = MontageConfig(),
-    val selectedDate: Long? = null,
 )

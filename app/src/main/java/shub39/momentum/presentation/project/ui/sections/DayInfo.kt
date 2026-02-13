@@ -1,4 +1,4 @@
-package shub39.momentum.presentation.project.ui.component
+package shub39.momentum.presentation.project.ui.sections
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -6,44 +6,32 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,7 +46,6 @@ import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.path
-import kotlinx.coroutines.launch
 import shub39.momentum.R
 import shub39.momentum.domain.data_classes.Day
 import shub39.momentum.domain.data_classes.Theme
@@ -70,49 +57,59 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DayInfoSheet(
+fun DayInfo(
+    modifier: Modifier = Modifier,
     selectedDate: Long,
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
-    modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    onNavigateBack: () -> Unit
 ) {
-    val scrollState = rememberScrollState()
-    val coroutineScope = rememberCoroutineScope()
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-
     val day = state.days.find { it.date == selectedDate }
-
-    var isFavorite by remember { mutableStateOf(day?.isFavorite ?: false) }
-    var comment by remember { mutableStateOf(day?.comment ?: "") }
     var imageFile: PlatformFile? by remember {
-        mutableStateOf(
-            day?.let { PlatformFile(it.image.toUri()) }
-        )
+        mutableStateOf(day?.let { PlatformFile(it.image.toUri()) })
     }
-
     val imagePicker = rememberFilePickerLauncher(
         type = FileKitType.Image
     ) { image ->
-        if (image != null) {
-            imageFile = image
-        }
+        if (image != null) imageFile = image
     }
 
-    ModalBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = { onAction(ProjectAction.OnUpdateSelectedDay(null)) },
+    DayInfoContent(
+        modifier = modifier,
+        day = day,
+        imageFile = imageFile,
+        onLaunchImagePicker = { imagePicker.launch() },
+        selectedDate = selectedDate,
+        state = state,
+        onAction = onAction,
+        onNavigateBack = onNavigateBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun DayInfoContent(
+    modifier: Modifier = Modifier,
+    day: Day?,
+    imageFile: PlatformFile?,
+    onLaunchImagePicker: () -> Unit,
+    selectedDate: Long,
+    state: ProjectState,
+    onAction: (ProjectAction) -> Unit,
+    onNavigateBack: () -> Unit
+) {
+    var isFavorite by remember { mutableStateOf(day?.isFavorite ?: false) }
+    var comment by remember { mutableStateOf(day?.comment ?: "") }
+
+    Scaffold(
         modifier = modifier
-    ) {
+    ) { padding ->
         Column(
-            modifier = Modifier
-                .verticalScroll(scrollState)
-                .imePadding()
-                .navigationBarsPadding()
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = modifier
+                .padding(padding)
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -136,7 +133,7 @@ fun DayInfoSheet(
             ) {
                 if (imageFile != null) {
                     CoilImage(
-                        imageModel = { imageFile!!.path.toUri() },
+                        imageModel = { imageFile.path.toUri() },
                         loading = { LoadingIndicator() },
                         failure = {
                             Column(
@@ -185,7 +182,7 @@ fun DayInfoSheet(
                     }
 
                     SmallFloatingActionButton(
-                        onClick = { imagePicker.launch() },
+                        onClick = onLaunchImagePicker,
                         modifier = Modifier
                             .padding(4.dp)
                             .align(Alignment.BottomEnd)
@@ -205,7 +202,7 @@ fun DayInfoSheet(
                         )
 
                         TextButton(
-                            onClick = { imagePicker.launch() },
+                            onClick = onLaunchImagePicker,
                             modifier = Modifier.width(200.dp)
                         ) {
                             Text(text = stringResource(R.string.select_image))
@@ -230,16 +227,7 @@ fun DayInfoSheet(
                     )
                 },
                 shape = MaterialTheme.shapes.large,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .bringIntoViewRequester(bringIntoViewRequester)
-                    .onFocusEvent { event ->
-                        if (event.isFocused) {
-                            coroutineScope.launch {
-                                bringIntoViewRequester.bringIntoView()
-                            }
-                        }
-                    }
+                modifier = Modifier.fillMaxWidth()
             )
 
             Row(
@@ -262,7 +250,7 @@ fun DayInfoSheet(
                                 )
                             )
 
-                            onAction(ProjectAction.OnUpdateSelectedDay(null))
+                            onNavigateBack()
                         },
                         enabled = imageFile != null,
                         modifier = Modifier.width(200.dp)
@@ -275,7 +263,7 @@ fun DayInfoSheet(
                     Button(
                         onClick = {
                             onAction(ProjectAction.OnDeleteDay(day))
-                            onAction(ProjectAction.OnUpdateSelectedDay(null))
+                            onNavigateBack()
                         }
                     ) {
                         Text(text = stringResource(R.string.delete_day))
@@ -294,7 +282,7 @@ fun DayInfoSheet(
                                     )
                                 )
                             )
-                            onAction(ProjectAction.OnUpdateSelectedDay(null))
+                            onNavigateBack()
                         },
                         modifier = Modifier.weight(1f),
                         enabled = (day.image.toUri() != imageFile?.path?.toUri() || day.isFavorite != isFavorite || day.comment != comment) && comment.length <= 50
@@ -309,7 +297,6 @@ fun DayInfoSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 private fun Preview() {
@@ -318,24 +305,15 @@ private fun Preview() {
             appTheme = AppTheme.DARK
         )
     ) {
-        DayInfoSheet(
-            selectedDate = 1,
-            state = ProjectState(
-                days = listOf(
-                    Day(
-                        id = 1,
-                        projectId = 1,
-                        image = "",
-                        comment = "",
-                        date = 1,
-                        isFavorite = false
-                    )
-                )
-            ),
-            onAction = {},
-            sheetState = rememberStandardBottomSheetState(
-                initialValue = SheetValue.Expanded
-            )
+        DayInfoContent(
+            modifier = Modifier,
+            day = null,
+            imageFile = null,
+            onLaunchImagePicker = { },
+            selectedDate = 0,
+            state = ProjectState(),
+            onAction = { },
+            onNavigateBack = { }
         )
     }
 }
