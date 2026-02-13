@@ -51,7 +51,7 @@ fun PrivateAnimation() {
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            painter = painterResource(R.drawable.camera),
+            painter = painterResource(R.drawable.camera_roll),
             contentDescription = "Camera",
             modifier = Modifier.fillMaxSize(),
             tint = MaterialTheme.colorScheme.primary

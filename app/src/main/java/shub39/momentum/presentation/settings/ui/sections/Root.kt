@@ -1,6 +1,7 @@
 package shub39.momentum.presentation.settings.ui.sections
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -137,16 +138,14 @@ fun Root(
                         )
                     },
                     trailingContent = {
-                        IconButton(
-                            onClick = onNavigateToLookAndFeel
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_forward),
-                                contentDescription = "Go"
-                            )
-                        }
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_forward),
+                            contentDescription = "Go"
+                        )
                     },
-                    modifier = Modifier.clip(detachedItemShape())
+                    modifier = Modifier
+                        .clip(detachedItemShape())
+                        .clickable { onNavigateToLookAndFeel() }
                 )
             }
 
@@ -166,16 +165,16 @@ fun Root(
                         Text(text = stringResource(R.string.onboarding_desc))
                     },
                     trailingContent = {
-                        IconButton(
-                            onClick = { onAction(SettingsAction.OnOnboardingToggle(false)) }
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_forward),
-                                contentDescription = "Go"
-                            )
-                        }
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_forward),
+                            contentDescription = "Go"
+                        )
                     },
-                    modifier = Modifier.clip(detachedItemShape())
+                    modifier = Modifier
+                        .clip(detachedItemShape())
+                        .clickable {
+                            onAction(SettingsAction.OnOnboardingToggle(false))
+                        }
                 )
             }
         }
