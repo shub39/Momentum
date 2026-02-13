@@ -18,11 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.FontDownload
-import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -48,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -96,7 +92,7 @@ fun LookAndFeel(
                         onClick = onNavigateBack
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            painter = painterResource(R.drawable.arrow_back),
                             contentDescription = "Navigate Back"
                         )
                     }
@@ -130,7 +126,7 @@ fun LookAndFeel(
                             onClick = { themePickerDialog = true }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Create,
+                                painter = painterResource(R.drawable.edit),
                                 contentDescription = "Pick"
                             )
                         }
@@ -174,7 +170,7 @@ fun LookAndFeel(
                             enabled = isPlusUser
                         ) {
                             Icon(
-                                imageVector = Icons.Default.FontDownload,
+                                painter = painterResource(R.drawable.font),
                                 contentDescription = "Pick Font"
                             )
                         }
@@ -261,7 +257,7 @@ fun LookAndFeel(
                                 enabled = !state.theme.isMaterialYou && isPlusUser
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Create,
+                                    painter = painterResource(R.drawable.edit),
                                     contentDescription = "Select Color"
                                 )
                             }
@@ -346,7 +342,7 @@ fun LookAndFeel(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.WbSunny,
+                    painter = painterResource(R.drawable.light_mode),
                     contentDescription = "Select App Theme",
                     modifier = Modifier.size(32.dp)
                 )
@@ -388,7 +384,7 @@ fun LookAndFeel(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.FontDownload,
+                    painter = painterResource(R.drawable.font),
                     contentDescription = "Select App Theme",
                     modifier = Modifier.size(32.dp)
                 )

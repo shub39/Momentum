@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -40,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -111,7 +109,7 @@ fun MontageEditSheet(
                 onClick = { onAction(ProjectAction.OnResetMontagePrefs) }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Sync,
+                    painter = painterResource(R.drawable.sync),
                     contentDescription = "Reset"
                 )
             }
@@ -495,7 +493,7 @@ fun MontageEditSheet(
                         )
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Create,
+                            painter = painterResource(R.drawable.edit),
                             contentDescription = "Pick color"
                         )
                     }

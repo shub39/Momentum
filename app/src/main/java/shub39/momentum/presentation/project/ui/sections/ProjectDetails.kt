@@ -15,13 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.rounded.PhotoLibrary
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -47,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -108,7 +102,7 @@ fun ProjectDetails(
                             onClick = onNavigateBack
                         ) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                painter = painterResource(R.drawable.arrow_back),
                                 contentDescription = "Navigate Back"
                             )
                         }
@@ -118,7 +112,7 @@ fun ProjectDetails(
                             onClick = { showDeleteDialog = true }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Delete,
+                                painter = painterResource(R.drawable.delete),
                                 contentDescription = "Delete"
                             )
                         }
@@ -127,7 +121,7 @@ fun ProjectDetails(
                             onClick = { showEditDialog = true }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Edit,
+                                painter = painterResource(R.drawable.edit),
                                 contentDescription = "Edit"
                             )
                         }
@@ -200,7 +194,7 @@ fun ProjectDetails(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
-                                imageVector = Icons.Rounded.PhotoLibrary,
+                                painter = painterResource(R.drawable.photo_library),
                                 contentDescription = "Favorite Images",
                                 modifier = Modifier.size(100.dp)
                             )
@@ -222,7 +216,7 @@ fun ProjectDetails(
                             },
                             leadingContent = {
                                 Icon(
-                                    imageVector = Icons.Default.Favorite,
+                                    painter = painterResource(R.drawable.favorite),
                                     contentDescription = "Favorites",
                                     modifier = Modifier.size(32.dp)
                                 )
@@ -260,7 +254,7 @@ fun ProjectDetails(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Edit,
+                        painter = painterResource(R.drawable.edit),
                         contentDescription = "Edit"
                     )
 
@@ -339,7 +333,7 @@ fun ProjectDetails(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Warning,
+                        painter = painterResource(R.drawable.warning),
                         contentDescription = "Caution"
                     )
 

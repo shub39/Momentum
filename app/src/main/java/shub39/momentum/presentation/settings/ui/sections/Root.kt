@@ -11,13 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,7 +60,7 @@ fun Root(
                         onClick = onNavigateBack
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            painter = painterResource(R.drawable.arrow_back),
                             contentDescription = "Navigate Back"
                         )
                     }
@@ -98,7 +92,7 @@ fun Root(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Add,
+                            painter = painterResource(R.drawable.add),
                             contentDescription = "Momentum Plus",
                             modifier = Modifier.size(24.dp)
                         )
@@ -114,8 +108,8 @@ fun Root(
                         Spacer(modifier = Modifier.weight(1f))
 
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = "Grit Plus"
+                            painter = painterResource(R.drawable.arrow_forward),
+                            contentDescription = null
                         )
                     }
                 }
@@ -131,7 +125,7 @@ fun Root(
                     supportingContent = { Text(text = stringResource(R.string.look_and_feel_info)) },
                     leadingContent = {
                         Icon(
-                            imageVector = Icons.Default.Palette,
+                            painter = painterResource(R.drawable.palette),
                             contentDescription = "Navigate",
                             modifier = Modifier.size(24.dp)
                         )
@@ -141,7 +135,7 @@ fun Root(
                             onClick = onNavigateToLookAndFeel
                         ) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                                painter = painterResource(R.drawable.arrow_forward),
                                 contentDescription = "Go"
                             )
                         }
@@ -153,7 +147,7 @@ fun Root(
                 ListItem(
                     leadingContent = {
                         Icon(
-                            imageVector = Icons.Rounded.Star,
+                            painter = painterResource(R.drawable.star),
                             contentDescription = "Onboarding"
                         )
                     },
@@ -168,7 +162,7 @@ fun Root(
                             onClick = { onAction(SettingsAction.OnOnboardingToggle(false)) }
                         ) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                                painter = painterResource(R.drawable.arrow_forward),
                                 contentDescription = "Go"
                             )
                         }
