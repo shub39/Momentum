@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,13 +28,13 @@ import shub39.momentum.BuildConfig
 import shub39.momentum.R
 
 @Composable
-fun AppInfo() {
+fun AboutApp(
+    modifier: Modifier = Modifier
+) {
     val uriHandler = LocalUriHandler.current
 
     Card(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -57,6 +59,27 @@ fun AppInfo() {
 
             Spacer(modifier = Modifier.weight(1f))
 
+            Row {
+                IconButton(
+                    onClick = { uriHandler.openUri("https://discord.gg/nxA2hgtEKf") }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.discord),
+                        contentDescription = "Discord",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                IconButton(
+                    onClick = { uriHandler.openUri("https://github.com/shub39/Momentum") }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.github),
+                        contentDescription = "Github",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
         }
 
         FlowRow(
@@ -76,10 +99,28 @@ fun AppInfo() {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.buymeacoffee),
-                        contentDescription = "Buy me a coffee"
+                        contentDescription = "Buy me a coffee",
+                        modifier = Modifier.size(24.dp)
                     )
 
                     Text(text = stringResource(R.string.bmc))
+                }
+            }
+
+            Button(
+                onClick = { uriHandler.openUri("https://play.google.com/store/apps/details?id=com.shub39.momentum.play") }
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.play_store),
+                        contentDescription = "Rate On Google Play",
+                        modifier = Modifier.size(20.dp)
+                    )
+
+                    Text(text = stringResource(R.string.rate_on_play))
                 }
             }
         }
