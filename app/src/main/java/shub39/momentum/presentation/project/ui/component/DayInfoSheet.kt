@@ -18,12 +18,6 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -153,7 +147,7 @@ fun DayInfoSheet(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Icon(
-                                    imageVector = Icons.Rounded.Warning,
+                                    painter = painterResource(R.drawable.warning),
                                     contentDescription = "Placeholder",
                                     modifier = Modifier.size(100.dp)
                                 )
@@ -179,11 +173,13 @@ fun DayInfoSheet(
                             .align(Alignment.TopEnd)
                     ) {
                         Icon(
-                            imageVector = if (isFavorite) {
-                                Icons.Default.Favorite
-                            } else {
-                                Icons.Default.FavoriteBorder
-                            },
+                            painter = painterResource(
+                                if (isFavorite) {
+                                    R.drawable.favorite
+                                } else {
+                                    R.drawable.favorite_border
+                                }
+                            ),
                             contentDescription = "Set Favorite"
                         )
                     }
@@ -195,7 +191,7 @@ fun DayInfoSheet(
                             .align(Alignment.BottomEnd)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Edit,
+                            painter = painterResource(R.drawable.edit),
                             contentDescription = "Pick another image"
                         )
                     }
@@ -203,7 +199,7 @@ fun DayInfoSheet(
                 } else {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Icon(
-                            imageVector = Icons.Default.Photo,
+                            painter = painterResource(R.drawable.add_photo),
                             contentDescription = "Placeholder",
                             modifier = Modifier.size(200.dp)
                         )
