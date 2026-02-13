@@ -4,8 +4,6 @@ minSdk = "27"
 compileSdk = "36"
 calendar = "2.10.0"
 exifinterface = "1.4.2"
-faceDetection = "16.1.7"
-materialIconsExtended = "1.7.8"
 media3Exoplayer = "1.9.2"
 splashscreen = "1.2.0"
 datastore = "1.2.0"
@@ -13,17 +11,18 @@ colorpicker = "1.1.3"
 koin-core = "4.1.1"
 koin-annotations = "2.3.1"
 kotlin = "2.3.10"
-ksp = "2.3.4"
-material3 = "1.5.0-alpha13"
+ksp = "2.3.5"
+material3 = "1.5.0-alpha14"
 room = "2.8.4"
 navigation = "2.9.7"
 serialization = "1.10.0"
 materialKolor = "4.1.1"
-compose = "1.10.2"
+compose = "1.10.3"
 landscapist = "2.9.3"
 filekitCore = "0.12.0"
 annotationJvm = "1.9.1"
-purchases = "9.20.1"
+purchases = "9.21.0"
+tasksVision = "0.10.32"
 truth = "1.4.5"
 espressoCore = "3.7.0"
 junit = "4.13.2"
@@ -36,7 +35,6 @@ androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", vers
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
-androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
@@ -63,6 +61,7 @@ koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "
 koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-annotations" }
 
 # Others
+tasks-vision = { module = "com.google.mediapipe:tasks-vision", version.ref = "tasksVision" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 junit = { module = "junit:junit", version.ref = "junit" }
 filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekitCore" }
@@ -72,7 +71,6 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
-face-detection = { module = "com.google.mlkit:face-detection", version.ref = "faceDetection" }
 
 [plugins]
 room = { id = "androidx.room", version.ref = "room" }

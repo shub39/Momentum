@@ -84,7 +84,9 @@ class MontageMakerImpl(
             alpha = 255
             isAntiAlias = true
             style = Paint.Style.FILL
-            typeface = ResourcesCompat.getFont(context, config.font.fontRes)
+            config.font.fontRes?.let {
+                typeface = ResourcesCompat.getFont(context, it)
+            }
             setShadowLayer(4f, 2f, 2f, Color.BLACK)
         }
 

@@ -11,6 +11,8 @@ val appVersionCode = 1401
 val appVersionName = "1.4.01"
 val appNameSpace = "shub39.momentum"
 
+val gitHash = execute("git", "rev-parse", "HEAD").take(7)
+
 android {
     namespace = appNameSpace
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -30,8 +32,18 @@ android {
             resValue("string", "app_name", appName)
             isMinifyEnabled = true
             isShrinkResources = true
-            applicationIdSuffix = ".play"
-            versionNameSuffix = "-play"
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+
+        create("beta") {
+            resValue("string", "app_name", "$appName Beta")
+            applicationIdSuffix = ".beta"
+            versionNameSuffix = "-beta$gitHash"
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -39,7 +51,23 @@ android {
         }
 
         debug {
-            resValue("string", "app_name", appName)
+            resValue("string", "app_name", "$appName Debug")
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
+    }
+
+    flavorDimensions += "version"
+
+    productFlavors {
+        create("play") {
+            dimension = "version"
+            applicationIdSuffix = ".play"
+            versionNameSuffix = "-play"
+        }
+
+        create("foss") {
+            dimension = "version"
         }
     }
 
@@ -69,8 +97,8 @@ android {
 dependencies {
     implementation(project(":montage"))
 
-    implementation(libs.purchases.ui)
-    implementation(libs.purchases)
+    "playImplementation"(libs.purchases.ui)
+    "playImplementation"(libs.purchases)
 
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)
@@ -94,11 +122,10 @@ dependencies {
     implementation(libs.koin.compose.viewmodel.navigation)
     ksp(libs.koin.ksp.compiler)
     api(libs.koin.annotations)
-    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.exifinterface)
-    implementation(libs.face.detection)
+    implementation(libs.tasks.vision)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -111,3 +138,7 @@ dependencies {
 room {
     schemaDirectory("$projectDir/schemas")
 }
+
+fun execute(vararg command: String): String = providers.exec {
+    commandLine(*command)
+}.standardOutput.asText.get().trim()
