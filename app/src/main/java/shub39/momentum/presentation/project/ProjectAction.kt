@@ -16,7 +16,7 @@ sealed interface ProjectAction {
     data object OnUpdateDays : ProjectAction
     data class OnUpdateProject(val project: Project) : ProjectAction
     data class OnDeleteProject(val project: Project) : ProjectAction
-    data class OnUpsertDay(val day: Day) : ProjectAction
+    data class OnUpsertDay(val day: Day, val isNewImage: Boolean = false) : ProjectAction
     data class OnDeleteDay(val day: Day) : ProjectAction
 
     data class OnCreateMontage(val days: List<Day>) : ProjectAction

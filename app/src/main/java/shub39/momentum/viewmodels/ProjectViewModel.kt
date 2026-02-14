@@ -82,17 +82,21 @@ class ProjectViewModel(
             }
 
             is ProjectAction.OnUpsertDay -> viewModelScope.launch {
-                val faceData = faceDetector.getFaceDataFromUri(action.day.image.toUri())
-                val copiedImageUri = imageHandler.copyImageToAppData(action.day)
+                if (action.isNewImage) {
+                    val faceData = faceDetector.getFaceDataFromUri(action.day.image.toUri())
+                    val copiedImageUri = imageHandler.copyImageToAppData(action.day)
 
-                Log.d("ProjectViewModel", "faceData : $faceData")
+                    Log.d("ProjectViewModel", "faceData : $faceData")
 
-                repository.upsertDay(
-                    action.day.copy(
-                        faceData = faceData,
-                        image = copiedImageUri.toString()
+                    repository.upsertDay(
+                        action.day.copy(
+                            faceData = faceData,
+                            image = copiedImageUri.toString()
+                        )
                     )
-                )
+                } else {
+                    repository.upsertDay(action.day)
+                }
             }
 
             is ProjectAction.OnCreateMontage -> viewModelScope.launch {
