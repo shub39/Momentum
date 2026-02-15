@@ -70,4 +70,5 @@
     <string name="days">Days</string>
     <string name="censor_faces">Censor Faces</string>
     <string name="rate_on_play">Rate on Google Play</string>
+    <string name="changelog">Changelog</string>
 </resources>

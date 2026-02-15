@@ -22,6 +22,7 @@ import shub39.momentum.presentation.home.HomeGraph
 import shub39.momentum.presentation.onboarding.Onboarding
 import shub39.momentum.presentation.project.ProjectGraph
 import shub39.momentum.presentation.settings.SettingsGraph
+import shub39.momentum.presentation.shared.ChangelogDialog
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.viewmodels.HomeViewModel
 import shub39.momentum.viewmodels.MainAppViewModel
@@ -138,6 +139,13 @@ fun App() {
                     }
                 )
             }
+        }
+
+        if (state.currentChangelog != null) {
+            ChangelogDialog(
+                currentLog = state.currentChangelog!!,
+                onDismissRequest = { mainViewModel.dismissChangelog() }
+            )
         }
     }
 }

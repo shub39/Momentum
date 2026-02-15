@@ -53,6 +53,7 @@ fun Root(
     onNavigateBack: () -> Unit,
     onNavigateToLookAndFeel: () -> Unit,
     onNavigateToPaywall: () -> Unit,
+    onNavigateToChangelog: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -179,6 +180,32 @@ fun Root(
                         }
                 )
             }
+
+            item {
+                ListItem(
+                    colors = listItemColors(),
+                    headlineContent = {
+                        Text(text = stringResource(R.string.changelog))
+                    },
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.logs),
+                            contentDescription = "Onboarding"
+                        )
+                    },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_forward),
+                            contentDescription = "Go"
+                        )
+                    },
+                    modifier = Modifier
+                        .clip(detachedItemShape())
+                        .clickable {
+                            onNavigateToChangelog()
+                        }
+                )
+            }
         }
     }
 }
@@ -195,7 +222,8 @@ private fun Preview() {
             onNavigateBack = {},
             onNavigateToLookAndFeel = {},
             onAction = {},
-            onNavigateToPaywall = {}
+            onNavigateToPaywall = {},
+            onNavigateToChangelog = {}
         )
     }
 }

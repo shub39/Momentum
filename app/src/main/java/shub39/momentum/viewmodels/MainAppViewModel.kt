@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -14,14 +15,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import shub39.momentum.BuildConfig
 import shub39.momentum.app.MainAppState
 import shub39.momentum.billing.domain.BillingHandler
+import shub39.momentum.data.ChangelogManager
 import shub39.momentum.domain.interfaces.SettingsPrefs
 
 @KoinViewModel
 class MainAppViewModel(
     private val datastore: SettingsPrefs,
-    private val billingHandler: BillingHandler
+    private val billingHandler: BillingHandler,
+    private val changelogManager: ChangelogManager
 ) : ViewModel() {
     private var observerJob: Job? = null
 
@@ -29,6 +33,7 @@ class MainAppViewModel(
     val state = _state.asStateFlow()
         .onStart {
             checkSubscription()
+            checkChangelog()
             observeData()
         }
         .stateIn(
@@ -43,6 +48,24 @@ class MainAppViewModel(
 
             _state.update {
                 it.copy(isPlusUser = result)
+            }
+        }
+    }
+
+    fun dismissChangelog() {
+        _state.update { it.copy(currentChangelog = null) }
+    }
+
+    private fun checkChangelog() {
+        viewModelScope.launch {
+            val changeLogs = changelogManager.changelogs.first()
+            val lastShownChangelog = datastore.getLastChangelogShown().first()
+
+            if (BuildConfig.DEBUG || lastShownChangelog.isBlank() || lastShownChangelog != BuildConfig.VERSION_NAME) {
+                _state.update {
+                    it.copy(currentChangelog = changeLogs.firstOrNull())
+                }
+                datastore.updateLastChangelogShown(BuildConfig.VERSION_NAME)
             }
         }
     }
