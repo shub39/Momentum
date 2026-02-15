@@ -1,6 +1,7 @@
 ![](fastlane/metadata/android/en-US/images/featureGraphic.png)
 
 [<img src="badges/playstore.png" alt="Google Play" height="80">](https://play.google.com/store/apps/details?id=shub39.momentum.play)
+[<img src="badges/github.png" alt="Github" height="80">](https://github.com/shub39/Momentum/releases)
 
 ## Screenshots
 
