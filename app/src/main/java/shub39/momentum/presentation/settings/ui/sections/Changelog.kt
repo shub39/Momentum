@@ -72,7 +72,7 @@ fun Changelog(
             ),
         ) {
             changelog.forEach { versionEntry ->
-                stickyHeader {
+                item {
                     Text(
                         text = "#${versionEntry.version}",
                         style = MaterialTheme.typography.headlineSmall.copy(

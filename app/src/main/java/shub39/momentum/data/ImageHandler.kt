@@ -19,7 +19,7 @@ class ImageHandler(
 
         val destFile = File(destDirectory, "${day.date}_${Clock.System.now().epochSeconds}")
 
-        destDirectory.listFiles()?.find { it.name.startsWith(day.date.toString()) }?.delete()
+        destDirectory.listFiles()?.find { it.name.startsWith("${day.date}_") }?.delete()
 
         context.contentResolver.openInputStream(day.image.toUri())?.use { inputStream ->
             destFile.outputStream().use { outputStream ->

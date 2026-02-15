@@ -61,7 +61,7 @@ class MainAppViewModel(
             val changeLogs = changelogManager.changelogs.first()
             val lastShownChangelog = datastore.getLastChangelogShown().first()
 
-            if (BuildConfig.DEBUG || lastShownChangelog.isBlank() || lastShownChangelog != BuildConfig.VERSION_NAME) {
+            if (BuildConfig.DEBUG || lastShownChangelog != BuildConfig.VERSION_NAME) {
                 _state.update {
                     it.copy(currentChangelog = changeLogs.firstOrNull())
                 }

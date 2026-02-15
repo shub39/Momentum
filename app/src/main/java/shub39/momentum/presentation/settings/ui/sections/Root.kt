@@ -190,7 +190,7 @@ fun Root(
                     leadingContent = {
                         Icon(
                             painter = painterResource(R.drawable.logs),
-                            contentDescription = "Onboarding"
+                            contentDescription = "Changelog"
                         )
                     },
                     trailingContent = {

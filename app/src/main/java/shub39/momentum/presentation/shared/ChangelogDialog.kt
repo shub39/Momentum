@@ -82,7 +82,7 @@ fun ChangelogDialog(
 
                 item {
                     Row(
-                        modifier = modifier
+                        modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.End
