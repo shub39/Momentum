@@ -32,7 +32,6 @@ import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
 import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
 import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.presentation.project.ProjectAction
 import java.time.LocalDate
 
 @Composable
@@ -40,8 +39,8 @@ fun WeeklyHorizontalCalendar(
     onNavigateToCalendar: () -> Unit,
     weekState: WeekCalendarState,
     days: List<Day>,
-    onAction: (ProjectAction) -> Unit,
     showGuide: Boolean,
+    onNavigateToDayInfo: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
@@ -85,7 +84,7 @@ fun WeeklyHorizontalCalendar(
                         .padding(2.dp)
                         .clip(CircleShape)
                         .clickable(enabled = possibleDay) {
-                            onAction(ProjectAction.OnUpdateSelectedDay(weekDay.date.toEpochDay()))
+                            onNavigateToDayInfo(weekDay.date.toEpochDay())
                         },
                     contentAlignment = Alignment.Center
                 ) {

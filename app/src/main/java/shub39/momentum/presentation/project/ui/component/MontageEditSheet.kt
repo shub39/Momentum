@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -126,6 +127,8 @@ fun MontageEditSheet(
                 )
             }
         }
+
+        HorizontalDivider()
 
         LazyColumn(
             modifier = modifier
@@ -257,7 +260,7 @@ fun MontageEditSheet(
                 }
             }
 
-            // text font
+            // stabilize faces
             item {
                 Row(
                     modifier = Modifier
@@ -267,32 +270,57 @@ fun MontageEditSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.video_font),
+                        text = stringResource(R.string.stabilize_faces),
                         style = MaterialTheme.typography.titleLarge
                     )
 
-                    Spacer(modifier = Modifier.size(44.dp))
-                }
-
-                FlowRow(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Fonts.entries.forEach { font ->
-                        ToggleButton(
-                            checked = font == state.montageConfig.font,
-                            onCheckedChange = {
+                    Switch(
+                        checked = state.montageConfig.stabilizeFaces,
+                        onCheckedChange = {
+                            if (isPlusUser) {
                                 onAction(
                                     ProjectAction.OnEditMontageConfig(
-                                        state.montageConfig.copy(font = font)
+                                        state.montageConfig.copy(stabilizeFaces = it)
                                     )
                                 )
+                            } else {
+                                onNavigateToPaywall()
                             }
-                        ) {
-                            Text(text = font.displayName)
                         }
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = state.montageConfig.stabilizeFaces,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.censor_faces),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Switch(
+                            checked = state.montageConfig.censorFaces,
+                            enabled = state.montageConfig.stabilizeFaces,
+                            onCheckedChange = {
+                                if (isPlusUser) {
+                                    onAction(
+                                        ProjectAction.OnEditMontageConfig(
+                                            state.montageConfig.copy(censorFaces = it)
+                                        )
+                                    )
+                                } else {
+                                    onNavigateToPaywall()
+                                }
+                            }
+                        )
                     }
                 }
             }
@@ -363,7 +391,7 @@ fun MontageEditSheet(
                 }
             }
 
-            // stabilize faces
+            // text font
             item {
                 Row(
                     modifier = Modifier
@@ -373,61 +401,33 @@ fun MontageEditSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.stabilize_faces),
+                        text = stringResource(R.string.video_font),
                         style = MaterialTheme.typography.titleLarge
                     )
 
-                    Switch(
-                        checked = state.montageConfig.stabilizeFaces,
-                        enabled = isPlusUser,
-                        onCheckedChange = {
-                            if (isPlusUser) {
+                    Spacer(modifier = Modifier.size(44.dp))
+                }
+
+                FlowRow(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Fonts.entries.forEach { font ->
+                        ToggleButton(
+                            checked = font == state.montageConfig.font,
+                            onCheckedChange = {
                                 onAction(
                                     ProjectAction.OnEditMontageConfig(
-                                        state.montageConfig.copy(stabilizeFaces = it)
+                                        state.montageConfig.copy(font = font)
                                     )
                                 )
-                            } else {
-                                onNavigateToPaywall()
-                            }
+                            },
+                            enabled = isPlusUser
+                        ) {
+                            Text(text = font.displayName)
                         }
-                    )
-                }
-            }
-
-            // censor faces, adding this for myself lol
-            item {
-                AnimatedVisibility(
-                    visible = state.montageConfig.stabilizeFaces,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(R.string.censor_faces),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        Switch(
-                            checked = state.montageConfig.censorFaces,
-                            enabled = isPlusUser && state.montageConfig.stabilizeFaces,
-                            onCheckedChange = {
-                                if (isPlusUser) {
-                                    onAction(
-                                        ProjectAction.OnEditMontageConfig(
-                                            state.montageConfig.copy(censorFaces = it)
-                                        )
-                                    )
-                                } else {
-                                    onNavigateToPaywall()
-                                }
-                            }
-                        )
                     }
                 }
             }

@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
+import shub39.momentum.presentation.settings.ui.sections.Changelog
 import shub39.momentum.presentation.settings.ui.sections.LookAndFeel
 import shub39.momentum.presentation.settings.ui.sections.Root
 
@@ -16,6 +17,9 @@ private sealed interface SettingsRoutes {
 
     @Serializable
     data object LookAndFeel : SettingsRoutes
+
+    @Serializable
+    data object Changelog : SettingsRoutes
 }
 
 @Composable
@@ -39,7 +43,8 @@ fun SettingsGraph(
                 onAction = onAction,
                 onNavigateBack = onNavigateBack,
                 onNavigateToLookAndFeel = { navController.navigate(SettingsRoutes.LookAndFeel) },
-                onNavigateToPaywall = onNavigateToPaywall
+                onNavigateToPaywall = onNavigateToPaywall,
+                onNavigateToChangelog = { navController.navigate(SettingsRoutes.Changelog) }
             )
         }
 
@@ -50,6 +55,13 @@ fun SettingsGraph(
                 onNavigateBack = { navController.navigateUp() },
                 isPlusUser = isPlusUser,
                 onNavigateToPaywall = onNavigateToPaywall
+            )
+        }
+
+        composable<SettingsRoutes.Changelog> {
+            Changelog(
+                changelog = state.changelog,
+                onNavigateBack = { navController.navigateUp() }
             )
         }
     }

@@ -37,6 +37,7 @@ class SettingsPrefsImpl(
         private val materialTheme = booleanPreferencesKey("material_theme")
         private val onboardingDone = booleanPreferencesKey("onboarding_done")
         private val selectedFont = stringPreferencesKey("font")
+        private val lastChangelogShownKey = stringPreferencesKey("last_changelog_shown")
     }
 
     override fun getAppThemePrefFlow(): Flow<AppTheme> = dataStore.data
@@ -51,7 +52,7 @@ class SettingsPrefsImpl(
     }
 
     override fun getSeedColorFlow(): Flow<Color> = dataStore.data
-        .map { preferences -> Color(preferences[seedColor] ?: Color.Companion.White.toArgb()) }
+        .map { preferences -> Color(preferences[seedColor] ?: Color.White.toArgb()) }
     override suspend fun updateSeedColor(color: Color) {
         dataStore.edit { settings ->
             settings[seedColor] = color.toArgb()
@@ -100,6 +101,15 @@ class SettingsPrefsImpl(
     override suspend fun updateFonts(font: Fonts) {
         dataStore.edit { settings ->
             settings[selectedFont] = font.name
+        }
+    }
+
+    override fun getLastChangelogShown(): Flow<String> = dataStore.data
+        .map { prefs -> prefs[lastChangelogShownKey] ?: "" }
+
+    override suspend fun updateLastChangelogShown(version: String) {
+        dataStore.edit { settings ->
+            settings[lastChangelogShownKey] = version
         }
     }
 }

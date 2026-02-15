@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import org.koin.core.annotation.Single
 import shub39.momentum.domain.data_classes.Day
 import java.io.File
+import kotlin.time.Clock
 
 @Single
 class ImageHandler(
@@ -16,7 +17,10 @@ class ImageHandler(
         val destDirectory = File(context.filesDir, day.projectId.toString())
         if (!destDirectory.exists()) destDirectory.mkdirs()
 
-        val destFile = File(destDirectory, day.date.toString())
+        val destFile = File(destDirectory, "${day.date}_${Clock.System.now().epochSeconds}")
+
+        destDirectory.listFiles()?.find { it.name.startsWith("${day.date}_") }?.delete()
+
         context.contentResolver.openInputStream(day.image.toUri())?.use { inputStream ->
             destFile.outputStream().use { outputStream ->
                 inputStream.copyTo(outputStream)

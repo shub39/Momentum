@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import shub39.momentum.data.ChangelogManager
 import shub39.momentum.domain.interfaces.SettingsPrefs
 import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.SettingsState
@@ -19,11 +21,13 @@ import shub39.momentum.presentation.settings.SettingsState
 @KoinViewModel
 class SettingsViewModel(
     private val datastore: SettingsPrefs,
+    private val changelogManager: ChangelogManager
 ): ViewModel() {
     private val _state = MutableStateFlow(SettingsState())
     val state = _state.asStateFlow()
         .onStart {
             observeDatastore()
+            getChangeLogs()
         }
         .stateIn(
             scope = viewModelScope,
@@ -40,6 +44,16 @@ class SettingsViewModel(
             is SettingsAction.OnSeedColorChange -> datastore.updateSeedColor(action.color)
             is SettingsAction.OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
             is SettingsAction.OnOnboardingToggle -> datastore.updateOnboardingDone(action.done)
+        }
+    }
+
+    private fun getChangeLogs() {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    changelog = changelogManager.changelogs.first()
+                )
+            }
         }
     }
 

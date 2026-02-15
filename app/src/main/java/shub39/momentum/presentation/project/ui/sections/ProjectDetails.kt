@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -74,7 +77,8 @@ fun ProjectDetails(
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToMontage: () -> Unit,
-    onNavigateToCalendar: () -> Unit
+    onNavigateToCalendar: () -> Unit,
+    onNavigateToDayInfo: (Long) -> Unit
 ) {
     if (state.project == null) {
         LoadingIndicator()
@@ -138,10 +142,13 @@ fun ProjectDetails(
 
             LazyColumn(
                 state = rememberLazyListState(),
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 16.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = paddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                    end = paddingValues.calculateEndPadding(LocalLayoutDirection.current),
+                    top = paddingValues.calculateTopPadding() + 16.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 60.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -151,7 +158,7 @@ fun ProjectDetails(
                         onNavigateToCalendar = onNavigateToCalendar,
                         weekState = weekState,
                         days = state.days,
-                        onAction = onAction,
+                        onNavigateToDayInfo = onNavigateToDayInfo,
                         showGuide = showGuide,
                         modifier = Modifier
                             .animateContentSize()
@@ -227,7 +234,7 @@ fun ProjectDetails(
                     items(state.days.filter { it.isFavorite }, key = { it.id }) { day ->
                         FavDayCard(
                             day = day,
-                            onClick = { onAction(ProjectAction.OnUpdateSelectedDay(day.date)) },
+                            onClick = { onNavigateToDayInfo(day.date) },
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
@@ -411,7 +418,8 @@ private fun Preview() {
             onAction = {},
             onNavigateBack = {},
             onNavigateToMontage = {},
-            onNavigateToCalendar = {}
+            onNavigateToCalendar = {},
+            onNavigateToDayInfo = {}
         )
     }
 }

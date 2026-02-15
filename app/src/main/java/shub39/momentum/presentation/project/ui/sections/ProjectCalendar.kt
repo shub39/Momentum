@@ -61,6 +61,7 @@ fun ProjectCalendar(
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToDayInfo: (Long) -> Unit
 ) {
     val calendarState = rememberCalendarState(
         startMonth = YearMonth.of(2025, 1),
@@ -144,7 +145,7 @@ fun ProjectCalendar(
                             .padding(2.dp)
                             .clip(CircleShape)
                             .clickable(enabled = possibleDay) {
-                                onAction(ProjectAction.OnUpdateSelectedDay(day.date.toEpochDay()))
+                                onNavigateToDayInfo(day.date.toEpochDay())
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -230,7 +231,8 @@ private fun Preview() {
         ProjectCalendar(
             state = state,
             onAction = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onNavigateToDayInfo = {}
         )
     }
 }

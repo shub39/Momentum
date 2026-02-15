@@ -11,8 +11,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        createNotificationChannel(this)
         enableEdgeToEdge()
-        setContent { App() }
+
+        createNotificationChannel(this)
+        setContent {
+            App()
+        }
     }
 }
