@@ -8,7 +8,7 @@ import android.util.Log
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
-class Mp4FrameMuxer(
+internal class Mp4FrameMuxer(
     path: String,
     fps: Float
 ) : FrameMuxer {

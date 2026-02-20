@@ -130,7 +130,7 @@ class ProjectViewModel(
             ProjectAction.OnClearMontageState -> {
                 _exoPlayer.value?.release()
                 _exoPlayer.update { null }
-                _state.update { it.copy(montage = MontageState.Processing()) }
+                _state.update { it.copy(montage = MontageState.ProcessingImages()) }
             }
 
             is ProjectAction.OnPlayerAction -> {

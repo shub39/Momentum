@@ -18,5 +18,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":common:core"))
+
     implementation(libs.androidx.annotation.jvm)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.core)
 }

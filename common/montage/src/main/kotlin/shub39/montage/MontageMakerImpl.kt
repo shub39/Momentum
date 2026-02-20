@@ -1,4 +1,4 @@
-package shub39.momentum.data
+package shub39.montage
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -15,24 +15,19 @@ import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.koin.core.annotation.Single
-import shub39.momentum.R
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.MontageConfig
 import shub39.momentum.core.data_classes.isValid
 import shub39.momentum.core.data_classes.toRect
 import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.MontageState
-import shub39.momentum.presentation.toDimensions
-import shub39.momentum.presentation.toFontRes
-import shub39.momentum.presentation.toFormatStyle
-import shub39.montage.Muxer
-import shub39.montage.MuxingResult
+import shub39.momentum.core.toDimensions
+import shub39.momentum.core.toFontRes
+import shub39.momentum.core.toFormatStyle
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@Single(binds = [MontageMaker::class])
 class MontageMakerImpl(
     private val context: Context
 ) : MontageMaker {
@@ -54,12 +49,11 @@ class MontageMakerImpl(
             val bitmap = processDay(day, config)
             if (bitmap != null) images.add(bitmap)
 
-            val fraction = (index + 1).toFloat() / total
-            val progress = 0.8f * fraction
-            emit(MontageState.Processing(progress, context.getString(R.string.processing_images)))
+            val progress = (index + 1).toFloat() / total
+            emit(MontageState.ProcessingImages(progress))
         }
 
-        emit(MontageState.Processing(0.9f, context.getString(R.string.assembling_video)))
+        emit(MontageState.AssemblingVideo)
 
         when (val result = muxer.muxAsync(images)) {
             is MuxingResult.MuxingError -> {
@@ -67,7 +61,6 @@ class MontageMakerImpl(
             }
 
             is MuxingResult.MuxingSuccess -> {
-                emit(MontageState.Processing(1f, "Done"))
                 emit(MontageState.Success(result.file, config))
             }
         }

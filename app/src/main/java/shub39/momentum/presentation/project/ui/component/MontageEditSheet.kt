@@ -51,6 +51,7 @@ import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.core.enums.DateStyle
 import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.VideoQuality
+import shub39.momentum.core.toFormatStyle
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.shared.ColorPickerDialog
@@ -58,7 +59,6 @@ import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.SettingSlider
 import shub39.momentum.presentation.shared.zigZagBackground
 import shub39.momentum.presentation.toDisplayString
-import shub39.momentum.presentation.toFormatStyle
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt

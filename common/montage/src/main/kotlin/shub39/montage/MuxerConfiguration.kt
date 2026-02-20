@@ -21,9 +21,10 @@ data class MuxerConfiguration(
     val bitrate: Int = 5_000_000,
     val iFrameInterval: Int = 1,
     val animation: SlideAnimation = SlideAnimation.SLIDE_LEFT,
-) {
-    fun createFrameMuxer(): FrameMuxer = Mp4FrameMuxer(file.absolutePath, framesPerSecond)
-}
+)
+
+fun MuxerConfiguration.createFrameMuxer(): FrameMuxer =
+    Mp4FrameMuxer(file.absolutePath, framesPerSecond)
 
 interface MuxingCompletionListener {
     fun onVideoSuccessful(file: File)

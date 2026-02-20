@@ -27,6 +27,7 @@ truth = "1.4.5"
 espressoCore = "3.7.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
+core = "1.17.0"
 
 [libraries]
 # Android
@@ -42,11 +43,12 @@ androidx-media3-ui = { module = "androidx.media3:media3-ui-compose", version.ref
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
-calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 
 # Purchases
 purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "purchases" }
@@ -70,7 +72,7 @@ landscapist-coil = { module = "com.github.skydoves:landscapist-coil3", version.r
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
-androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
+calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
 
 [plugins]
 room = { id = "androidx.room", version.ref = "room" }

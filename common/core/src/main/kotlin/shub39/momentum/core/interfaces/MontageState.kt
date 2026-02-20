@@ -4,10 +4,9 @@ import shub39.momentum.core.data_classes.MontageConfig
 import java.io.File
 
 sealed interface MontageState {
-    data class Processing(
-        val progress: Float = 0f,
-        val status: String = "Zzz"
-    ) : MontageState
+    data class ProcessingImages(val progress: Float = 0f) : MontageState
+
+    data object AssemblingVideo : MontageState
 
     data class Success(
         val file: File,

@@ -5,7 +5,7 @@ import androidx.annotation.RawRes
 import java.io.File
 import java.io.IOException
 
-class Muxer(private val context: Context, private val file: File) {
+internal class Muxer(private val context: Context, private val file: File) {
 
     private var muxerConfig: MuxerConfiguration = MuxerConfiguration(file)
     private var muxingCompletionListener: MuxingCompletionListener? = null

@@ -16,7 +16,7 @@ import androidx.annotation.RawRes
 import java.io.IOException
 import java.nio.ByteBuffer
 
-class FrameBuilder(
+internal class FrameBuilder(
     private val context: Context,
     private val muxerConfig: MuxerConfiguration,
     @param:RawRes private val audioTrackResource: Int?

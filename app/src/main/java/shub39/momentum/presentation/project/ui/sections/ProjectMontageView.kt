@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -146,7 +147,7 @@ fun ProjectMontageView(
                     }
                 }
 
-                is MontageState.Processing -> {
+                is MontageState.ProcessingImages -> {
                     Column(
                         modifier = Modifier
                             .padding(32.dp)
@@ -169,7 +170,31 @@ fun ProjectMontageView(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = state.montage.status,
+                            text = stringResource(R.string.processing_images),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                MontageState.AssemblingVideo -> {
+                    Column(
+                        modifier = Modifier
+                            .padding(32.dp)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        LoadingIndicator()
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        LinearWavyProgressIndicator(progress = { 1f })
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = stringResource(R.string.assembling_video),
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center
                         )

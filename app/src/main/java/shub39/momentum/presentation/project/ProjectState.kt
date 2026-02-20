@@ -18,7 +18,7 @@ sealed interface ScanState {
 data class ProjectState(
     val project: Project? = null,
     val days: List<Day> = emptyList(),
-    val montage: MontageState = MontageState.Processing(),
+    val montage: MontageState = MontageState.ProcessingImages(),
     val montageConfig: MontageConfig = MontageConfig(),
     val scanState: ScanState = ScanState.Idle
 )

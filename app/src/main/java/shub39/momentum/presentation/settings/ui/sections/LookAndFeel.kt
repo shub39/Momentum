@@ -62,6 +62,7 @@ import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.PaletteStyle
+import shub39.momentum.core.toFontRes
 import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.SettingsState
 import shub39.momentum.presentation.shared.ColorPickerDialog
@@ -71,7 +72,6 @@ import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
 import shub39.momentum.presentation.shared.middleItemShape
 import shub39.momentum.presentation.toDisplayString
-import shub39.momentum.presentation.toFontRes
 import shub39.momentum.presentation.toMPaletteStyle
 import shub39.momentum.presentation.toStringRes
 
