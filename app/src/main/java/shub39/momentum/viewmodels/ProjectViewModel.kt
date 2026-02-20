@@ -1,6 +1,7 @@
 package shub39.momentum.viewmodels
 
 import android.util.Log
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,6 @@ import androidx.media3.exoplayer.ExoPlayer.REPEAT_MODE_ALL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.data.ImageHandler
 import shub39.momentum.domain.enums.VideoAction
@@ -33,6 +34,7 @@ import shub39.momentum.domain.interfaces.MontageState
 import shub39.momentum.domain.interfaces.ProjectRepository
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
+import shub39.momentum.presentation.project.ScanState
 
 @KoinViewModel
 class ProjectViewModel(
@@ -121,9 +123,8 @@ class ProjectViewModel(
             }
 
             ProjectAction.OnUpdateDays -> viewModelScope.launch {
-                refreshDays()
-                delay(1000)
-                processDays()
+                withContext(Dispatchers.IO) { refreshDays() }
+                withContext(Dispatchers.Default) { processDays() }
             }
 
             ProjectAction.OnClearMontageState -> {
@@ -191,6 +192,28 @@ class ProjectViewModel(
 
             ProjectAction.OnResetMontagePrefs -> viewModelScope.launch {
                 montageConfigPrefs.resetPrefs()
+            }
+
+            ProjectAction.OnStartFaceScan -> viewModelScope.launch {
+                if (_state.value.days.isEmpty()) return@launch
+
+                _state.update { it.copy(scanState = ScanState.Processing(0f)) }
+                val size = _state.value.days.size
+
+                try {
+                    withContext(Dispatchers.IO) {
+                        state.value.days.fastForEachIndexed { index, day ->
+                            _state.update { it.copy(scanState = ScanState.Processing(index.toFloat() / size.toFloat())) }
+
+                            val faceData = faceDetector.getFaceDataFromUri(day.image.toUri())
+                            repository.upsertDay(day.copy(faceData = faceData))
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("ProjectViewModel", "Error while scanning project for faces: ", e)
+                } finally {
+                    _state.update { it.copy(scanState = ScanState.Done) }
+                }
             }
         }
     }

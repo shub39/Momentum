@@ -23,4 +23,6 @@ sealed interface ProjectAction {
     data object OnClearMontageState : ProjectAction
     data class OnEditMontageConfig(val config: MontageConfig) : ProjectAction
     data object OnResetMontagePrefs : ProjectAction
+
+    data object OnStartFaceScan : ProjectAction
 }

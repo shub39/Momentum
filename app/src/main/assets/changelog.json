@@ -1,5 +1,11 @@
 [
   {
+    "version": "1.5.1",
+    "changes": [
+      "Added option to rescan all faces in the project."
+    ]
+  },
+  {
     "version": "1.5.0",
     "changes": [
       "Changed Face stabilization to free tier and video font to paid",

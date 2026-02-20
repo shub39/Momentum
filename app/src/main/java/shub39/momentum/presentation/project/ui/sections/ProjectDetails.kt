@@ -1,5 +1,6 @@
 package shub39.momentum.presentation.project.ui.sections
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +39,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +62,7 @@ import shub39.momentum.domain.data_classes.Theme
 import shub39.momentum.domain.enums.AppTheme
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
+import shub39.momentum.presentation.project.ScanState
 import shub39.momentum.presentation.project.ui.component.AlarmCard
 import shub39.momentum.presentation.project.ui.component.CreateMontageButton
 import shub39.momentum.presentation.project.ui.component.FavDayCard
@@ -85,6 +89,7 @@ fun ProjectDetails(
     } else {
         var showDeleteDialog by remember { mutableStateOf(false) }
         var showEditDialog by remember { mutableStateOf(false) }
+        var showRescanDialog by rememberSaveable { mutableStateOf(false) }
 
         var showGuide by remember { mutableStateOf(false) }
 
@@ -112,6 +117,15 @@ fun ProjectDetails(
                         }
                     },
                     actions = {
+                        IconButton(
+                            onClick = { showRescanDialog = true }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.detect_face),
+                                contentDescription = null
+                            )
+                        }
+
                         IconButton(
                             onClick = { showDeleteDialog = true }
                         ) {
@@ -242,6 +256,71 @@ fun ProjectDetails(
 
                 item {
                     Spacer(modifier = Modifier.height(60.dp))
+                }
+            }
+        }
+
+        if (showRescanDialog) {
+            MomentumDialog(
+                onDismissRequest = {
+                    if (state.scanState !is ScanState.Processing) {
+                        showRescanDialog = false
+                    }
+                }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.detect_face),
+                        contentDescription = null
+                    )
+
+                    Text(
+                        text = stringResource(R.string.rescan_faces),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Text(
+                        text = stringResource(R.string.rescan_faces_desc),
+                        textAlign = TextAlign.Center
+                    )
+
+                    AnimatedVisibility(
+                        visible = state.scanState is ScanState.Processing
+                    ) {
+                        LinearWavyProgressIndicator(
+                            progress = {
+                                (state.scanState as? ScanState.Processing)?.progress ?: 0f
+                            }
+                        )
+                    }
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Button(
+                            onClick = { onAction(ProjectAction.OnStartFaceScan) },
+                            enabled = state.scanState is ScanState.Idle,
+                            modifier = Modifier
+                                .widthIn(max = 300.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(text = stringResource(R.string.start_scan))
+                        }
+
+                        Button(
+                            onClick = { showRescanDialog = false },
+                            enabled = state.scanState is ScanState.Done,
+                            modifier = Modifier
+                                .widthIn(max = 300.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(text = stringResource(R.string.done))
+                        }
+                    }
                 }
             }
         }
