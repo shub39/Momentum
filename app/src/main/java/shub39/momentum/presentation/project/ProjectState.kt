@@ -7,6 +7,12 @@ import shub39.momentum.domain.data_classes.MontageConfig
 import shub39.momentum.domain.data_classes.Project
 import shub39.momentum.domain.interfaces.MontageState
 
+sealed interface ScanState {
+    data object Idle : ScanState
+    data class Processing(val progress: Float) : ScanState
+    data object Done : ScanState
+}
+
 @Stable
 @Immutable
 data class ProjectState(
@@ -14,4 +20,5 @@ data class ProjectState(
     val days: List<Day> = emptyList(),
     val montage: MontageState = MontageState.Processing(),
     val montageConfig: MontageConfig = MontageConfig(),
+    val scanState: ScanState = ScanState.Idle
 )

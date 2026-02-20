@@ -71,4 +71,7 @@
     <string name="censor_faces">Censor Faces</string>
     <string name="rate_on_play">Rate on Google Play</string>
     <string name="changelog">Changelog</string>
+    <string name="rescan_faces">Rescan Faces</string>
+    <string name="rescan_faces_desc">Rescan all the images and update face data for this project</string>
+    <string name="start_scan">Start Scan</string>
 </resources>

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1
+
+- Added option to rescan all faces in the project.
+
 ## 1.5.0
 
 - Changed Face stabilization to free tier and video font to paid
