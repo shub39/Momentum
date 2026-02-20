@@ -5,7 +5,7 @@ import shub39.momentum.data.database.ProjectEntity
 import shub39.momentum.domain.data_classes.Day
 import shub39.momentum.domain.data_classes.MontageConfig
 import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.enums.VideoQuality.Companion.toDimensions
+import shub39.momentum.presentation.toDimensions
 import shub39.montage.MuxerConfiguration
 
 fun MuxerConfiguration.update(montageConfig: MontageConfig): MuxerConfiguration {

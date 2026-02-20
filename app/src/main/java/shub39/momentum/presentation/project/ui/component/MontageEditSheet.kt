@@ -49,7 +49,6 @@ import shub39.momentum.domain.data_classes.MontageConfig
 import shub39.momentum.domain.data_classes.Theme
 import shub39.momentum.domain.enums.AppTheme
 import shub39.momentum.domain.enums.DateStyle
-import shub39.momentum.domain.enums.DateStyle.Companion.toFormatStyle
 import shub39.momentum.domain.enums.Fonts
 import shub39.momentum.domain.enums.VideoQuality
 import shub39.momentum.presentation.project.ProjectAction
@@ -58,6 +57,8 @@ import shub39.momentum.presentation.shared.ColorPickerDialog
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.SettingSlider
 import shub39.momentum.presentation.shared.zigZagBackground
+import shub39.momentum.presentation.toDisplayString
+import shub39.momentum.presentation.toFormatStyle
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -426,7 +427,7 @@ fun MontageEditSheet(
                             },
                             enabled = isPlusUser
                         ) {
-                            Text(text = font.displayName)
+                            Text(text = font.toDisplayString())
                         }
                     }
                 }

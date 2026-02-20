@@ -70,6 +70,9 @@ import shub39.momentum.presentation.shared.endItemShape
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
 import shub39.momentum.presentation.shared.middleItemShape
+import shub39.momentum.presentation.toDisplayString
+import shub39.momentum.presentation.toFontRes
+import shub39.momentum.presentation.toStringRes
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -167,7 +170,7 @@ fun LookAndFeel(
                                     )
                                 ) {
                                     Text(
-                                        text = stringResource(appTheme.stringRes),
+                                        text = stringResource(appTheme.toStringRes()),
                                         modifier = Modifier.basicMarquee(),
                                         maxLines = 1
                                     )
@@ -266,8 +269,8 @@ fun LookAndFeel(
                                     )
                                 ) {
                                     Text(
-                                        text = font.displayName,
-                                        fontFamily = font.fontRes?.let { FontFamily(Font(it)) }
+                                        text = font.toDisplayString(),
+                                        fontFamily = font.toFontRes()?.let { FontFamily(Font(it)) }
                                             ?: FontFamily.Default
                                     )
                                 }

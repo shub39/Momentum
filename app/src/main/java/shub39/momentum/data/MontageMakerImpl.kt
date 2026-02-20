@@ -21,10 +21,11 @@ import shub39.momentum.domain.data_classes.Day
 import shub39.momentum.domain.data_classes.MontageConfig
 import shub39.momentum.domain.data_classes.isValid
 import shub39.momentum.domain.data_classes.toRect
-import shub39.momentum.domain.enums.DateStyle.Companion.toFormatStyle
-import shub39.momentum.domain.enums.VideoQuality.Companion.toDimensions
 import shub39.momentum.domain.interfaces.MontageMaker
 import shub39.momentum.domain.interfaces.MontageState
+import shub39.momentum.presentation.toDimensions
+import shub39.momentum.presentation.toFontRes
+import shub39.momentum.presentation.toFormatStyle
 import shub39.montage.Muxer
 import shub39.montage.MuxingResult
 import java.io.File
@@ -84,7 +85,7 @@ class MontageMakerImpl(
             alpha = 255
             isAntiAlias = true
             style = Paint.Style.FILL
-            config.font.fontRes?.let {
+            config.font.toFontRes()?.let {
                 typeface = ResourcesCompat.getFont(context, it)
             }
             setShadowLayer(4f, 2f, 2f, Color.BLACK)

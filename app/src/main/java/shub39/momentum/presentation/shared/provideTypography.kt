@@ -8,13 +8,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import shub39.momentum.domain.enums.Fonts
+import shub39.momentum.presentation.toFontRes
 
 @Composable
 fun provideTypography(
     scale: Float = 1f,
     font: Fonts = Fonts.FIGTREE
 ): Typography {
-    val selectedFont = font.fontRes?.let { FontFamily(Font(it)) }
+    val selectedFont = font.toFontRes()?.let { FontFamily(Font(it)) }
         ?: FontFamily.Default
 
     return Typography(
