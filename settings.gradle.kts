@@ -28,3 +28,4 @@ rootProject.name = "Momentum"
 include(":app")
 include(":common:core")
 include(":common:montage")
+include(":common:facedetection")

@@ -1,4 +1,4 @@
-package shub39.momentum.data
+package shub39.facedetection
 
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -10,12 +10,10 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.koin.core.annotation.Single
 import shub39.momentum.core.data_classes.FaceData
 import shub39.momentum.core.interfaces.FaceDetector
 import kotlin.math.atan2
 
-@Single(binds = [FaceDetector::class])
 class FaceDetectorImpl(
     private val context: Context
 ) : FaceDetector {

@@ -4,6 +4,8 @@ import android.content.Context
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
+import shub39.facedetection.FaceDetectorImpl
+import shub39.momentum.core.interfaces.FaceDetector
 import shub39.momentum.core.interfaces.MontageConfigPrefs
 import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.SettingsPrefs
@@ -43,4 +45,7 @@ class AppModule {
 
     @Single
     fun getMontageMaker(context: Context): MontageMaker = MontageMakerImpl(context)
+
+    @Single
+    fun getFaceDetector(context: Context): FaceDetector = FaceDetectorImpl(context)
 }

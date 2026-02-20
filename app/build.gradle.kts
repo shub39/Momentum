@@ -110,6 +110,7 @@ android {
 dependencies {
     implementation(project(":common:core"))
     implementation(project(":common:montage"))
+    implementation(project(":common:facedetection"))
 
     "playImplementation"(libs.purchases.ui)
     "playImplementation"(libs.purchases)
@@ -138,7 +139,6 @@ dependencies {
     api(libs.koin.annotations)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
-    implementation(libs.tasks.vision)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
