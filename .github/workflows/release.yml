@@ -74,17 +74,6 @@ jobs:
           -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
           -Pandroid.injected.signing.key.alias=key0 \
           -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
-          
-          APK_PATHS=$(find app/build/outputs/ -name "*.apk" -print -quit)
-          
-          if [ -z "$APK_PATHS" ]; then
-            echo "::error::Could not find APK file."
-            exit 1
-          fi
-          
-          echo "APK_PATHS<<EOF" >> $GITHUB_ENV
-          echo "$APK_PATHS" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -99,7 +88,7 @@ jobs:
           tag_name: ${{ env.VERSION_NAME }}
           name: ${{ env.VERSION_NAME }}
           body_path: commit.txt
-          files: ${{ env.APK_PATHS }}
+          files: app/build/outputs/**/*.apk
 
       - name: Notify on Discord
         shell: bash
