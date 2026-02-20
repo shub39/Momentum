@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
+import shub39.momentum.core.data_classes.Day
 import shub39.momentum.data.getPlaceholder
-import shub39.momentum.domain.data_classes.Day
 import shub39.momentum.presentation.shared.MomentumTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -86,7 +86,7 @@ fun FavDayCard(
 
                 if (!day.comment.isNullOrBlank()) {
                     Text(
-                        text = day.comment
+                        text = day.comment!!
                     )
                 }
             }

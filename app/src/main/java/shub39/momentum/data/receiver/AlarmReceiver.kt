@@ -10,10 +10,10 @@ import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import shub39.momentum.core.interfaces.AlarmScheduler
+import shub39.momentum.core.interfaces.ProjectRepository
 import shub39.momentum.data.AlarmSchedulerImpl
 import shub39.momentum.data.reminderNotification
-import shub39.momentum.domain.interfaces.AlarmScheduler
-import shub39.momentum.domain.interfaces.ProjectRepository
 import java.time.LocalDate
 
 @Single

@@ -2,10 +2,10 @@ package shub39.momentum.presentation.project
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.MontageConfig
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.interfaces.MontageState
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.MontageConfig
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.interfaces.MontageState
 
 sealed interface ScanState {
     data object Idle : ScanState

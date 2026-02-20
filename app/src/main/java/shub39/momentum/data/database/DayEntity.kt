@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
-import shub39.momentum.domain.data_classes.FaceData
+import shub39.momentum.core.data_classes.FaceData
 
 @Serializable
 @Entity(

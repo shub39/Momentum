@@ -56,12 +56,12 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
-import shub39.momentum.domain.enums.Fonts
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.enums.Fonts
+import shub39.momentum.core.enums.PaletteStyle
 import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.SettingsState
 import shub39.momentum.presentation.shared.ColorPickerDialog
@@ -72,6 +72,7 @@ import shub39.momentum.presentation.shared.listItemColors
 import shub39.momentum.presentation.shared.middleItemShape
 import shub39.momentum.presentation.toDisplayString
 import shub39.momentum.presentation.toFontRes
+import shub39.momentum.presentation.toMPaletteStyle
 import shub39.momentum.presentation.toStringRes
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -374,7 +375,7 @@ fun LookAndFeel(
                                         AppTheme.LIGHT -> false
                                     },
                                     isAmoled = state.theme.isAmoled,
-                                    style = style
+                                    style = style.toMPaletteStyle()
                                 )
                                 val selected = state.theme.paletteStyle == style
 

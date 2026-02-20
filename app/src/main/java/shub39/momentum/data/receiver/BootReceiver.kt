@@ -11,9 +11,9 @@ import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import shub39.momentum.core.interfaces.AlarmScheduler
 import shub39.momentum.data.database.ProjectDao
 import shub39.momentum.data.toProject
-import shub39.momentum.domain.interfaces.AlarmScheduler
 
 @Single
 class BootReceiver : BroadcastReceiver(), KoinComponent {

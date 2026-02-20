@@ -40,8 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.AlarmData
-import shub39.momentum.domain.data_classes.Project
+import shub39.momentum.core.data_classes.AlarmData
+import shub39.momentum.core.data_classes.Project
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.shared.MomentumTheme
 import java.time.DayOfWeek

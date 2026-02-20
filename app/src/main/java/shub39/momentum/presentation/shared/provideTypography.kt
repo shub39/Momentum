@@ -7,7 +7,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import shub39.momentum.domain.enums.Fonts
+import shub39.momentum.core.enums.Fonts
 import shub39.momentum.presentation.toFontRes
 
 @Composable

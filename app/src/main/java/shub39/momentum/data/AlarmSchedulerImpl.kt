@@ -7,9 +7,9 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import org.koin.core.annotation.Single
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.interfaces.AlarmScheduler
 import shub39.momentum.data.receiver.AlarmReceiver
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.interfaces.AlarmScheduler
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
@@ -30,7 +30,7 @@ class AlarmSchedulerImpl(
         cancel(project)
         if (project.alarm == null) return
 
-        val time = LocalTime.ofSecondOfDay(project.alarm.time)
+        val time = LocalTime.ofSecondOfDay(project.alarm!!.time)
         val now = LocalDateTime.now()
         val today = now.toLocalDate()
 

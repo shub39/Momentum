@@ -3,7 +3,7 @@ package shub39.momentum.app
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import kotlinx.serialization.Serializable
-import shub39.momentum.domain.data_classes.Theme
+import shub39.momentum.core.data_classes.Theme
 
 @Serializable
 data class VersionEntry(

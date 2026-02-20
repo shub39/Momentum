@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.presentation.onboarding.ui.components.AutoAnimation
 import shub39.momentum.presentation.onboarding.ui.components.CameraAnimation
 import shub39.momentum.presentation.onboarding.ui.components.PrivateAnimation

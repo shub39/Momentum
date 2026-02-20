@@ -11,10 +11,10 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import shub39.momentum.domain.enums.DateStyle
-import shub39.momentum.domain.enums.Fonts
-import shub39.momentum.domain.enums.VideoQuality
-import shub39.momentum.domain.interfaces.MontageConfigPrefs
+import shub39.momentum.core.enums.DateStyle
+import shub39.momentum.core.enums.Fonts
+import shub39.momentum.core.enums.VideoQuality
+import shub39.momentum.core.interfaces.MontageConfigPrefs
 
 class MontageConfigPrefsImpl(
     private val dataStore: DataStore<Preferences>

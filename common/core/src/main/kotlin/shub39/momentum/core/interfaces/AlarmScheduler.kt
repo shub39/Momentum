@@ -1,0 +1,9 @@
+package shub39.momentum.core.interfaces
+
+import shub39.momentum.core.data_classes.Project
+
+interface AlarmScheduler {
+    fun schedule(project: Project)
+    fun cancel(project: Project)
+    fun cancelAll()
+}

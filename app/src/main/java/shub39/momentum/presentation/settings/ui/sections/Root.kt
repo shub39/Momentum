@@ -38,8 +38,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.ui.component.AboutApp
 import shub39.momentum.presentation.shared.MomentumTheme

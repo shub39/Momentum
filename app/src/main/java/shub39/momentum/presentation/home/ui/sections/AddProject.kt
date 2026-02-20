@@ -28,11 +28,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.materialkolor.PaletteStyle
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
-import shub39.momentum.domain.enums.Fonts
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.enums.Fonts
+import shub39.momentum.core.enums.PaletteStyle
 import shub39.momentum.presentation.home.HomeAction
 import shub39.momentum.presentation.shared.MomentumTheme
 
@@ -126,7 +126,7 @@ private fun Preview() {
             seedColor = Color.Yellow,
             appTheme = AppTheme.DARK,
             font = Fonts.FIGTREE,
-            paletteStyle = PaletteStyle.Fidelity
+            paletteStyle = PaletteStyle.FIDELITY
         )
     ) {
         AddProject(

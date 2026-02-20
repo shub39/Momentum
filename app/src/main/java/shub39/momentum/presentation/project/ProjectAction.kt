@@ -1,11 +1,11 @@
 package shub39.momentum.presentation.project
 
 import android.content.Context
-import shub39.momentum.domain.data_classes.AlarmData
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.MontageConfig
-import shub39.momentum.domain.data_classes.PlayerAction
-import shub39.momentum.domain.data_classes.Project
+import shub39.momentum.core.data_classes.AlarmData
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.MontageConfig
+import shub39.momentum.core.data_classes.PlayerAction
+import shub39.momentum.core.data_classes.Project
 
 sealed interface ProjectAction {
     data class OnInitializeExoPlayer(val context: Context) : ProjectAction

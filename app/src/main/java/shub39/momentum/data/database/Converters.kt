@@ -2,8 +2,8 @@ package shub39.momentum.data.database
 
 import androidx.room.TypeConverter
 import kotlinx.serialization.json.Json
-import shub39.momentum.domain.data_classes.AlarmData
-import shub39.momentum.domain.data_classes.FaceData
+import shub39.momentum.core.data_classes.AlarmData
+import shub39.momentum.core.data_classes.FaceData
 
 object Converters {
     private val json = Json { encodeDefaults = true; ignoreUnknownKeys = true }

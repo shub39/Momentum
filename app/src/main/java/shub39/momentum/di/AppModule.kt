@@ -3,13 +3,13 @@ package shub39.momentum.di
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
+import shub39.momentum.core.interfaces.MontageConfigPrefs
+import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.database.DaysDao
 import shub39.momentum.data.database.ProjectDBFactory
 import shub39.momentum.data.database.ProjectDao
 import shub39.momentum.data.database.ProjectDatabase
 import shub39.momentum.data.datastore.DatastoreFactory
-import shub39.momentum.domain.interfaces.MontageConfigPrefs
-import shub39.momentum.domain.interfaces.SettingsPrefs
 
 @Module
 @ComponentScan("shub39.momentum")

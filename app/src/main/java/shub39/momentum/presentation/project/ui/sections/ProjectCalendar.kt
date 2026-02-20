@@ -44,10 +44,10 @@ import com.kizitonwose.calendar.core.OutDateStyle
 import com.kizitonwose.calendar.core.yearMonth
 import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.shared.MomentumTheme

@@ -17,12 +17,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.koin.core.annotation.Single
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.MontageConfig
-import shub39.momentum.domain.data_classes.isValid
-import shub39.momentum.domain.data_classes.toRect
-import shub39.momentum.domain.interfaces.MontageMaker
-import shub39.momentum.domain.interfaces.MontageState
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.MontageConfig
+import shub39.momentum.core.data_classes.isValid
+import shub39.momentum.core.data_classes.toRect
+import shub39.momentum.core.interfaces.MontageMaker
+import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.presentation.toDimensions
 import shub39.momentum.presentation.toFontRes
 import shub39.momentum.presentation.toFormatStyle
@@ -145,7 +145,7 @@ class MontageMakerImpl(
                                 scale,
                                 scale
                             )                      // scale to target size
-                            matrix.postRotate(-day.faceData.headAngle)          // straighten roll
+                            matrix.postRotate(-day.faceData!!.headAngle)          // straighten roll
                             matrix.postTranslate(targetCenterX, targetCenterY)  // center face
                         } else {
                             // No stabilization, just fit into canvas
@@ -179,7 +179,7 @@ class MontageMakerImpl(
                             canvas.drawText(date, paddingX, paddingY, paint)
                         }
                         if (config.showMessage && !day.comment.isNullOrBlank()) {
-                            val message = day.comment
+                            val message = day.comment!!
                             val paddingX = dimensions.first * 0.05f
                             val paddingY =
                                 dimensions.second - dimensions.second * 0.12f - paint.descent()

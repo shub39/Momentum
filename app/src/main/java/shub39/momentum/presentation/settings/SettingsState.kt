@@ -2,7 +2,7 @@ package shub39.momentum.presentation.settings
 
 import androidx.compose.runtime.Immutable
 import shub39.momentum.app.Changelog
-import shub39.momentum.domain.data_classes.Theme
+import shub39.momentum.core.data_classes.Theme
 
 @Immutable
 data class SettingsState(

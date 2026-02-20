@@ -7,7 +7,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Project
+import shub39.momentum.core.data_classes.Project
 
 fun reminderNotification(
     context: Context,

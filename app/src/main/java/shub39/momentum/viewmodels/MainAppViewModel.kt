@@ -18,8 +18,8 @@ import org.koin.android.annotation.KoinViewModel
 import shub39.momentum.BuildConfig
 import shub39.momentum.app.MainAppState
 import shub39.momentum.billing.domain.BillingHandler
+import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.ChangelogManager
-import shub39.momentum.domain.interfaces.SettingsPrefs
 
 @KoinViewModel
 class MainAppViewModel(

@@ -11,8 +11,8 @@ import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
-import shub39.momentum.domain.data_classes.FaceData
-import shub39.momentum.domain.interfaces.FaceDetector
+import shub39.momentum.core.data_classes.FaceData
+import shub39.momentum.core.interfaces.FaceDetector
 import kotlin.math.atan2
 
 @Single(binds = [FaceDetector::class])

@@ -31,7 +31,7 @@ import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
 import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Day
+import shub39.momentum.core.data_classes.Day
 import java.time.LocalDate
 
 @Composable

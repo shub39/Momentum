@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.interfaces.MontageState
-import shub39.momentum.domain.interfaces.ProjectRepository
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.interfaces.MontageState
+import shub39.momentum.core.interfaces.ProjectRepository
 import shub39.momentum.presentation.home.HomeAction
 import shub39.momentum.presentation.home.HomeState
 

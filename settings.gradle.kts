@@ -26,5 +26,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Momentum"
 include(":app")
-include(":montage")
-include(":shared:core")
+include(":common:core")
+include(":common:montage")

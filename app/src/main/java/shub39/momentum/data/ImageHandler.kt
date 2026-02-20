@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import org.koin.core.annotation.Single
-import shub39.momentum.domain.data_classes.Day
+import shub39.momentum.core.data_classes.Day
 import java.io.File
 import kotlin.time.Clock
 

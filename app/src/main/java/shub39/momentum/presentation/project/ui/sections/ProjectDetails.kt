@@ -52,14 +52,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
-import com.materialkolor.PaletteStyle
 import kotlinx.coroutines.delay
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.AlarmData
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
+import shub39.momentum.core.data_classes.AlarmData
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.enums.PaletteStyle
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ScanState
@@ -492,7 +492,7 @@ private fun Preview() {
         theme = Theme(
             appTheme = AppTheme.DARK,
             seedColor = Color.Yellow,
-            paletteStyle = PaletteStyle.Expressive
+            paletteStyle = PaletteStyle.EXPRESSIVE
         )
     ) {
         ProjectDetails(

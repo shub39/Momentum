@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import okio.Path.Companion.toPath
 import org.koin.core.annotation.Single
-import shub39.momentum.domain.interfaces.MontageConfigPrefs
-import shub39.momentum.domain.interfaces.SettingsPrefs
+import shub39.momentum.core.interfaces.MontageConfigPrefs
+import shub39.momentum.core.interfaces.SettingsPrefs
 
 @Single
 class DatastoreFactory(

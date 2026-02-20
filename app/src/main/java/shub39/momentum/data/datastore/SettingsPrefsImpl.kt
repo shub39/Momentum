@@ -1,5 +1,6 @@
 package shub39.momentum.data.datastore
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.datastore.core.DataStore
@@ -8,12 +9,12 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.materialkolor.PaletteStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import shub39.momentum.domain.enums.AppTheme
-import shub39.momentum.domain.enums.Fonts
-import shub39.momentum.domain.interfaces.SettingsPrefs
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.enums.Fonts
+import shub39.momentum.core.enums.PaletteStyle
+import shub39.momentum.core.interfaces.SettingsPrefs
 
 class SettingsPrefsImpl(
     private val dataStore: DataStore<Preferences>
@@ -45,6 +46,7 @@ class SettingsPrefsImpl(
             val theme = preferences[appTheme] ?: AppTheme.SYSTEM.name
             AppTheme.valueOf(theme)
         }
+
     override suspend fun updateAppThemePref(pref: AppTheme) {
         dataStore.edit {
             it[appTheme] = pref.name
@@ -53,6 +55,7 @@ class SettingsPrefsImpl(
 
     override fun getSeedColorFlow(): Flow<Color> = dataStore.data
         .map { preferences -> Color(preferences[seedColor] ?: Color.White.toArgb()) }
+
     override suspend fun updateSeedColor(color: Color) {
         dataStore.edit { settings ->
             settings[seedColor] = color.toArgb()
@@ -61,6 +64,7 @@ class SettingsPrefsImpl(
 
     override fun getAmoledPrefFlow(): Flow<Boolean> = dataStore.data
         .map { preferences -> preferences[amoledPref] == true }
+
     override suspend fun updateAmoledPref(amoled: Boolean) {
         dataStore.edit { settings ->
             settings[amoledPref] = amoled
@@ -69,8 +73,14 @@ class SettingsPrefsImpl(
 
     override fun getPaletteStyle(): Flow<PaletteStyle> = dataStore.data
         .map { preferences ->
-            PaletteStyle.valueOf(preferences[paletteStyle] ?: PaletteStyle.TonalSpot.name)
+            try {
+                PaletteStyle.valueOf(preferences[paletteStyle] ?: PaletteStyle.TONALSPOT.name)
+            } catch (e: Exception) {
+                Log.wtf("OtherPreferencesImpl", "Error getting palette style: ${e.message}")
+                PaletteStyle.TONALSPOT
+            }
         }
+
     override suspend fun updatePaletteStyle(style: PaletteStyle) {
         dataStore.edit { settings ->
             settings[paletteStyle] = style.name
@@ -79,6 +89,7 @@ class SettingsPrefsImpl(
 
     override fun getOnboardingDoneFlow(): Flow<Boolean> = dataStore.data
         .map { preferences -> preferences[onboardingDone] == true }
+
     override suspend fun updateOnboardingDone(done: Boolean) {
         dataStore.edit { settings ->
             settings[onboardingDone] = done
@@ -87,6 +98,7 @@ class SettingsPrefsImpl(
 
     override fun getMaterialYouFlow(): Flow<Boolean> = dataStore.data
         .map { preferences -> preferences[materialTheme] == true }
+
     override suspend fun updateMaterialTheme(pref: Boolean) {
         dataStore.edit { settings ->
             settings[materialTheme] = pref
@@ -98,6 +110,7 @@ class SettingsPrefsImpl(
             val font = prefs[selectedFont] ?: Fonts.FIGTREE.name
             Fonts.valueOf(font)
         }
+
     override suspend fun updateFonts(font: Fonts) {
         dataStore.edit { settings ->
             settings[selectedFont] = font.name

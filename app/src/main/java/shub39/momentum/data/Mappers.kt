@@ -1,10 +1,10 @@
 package shub39.momentum.data
 
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.MontageConfig
+import shub39.momentum.core.data_classes.Project
 import shub39.momentum.data.database.DayEntity
 import shub39.momentum.data.database.ProjectEntity
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.MontageConfig
-import shub39.momentum.domain.data_classes.Project
 import shub39.momentum.presentation.toDimensions
 import shub39.montage.MuxerConfiguration
 

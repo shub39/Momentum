@@ -19,13 +19,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.materialkolor.PaletteStyle
 import kotlinx.serialization.Serializable
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.data_classes.ProjectListData
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
-import shub39.momentum.domain.enums.Fonts
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.data_classes.ProjectListData
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.enums.Fonts
+import shub39.momentum.core.enums.PaletteStyle
 import shub39.momentum.presentation.home.ui.sections.AddProject
 import shub39.momentum.presentation.home.ui.sections.ProjectList
 import shub39.momentum.presentation.shared.MomentumTheme
@@ -113,7 +113,7 @@ private fun Preview() {
             seedColor = Color.Yellow,
             appTheme = AppTheme.DARK,
             font = Fonts.FIGTREE,
-            paletteStyle = PaletteStyle.Fidelity
+            paletteStyle = PaletteStyle.FIDELITY
         )
     ) {
         HomeGraph(

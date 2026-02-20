@@ -108,7 +108,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":montage"))
+    implementation(project(":common:core"))
+    implementation(project(":common:montage"))
 
     "playImplementation"(libs.purchases.ui)
     "playImplementation"(libs.purchases)
