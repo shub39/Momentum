@@ -25,4 +25,5 @@ sealed interface ProjectAction {
     data object OnResetMontagePrefs : ProjectAction
 
     data object OnStartFaceScan : ProjectAction
+    data object OnResetScanState : ProjectAction
 }

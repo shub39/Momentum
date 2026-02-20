@@ -202,7 +202,7 @@ class ProjectViewModel(
 
                 try {
                     withContext(Dispatchers.IO) {
-                        state.value.days.fastForEachIndexed { index, day ->
+                        _state.value.days.fastForEachIndexed { index, day ->
                             _state.update { it.copy(scanState = ScanState.Processing(index.toFloat() / size.toFloat())) }
 
                             val faceData = faceDetector.getFaceDataFromUri(day.image.toUri())
@@ -214,6 +214,10 @@ class ProjectViewModel(
                 } finally {
                     _state.update { it.copy(scanState = ScanState.Done) }
                 }
+            }
+
+            ProjectAction.OnResetScanState -> {
+                _state.update { it.copy(scanState = ScanState.Idle) }
             }
         }
     }

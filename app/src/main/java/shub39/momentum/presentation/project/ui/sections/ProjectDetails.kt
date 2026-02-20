@@ -312,7 +312,10 @@ fun ProjectDetails(
                         }
 
                         Button(
-                            onClick = { showRescanDialog = false },
+                            onClick = {
+                                onAction(ProjectAction.OnResetScanState)
+                                showRescanDialog = false
+                            },
                             enabled = state.scanState is ScanState.Done,
                             modifier = Modifier
                                 .widthIn(max = 300.dp)
