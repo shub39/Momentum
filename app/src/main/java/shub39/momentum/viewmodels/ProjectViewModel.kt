@@ -123,7 +123,7 @@ class ProjectViewModel(
             }
 
             ProjectAction.OnUpdateDays -> viewModelScope.launch {
-                withContext(Dispatchers.IO) { refreshDays() }
+                refreshDays()
                 withContext(Dispatchers.Default) { processDays() }
             }
 
