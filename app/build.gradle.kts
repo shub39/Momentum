@@ -92,6 +92,15 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("x86", "x86_64", "arm64-v8a", "armeabi-v7a")
+            isUniversalApk = true
+        }
+    }
 }
 
 dependencies {
