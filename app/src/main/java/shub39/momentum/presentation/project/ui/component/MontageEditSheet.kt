@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.project.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
@@ -43,6 +59,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.MontageConfig
@@ -59,9 +78,6 @@ import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.SettingSlider
 import shub39.momentum.presentation.shared.zigZagBackground
 import shub39.momentum.presentation.toDisplayString
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -73,7 +89,7 @@ fun MontageEditSheet(
     isPlusUser: Boolean,
     onNavigateToPaywall: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
 
@@ -87,33 +103,28 @@ fun MontageEditSheet(
                     )
                 )
             },
-            onDismiss = { showColorPicker = false }
+            onDismiss = { showColorPicker = false },
         )
     }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetGesturesEnabled = false,
-        sheetState = sheetState
+        sheetState = sheetState,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = stringResource(R.string.edit_montage),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
 
-            IconButton(
-                onClick = { onAction(ProjectAction.OnResetMontagePrefs) }
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.sync),
-                    contentDescription = "Reset"
-                )
+            IconButton(onClick = { onAction(ProjectAction.OnResetMontagePrefs) }) {
+                Icon(painter = painterResource(R.drawable.sync), contentDescription = "Reset")
             }
 
             Button(
@@ -121,11 +132,9 @@ fun MontageEditSheet(
                     onAction(ProjectAction.OnCreateMontage(state.days))
                     onDismissRequest()
                 },
-                enabled = buttonEnabled
+                enabled = buttonEnabled,
             ) {
-                Text(
-                    text = stringResource(R.string.remake)
-                )
+                Text(text = stringResource(R.string.remake))
             }
         }
 
@@ -138,7 +147,7 @@ fun MontageEditSheet(
                 .heightIn(max = 400.dp),
             contentPadding = PaddingValues(vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // frames per image slider
             item {
@@ -155,7 +164,7 @@ fun MontageEditSheet(
                     valueRange = 1f..10f,
                     steps = 8,
                     valueToShow = state.montageConfig.framesPerImage.toString(),
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp),
                 )
             }
 
@@ -174,7 +183,7 @@ fun MontageEditSheet(
                     valueRange = 1f..10f,
                     steps = 8,
                     valueToShow = state.montageConfig.framesPerSecond.roundToInt().toString(),
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp),
                 )
             }
 
@@ -185,11 +194,11 @@ fun MontageEditSheet(
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = stringResource(R.string.show_date),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     Switch(
@@ -200,7 +209,7 @@ fun MontageEditSheet(
                                     state.montageConfig.copy(showDate = it)
                                 )
                             )
-                        }
+                        },
                     )
                 }
 
@@ -209,7 +218,7 @@ fun MontageEditSheet(
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
                             .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         DateStyle.entries.forEach { style ->
                             ToggleButton(
@@ -217,16 +226,19 @@ fun MontageEditSheet(
                                 onCheckedChange = {
                                     onAction(
                                         ProjectAction.OnEditMontageConfig(
-                                            state.montageConfig.copy(
-                                                dateStyle = style
-                                            )
+                                            state.montageConfig.copy(dateStyle = style)
                                         )
                                     )
-                                }
+                                },
                             ) {
                                 Text(
-                                    text = LocalDate.now()
-                                        .format(DateTimeFormatter.ofLocalizedDate(style.toFormatStyle()))
+                                    text =
+                                        LocalDate.now()
+                                            .format(
+                                                DateTimeFormatter.ofLocalizedDate(
+                                                    style.toFormatStyle()
+                                                )
+                                            )
                                 )
                             }
                         }
@@ -241,11 +253,11 @@ fun MontageEditSheet(
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = stringResource(R.string.show_message),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     Switch(
@@ -256,7 +268,7 @@ fun MontageEditSheet(
                                     state.montageConfig.copy(showMessage = it)
                                 )
                             )
-                        }
+                        },
                     )
                 }
             }
@@ -268,11 +280,11 @@ fun MontageEditSheet(
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = stringResource(R.string.stabilize_faces),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     Switch(
@@ -287,24 +299,24 @@ fun MontageEditSheet(
                             } else {
                                 onNavigateToPaywall()
                             }
-                        }
+                        },
                     )
                 }
 
                 AnimatedVisibility(
                     visible = state.montageConfig.stabilizeFaces,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             text = stringResource(R.string.censor_faces),
-                            style = MaterialTheme.typography.titleLarge
+                            style = MaterialTheme.typography.titleLarge,
                         )
 
                         Switch(
@@ -320,7 +332,7 @@ fun MontageEditSheet(
                                 } else {
                                     onNavigateToPaywall()
                                 }
-                            }
+                            },
                         )
                     }
                 }
@@ -333,15 +345,11 @@ fun MontageEditSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
-                            .zigZagBackground()
+                            .zigZagBackground(),
                     ) {
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = onNavigateToPaywall
-                        ) {
-                            Text(
-                                text = stringResource(R.string.unlock_more_pro)
-                            )
+                        Button(onClick = onNavigateToPaywall) {
+                            Text(text = stringResource(R.string.unlock_more_pro))
                         }
                     }
                 }
@@ -354,11 +362,11 @@ fun MontageEditSheet(
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = stringResource(R.string.video_quality),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     Spacer(modifier = Modifier.size(44.dp))
@@ -368,7 +376,7 @@ fun MontageEditSheet(
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     VideoQuality.entries.forEach { quality ->
                         ToggleButton(
@@ -384,7 +392,7 @@ fun MontageEditSheet(
                                 } else {
                                     onNavigateToPaywall()
                                 }
-                            }
+                            },
                         ) {
                             Text(text = quality.name)
                         }
@@ -399,11 +407,11 @@ fun MontageEditSheet(
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = stringResource(R.string.video_font),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     Spacer(modifier = Modifier.size(44.dp))
@@ -413,7 +421,7 @@ fun MontageEditSheet(
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Fonts.entries.forEach { font ->
                         ToggleButton(
@@ -425,7 +433,7 @@ fun MontageEditSheet(
                                     )
                                 )
                             },
-                            enabled = isPlusUser
+                            enabled = isPlusUser,
                         ) {
                             Text(text = font.toDisplayString())
                         }
@@ -440,11 +448,11 @@ fun MontageEditSheet(
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = stringResource(R.string.show_watermark),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     Switch(
@@ -460,7 +468,7 @@ fun MontageEditSheet(
                             } else {
                                 onNavigateToPaywall()
                             }
-                        }
+                        },
                     )
                 }
             }
@@ -472,11 +480,11 @@ fun MontageEditSheet(
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = stringResource(R.string.background_color),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     IconButton(
@@ -488,14 +496,15 @@ fun MontageEditSheet(
                             }
                         },
                         enabled = isPlusUser,
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = state.montageConfig.backgroundColor,
-                            contentColor = contentColorFor(state.montageConfig.backgroundColor)
-                        )
+                        colors =
+                            IconButtonDefaults.iconButtonColors(
+                                containerColor = state.montageConfig.backgroundColor,
+                                contentColor = contentColorFor(state.montageConfig.backgroundColor),
+                            ),
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.edit),
-                            contentDescription = "Pick color"
+                            contentDescription = "Pick color",
                         )
                     }
                 }
@@ -508,33 +517,29 @@ fun MontageEditSheet(
 @Composable
 @Preview
 private fun Preview() {
-    MomentumTheme(
-        theme = Theme(
-            appTheme = AppTheme.DARK
-        )
-    ) {
+    MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
         MontageEditSheet(
-            state = ProjectState(
-                days = listOf(
-                    Day(
-                        id = 1,
-                        projectId = 1,
-                        image = "",
-                        comment = "",
-                        date = 1,
-                        isFavorite = false
-                    )
+            state =
+                ProjectState(
+                    days =
+                        listOf(
+                            Day(
+                                id = 1,
+                                projectId = 1,
+                                image = "",
+                                comment = "",
+                                date = 1,
+                                isFavorite = false,
+                            )
+                        ),
+                    montageConfig = MontageConfig(stabilizeFaces = true),
                 ),
-                montageConfig = MontageConfig(stabilizeFaces = true)
-            ),
             onAction = {},
             buttonEnabled = false,
             onDismissRequest = {},
-            sheetState = rememberStandardBottomSheetState(
-                initialValue = SheetValue.Expanded
-            ),
+            sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded),
             isPlusUser = true,
-            onNavigateToPaywall = { },
+            onNavigateToPaywall = {},
         )
     }
 }

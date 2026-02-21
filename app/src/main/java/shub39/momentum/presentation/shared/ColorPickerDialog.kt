@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.shared
 
 import androidx.compose.foundation.layout.Arrangement
@@ -27,22 +43,16 @@ import shub39.momentum.R
 
 // Color picker used app wide
 @Composable
-fun ColorPickerDialog(
-    initialColor: Color,
-    onSelect: (Color) -> Unit,
-    onDismiss: () -> Unit
-) {
+fun ColorPickerDialog(initialColor: Color, onSelect: (Color) -> Unit, onDismiss: () -> Unit) {
     val controller = rememberColorPickerController()
 
-    MomentumDialog(
-        onDismissRequest = onDismiss
-    ) {
+    MomentumDialog(onDismissRequest = onDismiss) {
         Column(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             HsvColorPicker(
                 modifier = Modifier
@@ -50,7 +60,7 @@ fun ColorPickerDialog(
                     .height(300.dp)
                     .padding(top = 10.dp),
                 initialColor = initialColor,
-                controller = controller
+                controller = controller,
             )
 
             BrightnessSlider(
@@ -58,15 +68,16 @@ fun ColorPickerDialog(
                     .padding(top = 10.dp)
                     .height(35.dp),
                 initialColor = initialColor,
-                controller = controller
+                controller = controller,
             )
 
             AlphaTile(
-                modifier = Modifier
-                    .size(80.dp)
-                    .padding(vertical = 10.dp)
-                    .clip(RoundedCornerShape(6.dp)),
-                controller = controller
+                modifier =
+                    Modifier
+                        .size(80.dp)
+                        .padding(vertical = 10.dp)
+                        .clip(RoundedCornerShape(6.dp)),
+                controller = controller,
             )
 
             Button(
@@ -78,7 +89,7 @@ fun ColorPickerDialog(
                 Text(
                     text = stringResource(R.string.done),
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }

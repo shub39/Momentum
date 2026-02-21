@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.settings.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
@@ -36,7 +52,8 @@ import androidx.compose.ui.unit.dp
 import com.materialkolor.palettes.TonalPalette
 import shub39.momentum.R
 
-// yeeted from https://github.com/SkyD666/PodAura/blob/master/app/src/main/java/com/skyd/anivu/ui/screen/settings/appearance/AppearanceScreen.kt
+// yeeted from
+// https://github.com/SkyD666/PodAura/blob/master/app/src/main/java/com/skyd/anivu/ui/screen/settings/appearance/AppearanceScreen.kt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectableMiniPalette(
@@ -47,29 +64,24 @@ fun SelectableMiniPalette(
     contentDescription: () -> String,
     accents: List<TonalPalette>,
 ) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp)
-    ) {
+    Surface(modifier = modifier, shape = RoundedCornerShape(16.dp)) {
         TooltipBox(
             modifier = modifier,
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                positioning = TooltipAnchorPosition.End
-            ),
-            tooltip = {
-                PlainTooltip {
-                    Text(contentDescription())
-                }
-            },
-            state = rememberTooltipState()
+            positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(
+                    positioning = TooltipAnchorPosition.End
+                ),
+            tooltip = { PlainTooltip { Text(contentDescription()) } },
+            state = rememberTooltipState(),
         ) {
             Surface(
-                modifier = Modifier
-                    .clickable(enabled = enabled, onClick = onClick)
-                    .padding(12.dp)
-                    .size(50.dp),
+                modifier =
+                    Modifier
+                        .clickable(enabled = enabled, onClick = onClick)
+                        .padding(12.dp)
+                        .size(50.dp),
                 shape = CircleShape,
-                color = Color(accents[0].tone(60))
+                color = Color(accents[0].tone(60)),
             ) {
                 Box {
                     Surface(
@@ -91,12 +103,13 @@ fun SelectableMiniPalette(
                         exit = scaleOut(animationSpec) + fadeOut(animationSpec),
                     ) {
                         Box(
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary),
-                            contentAlignment = Alignment.Center
+                            modifier =
+                                Modifier
+                                    .padding(10.dp)
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary),
+                            contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.check_border),
@@ -104,7 +117,7 @@ fun SelectableMiniPalette(
                                 modifier = Modifier
                                     .padding(8.dp)
                                     .size(16.dp),
-                                tint = MaterialTheme.colorScheme.surface
+                                tint = MaterialTheme.colorScheme.surface,
                             )
                         }
                     }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.montage
 
 import android.content.Context
@@ -13,6 +29,9 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toRectF
 import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
+import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import shub39.momentum.core.data_classes.Day
@@ -24,17 +43,12 @@ import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.core.toDimensions
 import shub39.momentum.core.toFontRes
 import shub39.momentum.core.toFormatStyle
-import java.io.File
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-class MontageMakerImpl(
-    private val context: Context
-) : MontageMaker {
+class MontageMakerImpl(private val context: Context) : MontageMaker {
 
     override suspend fun createMontageFlow(
         days: List<Day>,
-        config: MontageConfig
+        config: MontageConfig,
     ): Flow<MontageState> = flow {
         val file = File(context.cacheDir, "temp.mp4")
         val muxer = Muxer(context, file)
@@ -66,23 +80,19 @@ class MontageMakerImpl(
         }
     }
 
-    private fun processDay(
-        day: Day,
-        config: MontageConfig,
-    ): Bitmap? {
+    private fun processDay(day: Day, config: MontageConfig): Bitmap? {
         val dimensions = config.videoQuality.toDimensions()
 
-        val paint = Paint().apply {
-            color = Color.WHITE
-            textSize = dimensions.first * 0.04f
-            alpha = 255
-            isAntiAlias = true
-            style = Paint.Style.FILL
-            config.font.toFontRes()?.let {
-                typeface = ResourcesCompat.getFont(context, it)
+        val paint =
+            Paint().apply {
+                color = Color.WHITE
+                textSize = dimensions.first * 0.04f
+                alpha = 255
+                isAntiAlias = true
+                style = Paint.Style.FILL
+                config.font.toFontRes()?.let { typeface = ResourcesCompat.getFont(context, it) }
+                setShadowLayer(4f, 2f, 2f, Color.BLACK)
             }
-            setShadowLayer(4f, 2f, 2f, Color.BLACK)
-        }
 
         val contentResolver = context.contentResolver
 
@@ -90,27 +100,29 @@ class MontageMakerImpl(
             val uri = day.image.toUri()
             contentResolver.openInputStream(uri)?.use { exifStream ->
                 val exif = ExifInterface(exifStream)
-                val orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED
-                )
+                val orientation =
+                    exif.getAttributeInt(
+                        ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED,
+                    )
                 contentResolver.openInputStream(uri)?.use { bitmapSteam ->
                     val decodedBitmap = BitmapFactory.decodeStream(bitmapSteam)
-                    val originalBitmap = when (orientation) {
-                        ExifInterface.ORIENTATION_ROTATE_90 -> {
-                            rotateBitmap(decodedBitmap, 90f)
-                        }
+                    val originalBitmap =
+                        when (orientation) {
+                            ExifInterface.ORIENTATION_ROTATE_90 -> {
+                                rotateBitmap(decodedBitmap, 90f)
+                            }
 
-                        ExifInterface.ORIENTATION_ROTATE_180 -> {
-                            rotateBitmap(decodedBitmap, 180f)
-                        }
+                            ExifInterface.ORIENTATION_ROTATE_180 -> {
+                                rotateBitmap(decodedBitmap, 180f)
+                            }
 
-                        ExifInterface.ORIENTATION_ROTATE_270 -> {
-                            rotateBitmap(decodedBitmap, 270f)
-                        }
+                            ExifInterface.ORIENTATION_ROTATE_270 -> {
+                                rotateBitmap(decodedBitmap, 270f)
+                            }
 
-                        else -> decodedBitmap
-                    }
+                            else -> decodedBitmap
+                        }
                     if (originalBitmap != null) {
                         val canvasBitmap = createBitmap(dimensions.first, dimensions.second)
                         val canvas = Canvas(canvasBitmap)
@@ -132,20 +144,18 @@ class MontageMakerImpl(
                             // --- Build transform ---
                             matrix.postTranslate(
                                 -faceCenterX,
-                                -faceCenterY
+                                -faceCenterY,
                             ) // move face center to (0,0)
-                            matrix.postScale(
-                                scale,
-                                scale
-                            )                      // scale to target size
-                            matrix.postRotate(-day.faceData!!.headAngle)          // straighten roll
-                            matrix.postTranslate(targetCenterX, targetCenterY)  // center face
+                            matrix.postScale(scale, scale) // scale to target size
+                            matrix.postRotate(-day.faceData!!.headAngle) // straighten roll
+                            matrix.postTranslate(targetCenterX, targetCenterY) // center face
                         } else {
                             // No stabilization, just fit into canvas
-                            val scale = minOf(
-                                dimensions.first.toFloat() / originalBitmap.width,
-                                dimensions.second.toFloat() / originalBitmap.height
-                            )
+                            val scale =
+                                minOf(
+                                    dimensions.first.toFloat() / originalBitmap.width,
+                                    dimensions.second.toFloat() / originalBitmap.height,
+                                )
                             val dx = (dimensions.first - originalBitmap.width * scale) / 2f
                             val dy = (dimensions.second - originalBitmap.height * scale) / 2f
                             matrix.postScale(scale, scale)
@@ -163,9 +173,13 @@ class MontageMakerImpl(
                             canvas.drawText(watermark, paddingX, paddingY, paint)
                         }
                         if (config.showDate) {
-                            val date = LocalDate.ofEpochDay(day.date).format(
-                                DateTimeFormatter.ofLocalizedDate(config.dateStyle.toFormatStyle())
-                            )
+                            val date =
+                                LocalDate.ofEpochDay(day.date)
+                                    .format(
+                                        DateTimeFormatter.ofLocalizedDate(
+                                            config.dateStyle.toFormatStyle()
+                                        )
+                                    )
                             val paddingX = dimensions.first * 0.05f
                             val paddingY =
                                 dimensions.second - dimensions.second * 0.05f - paint.descent()
@@ -185,11 +199,12 @@ class MontageMakerImpl(
                             val faceRectF = faceBox.toRectF()
                             matrix.mapRect(faceRectF)
 
-                            val censorPaint = Paint().apply {
-                                isAntiAlias = true
-                                style = Paint.Style.FILL
-                                color = config.backgroundColor.toArgb()
-                            }
+                            val censorPaint =
+                                Paint().apply {
+                                    isAntiAlias = true
+                                    style = Paint.Style.FILL
+                                    color = config.backgroundColor.toArgb()
+                                }
                             canvas.drawRect(faceRectF, censorPaint)
                         }
 

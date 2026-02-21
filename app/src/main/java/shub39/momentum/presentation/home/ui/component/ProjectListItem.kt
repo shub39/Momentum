@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.home.ui.component
 
 import androidx.compose.foundation.layout.Box
@@ -29,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
+import java.time.LocalDate
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.Project
@@ -36,27 +53,25 @@ import shub39.momentum.core.data_classes.ProjectListData
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.presentation.shared.MomentumTheme
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectListItem(
     projectListData: ProjectListData,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(32.dp),
         onClick = onClick,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ),
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             if (projectListData.last10Days.isNotEmpty()) {
                 val carouselState = rememberCarouselState { projectListData.last10Days.size }
 
@@ -65,7 +80,7 @@ fun ProjectListItem(
                     modifier = Modifier.height(200.dp),
                     preferredItemWidth = 200.dp,
                     itemSpacing = 8.dp,
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp)
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp),
                 ) {
                     val currentDay = projectListData.last10Days[it]
 
@@ -74,21 +89,19 @@ fun ProjectListItem(
                         failure = {
                             Box(
                                 modifier = Modifier.matchParentSize(),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.warning),
-                                    contentDescription = "Warning"
+                                    contentDescription = "Warning",
                                 )
                             }
                         },
-                        imageOptions = ImageOptions(
-                            contentScale = ContentScale.Crop
-                        ),
+                        imageOptions = ImageOptions(contentScale = ContentScale.Crop),
                         previewPlaceholder = painterResource(R.drawable.ic_launcher_foreground),
                         modifier = Modifier
                             .fillMaxSize()
-                            .maskClip(RoundedCornerShape(16.dp))
+                            .maskClip(RoundedCornerShape(16.dp)),
                     )
                 }
             }
@@ -97,21 +110,20 @@ fun ProjectListItem(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column {
                     Text(
                         text = projectListData.project.title,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold
-                        )
+                        style =
+                            MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     )
 
                     if (projectListData.project.description.isNotBlank()) {
                         Text(
                             text = projectListData.project.description,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
@@ -120,7 +132,7 @@ fun ProjectListItem(
 
                 Icon(
                     painter = painterResource(R.drawable.arrow_forward),
-                    contentDescription = "Navigate to project"
+                    contentDescription = "Navigate to project",
                 )
             }
         }
@@ -130,30 +142,29 @@ fun ProjectListItem(
 @Preview
 @Composable
 private fun Preview() {
-    MomentumTheme(
-        theme = Theme(
-            appTheme = AppTheme.DARK
-        )
-    ) {
+    MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
         ProjectListItem(
-            projectListData = ProjectListData(
-                project = Project(
-                    id = 1,
-                    title = "Project 1",
-                    description = "Description for project 1"
+            projectListData =
+                ProjectListData(
+                    project =
+                        Project(
+                            id = 1,
+                            title = "Project 1",
+                            description = "Description for project 1",
+                        ),
+                    last10Days =
+                        (0..10).map { it1 ->
+                            Day(
+                                id = it1.toLong(),
+                                projectId = it1.toLong(),
+                                image = "",
+                                comment = "",
+                                date = LocalDate.now().toEpochDay(),
+                                isFavorite = false,
+                            )
+                        },
                 ),
-                last10Days = (0..10).map { it1 ->
-                    Day(
-                        id = it1.toLong(),
-                        projectId = it1.toLong(),
-                        image = "",
-                        comment = "",
-                        date = LocalDate.now().toEpochDay(),
-                        isFavorite = false
-                    )
-                }
-            ),
-            onClick = {}
+            onClick = {},
         )
     }
 }

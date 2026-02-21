@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.project.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
@@ -43,7 +59,7 @@ import shub39.momentum.core.enums.VideoAction
 fun VideoPlayer(
     exoPlayer: ExoPlayer,
     onPlayerAction: (PlayerAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var isPlaying by remember { mutableStateOf(true) }
     var showControls by remember { mutableStateOf(false) }
@@ -69,32 +85,24 @@ fun VideoPlayer(
         }
     }
 
-    Box(
-        modifier = modifier.clickable { showControls = true }
-    ) {
+    Box(modifier = modifier.clickable { showControls = true }) {
         PlayerSurface(
             player = exoPlayer,
             modifier = Modifier.fillMaxSize(),
-            surfaceType = SURFACE_TYPE_TEXTURE_VIEW
+            surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
         )
 
-        AnimatedVisibility(
-            visible = showControls,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.4f))
-            )
+        AnimatedVisibility(visible = showControls, enter = fadeIn(), exit = fadeOut()) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.4f)))
 
             Row(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 FilledIconButton(
                     onClick = {
@@ -109,8 +117,9 @@ fun VideoPlayer(
                     }
                 ) {
                     Icon(
-                        painter = painterResource(if (isPlaying) R.drawable.pause else R.drawable.play),
-                        contentDescription = null
+                        painter =
+                            painterResource(if (isPlaying) R.drawable.pause else R.drawable.play),
+                        contentDescription = null,
                     )
                 }
 
@@ -121,10 +130,9 @@ fun VideoPlayer(
                         onPlayerAction(PlayerAction(action = VideoAction.SEEK, data = newPosition))
                         position = newPosition
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
     }
 }
-

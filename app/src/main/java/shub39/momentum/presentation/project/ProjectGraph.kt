@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.project
 
 import androidx.compose.animation.core.tween
@@ -58,7 +74,7 @@ fun ProjectGraph(
     onNavigateBack: () -> Unit,
     isPlusUser: Boolean,
     onNavigateToPaywall: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(state.project) { onAction(ProjectAction.OnUpdateDays) }
 
@@ -73,16 +89,18 @@ fun ProjectGraph(
         popExitTransition = { fadeOut(tween(500)) },
         modifier = modifier
             .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         composable<ProjectRoutes.ProjectDetails> {
             ProjectDetails(
                 state = state,
                 onAction = onAction,
                 onNavigateBack = onNavigateBack,
-                onNavigateToCalendar = { navController.navigate(ProjectRoutes.ProjectCalendarView) },
+                onNavigateToCalendar = {
+                    navController.navigate(ProjectRoutes.ProjectCalendarView)
+                },
                 onNavigateToMontage = { navController.navigate(ProjectRoutes.ProjectMontageView) },
-                onNavigateToDayInfo = { navController.navigate(ProjectRoutes.DayInfoView(it)) }
+                onNavigateToDayInfo = { navController.navigate(ProjectRoutes.DayInfoView(it)) },
             )
         }
 
@@ -91,7 +109,7 @@ fun ProjectGraph(
                 state = state,
                 onAction = onAction,
                 onNavigateBack = { navController.navigateUp() },
-                onNavigateToDayInfo = { navController.navigate(ProjectRoutes.DayInfoView(it)) }
+                onNavigateToDayInfo = { navController.navigate(ProjectRoutes.DayInfoView(it)) },
             )
         }
 
@@ -102,7 +120,7 @@ fun ProjectGraph(
                 selectedDate = selectedDate,
                 state = state,
                 onAction = onAction,
-                onNavigateBack = { navController.navigateUp() }
+                onNavigateBack = { navController.navigateUp() },
             )
         }
 
@@ -117,7 +135,7 @@ fun ProjectGraph(
                 onAction = onAction,
                 onNavigateBack = { navController.navigateUp() },
                 isPlusUser = isPlusUser,
-                onNavigateToPaywall = onNavigateToPaywall
+                onNavigateToPaywall = onNavigateToPaywall,
             )
         }
     }
@@ -129,27 +147,20 @@ private fun Preview() {
     var state by remember {
         mutableStateOf(
             ProjectState(
-                project = Project(
-                    id = 1,
-                    title = "Sample Project",
-                    description = "A sample project",
-                )
+                project =
+                    Project(id = 1, title = "Sample Project", description = "A sample project")
             )
         )
     }
 
-    MomentumTheme(
-        theme = Theme(
-            appTheme = AppTheme.DARK
-        )
-    ) {
+    MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
         ProjectGraph(
             state = state,
             onAction = {},
             onNavigateBack = {},
             exoPlayer = null,
             isPlusUser = true,
-            onNavigateToPaywall = {}
+            onNavigateToPaywall = {},
         )
     }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.onboarding
 
 import androidx.compose.foundation.layout.Box
@@ -32,7 +48,7 @@ import shub39.momentum.presentation.shared.MomentumTheme
 fun Onboarding(
     state: OnboardingState,
     onAction: (OnboardingAction) -> Unit,
-    onNavigateToHome: () -> Unit
+    onNavigateToHome: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState { 3 }
@@ -41,20 +57,18 @@ fun Onboarding(
         HorizontalPager(
             state = pagerState,
             pageSpacing = 32.dp,
-            contentPadding = PaddingValues(
-                top = paddingValues.calculateTopPadding() + 16.dp,
-                bottom = paddingValues.calculateBottomPadding() + 16.dp,
-                start = paddingValues.calculateLeftPadding(LayoutDirection.Ltr) + 32.dp,
-                end = paddingValues.calculateRightPadding(LayoutDirection.Ltr) + 32.dp
-            ),
-            modifier = Modifier.fillMaxSize()
+            contentPadding =
+                PaddingValues(
+                    top = paddingValues.calculateTopPadding() + 16.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 16.dp,
+                    start = paddingValues.calculateLeftPadding(LayoutDirection.Ltr) + 32.dp,
+                    end = paddingValues.calculateRightPadding(LayoutDirection.Ltr) + 32.dp,
+                ),
+            modifier = Modifier.fillMaxSize(),
         ) { page ->
             when (page) {
                 0 -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CameraAnimation()
 
@@ -63,12 +77,12 @@ fun Onboarding(
                             Text(
                                 text = "Create Montages Easily",
                                 style = MaterialTheme.typography.titleLarge,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
                             )
 
                             Text(
                                 text = "Get reminded to take a picture everyday.",
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
                             )
 
                             Spacer(modifier = Modifier.height(32.dp))
@@ -76,19 +90,14 @@ fun Onboarding(
                             Button(
                                 onClick = { scope.launch { pagerState.animateScrollToPage(1) } }
                             ) {
-                                Text(
-                                    text = "Next"
-                                )
+                                Text(text = "Next")
                             }
                         }
                     }
                 }
 
                 1 -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             AutoAnimation()
 
@@ -97,12 +106,12 @@ fun Onboarding(
                             Text(
                                 text = "Convenient and Automatic",
                                 style = MaterialTheme.typography.titleLarge,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
                             )
 
                             Text(
                                 text = "Don't even think about storage or editing.",
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
                             )
 
                             Spacer(modifier = Modifier.height(32.dp))
@@ -110,19 +119,14 @@ fun Onboarding(
                             Button(
                                 onClick = { scope.launch { pagerState.animateScrollToPage(2) } }
                             ) {
-                                Text(
-                                    text = "Next"
-                                )
+                                Text(text = "Next")
                             }
                         }
                     }
                 }
 
                 else -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             PrivateAnimation()
 
@@ -131,12 +135,13 @@ fun Onboarding(
                             Text(
                                 text = "Permissionless and Private",
                                 style = MaterialTheme.typography.titleLarge,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
                             )
 
                             Text(
-                                text = "No invasive permissions, Everything is processed on device!",
-                                textAlign = TextAlign.Center
+                                text =
+                                    "No invasive permissions, Everything is processed on device!",
+                                textAlign = TextAlign.Center,
                             )
 
                             Spacer(modifier = Modifier.height(32.dp))
@@ -160,15 +165,7 @@ fun Onboarding(
 @Composable
 @Preview
 private fun Preview() {
-    MomentumTheme(
-        theme = Theme(
-            appTheme = AppTheme.DARK
-        )
-    ) {
-        Onboarding(
-            state = OnboardingState(),
-            onAction = {},
-            onNavigateToHome = {}
-        )
+    MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
+        Onboarding(state = OnboardingState(), onAction = {}, onNavigateToHome = {})
     }
 }

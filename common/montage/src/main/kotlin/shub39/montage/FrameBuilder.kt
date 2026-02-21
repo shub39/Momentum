@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.montage
 
 import android.content.Context
@@ -19,7 +35,7 @@ import java.nio.ByteBuffer
 internal class FrameBuilder(
     private val context: Context,
     private val muxerConfig: MuxerConfiguration,
-    @param:RawRes private val audioTrackResource: Int?
+    @param:RawRes private val audioTrackResource: Int?,
 ) {
 
     companion object {
@@ -27,20 +43,24 @@ internal class FrameBuilder(
         private const val TIMEOUT_USEC = 10_000L
     }
 
-    private val mediaFormat: MediaFormat = MediaFormat.createVideoFormat(
-        muxerConfig.mimeType, muxerConfig.videoWidth, muxerConfig.videoHeight
-    ).apply {
-        setInteger(
-            MediaFormat.KEY_COLOR_FORMAT,
-            MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
+    private val mediaFormat: MediaFormat =
+        MediaFormat.createVideoFormat(
+            muxerConfig.mimeType,
+            muxerConfig.videoWidth,
+            muxerConfig.videoHeight,
         )
-        setInteger(MediaFormat.KEY_BIT_RATE, muxerConfig.bitrate)
-        setInteger(MediaFormat.KEY_FRAME_RATE, muxerConfig.framesPerSecond.toInt())
-        setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, muxerConfig.iFrameInterval)
-        setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_FULL)
-        setInteger(MediaFormat.KEY_COLOR_STANDARD, MediaFormat.COLOR_STANDARD_BT709)
-        setInteger(MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_SDR_VIDEO)
-    }
+            .apply {
+                setInteger(
+                    MediaFormat.KEY_COLOR_FORMAT,
+                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface,
+                )
+                setInteger(MediaFormat.KEY_BIT_RATE, muxerConfig.bitrate)
+                setInteger(MediaFormat.KEY_FRAME_RATE, muxerConfig.framesPerSecond.toInt())
+                setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, muxerConfig.iFrameInterval)
+                setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_FULL)
+                setInteger(MediaFormat.KEY_COLOR_STANDARD, MediaFormat.COLOR_STANDARD_BT709)
+                setInteger(MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_SDR_VIDEO)
+            }
 
     private val mediaCodec: MediaCodec
     private val bufferInfo = MediaCodec.BufferInfo()
@@ -52,15 +72,17 @@ internal class FrameBuilder(
 
     init {
         val codecs = MediaCodecList(MediaCodecList.REGULAR_CODECS)
-        val codecName = codecs.findEncoderForFormat(mediaFormat)
-            ?: throw IOException("No suitable codec for format: $mediaFormat")
+        val codecName =
+            codecs.findEncoderForFormat(mediaFormat)
+                ?: throw IOException("No suitable codec for format: $mediaFormat")
         mediaCodec = MediaCodec.createByCodecName(codecName)
 
         audioTrackResource?.let { res ->
             val afd: AssetFileDescriptor = context.resources.openRawResourceFd(res)
-            audioExtractor = MediaExtractor().apply {
-                setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-            }
+            audioExtractor =
+                MediaExtractor().apply {
+                    setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                }
         }
     }
 
@@ -131,8 +153,9 @@ internal class FrameBuilder(
                         continue
                     }
 
-                    val encoded = mediaCodec.getOutputBuffer(encoderStatus)
-                        ?: throw RuntimeException("getOutputBuffer returned null")
+                    val encoded =
+                        mediaCodec.getOutputBuffer(encoderStatus)
+                            ?: throw RuntimeException("getOutputBuffer returned null")
 
                     if (bufferInfo.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG != 0) {
                         bufferInfo.size = 0
@@ -189,15 +212,18 @@ internal class FrameBuilder(
         }
         try {
             mediaCodec.stop()
-        } catch (e: Exception) { /* ignore */
+        } catch (e: Exception) {
+            /* ignore */
         }
         try {
             mediaCodec.release()
-        } catch (e: Exception) { /* ignore */
+        } catch (e: Exception) {
+            /* ignore */
         }
         try {
             surface?.release()
-        } catch (e: Exception) { /* ignore */
+        } catch (e: Exception) {
+            /* ignore */
         }
     }
 

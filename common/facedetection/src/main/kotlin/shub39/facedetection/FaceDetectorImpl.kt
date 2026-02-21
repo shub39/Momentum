@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.facedetection
 
 import android.content.Context
@@ -8,15 +24,13 @@ import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
+import kotlin.math.atan2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import shub39.momentum.core.data_classes.FaceData
 import shub39.momentum.core.interfaces.FaceDetector
-import kotlin.math.atan2
 
-class FaceDetectorImpl(
-    private val context: Context
-) : FaceDetector {
+class FaceDetectorImpl(private val context: Context) : FaceDetector {
 
     companion object {
         const val TAG = "FaceDetector"
@@ -31,85 +45,91 @@ class FaceDetectorImpl(
     private val faceLandmarker: FaceLandmarker by lazy {
         val baseOptionsBuilder = BaseOptions.builder().setModelAssetPath(MP_FACE_LANDMARKER_TASK)
         val baseOptions = baseOptionsBuilder.build()
-        val optionsBuilder = FaceLandmarker.FaceLandmarkerOptions.builder()
-            .setBaseOptions(baseOptions)
-            .setMinFaceDetectionConfidence(DEFAULT_FACE_DETECTION_CONFIDENCE)
-            .setMinTrackingConfidence(DEFAULT_FACE_TRACKING_CONFIDENCE)
-            .setMinFacePresenceConfidence(DEFAULT_FACE_PRESENCE_CONFIDENCE)
-            .setNumFaces(DEFAULT_NUM_FACES)
-            .setRunningMode(RunningMode.IMAGE)
+        val optionsBuilder =
+            FaceLandmarker.FaceLandmarkerOptions.builder()
+                .setBaseOptions(baseOptions)
+                .setMinFaceDetectionConfidence(DEFAULT_FACE_DETECTION_CONFIDENCE)
+                .setMinTrackingConfidence(DEFAULT_FACE_TRACKING_CONFIDENCE)
+                .setMinFacePresenceConfidence(DEFAULT_FACE_PRESENCE_CONFIDENCE)
+                .setNumFaces(DEFAULT_NUM_FACES)
+                .setRunningMode(RunningMode.IMAGE)
         val options = optionsBuilder.build()
 
         FaceLandmarker.createFromOptions(context, options)
     }
 
-    override suspend fun getFaceDataFromUri(uri: Uri): FaceData = withContext(Dispatchers.Default) {
-        val imageBitmap = contentResolver.openInputStream(uri)?.use { stream ->
-            BitmapFactory.decodeStream(stream)
-        }
-        if (imageBitmap == null) {
-            Log.e(TAG, "Could not decode image from Uri")
-            return@withContext FaceData()
-        }
-
-        val mpImage = BitmapImageBuilder(imageBitmap).build()
-        if (mpImage == null) {
-            Log.e(TAG, "Could not process image bitmap")
-            return@withContext FaceData()
-        }
-
-        val landmarks = try {
-            faceLandmarker.detect(mpImage).faceLandmarks().firstOrNull()
-        } catch (e: Exception) {
-            Log.e(TAG, "Face Detection Failed", e)
-            null
-        }
-        if (landmarks == null) {
-            Log.e(TAG, "Could not extract landmarks")
-            return@withContext FaceData()
-        }
-
-        try {
-            var minX = 1.0f
-            var minY = 1.0f
-            var maxX = 0.0f
-            var maxY = 0.0f
-
-            for (landmark in landmarks) {
-                minX = minOf(minX, landmark.x())
-                minY = minOf(minY, landmark.y())
-                maxX = maxOf(maxX, landmark.x())
-                maxY = maxOf(maxY, landmark.y())
+    override suspend fun getFaceDataFromUri(uri: Uri): FaceData =
+        withContext(Dispatchers.Default) {
+            val imageBitmap =
+                contentResolver.openInputStream(uri)?.use { stream ->
+                    BitmapFactory.decodeStream(stream)
+                }
+            if (imageBitmap == null) {
+                Log.e(TAG, "Could not decode image from Uri")
+                return@withContext FaceData()
             }
 
-            val width = imageBitmap.width
-            val height = imageBitmap.height
+            val mpImage = BitmapImageBuilder(imageBitmap).build()
+            if (mpImage == null) {
+                Log.e(TAG, "Could not process image bitmap")
+                return@withContext FaceData()
+            }
 
-            val left = (minX * width).toInt()
-            val top = (minY * height).toInt()
-            val right = (maxX * width).toInt()
-            val bottom = (maxY * height).toInt()
+            val landmarks =
+                try {
+                    faceLandmarker.detect(mpImage).faceLandmarks().firstOrNull()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Face Detection Failed", e)
+                    null
+                }
+            if (landmarks == null) {
+                Log.e(TAG, "Could not extract landmarks")
+                return@withContext FaceData()
+            }
 
-            val leftEye = landmarks[33]
-            val rightEye = landmarks[263]
+            try {
+                var minX = 1.0f
+                var minY = 1.0f
+                var maxX = 0.0f
+                var maxY = 0.0f
 
-            val headAngle = Math.toDegrees(
-                atan2(
-                    ((rightEye.y() - leftEye.y()) * height).toDouble(),
-                    ((rightEye.x() - leftEye.x()) * width).toDouble()
+                for (landmark in landmarks) {
+                    minX = minOf(minX, landmark.x())
+                    minY = minOf(minY, landmark.y())
+                    maxX = maxOf(maxX, landmark.x())
+                    maxY = maxOf(maxY, landmark.y())
+                }
+
+                val width = imageBitmap.width
+                val height = imageBitmap.height
+
+                val left = (minX * width).toInt()
+                val top = (minY * height).toInt()
+                val right = (maxX * width).toInt()
+                val bottom = (maxY * height).toInt()
+
+                val leftEye = landmarks[33]
+                val rightEye = landmarks[263]
+
+                val headAngle =
+                    Math.toDegrees(
+                        atan2(
+                            ((rightEye.y() - leftEye.y()) * height).toDouble(),
+                            ((rightEye.x() - leftEye.x()) * width).toDouble(),
+                        )
+                    )
+                        .toFloat()
+
+                FaceData(
+                    left = left,
+                    top = top,
+                    right = right,
+                    bottom = bottom,
+                    headAngle = headAngle,
                 )
-            ).toFloat()
-
-            FaceData(
-                left = left,
-                top = top,
-                right = right,
-                bottom = bottom,
-                headAngle = headAngle
-            )
-        } catch (e: Exception) {
-            Log.e(TAG, "Unexpected Error while extracting face", e)
-            return@withContext FaceData()
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected Error while extracting face", e)
+                return@withContext FaceData()
+            }
         }
-    }
 }

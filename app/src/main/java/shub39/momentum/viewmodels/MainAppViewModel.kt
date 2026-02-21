@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.viewmodels
 
 import androidx.lifecycle.ViewModel
@@ -25,30 +41,30 @@ import shub39.momentum.data.ChangelogManager
 class MainAppViewModel(
     private val datastore: SettingsPrefs,
     private val billingHandler: BillingHandler,
-    private val changelogManager: ChangelogManager
+    private val changelogManager: ChangelogManager,
 ) : ViewModel() {
     private var observerJob: Job? = null
 
     private val _state = MutableStateFlow(MainAppState())
-    val state = _state.asStateFlow()
-        .onStart {
-            checkSubscription()
-            checkChangelog()
-            observeData()
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = MainAppState()
-        )
+    val state =
+        _state
+            .asStateFlow()
+            .onStart {
+                checkSubscription()
+                checkChangelog()
+                observeData()
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = MainAppState(),
+            )
 
     fun checkSubscription() {
         viewModelScope.launch {
             val result = billingHandler.isPlusUser()
 
-            _state.update {
-                it.copy(isPlusUser = result)
-            }
+            _state.update { it.copy(isPlusUser = result) }
         }
     }
 
@@ -62,9 +78,7 @@ class MainAppViewModel(
             val lastShownChangelog = datastore.getLastChangelogShown().first()
 
             if (BuildConfig.DEBUG || lastShownChangelog != BuildConfig.VERSION_NAME) {
-                _state.update {
-                    it.copy(currentChangelog = changeLogs.firstOrNull())
-                }
+                _state.update { it.copy(currentChangelog = changeLogs.firstOrNull()) }
                 datastore.updateLastChangelogShown(BuildConfig.VERSION_NAME)
             }
         }
@@ -72,46 +86,41 @@ class MainAppViewModel(
 
     private fun observeData() {
         observerJob?.cancel()
-        observerJob = viewModelScope.launch {
-            datastore.getMaterialYouFlow()
-                .onEach { pref ->
+        observerJob =
+            viewModelScope.launch {
+                datastore
+                    .getMaterialYouFlow()
+                    .onEach { pref ->
+                        _state.update { it.copy(theme = it.theme.copy(isMaterialYou = pref)) }
+                    }
+                    .launchIn(this)
+
+                combine(
+                    datastore.getPaletteStyle(),
+                    datastore.getFontFlow(),
+                    datastore.getSeedColorFlow(),
+                    datastore.getAppThemePrefFlow(),
+                    datastore.getAmoledPrefFlow(),
+                ) { style, font, seedColor, appTheme, amoled ->
                     _state.update {
                         it.copy(
-                            theme = it.theme.copy(
-                                isMaterialYou = pref
-                            )
+                            theme =
+                                it.theme.copy(
+                                    paletteStyle = style,
+                                    font = font,
+                                    seedColor = seedColor,
+                                    appTheme = appTheme,
+                                    isAmoled = amoled,
+                                )
                         )
                     }
-                }
-                .launchIn(this)
-
-            combine(
-                datastore.getPaletteStyle(),
-                datastore.getFontFlow(),
-                datastore.getSeedColorFlow(),
-                datastore.getAppThemePrefFlow(),
-                datastore.getAmoledPrefFlow()
-            ) { style, font, seedColor, appTheme, amoled ->
-                _state.update {
-                    it.copy(
-                        theme = it.theme.copy(
-                            paletteStyle = style,
-                            font = font,
-                            seedColor = seedColor,
-                            appTheme = appTheme,
-                            isAmoled = amoled
-                        )
-                    )
-                }
-            }.launchIn(this)
-
-            datastore.getOnboardingDoneFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(isOnboardingDone = pref)
                     }
-                }
-                .launchIn(this)
-        }
+                    .launchIn(this)
+
+                datastore
+                    .getOnboardingDoneFlow()
+                    .onEach { pref -> _state.update { it.copy(isOnboardingDone = pref) } }
+                    .launchIn(this)
+            }
     }
 }

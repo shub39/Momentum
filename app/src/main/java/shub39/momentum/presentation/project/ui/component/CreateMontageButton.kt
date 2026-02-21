@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.project.ui.component
 
 import androidx.compose.animation.core.LinearEasing
@@ -47,114 +63,100 @@ import shub39.momentum.presentation.shared.MomentumTheme
 fun CreateMontageButton(
     daysSize: Int,
     onNavigateToMontage: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val dayProgress by animateFloatAsState(
-        targetValue = daysSize.toFloat() / 5f
-    )
+    val dayProgress by animateFloatAsState(targetValue = daysSize.toFloat() / 5f)
 
     val canCreateMontage = daysSize >= 5
 
-    val roundness by animateDpAsState(
-        targetValue = if (canCreateMontage) 16.dp else 100.dp
-    )
+    val roundness by animateDpAsState(targetValue = if (canCreateMontage) 16.dp else 100.dp)
 
-    val infiniteTransition =
-        rememberInfiniteTransition(label = "rotation")
+    val infiniteTransition = rememberInfiniteTransition(label = "rotation")
 
-    val rotation by infiniteTransition.animateFloat(
+    val rotation by
+    infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 2000,
-                easing = LinearEasing
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = 2000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart,
             ),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "infinite rotation"
+        label = "infinite rotation",
     )
 
     Card(
-        onClick = {
-            if (canCreateMontage) onNavigateToMontage()
-        },
+        onClick = { if (canCreateMontage) onNavigateToMontage() },
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(roundness),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            ),
     ) {
         Box {
             Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .drawWithContent {
-                        val width = size.width * dayProgress
+                modifier =
+                    Modifier
+                        .matchParentSize()
+                        .drawWithContent {
+                            val width = size.width * dayProgress
 
-                        clipRect(
-                            right = width
-                        ) {
-                            this@drawWithContent.drawContent()
+                            clipRect(right = width) { this@drawWithContent.drawContent() }
                         }
-                    }
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
             )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             ) {
                 Column {
                     Text(
                         text = stringResource(R.string.montage),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold
-                        )
+                        style =
+                            MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     )
 
                     val daysLeft = 5 - daysSize
                     Text(
-                        text = if (!canCreateMontage) {
-                            pluralStringResource(
-                                id = R.plurals.add_more_days,
-                                count = daysLeft,
-                                formatArgs = arrayOf(daysLeft)
-                            )
-                        } else {
-                            "$daysSize ${stringResource(R.string.days)}"
-                        },
-                        style = MaterialTheme.typography.labelSmall
+                        text =
+                            if (!canCreateMontage) {
+                                pluralStringResource(
+                                    id = R.plurals.add_more_days,
+                                    count = daysLeft,
+                                    formatArgs = arrayOf(daysLeft),
+                                )
+                            } else {
+                                "$daysSize ${stringResource(R.string.days)}"
+                            },
+                        style = MaterialTheme.typography.labelSmall,
                     )
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Box(
-                    modifier = Modifier.wrapContentSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(modifier = Modifier.wrapContentSize(), contentAlignment = Alignment.Center) {
                     Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .then(
-                                if (canCreateMontage) {
-                                    Modifier.graphicsLayer {
-                                        rotationZ = rotation
-                                    }
-                                } else Modifier
-                            )
-                            .background(
-                                color = MaterialTheme.colorScheme.secondary,
-                                shape = VerySunny.toShape()
-                            )
+                        modifier =
+                            Modifier
+                                .size(50.dp)
+                                .then(
+                                    if (canCreateMontage) {
+                                        Modifier.graphicsLayer { rotationZ = rotation }
+                                    } else Modifier
+                                )
+                                .background(
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    shape = VerySunny.toShape(),
+                                )
                     )
 
                     Icon(
                         painter = painterResource(R.drawable.arrow_forward),
                         contentDescription = "Create Montage",
-                        tint = MaterialTheme.colorScheme.onSecondary
+                        tint = MaterialTheme.colorScheme.onSecondary,
                     )
                 }
             }
@@ -165,10 +167,5 @@ fun CreateMontageButton(
 @Preview
 @Composable
 private fun Preview() {
-    MomentumTheme {
-        CreateMontageButton(
-            daysSize = 7,
-            onNavigateToMontage = {}
-        )
-    }
+    MomentumTheme { CreateMontageButton(daysSize = 7, onNavigateToMontage = {}) }
 }

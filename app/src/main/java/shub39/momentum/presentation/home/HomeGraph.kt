@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.home
 
 import androidx.compose.animation.core.tween
@@ -48,7 +64,7 @@ fun HomeGraph(
     onNavigateToProject: () -> Unit,
     isPlusUser: Boolean,
     onNavigateToPaywall: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
 
@@ -61,7 +77,7 @@ fun HomeGraph(
         popExitTransition = { fadeOut(tween(300)) },
         modifier = modifier
             .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         composable<HomeRoutes.ProjectList> {
             ProjectList(
@@ -75,15 +91,12 @@ fun HomeGraph(
                     } else {
                         onNavigateToPaywall()
                     }
-                }
+                },
             )
         }
 
         composable<HomeRoutes.AddProject> {
-            AddProject(
-                onAction = onAction,
-                onNavigateBack = { navController.navigateUp() }
-            )
+            AddProject(onAction = onAction, onNavigateBack = { navController.navigateUp() })
         }
     }
 }
@@ -94,27 +107,30 @@ private fun Preview() {
     var state by remember {
         mutableStateOf(
             HomeState(
-                projects = (0..10).map {
-                    ProjectListData(
-                        project = Project(
-                            id = it.toLong(),
-                            title = "Project $it",
-                            description = "Description for project $it",
-                        ),
-                        last10Days = emptyList()
-                    )
-                }
+                projects =
+                    (0..10).map {
+                        ProjectListData(
+                            project =
+                                Project(
+                                    id = it.toLong(),
+                                    title = "Project $it",
+                                    description = "Description for project $it",
+                                ),
+                            last10Days = emptyList(),
+                        )
+                    }
             )
         )
     }
 
     MomentumTheme(
-        theme = Theme(
-            seedColor = Color.Yellow,
-            appTheme = AppTheme.DARK,
-            font = Fonts.FIGTREE,
-            paletteStyle = PaletteStyle.FIDELITY
-        )
+        theme =
+            Theme(
+                seedColor = Color.Yellow,
+                appTheme = AppTheme.DARK,
+                font = Fonts.FIGTREE,
+                paletteStyle = PaletteStyle.FIDELITY,
+            )
     ) {
         HomeGraph(
             state = state,
@@ -122,7 +138,7 @@ private fun Preview() {
             onNavigateToSettings = {},
             onNavigateToProject = {},
             isPlusUser = true,
-            onNavigateToPaywall = {}
+            onNavigateToPaywall = {},
         )
     }
 }

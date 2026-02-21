@@ -1,5 +1,20 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.settings.ui.sections
-
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +69,7 @@ fun Root(
     onNavigateToLookAndFeel: () -> Unit,
     onNavigateToPaywall: () -> Unit,
     onNavigateToChangelog: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -64,27 +79,27 @@ fun Root(
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.settings)) },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onNavigateBack
-                    ) {
+                    IconButton(onClick = onNavigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.arrow_back),
-                            contentDescription = "Navigate Back"
+                            contentDescription = "Navigate Back",
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = paddingValues.calculateTopPadding() + 16.dp,
-                bottom = paddingValues.calculateBottomPadding() + 60.dp,
-                start = paddingValues.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
-                end = paddingValues.calculateEndPadding(LocalLayoutDirection.current) + 16.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            contentPadding =
+                PaddingValues(
+                    top = paddingValues.calculateTopPadding() + 16.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 60.dp,
+                    start =
+                        paddingValues.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
+                    end = paddingValues.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
+                ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             // about app
             item { AboutApp() }
@@ -93,21 +108,22 @@ fun Root(
                 Card(
                     onClick = onNavigateToPaywall,
                     shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = MaterialTheme.colorScheme.onTertiary
-                    )
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                        ),
                 ) {
                     Row(
                         modifier = Modifier
                             .padding(16.dp)
                             .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.add),
                             contentDescription = "Momentum Plus",
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
@@ -115,14 +131,14 @@ fun Root(
                         Text(
                             text = stringResource(R.string.pro),
                             style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
 
                         Spacer(modifier = Modifier.weight(1f))
 
                         Icon(
                             painter = painterResource(R.drawable.arrow_forward),
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     }
                 }
@@ -132,23 +148,26 @@ fun Root(
                 ListItem(
                     colors = listItemColors(),
                     headlineContent = { Text(text = stringResource(R.string.look_and_feel)) },
-                    supportingContent = { Text(text = stringResource(R.string.look_and_feel_info)) },
+                    supportingContent = {
+                        Text(text = stringResource(R.string.look_and_feel_info))
+                    },
                     leadingContent = {
                         Icon(
                             painter = painterResource(R.drawable.palette),
                             contentDescription = "Navigate",
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
                     },
                     trailingContent = {
                         Icon(
                             painter = painterResource(R.drawable.arrow_forward),
-                            contentDescription = "Go"
+                            contentDescription = "Go",
                         )
                     },
-                    modifier = Modifier
-                        .clip(detachedItemShape())
-                        .clickable { onNavigateToLookAndFeel() }
+                    modifier =
+                        Modifier
+                            .clip(detachedItemShape())
+                            .clickable { onNavigateToLookAndFeel() },
                 )
             }
 
@@ -158,52 +177,46 @@ fun Root(
                     leadingContent = {
                         Icon(
                             painter = painterResource(R.drawable.star),
-                            contentDescription = "Onboarding"
+                            contentDescription = "Onboarding",
                         )
                     },
-                    headlineContent = {
-                        Text(text = stringResource(R.string.onboarding))
-                    },
-                    supportingContent = {
-                        Text(text = stringResource(R.string.onboarding_desc))
-                    },
+                    headlineContent = { Text(text = stringResource(R.string.onboarding)) },
+                    supportingContent = { Text(text = stringResource(R.string.onboarding_desc)) },
                     trailingContent = {
                         Icon(
                             painter = painterResource(R.drawable.arrow_forward),
-                            contentDescription = "Go"
+                            contentDescription = "Go",
                         )
                     },
-                    modifier = Modifier
-                        .clip(detachedItemShape())
-                        .clickable {
-                            onAction(SettingsAction.OnOnboardingToggle(false))
-                        }
+                    modifier =
+                        Modifier
+                            .clip(detachedItemShape())
+                            .clickable {
+                                onAction(SettingsAction.OnOnboardingToggle(false))
+                            },
                 )
             }
 
             item {
                 ListItem(
                     colors = listItemColors(),
-                    headlineContent = {
-                        Text(text = stringResource(R.string.changelog))
-                    },
+                    headlineContent = { Text(text = stringResource(R.string.changelog)) },
                     leadingContent = {
                         Icon(
                             painter = painterResource(R.drawable.logs),
-                            contentDescription = "Changelog"
+                            contentDescription = "Changelog",
                         )
                     },
                     trailingContent = {
                         Icon(
                             painter = painterResource(R.drawable.arrow_forward),
-                            contentDescription = "Go"
+                            contentDescription = "Go",
                         )
                     },
-                    modifier = Modifier
-                        .clip(detachedItemShape())
-                        .clickable {
-                            onNavigateToChangelog()
-                        }
+                    modifier =
+                        Modifier
+                            .clip(detachedItemShape())
+                            .clickable { onNavigateToChangelog() },
                 )
             }
         }
@@ -213,17 +226,13 @@ fun Root(
 @Preview
 @Composable
 private fun Preview() {
-    MomentumTheme(
-        theme = Theme(
-            appTheme = AppTheme.DARK
-        )
-    ) {
+    MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
         Root(
             onNavigateBack = {},
             onNavigateToLookAndFeel = {},
             onAction = {},
             onNavigateToPaywall = {},
-            onNavigateToChangelog = {}
+            onNavigateToChangelog = {},
         )
     }
 }

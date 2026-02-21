@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
@@ -34,7 +50,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
 
@@ -46,7 +62,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
 
@@ -66,9 +82,7 @@ android {
             versionNameSuffix = "-play"
         }
 
-        create("foss") {
-            dimension = "version"
-        }
+        create("foss") { dimension = "version" }
     }
 
     compileOptions {
@@ -82,11 +96,7 @@ android {
         resValues = true
     }
 
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 
     dependenciesInfo {
         includeInApk = false
@@ -148,15 +158,13 @@ dependencies {
     androidTestImplementation(libs.truth)
 }
 
-room {
-    schemaDirectory("$projectDir/schemas")
-}
+room { schemaDirectory("$projectDir/schemas") }
 
-fun execute(vararg command: String): String = providers.exec {
-    commandLine(*command)
-}.standardOutput.asText.get().trim()
+fun execute(vararg command: String): String =
+    providers.exec { commandLine(*command) }.standardOutput.asText.get().trim()
 
-val generateChangelogJson by tasks.registering {
+val generateChangelogJson by
+tasks.registering {
     val inputFile = rootProject.file("CHANGELOG.md")
     val outputDir = file("$projectDir/src/main/assets/")
     val outputFile = File(outputDir, "changelog.json")
@@ -180,9 +188,7 @@ val generateChangelogJson by tasks.registering {
                 }
 
                 line.startsWith("- ") && currentVersion != null -> {
-                    map[currentVersion]?.add(
-                        line.removePrefix("- ").trim()
-                    )
+                    map[currentVersion]?.add(line.removePrefix("- ").trim())
                 }
             }
         }
@@ -211,11 +217,8 @@ val generateChangelogJson by tasks.registering {
             append("]")
         }
 
-
         outputFile.writeText(json)
     }
 }
 
-tasks.named("preBuild") {
-    dependsOn(generateChangelogJson)
-}
+tasks.named("preBuild") { dependsOn(generateChangelogJson) }
