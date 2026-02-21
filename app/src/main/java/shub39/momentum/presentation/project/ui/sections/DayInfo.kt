@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.project.ui.sections
 
 import android.graphics.Bitmap
@@ -66,18 +82,18 @@ import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.path
-import kotlinx.coroutines.delay
-import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.data_classes.isValid
-import shub39.momentum.domain.enums.AppTheme
-import shub39.momentum.presentation.project.ProjectAction
-import shub39.momentum.presentation.project.ProjectState
-import shub39.momentum.presentation.shared.MomentumTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlinx.coroutines.delay
+import shub39.momentum.R
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.data_classes.isValid
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.presentation.project.ProjectAction
+import shub39.momentum.presentation.project.ProjectState
+import shub39.momentum.presentation.shared.MomentumTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -86,37 +102,35 @@ fun DayInfo(
     selectedDate: Long,
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
 ) {
     val day = state.days.find { it.date == selectedDate }
-    var imageFile: PlatformFile? by remember(day) {
-        mutableStateOf(day?.let { PlatformFile(it.image.toUri()) })
-    }
+    var imageFile: PlatformFile? by
+    remember(day) { mutableStateOf(day?.let { PlatformFile(it.image.toUri()) }) }
     var isFavorite by remember(day) { mutableStateOf(day?.isFavorite ?: false) }
     var comment by remember(day) { mutableStateOf(day?.comment ?: "") }
 
-    val imagePicker = rememberFilePickerLauncher(
-        type = FileKitType.Image
-    ) { image ->
-        if (image != null) {
-            imageFile = image
+    val imagePicker =
+        rememberFilePickerLauncher(type = FileKitType.Image) { image ->
+            if (image != null) {
+                imageFile = image
 
-            onAction(
-                ProjectAction.OnUpsertDay(
-                    day = day?.copy(
-                        image = image.path.toUri().toString()
-                    ) ?: Day(
-                        projectId = state.project?.id!!,
-                        image = image.path.toUri().toString(),
-                        comment = comment,
-                        date = selectedDate,
-                        isFavorite = isFavorite
-                    ),
-                    isNewImage = true
+                onAction(
+                    ProjectAction.OnUpsertDay(
+                        day =
+                            day?.copy(image = image.path.toUri().toString())
+                                ?: Day(
+                                    projectId = state.project?.id!!,
+                                    image = image.path.toUri().toString(),
+                                    comment = comment,
+                                    date = selectedDate,
+                                    isFavorite = isFavorite,
+                                ),
+                        isNewImage = true,
+                    )
                 )
-            )
+            }
         }
-    }
 
     DayInfoContent(
         modifier = modifier,
@@ -132,10 +146,8 @@ fun DayInfo(
         onUpdateFavorite = {
             isFavorite = it
 
-            day?.let { day ->
-                onAction(ProjectAction.OnUpsertDay(day.copy(isFavorite = it)))
-            }
-        }
+            day?.let { day -> onAction(ProjectAction.OnUpsertDay(day.copy(isFavorite = it))) }
+        },
     )
 }
 
@@ -152,7 +164,7 @@ private fun DayInfoContent(
     onLaunchImagePicker: () -> Unit,
     selectedDate: Long,
     onAction: (ProjectAction) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
 ) {
     var showCommentModal by remember { mutableStateOf(false) }
     var highlightFace by remember { mutableStateOf(false) }
@@ -163,23 +175,21 @@ private fun DayInfoContent(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = LocalDate.ofEpochDay(selectedDate).format(
-                            DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
-                        ),
+                        text =
+                            LocalDate.ofEpochDay(selectedDate)
+                                .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)),
                         maxLines = 1,
-                        modifier = Modifier.basicMarquee()
+                        modifier = Modifier.basicMarquee(),
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onNavigateBack
-                    ) {
+                    IconButton(onClick = onNavigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.arrow_back),
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     }
-                }
+                },
             )
         },
         floatingActionButton = {
@@ -192,119 +202,112 @@ private fun DayInfoContent(
                             highlightFace = false
                         }
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.image),
-                            contentDescription = null
-                        )
+                        Icon(painter = painterResource(R.drawable.image), contentDescription = null)
                     }
-                }
+                },
             ) {
                 IconButton(
                     onClick = {
                         day?.let { onAction(ProjectAction.OnDeleteDay(it)) }
                         onNavigateBack()
                     },
-                    enabled = day != null
+                    enabled = day != null,
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.delete),
-                        contentDescription = null
-                    )
+                    Icon(painter = painterResource(R.drawable.delete), contentDescription = null)
                 }
 
                 IconToggleButton(
                     checked = highlightFace,
                     onCheckedChange = { highlightFace = !highlightFace },
-                    enabled = day?.faceData.isValid()
+                    enabled = day?.faceData.isValid(),
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.detect_face),
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 }
 
-                IconButton(
-                    onClick = { showCommentModal = true },
-                    enabled = day != null
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.comment),
-                        contentDescription = null
-                    )
+                IconButton(onClick = { showCommentModal = true }, enabled = day != null) {
+                    Icon(painter = painterResource(R.drawable.comment), contentDescription = null)
                 }
 
                 IconToggleButton(
                     checked = isFavorite,
                     onCheckedChange = { onUpdateFavorite(it) },
-                    enabled = day != null
+                    enabled = day != null,
                 ) {
                     Icon(
-                        painter = painterResource(
-                            if (isFavorite) {
-                                R.drawable.favorite
-                            } else {
-                                R.drawable.favorite_border
-                            }
-                        ),
-                        contentDescription = "Set Favorite"
+                        painter =
+                            painterResource(
+                                if (isFavorite) {
+                                    R.drawable.favorite
+                                } else {
+                                    R.drawable.favorite_border
+                                }
+                            ),
+                        contentDescription = "Set Favorite",
                     )
                 }
             }
         },
-        floatingActionButtonPosition = FabPosition.Center
+        floatingActionButtonPosition = FabPosition.Center,
     ) { padding ->
         Column(
             modifier = modifier
                 .padding(padding)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (imageFile != null) {
                 val context = LocalContext.current
-                val zoomProgress by animateFloatAsState(
+                val zoomProgress by
+                animateFloatAsState(
                     targetValue = if (highlightFace && day?.faceData.isValid()) 1f else 0f,
                     animationSpec = tween(durationMillis = 500),
-                    label = "faceZoom"
+                    label = "faceZoom",
                 )
 
                 // original image
-                val originalBitmap = remember(imageFile) {
-                    context.contentResolver.openInputStream(imageFile.path.toUri())?.use { stream ->
-                        BitmapFactory.decodeStream(stream)
+                val originalBitmap =
+                    remember(imageFile) {
+                        context.contentResolver.openInputStream(imageFile.path.toUri())
+                            ?.use { stream ->
+                                BitmapFactory.decodeStream(stream)
+                            }
                     }
-                }
 
                 // cropped image around the face
-                val croppedFaceBitmap = remember(imageFile, day?.faceData) {
-                    if (originalBitmap != null && day?.faceData.isValid()) {
-                        val faceData = day?.faceData!!
+                val croppedFaceBitmap =
+                    remember(imageFile, day?.faceData) {
+                        if (originalBitmap != null && day?.faceData.isValid()) {
+                            val faceData = day?.faceData!!
 
-                        val faceWidth = faceData.right - faceData.left
-                        val faceHeight = faceData.bottom - faceData.top
-                        val padding = (maxOf(faceWidth, faceHeight) * 0.5f).toInt()
+                            val faceWidth = faceData.right - faceData.left
+                            val faceHeight = faceData.bottom - faceData.top
+                            val padding = (maxOf(faceWidth, faceHeight) * 0.5f).toInt()
 
-                        val cropLeft = (faceData.left - padding).coerceAtLeast(0)
-                        val cropTop = (faceData.top - padding).coerceAtLeast(0)
-                        val cropRight =
-                            (faceData.right + padding).coerceAtMost(originalBitmap.width)
-                        val cropBottom =
-                            (faceData.bottom + padding).coerceAtMost(originalBitmap.height)
+                            val cropLeft = (faceData.left - padding).coerceAtLeast(0)
+                            val cropTop = (faceData.top - padding).coerceAtLeast(0)
+                            val cropRight =
+                                (faceData.right + padding).coerceAtMost(originalBitmap.width)
+                            val cropBottom =
+                                (faceData.bottom + padding).coerceAtMost(originalBitmap.height)
 
-                        val cropWidth = cropRight - cropLeft
-                        val cropHeight = cropBottom - cropTop
+                            val cropWidth = cropRight - cropLeft
+                            val cropHeight = cropBottom - cropTop
 
-                        Bitmap.createBitmap(
-                            originalBitmap,
-                            cropLeft,
-                            cropTop,
-                            cropWidth,
-                            cropHeight
-                        )
-                    } else {
-                        null
+                            Bitmap.createBitmap(
+                                originalBitmap,
+                                cropLeft,
+                                cropTop,
+                                cropWidth,
+                                cropHeight,
+                            )
+                        } else {
+                            null
+                        }
                     }
-                }
 
                 CoilImage(
                     imageModel = { imageFile.path.toUri() },
@@ -314,34 +317,34 @@ private fun DayInfoContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(MaterialTheme.shapes.large),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             // Show full image with fade out
                             Image(
                                 painter = painter,
                                 contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .graphicsLayer {
-                                        alpha = 1f - zoomProgress
-                                    },
-                                contentScale = ContentScale.Fit
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .graphicsLayer {
+                                            alpha = 1f - zoomProgress
+                                        },
+                                contentScale = ContentScale.Fit,
                             )
 
                             // Show cropped face with fade in
                             if (croppedFaceBitmap != null && day?.faceData.isValid()) {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
+                                Box(modifier = Modifier.fillMaxWidth()) {
                                     Image(
                                         bitmap = croppedFaceBitmap.asImageBitmap(),
                                         contentDescription = null,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .graphicsLayer {
-                                                alpha = zoomProgress
-                                            },
-                                        contentScale = ContentScale.Fit
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .graphicsLayer {
+                                                    alpha = zoomProgress
+                                                },
+                                        contentScale = ContentScale.Fit,
                                     )
 
                                     // Draw bounding box
@@ -391,13 +394,13 @@ private fun DayInfoContent(
 
                                             rotate(
                                                 degrees = faceData.headAngle,
-                                                pivot = Offset(centerX, centerY)
+                                                pivot = Offset(centerX, centerY),
                                             ) {
                                                 drawRect(
                                                     color = Color.Green.copy(alpha = zoomProgress),
                                                     topLeft = Offset(canvasFaceLeft, canvasFaceTop),
                                                     size = Size(boxWidth, boxHeight),
-                                                    style = Stroke(width = 4.dp.toPx())
+                                                    style = Stroke(width = 4.dp.toPx()),
                                                 )
                                             }
                                         }
@@ -412,45 +415,40 @@ private fun DayInfoContent(
                                 .size(300.dp)
                                 .padding(12.dp),
                             verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.warning),
                                 contentDescription = "Placeholder",
-                                modifier = Modifier.size(100.dp)
+                                modifier = Modifier.size(100.dp),
                             )
 
                             Text(
                                 text = stringResource(R.string.select_another_image),
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
                             )
                         }
                     },
                     previewPlaceholder = painterResource(R.drawable.ic_launcher_foreground),
                     modifier = Modifier.fillMaxWidth(),
-                    imageOptions = ImageOptions(contentScale = ContentScale.Fit)
+                    imageOptions = ImageOptions(contentScale = ContentScale.Fit),
                 )
             } else {
                 Column(modifier = Modifier.padding(12.dp)) {
                     Icon(
                         painter = painterResource(R.drawable.add_photo),
                         contentDescription = "Placeholder",
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(200.dp),
                     )
 
-                    TextButton(
-                        onClick = onLaunchImagePicker,
-                        modifier = Modifier.width(200.dp)
-                    ) {
+                    TextButton(onClick = onLaunchImagePicker, modifier = Modifier.width(200.dp)) {
                         Text(text = stringResource(R.string.select_image))
                     }
                 }
             }
 
             if (showCommentModal) {
-                ModalBottomSheet(
-                    onDismissRequest = { showCommentModal = false }
-                ) {
+                ModalBottomSheet(onDismissRequest = { showCommentModal = false }) {
                     val keyboardController = LocalSoftwareKeyboardController.current
                     val focusRequester = remember { FocusRequester() }
 
@@ -466,17 +464,14 @@ private fun DayInfoContent(
                         enabled = imageFile != null,
                         singleLine = true,
                         isError = comment.length > 100,
-                        label = {
-                            Text(
-                                text = stringResource(R.string.add_comment)
-                            )
-                        },
+                        label = { Text(text = stringResource(R.string.add_comment)) },
                         shape = MaterialTheme.shapes.large,
-                        modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
-                            .fillMaxWidth()
-                            .imePadding()
-                            .focusRequester(focusRequester)
+                        modifier =
+                            Modifier
+                                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+                                .fillMaxWidth()
+                                .imePadding()
+                                .focusRequester(focusRequester),
                     )
 
                     Button(
@@ -487,9 +482,10 @@ private fun DayInfoContent(
                                 onAction(ProjectAction.OnUpsertDay(day.copy(comment = comment)))
                             }
                         },
-                        modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
-                            .fillMaxWidth()
+                        modifier =
+                            Modifier
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
+                                .fillMaxWidth(),
                     ) {
                         Text(text = stringResource(R.string.done))
                     }
@@ -502,23 +498,19 @@ private fun DayInfoContent(
 @Composable
 @Preview
 private fun Preview() {
-    MomentumTheme(
-        theme = Theme(
-            appTheme = AppTheme.DARK
-        )
-    ) {
+    MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
         DayInfoContent(
             modifier = Modifier,
             day = null,
             imageFile = null,
-            onLaunchImagePicker = { },
+            onLaunchImagePicker = {},
             selectedDate = 0,
-            onAction = { },
-            onNavigateBack = { },
+            onAction = {},
+            onNavigateBack = {},
             isFavorite = true,
             comment = "",
-            onUpdateComment = { },
-            onUpdateFavorite = { },
+            onUpdateComment = {},
+            onUpdateFavorite = {},
         )
     }
 }

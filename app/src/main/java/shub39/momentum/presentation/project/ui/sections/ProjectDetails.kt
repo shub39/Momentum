@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.project.ui.sections
 
 import androidx.compose.animation.AnimatedVisibility
@@ -52,14 +68,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
-import com.materialkolor.PaletteStyle
+import java.time.LocalDate
 import kotlinx.coroutines.delay
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.AlarmData
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
+import shub39.momentum.core.data_classes.AlarmData
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.enums.PaletteStyle
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ScanState
@@ -69,11 +86,11 @@ import shub39.momentum.presentation.project.ui.component.FavDayCard
 import shub39.momentum.presentation.project.ui.component.WeeklyHorizontalCalendar
 import shub39.momentum.presentation.shared.MomentumDialog
 import shub39.momentum.presentation.shared.MomentumTheme
-import java.time.LocalDate
 
 @OptIn(
-    ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalFoundationApi::class
+    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class,
 )
 @Composable
 fun ProjectDetails(
@@ -82,7 +99,7 @@ fun ProjectDetails(
     onNavigateBack: () -> Unit,
     onNavigateToMontage: () -> Unit,
     onNavigateToCalendar: () -> Unit,
-    onNavigateToDayInfo: (Long) -> Unit
+    onNavigateToDayInfo: (Long) -> Unit,
 ) {
     if (state.project == null) {
         LoadingIndicator()
@@ -107,64 +124,58 @@ fun ProjectDetails(
                     title = { Text(text = state.project.title) },
                     subtitle = { Text(text = state.project.description) },
                     navigationIcon = {
-                        IconButton(
-                            onClick = onNavigateBack
-                        ) {
+                        IconButton(onClick = onNavigateBack) {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),
-                                contentDescription = "Navigate Back"
+                                contentDescription = "Navigate Back",
                             )
                         }
                     },
                     actions = {
-                        IconButton(
-                            onClick = { showRescanDialog = true }
-                        ) {
+                        IconButton(onClick = { showRescanDialog = true }) {
                             Icon(
                                 painter = painterResource(R.drawable.detect_face),
-                                contentDescription = null
+                                contentDescription = null,
                             )
                         }
 
-                        IconButton(
-                            onClick = { showDeleteDialog = true }
-                        ) {
+                        IconButton(onClick = { showDeleteDialog = true }) {
                             Icon(
                                 painter = painterResource(R.drawable.delete),
-                                contentDescription = "Delete"
+                                contentDescription = "Delete",
                             )
                         }
 
-                        IconButton(
-                            onClick = { showEditDialog = true }
-                        ) {
+                        IconButton(onClick = { showEditDialog = true }) {
                             Icon(
                                 painter = painterResource(R.drawable.edit),
-                                contentDescription = "Edit"
+                                contentDescription = "Edit",
                             )
                         }
-                    }
+                    },
                 )
-            }
+            },
         ) { paddingValues ->
             val today = LocalDate.now()
-            val weekState = rememberWeekCalendarState(
-                startDate = LocalDate.of(2025, 1, 1),
-                endDate = today,
-                firstVisibleWeekDate = today
-            )
+            val weekState =
+                rememberWeekCalendarState(
+                    startDate = LocalDate.of(2025, 1, 1),
+                    endDate = today,
+                    firstVisibleWeekDate = today,
+                )
 
             LazyColumn(
                 state = rememberLazyListState(),
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = paddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                    end = paddingValues.calculateEndPadding(LocalLayoutDirection.current),
-                    top = paddingValues.calculateTopPadding() + 16.dp,
-                    bottom = paddingValues.calculateBottomPadding() + 60.dp
-                ),
+                contentPadding =
+                    PaddingValues(
+                        start = paddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                        end = paddingValues.calculateEndPadding(LocalLayoutDirection.current),
+                        top = paddingValues.calculateTopPadding() + 16.dp,
+                        bottom = paddingValues.calculateBottomPadding() + 60.dp,
+                    ),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 // weekly horizontal calendar
                 item {
@@ -176,7 +187,7 @@ fun ProjectDetails(
                         showGuide = showGuide,
                         modifier = Modifier
                             .animateContentSize()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 16.dp),
                     )
                 }
 
@@ -185,7 +196,7 @@ fun ProjectDetails(
                     CreateMontageButton(
                         daysSize = state.days.size,
                         onNavigateToMontage = onNavigateToMontage,
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
 
@@ -194,35 +205,32 @@ fun ProjectDetails(
                     AlarmCard(
                         project = state.project,
                         onAction = onAction,
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
 
-                item {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 16.dp)
-                    )
-                }
+                item { HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp)) }
 
                 // favorite days
                 if (state.days.none { it.isFavorite }) {
                     item {
                         Column(
-                            modifier = Modifier
-                                .padding(horizontal = 32.dp, vertical = 60.dp)
-                                .fillMaxWidth(),
+                            modifier =
+                                Modifier
+                                    .padding(horizontal = 32.dp, vertical = 60.dp)
+                                    .fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.photo_library),
                                 contentDescription = "Favorite Images",
-                                modifier = Modifier.size(100.dp)
+                                modifier = Modifier.size(100.dp),
                             )
 
                             Text(
                                 text = stringResource(R.string.favourites_text),
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
                             )
                         }
                     }
@@ -232,16 +240,16 @@ fun ProjectDetails(
                             headlineContent = {
                                 Text(
                                     text = stringResource(R.string.favourites),
-                                    style = MaterialTheme.typography.titleLargeEmphasized
+                                    style = MaterialTheme.typography.titleLargeEmphasized,
                                 )
                             },
                             leadingContent = {
                                 Icon(
                                     painter = painterResource(R.drawable.favorite),
                                     contentDescription = "Favorites",
-                                    modifier = Modifier.size(32.dp)
+                                    modifier = Modifier.size(32.dp),
                                 )
-                            }
+                            },
                         )
                     }
 
@@ -249,14 +257,12 @@ fun ProjectDetails(
                         FavDayCard(
                             day = day,
                             onClick = { onNavigateToDayInfo(day.date) },
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                            modifier = Modifier.padding(horizontal = 16.dp),
                         )
                     }
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(60.dp))
-                }
+                item { Spacer(modifier = Modifier.height(60.dp)) }
             }
         }
 
@@ -273,26 +279,24 @@ fun ProjectDetails(
                         .padding(16.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.detect_face),
-                        contentDescription = null
+                        contentDescription = null,
                     )
 
                     Text(
                         text = stringResource(R.string.rescan_faces),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     Text(
                         text = stringResource(R.string.rescan_faces_desc),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
 
-                    AnimatedVisibility(
-                        visible = state.scanState is ScanState.Processing
-                    ) {
+                    AnimatedVisibility(visible = state.scanState is ScanState.Processing) {
                         LinearWavyProgressIndicator(
                             progress = {
                                 (state.scanState as? ScanState.Processing)?.progress ?: 0f
@@ -306,7 +310,7 @@ fun ProjectDetails(
                             enabled = state.scanState is ScanState.Idle,
                             modifier = Modifier
                                 .widthIn(max = 300.dp)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.start_scan))
                         }
@@ -319,7 +323,7 @@ fun ProjectDetails(
                             enabled = state.scanState is ScanState.Done,
                             modifier = Modifier
                                 .widthIn(max = 300.dp)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.done))
                         }
@@ -332,24 +336,19 @@ fun ProjectDetails(
             var newProjectTitle by remember { mutableStateOf(state.project.title) }
             var newProjectDescription by remember { mutableStateOf(state.project.description) }
 
-            MomentumDialog(
-                onDismissRequest = { showEditDialog = false }
-            ) {
+            MomentumDialog(onDismissRequest = { showEditDialog = false }) {
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.edit),
-                        contentDescription = "Edit"
-                    )
+                    Icon(painter = painterResource(R.drawable.edit), contentDescription = "Edit")
 
                     Text(
                         text = stringResource(R.string.edit_project),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     OutlinedTextField(
@@ -361,7 +360,7 @@ fun ProjectDetails(
                         placeholder = { Text(text = stringResource(R.string.title)) },
                         modifier = Modifier
                             .widthIn(max = 300.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
                     )
 
                     OutlinedTextField(
@@ -373,7 +372,7 @@ fun ProjectDetails(
                         placeholder = { Text(text = stringResource(R.string.description)) },
                         modifier = Modifier
                             .widthIn(max = 300.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
                     )
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -381,28 +380,30 @@ fun ProjectDetails(
                             onClick = {
                                 onAction(
                                     ProjectAction.OnUpdateProject(
-                                        project = state.project.copy(
-                                            title = newProjectTitle.trim(),
-                                            description = newProjectDescription.trim()
-                                        )
+                                        project =
+                                            state.project.copy(
+                                                title = newProjectTitle.trim(),
+                                                description = newProjectDescription.trim(),
+                                            )
                                     )
                                 )
                                 showEditDialog = false
                             },
-                            enabled = newProjectTitle.length <= 20 &&
+                            enabled =
+                                newProjectTitle.length <= 20 &&
                                     newProjectDescription.length <= 100 &&
                                     newProjectTitle.isNotBlank() &&
-                                    (newProjectTitle.trim() != state.project.title.trim() || newProjectDescription.trim() != state.project.description.trim()),
+                                        (newProjectTitle.trim() != state.project.title.trim() ||
+                                                newProjectDescription.trim() !=
+                                                state.project.description.trim()),
                             modifier = Modifier
                                 .widthIn(max = 300.dp)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.edit))
                         }
 
-                        TextButton(
-                            onClick = { showEditDialog = false }
-                        ) {
+                        TextButton(onClick = { showEditDialog = false }) {
                             Text(text = stringResource(R.string.cancel))
                         }
                     }
@@ -411,29 +412,27 @@ fun ProjectDetails(
         }
 
         if (showDeleteDialog) {
-            MomentumDialog(
-                onDismissRequest = { showDeleteDialog = false }
-            ) {
+            MomentumDialog(onDismissRequest = { showDeleteDialog = false }) {
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.warning),
-                        contentDescription = "Caution"
+                        contentDescription = "Caution",
                     )
 
                     Text(
                         text = stringResource(R.string.delete_project),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
 
                     Text(
                         text = stringResource(R.string.delete_project_caution),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -441,7 +440,7 @@ fun ProjectDetails(
                             onClick = { showDeleteDialog = false },
                             modifier = Modifier
                                 .widthIn(max = 300.dp)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.cancel))
                         }
@@ -468,32 +467,35 @@ private fun Preview() {
     var state by remember {
         mutableStateOf(
             ProjectState(
-                project = Project(
-                    id = 1,
-                    title = "Sample Project",
-                    description = "A sample project",
-                    alarm = AlarmData(1L, emptyList())
-                ),
-                days = (0..5).map {
-                    Day(
-                        id = it.toLong(),
-                        projectId = 1,
-                        image = "",
-                        comment = it.toString(),
-                        date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
-                        isFavorite = true
-                    )
-                }
+                project =
+                    Project(
+                        id = 1,
+                        title = "Sample Project",
+                        description = "A sample project",
+                        alarm = AlarmData(1L, emptyList()),
+                    ),
+                days =
+                    (0..5).map {
+                        Day(
+                            id = it.toLong(),
+                            projectId = 1,
+                            image = "",
+                            comment = it.toString(),
+                            date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
+                            isFavorite = true,
+                        )
+                    },
             )
         )
     }
 
     MomentumTheme(
-        theme = Theme(
-            appTheme = AppTheme.DARK,
-            seedColor = Color.Yellow,
-            paletteStyle = PaletteStyle.Expressive
-        )
+        theme =
+            Theme(
+                appTheme = AppTheme.DARK,
+                seedColor = Color.Yellow,
+                paletteStyle = PaletteStyle.EXPRESSIVE,
+            )
     ) {
         ProjectDetails(
             state = state,
@@ -501,7 +503,7 @@ private fun Preview() {
             onNavigateBack = {},
             onNavigateToMontage = {},
             onNavigateToCalendar = {},
-            onNavigateToDayInfo = {}
+            onNavigateToDayInfo = {},
         )
     }
 }

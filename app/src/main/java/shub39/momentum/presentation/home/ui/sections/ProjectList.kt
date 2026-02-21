@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.home.ui.sections
 
 import androidx.compose.foundation.layout.Arrangement
@@ -32,20 +48,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.materialkolor.PaletteStyle
+import java.time.LocalDate
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.data_classes.ProjectListData
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
-import shub39.momentum.domain.enums.Fonts
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.data_classes.ProjectListData
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.enums.Fonts
+import shub39.momentum.core.enums.PaletteStyle
 import shub39.momentum.presentation.home.HomeAction
 import shub39.momentum.presentation.home.HomeState
 import shub39.momentum.presentation.home.ui.component.Empty
 import shub39.momentum.presentation.home.ui.component.ProjectListItem
 import shub39.momentum.presentation.shared.MomentumTheme
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -54,7 +70,7 @@ fun ProjectList(
     onAction: (HomeAction) -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToProject: () -> Unit,
-    onNavigateToNewProject: () -> Unit
+    onNavigateToNewProject: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -64,37 +80,34 @@ fun ProjectList(
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.app_name)) },
                 subtitle = {
-                    Text(
-                        text = "${state.projects.size} " + stringResource(R.string.projects)
-                    )
+                    Text(text = "${state.projects.size} " + stringResource(R.string.projects))
                 },
                 actions = {
                     IconButton(
                         onClick = onNavigateToSettings,
-                        shapes = IconButtonShapes(
-                            shape = CircleShape,
-                            pressedShape = RoundedCornerShape(10.dp)
-                        )
+                        shapes =
+                            IconButtonShapes(
+                                shape = CircleShape,
+                                pressedShape = RoundedCornerShape(10.dp),
+                            ),
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.settings),
-                            contentDescription = "Settings"
+                            contentDescription = "Settings",
                         )
                     }
-                }
+                },
             )
         },
         floatingActionButton = {
-            MediumFloatingActionButton(
-                onClick = onNavigateToNewProject
-            ) {
+            MediumFloatingActionButton(onClick = onNavigateToNewProject) {
                 Icon(
                     painter = painterResource(R.drawable.add),
                     contentDescription = "Add New Project",
-                    modifier = Modifier.size(FloatingActionButtonDefaults.MediumIconSize)
+                    modifier = Modifier.size(FloatingActionButtonDefaults.MediumIconSize),
                 )
             }
-        }
+        },
     ) { padding ->
         if (state.projects.isNotEmpty()) {
             LazyColumn(
@@ -102,7 +115,7 @@ fun ProjectList(
                     .padding(padding)
                     .fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(state.projects, key = { it.project.id }) { projectListData ->
                     ProjectListItem(
@@ -110,7 +123,7 @@ fun ProjectList(
                         onClick = {
                             onAction(HomeAction.OnChangeProject(projectListData.project))
                             onNavigateToProject()
-                        }
+                        },
                     )
                 }
             }
@@ -126,43 +139,47 @@ private fun Preview() {
     var state by remember {
         mutableStateOf(
             HomeState(
-                projects = (0..10).map {
-                    ProjectListData(
-                        project = Project(
-                            id = it.toLong(),
-                            title = "Project $it",
-                            description = "Description for project $it",
-                        ),
-                        last10Days = (0..10).map { it1 ->
-                            Day(
-                                id = it1.toLong(),
-                                projectId = it1.toLong(),
-                                image = "",
-                                comment = "",
-                                date = LocalDate.now().toEpochDay(),
-                                isFavorite = false
-                            )
-                        }
-                    )
-                }
+                projects =
+                    (0..10).map {
+                        ProjectListData(
+                            project =
+                                Project(
+                                    id = it.toLong(),
+                                    title = "Project $it",
+                                    description = "Description for project $it",
+                                ),
+                            last10Days =
+                                (0..10).map { it1 ->
+                                    Day(
+                                        id = it1.toLong(),
+                                        projectId = it1.toLong(),
+                                        image = "",
+                                        comment = "",
+                                        date = LocalDate.now().toEpochDay(),
+                                        isFavorite = false,
+                                    )
+                                },
+                        )
+                    }
             )
         )
     }
 
     MomentumTheme(
-        theme = Theme(
-            seedColor = Color.Yellow,
-            appTheme = AppTheme.DARK,
-            font = Fonts.FIGTREE,
-            paletteStyle = PaletteStyle.Fidelity
-        )
+        theme =
+            Theme(
+                seedColor = Color.Yellow,
+                appTheme = AppTheme.DARK,
+                font = Fonts.FIGTREE,
+                paletteStyle = PaletteStyle.FIDELITY,
+            )
     ) {
         ProjectList(
             state = state,
             onAction = {},
             onNavigateToSettings = {},
             onNavigateToProject = {},
-            onNavigateToNewProject = {}
+            onNavigateToNewProject = {},
         )
     }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.data
 
 import android.app.AlarmManager
@@ -6,18 +22,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import org.koin.core.annotation.Single
-import shub39.momentum.data.receiver.AlarmReceiver
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.interfaces.AlarmScheduler
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import org.koin.core.annotation.Single
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.interfaces.AlarmScheduler
+import shub39.momentum.data.receiver.AlarmReceiver
 
 @Single(binds = [AlarmScheduler::class])
-class AlarmSchedulerImpl(
-    private val context: Context
-) : AlarmScheduler {
+class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
     companion object {
         private const val TAG = "NotificationAlarmScheduler"
@@ -30,48 +44,51 @@ class AlarmSchedulerImpl(
         cancel(project)
         if (project.alarm == null) return
 
-        val time = LocalTime.ofSecondOfDay(project.alarm.time)
+        val time = LocalTime.ofSecondOfDay(project.alarm!!.time)
         val now = LocalDateTime.now()
         val today = now.toLocalDate()
 
         val scheduledDate = if (time.isAfter(now.toLocalTime())) today else today.plusDays(1)
 
-        val nextDateTime = LocalDateTime.of(scheduledDate, time)
-            .atZone(ZoneId.systemDefault())
+        val nextDateTime = LocalDateTime.of(scheduledDate, time).atZone(ZoneId.systemDefault())
 
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
-            action = ACTION
-            putExtra("project_id", project.id)
-        }
+        val intent =
+            Intent(context, AlarmReceiver::class.java).apply {
+                action = ACTION
+                putExtra("project_id", project.id)
+            }
 
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            project.id.toInt(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+        val pendingIntent =
+            PendingIntent.getBroadcast(
+                context,
+                project.id.toInt(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             nextDateTime.toEpochSecond() * 1000,
-            pendingIntent
+            pendingIntent,
         )
 
         Log.d(TAG, "Scheduled alarm for ${project.title} at $nextDateTime)")
     }
 
     override fun cancel(project: Project) {
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
-            action = ACTION
-            putExtra("project_id", project.id)
-        }
+        val intent =
+            Intent(context, AlarmReceiver::class.java).apply {
+                action = ACTION
+                putExtra("project_id", project.id)
+            }
 
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            project.id.toInt(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+        val pendingIntent =
+            PendingIntent.getBroadcast(
+                context,
+                project.id.toInt(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
 
         alarmManager.cancel(pendingIntent)
         Log.d(TAG, "Cancelled alarm for project=${project.id}")

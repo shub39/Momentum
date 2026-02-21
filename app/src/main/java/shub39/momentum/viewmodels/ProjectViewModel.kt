@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.viewmodels
 
 import android.util.Log
@@ -24,14 +40,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
+import shub39.momentum.core.enums.VideoAction
+import shub39.momentum.core.interfaces.AlarmScheduler
+import shub39.momentum.core.interfaces.FaceDetector
+import shub39.momentum.core.interfaces.MontageConfigPrefs
+import shub39.momentum.core.interfaces.MontageMaker
+import shub39.momentum.core.interfaces.MontageState
+import shub39.momentum.core.interfaces.ProjectRepository
 import shub39.momentum.data.ImageHandler
-import shub39.momentum.domain.enums.VideoAction
-import shub39.momentum.domain.interfaces.AlarmScheduler
-import shub39.momentum.domain.interfaces.FaceDetector
-import shub39.momentum.domain.interfaces.MontageConfigPrefs
-import shub39.momentum.domain.interfaces.MontageMaker
-import shub39.momentum.domain.interfaces.MontageState
-import shub39.momentum.domain.interfaces.ProjectRepository
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ScanState
@@ -44,93 +60,98 @@ class ProjectViewModel(
     private val repository: ProjectRepository,
     private val montageConfigPrefs: MontageConfigPrefs,
     private val scheduler: AlarmScheduler,
-    private val imageHandler: ImageHandler
+    private val imageHandler: ImageHandler,
 ) : ViewModel() {
     private var observeDaysJob: Job? = null
 
     private val _exoPlayer = MutableStateFlow<ExoPlayer?>(null)
-    val exoPlayer = _exoPlayer.asStateFlow()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
+    val exoPlayer =
+        _exoPlayer
+            .asStateFlow()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = null,
+            )
 
     private val _state = sharedState.projectState
-    val state = _state.asStateFlow()
-        .onStart { observeConfig() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = ProjectState()
-        )
+    val state =
+        _state
+            .asStateFlow()
+            .onStart { observeConfig() }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = ProjectState(),
+            )
 
     fun onAction(action: ProjectAction) {
         when (action) {
-            is ProjectAction.OnUpdateProject -> viewModelScope.launch {
-                repository.upsertProject(action.project)
-                _state.update { it.copy(project = action.project) }
-                scheduler.schedule(action.project)
-            }
-
-            is ProjectAction.OnDeleteProject -> viewModelScope.launch {
-                repository.deleteProject(action.project)
-                scheduler.cancel(action.project)
-            }
-
-            is ProjectAction.OnDeleteDay -> viewModelScope.launch {
-                imageHandler.deleteDayImage(action.day)
-                repository.deleteDay(action.day)
-            }
-
-            is ProjectAction.OnUpsertDay -> viewModelScope.launch {
-                if (action.isNewImage) {
-                    val faceData = faceDetector.getFaceDataFromUri(action.day.image.toUri())
-                    val copiedImageUri = imageHandler.copyImageToAppData(action.day)
-
-                    Log.d("ProjectViewModel", "faceData : $faceData")
-
-                    repository.upsertDay(
-                        action.day.copy(
-                            faceData = faceData,
-                            image = copiedImageUri.toString()
-                        )
-                    )
-                } else {
-                    repository.upsertDay(action.day)
+            is ProjectAction.OnUpdateProject ->
+                viewModelScope.launch {
+                    repository.upsertProject(action.project)
+                    _state.update { it.copy(project = action.project) }
+                    scheduler.schedule(action.project)
                 }
-            }
 
-            is ProjectAction.OnCreateMontage -> viewModelScope.launch {
-                montageMaker.createMontageFlow(
-                    days = action.days,
-                    config = _state.value.montageConfig
-                )
-                    .flowOn(Dispatchers.Default)
-                    .collect { state ->
-                        Log.d("ProjectViewModel", "Montage state: $state")
+            is ProjectAction.OnDeleteProject ->
+                viewModelScope.launch {
+                    repository.deleteProject(action.project)
+                    scheduler.cancel(action.project)
+                }
 
-                        if (state is MontageState.Success) {
-                            _exoPlayer.value?.apply {
-                                clearMediaItems()
-                                setMediaItem(MediaItem.fromUri(state.file.toUri()))
-                                prepare()
-                            }
-                        }
+            is ProjectAction.OnDeleteDay ->
+                viewModelScope.launch {
+                    imageHandler.deleteDayImage(action.day)
+                    repository.deleteDay(action.day)
+                }
 
-                        _state.update { it.copy(montage = state) }
+            is ProjectAction.OnUpsertDay ->
+                viewModelScope.launch {
+                    if (action.isNewImage) {
+                        val faceData = faceDetector.getFaceDataFromUri(action.day.image.toUri())
+                        val copiedImageUri = imageHandler.copyImageToAppData(action.day)
+
+                        Log.d("ProjectViewModel", "faceData : $faceData")
+
+                        repository.upsertDay(
+                            action.day.copy(faceData = faceData, image = copiedImageUri.toString())
+                        )
+                    } else {
+                        repository.upsertDay(action.day)
                     }
-            }
+                }
 
-            ProjectAction.OnUpdateDays -> viewModelScope.launch {
-                refreshDays()
-                withContext(Dispatchers.Default) { processDays() }
-            }
+            is ProjectAction.OnCreateMontage ->
+                viewModelScope.launch {
+                    montageMaker
+                        .createMontageFlow(days = action.days, config = _state.value.montageConfig)
+                        .flowOn(Dispatchers.Default)
+                        .collect { state ->
+                            Log.d("ProjectViewModel", "Montage state: $state")
+
+                            if (state is MontageState.Success) {
+                                _exoPlayer.value?.apply {
+                                    clearMediaItems()
+                                    setMediaItem(MediaItem.fromUri(state.file.toUri()))
+                                    prepare()
+                                }
+                            }
+
+                            _state.update { it.copy(montage = state) }
+                        }
+                }
+
+            ProjectAction.OnUpdateDays ->
+                viewModelScope.launch {
+                    refreshDays()
+                    withContext(Dispatchers.Default) { processDays() }
+                }
 
             ProjectAction.OnClearMontageState -> {
                 _exoPlayer.value?.release()
                 _exoPlayer.update { null }
-                _state.update { it.copy(montage = MontageState.Processing()) }
+                _state.update { it.copy(montage = MontageState.ProcessingImages()) }
             }
 
             is ProjectAction.OnPlayerAction -> {
@@ -150,12 +171,10 @@ class ProjectViewModel(
             is ProjectAction.OnInitializeExoPlayer -> {
                 if (_exoPlayer.value == null) {
                     _exoPlayer.update {
-                        Builder(action.context)
-                            .build()
-                            .apply {
-                                prepare()
-                                repeatMode = REPEAT_MODE_ALL
-                            }
+                        Builder(action.context).build().apply {
+                            prepare()
+                            repeatMode = REPEAT_MODE_ALL
+                        }
                     }
                 }
             }
@@ -177,44 +196,50 @@ class ProjectViewModel(
                 }
             }
 
-            is ProjectAction.OnUpdateReminder -> viewModelScope.launch {
-                val newProject = _state.value.project!!.copy(alarm = action.alarmData)
+            is ProjectAction.OnUpdateReminder ->
+                viewModelScope.launch {
+                    val newProject = _state.value.project!!.copy(alarm = action.alarmData)
 
-                repository.upsertProject(newProject)
-                _state.update { it.copy(project = newProject) }
+                    repository.upsertProject(newProject)
+                    _state.update { it.copy(project = newProject) }
 
-                if (action.alarmData == null) {
-                    scheduler.cancel(newProject)
-                } else {
-                    scheduler.schedule(newProject)
-                }
-            }
-
-            ProjectAction.OnResetMontagePrefs -> viewModelScope.launch {
-                montageConfigPrefs.resetPrefs()
-            }
-
-            ProjectAction.OnStartFaceScan -> viewModelScope.launch {
-                if (_state.value.days.isEmpty()) return@launch
-
-                _state.update { it.copy(scanState = ScanState.Processing(0f)) }
-                val size = _state.value.days.size
-
-                try {
-                    withContext(Dispatchers.IO) {
-                        _state.value.days.fastForEachIndexed { index, day ->
-                            _state.update { it.copy(scanState = ScanState.Processing(index.toFloat() / size.toFloat())) }
-
-                            val faceData = faceDetector.getFaceDataFromUri(day.image.toUri())
-                            repository.upsertDay(day.copy(faceData = faceData))
-                        }
+                    if (action.alarmData == null) {
+                        scheduler.cancel(newProject)
+                    } else {
+                        scheduler.schedule(newProject)
                     }
-                } catch (e: Exception) {
-                    Log.e("ProjectViewModel", "Error while scanning project for faces: ", e)
-                } finally {
-                    _state.update { it.copy(scanState = ScanState.Done) }
                 }
-            }
+
+            ProjectAction.OnResetMontagePrefs ->
+                viewModelScope.launch { montageConfigPrefs.resetPrefs() }
+
+            ProjectAction.OnStartFaceScan ->
+                viewModelScope.launch {
+                    if (_state.value.days.isEmpty()) return@launch
+
+                    _state.update { it.copy(scanState = ScanState.Processing(0f)) }
+                    val size = _state.value.days.size
+
+                    try {
+                        withContext(Dispatchers.IO) {
+                            _state.value.days.fastForEachIndexed { index, day ->
+                                _state.update {
+                                    it.copy(
+                                        scanState =
+                                            ScanState.Processing(index.toFloat() / size.toFloat())
+                                    )
+                                }
+
+                                val faceData = faceDetector.getFaceDataFromUri(day.image.toUri())
+                                repository.upsertDay(day.copy(faceData = faceData))
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("ProjectViewModel", "Error while scanning project for faces: ", e)
+                    } finally {
+                        _state.update { it.copy(scanState = ScanState.Done) }
+                    }
+                }
 
             ProjectAction.OnResetScanState -> {
                 _state.update { it.copy(scanState = ScanState.Idle) }
@@ -224,21 +249,21 @@ class ProjectViewModel(
 
     private fun refreshDays() {
         observeDaysJob?.cancel()
-        observeDaysJob = viewModelScope.launch {
-            repository.getDays()
-                .onEach { days ->
-                    val filteredDays = async(Dispatchers.Default) {
-                        days.filter { it.projectId == _state.value.project?.id }
-                            .sortedByDescending { it.date }
+        observeDaysJob =
+            viewModelScope.launch {
+                repository
+                    .getDays()
+                    .onEach { days ->
+                        val filteredDays =
+                            async(Dispatchers.Default) {
+                                days
+                                    .filter { it.projectId == _state.value.project?.id }
+                                    .sortedByDescending { it.date }
+                            }
+                        _state.update { it.copy(days = filteredDays.await()) }
                     }
-                    _state.update {
-                        it.copy(
-                            days = filteredDays.await()
-                        )
-                    }
-                }
-                .launchIn(this)
-        }
+                    .launchIn(this)
+            }
     }
 
     private suspend fun processDays() {
@@ -250,84 +275,105 @@ class ProjectViewModel(
         }
     }
 
-    private fun observeConfig() = viewModelScope.launch {
-        montageConfigPrefs.getFpiFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(framesPerImage = pref))
+    private fun observeConfig() =
+        viewModelScope.launch {
+            montageConfigPrefs
+                .getFpiFlow()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(framesPerImage = pref))
+                    }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getFpsFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(framesPerSecond = pref))
+            montageConfigPrefs
+                .getFpsFlow()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(framesPerSecond = pref))
+                    }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getVideoQualityFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(videoQuality = pref))
+            montageConfigPrefs
+                .getVideoQualityFlow()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(videoQuality = pref))
+                    }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getBackgroundColorFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(backgroundColor = pref))
+            montageConfigPrefs
+                .getBackgroundColorFlow()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(backgroundColor = pref))
+                    }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getWaterMarkFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(waterMark = pref))
+            montageConfigPrefs
+                .getWaterMarkFlow()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(waterMark = pref))
+                    }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getShowDateFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(showDate = pref))
+            montageConfigPrefs
+                .getShowDateFlow()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(showDate = pref))
+                    }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getShowMessageFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(showMessage = pref))
+            montageConfigPrefs
+                .getShowMessageFlow()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(showMessage = pref))
+                    }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getFontFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(font = pref))
+            montageConfigPrefs
+                .getFontFlow()
+                .onEach { pref ->
+                    _state.update { it.copy(montageConfig = it.montageConfig.copy(font = pref)) }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getDateStyleFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(dateStyle = pref))
+            montageConfigPrefs
+                .getDateStyleFlow()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(dateStyle = pref))
+                    }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getStabilizeFacesFlow()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(stabilizeFaces = pref))
+            montageConfigPrefs
+                .getStabilizeFacesFlow()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(stabilizeFaces = pref))
+                    }
                 }
-            }.launchIn(this)
+                .launchIn(this)
 
-        montageConfigPrefs.getCensorPref()
-            .onEach { pref ->
-                _state.update {
-                    it.copy(montageConfig = it.montageConfig.copy(censorFaces = pref))
+            montageConfigPrefs
+                .getCensorPref()
+                .onEach { pref ->
+                    _state.update {
+                        it.copy(montageConfig = it.montageConfig.copy(censorFaces = pref))
+                    }
                 }
-            }.launchIn(this)
-    }
+                .launchIn(this)
+        }
 
     override fun onCleared() {
         super.onCleared()

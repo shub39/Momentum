@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.project.ui.component
 
 import androidx.compose.foundation.background
@@ -30,9 +46,9 @@ import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
 import com.skydoves.landscapist.coil3.CoilImage
-import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Day
 import java.time.LocalDate
+import shub39.momentum.R
+import shub39.momentum.core.data_classes.Day
 
 @Composable
 fun WeeklyHorizontalCalendar(
@@ -41,31 +57,24 @@ fun WeeklyHorizontalCalendar(
     days: List<Day>,
     showGuide: Boolean,
     onNavigateToDayInfo: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium
-    ) {
+    OutlinedCard(modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
             Text(
                 text = stringResource(R.string.calendar),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
-                )
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(
-                onClick = onNavigateToCalendar
-            ) {
+            IconButton(onClick = onNavigateToCalendar) {
                 Icon(
                     painter = painterResource(R.drawable.arrow_forward),
-                    contentDescription = "Calendar"
+                    contentDescription = "Calendar",
                 )
             }
         }
@@ -79,94 +88,90 @@ fun WeeklyHorizontalCalendar(
                 val possibleDay = weekDay.date <= today
 
                 Box(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .padding(2.dp)
-                        .clip(CircleShape)
-                        .clickable(enabled = possibleDay) {
-                            onNavigateToDayInfo(weekDay.date.toEpochDay())
-                        },
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .aspectRatio(1f)
+                            .padding(2.dp)
+                            .clip(CircleShape)
+                            .clickable(
+                                enabled = possibleDay
+                            ) {
+                                onNavigateToDayInfo(weekDay.date.toEpochDay())
+                            },
+                    contentAlignment = Alignment.Center,
                 ) {
                     day?.let {
                         CoilImage(
                             imageModel = { it.image },
                             failure = {
                                 Box(
-                                    modifier = Modifier
-                                        .matchParentSize()
-                                        .border(
-                                            width = 2.dp,
-                                            color = MaterialTheme.colorScheme.error,
-                                            shape = CircleShape
-                                        )
+                                    modifier =
+                                        Modifier
+                                            .matchParentSize()
+                                            .border(
+                                                width = 2.dp,
+                                                color = MaterialTheme.colorScheme.error,
+                                                shape = CircleShape,
+                                            )
                                 )
                             },
                             modifier = Modifier
                                 .matchParentSize()
                                 .blur(2.dp)
-                                .clip(CircleShape)
+                                .clip(CircleShape),
                         )
 
                         Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .background(
-                                    color = MaterialTheme.colorScheme.background.copy(
-                                        alpha = 0.5f
-                                    ),
-                                    shape = CircleShape
-                                )
+                            modifier =
+                                Modifier
+                                    .matchParentSize()
+                                    .background(
+                                        color =
+                                            MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
+                                        shape = CircleShape,
+                                    )
                         )
                     }
 
                     Column(
                         modifier = Modifier.padding(4.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
                             text = weekDay.date.dayOfMonth.toString(),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = if (possibleDay) {
-                                MaterialTheme.colorScheme.onBackground
-                            } else {
-                                MaterialTheme.colorScheme.onBackground.copy(
-                                    alpha = 0.5f
-                                )
-                            },
+                            color =
+                                if (possibleDay) {
+                                    MaterialTheme.colorScheme.onBackground
+                                } else {
+                                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                },
                             fontWeight = FontWeight.Bold,
                         )
 
                         Text(
                             text = weekDay.date.dayOfWeek.toString().take(3),
-                            color = if (possibleDay) {
-                                MaterialTheme.colorScheme.onBackground
-                            } else {
-                                MaterialTheme.colorScheme.onBackground.copy(
-                                    alpha = 0.5f
-                                )
-                            },
-                            style = MaterialTheme.typography.bodySmall
+                            color =
+                                if (possibleDay) {
+                                    MaterialTheme.colorScheme.onBackground
+                                } else {
+                                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                },
+                            style = MaterialTheme.typography.bodySmall,
                         )
                     }
                 }
-            }
+            },
         )
 
         if (showGuide) {
-            Row(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 16.dp
-                )
-            ) {
+            Row(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
                 Text(
                     text = stringResource(R.string.guide_text),
                     modifier = Modifier.fillMaxWidth(),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.billing.presentation
 
 import androidx.activity.compose.BackHandler
@@ -26,11 +42,7 @@ import androidx.compose.ui.unit.dp
 import shub39.momentum.R
 
 @Composable
-fun PaywallPage(
-    isPlusUser: Boolean,
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun PaywallPage(isPlusUser: Boolean, onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
 
     BackHandler { onDismissRequest() }
@@ -40,44 +52,39 @@ fun PaywallPage(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Column(
                 modifier = Modifier
                     .padding(horizontal = 32.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Icon(
                     painter = painterResource(R.drawable.warning),
                     contentDescription = "Warning",
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(48.dp),
                 )
 
                 Text(
                     text = stringResource(R.string.foss),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
                 )
 
-                Text(
-                    text = stringResource(R.string.foss_desc),
-                    textAlign = TextAlign.Center
-                )
+                Text(text = stringResource(R.string.foss_desc), textAlign = TextAlign.Center)
 
-                Button(
-                    onClick = { uriHandler.openUri("https://buymeacoffee.com/shub39") }
-                ) {
+                Button(onClick = { uriHandler.openUri("https://buymeacoffee.com/shub39") }) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.buymeacoffee),
                             contentDescription = "Buy me a coffee",
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
 
                         Text(text = stringResource(R.string.bmc))

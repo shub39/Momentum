@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.home.ui.sections
 
 import androidx.compose.foundation.layout.Arrangement
@@ -28,42 +44,36 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.materialkolor.PaletteStyle
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
-import shub39.momentum.domain.enums.Fonts
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.enums.Fonts
+import shub39.momentum.core.enums.PaletteStyle
 import shub39.momentum.presentation.home.HomeAction
 import shub39.momentum.presentation.shared.MomentumTheme
 
 @Composable
-fun AddProject(
-    onAction: (HomeAction) -> Unit,
-    onNavigateBack: () -> Unit
-) {
+fun AddProject(onAction: (HomeAction) -> Unit, onNavigateBack: () -> Unit) {
     var newProjectTitle by remember { mutableStateOf("") }
     var newProjectDescription by remember { mutableStateOf("") }
 
     Surface {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Icon(
                     painter = painterResource(R.drawable.add),
                     contentDescription = "Add new project",
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(48.dp),
                 )
 
                 Text(
                     text = stringResource(R.string.start_new_project),
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
                 )
 
                 OutlinedTextField(
@@ -75,7 +85,7 @@ fun AddProject(
                     placeholder = { Text(text = stringResource(R.string.title)) },
                     modifier = Modifier
                         .widthIn(max = 300.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 )
 
                 OutlinedTextField(
@@ -87,7 +97,7 @@ fun AddProject(
                     placeholder = { Text(text = stringResource(R.string.description)) },
                     modifier = Modifier
                         .widthIn(max = 300.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 )
 
                 Button(
@@ -95,22 +105,23 @@ fun AddProject(
                         onAction(
                             HomeAction.OnAddProject(
                                 title = newProjectTitle.trim(),
-                                description = newProjectDescription.trim()
+                                description = newProjectDescription.trim(),
                             )
                         )
                         onNavigateBack()
                     },
-                    enabled = newProjectTitle.length <= 20 && newProjectDescription.length <= 100 && newProjectTitle.isNotBlank(),
+                    enabled =
+                        newProjectTitle.length <= 20 &&
+                                newProjectDescription.length <= 100 &&
+                                newProjectTitle.isNotBlank(),
                     modifier = Modifier
                         .widthIn(max = 300.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 ) {
                     Text(text = stringResource(R.string.add_new_project))
                 }
 
-                TextButton(
-                    onClick = onNavigateBack
-                ) {
+                TextButton(onClick = onNavigateBack) {
                     Text(text = stringResource(R.string.cancel))
                 }
             }
@@ -122,16 +133,14 @@ fun AddProject(
 @Preview
 private fun Preview() {
     MomentumTheme(
-        theme = Theme(
-            seedColor = Color.Yellow,
-            appTheme = AppTheme.DARK,
-            font = Fonts.FIGTREE,
-            paletteStyle = PaletteStyle.Fidelity
-        )
+        theme =
+            Theme(
+                seedColor = Color.Yellow,
+                appTheme = AppTheme.DARK,
+                font = Fonts.FIGTREE,
+                paletteStyle = PaletteStyle.FIDELITY,
+            )
     ) {
-        AddProject(
-            onAction = {},
-            onNavigateBack = {}
-        )
+        AddProject(onAction = {}, onNavigateBack = {})
     }
 }

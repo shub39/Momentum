@@ -1,10 +1,11 @@
 [versions]
 agp = "9.0.1"
+kotlinx-coroutines = "1.10.2"
 minSdk = "27"
 compileSdk = "36"
 calendar = "2.10.0"
 exifinterface = "1.4.2"
-media3Exoplayer = "1.9.2"
+media3-exoplayer = "1.9.2"
 splashscreen = "1.2.0"
 datastore = "1.2.0"
 colorpicker = "1.1.3"
@@ -16,37 +17,41 @@ material3 = "1.5.0-alpha14"
 room = "2.8.4"
 navigation = "2.9.7"
 serialization = "1.10.0"
-materialKolor = "4.1.1"
+materialkolor = "4.1.1"
 compose = "1.10.3"
 landscapist = "2.9.5"
-filekitCore = "0.12.0"
-annotationJvm = "1.9.1"
+filekit = "0.12.0"
+annotation-jvm = "1.9.1"
 purchases = "9.22.0"
-tasksVision = "0.10.32"
+tasks-vision = "0.10.32"
 truth = "1.4.5"
-espressoCore = "3.7.0"
+espresso-core = "3.7.0"
 junit = "4.13.2"
-junitVersion = "1.3.0"
+junit-version = "1.3.0"
+core = "1.17.0"
+spotless = "8.2.1"
+ktfmt = "0.61"
 
 [libraries]
 # Android
-androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso-core" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junit-version" }
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
-androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
-androidx-media3-ui = { module = "androidx.media3:media3-ui-compose", version.ref = "media3Exoplayer" }
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3-exoplayer" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui-compose", version.ref = "media3-exoplayer" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
-calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotation-jvm" }
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 
 # Purchases
 purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "purchases" }
@@ -61,16 +66,17 @@ koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "
 koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-annotations" }
 
 # Others
-tasks-vision = { module = "com.google.mediapipe:tasks-vision", version.ref = "tasksVision" }
+tasks-vision = { module = "com.google.mediapipe:tasks-vision", version.ref = "tasks-vision" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 junit = { module = "junit:junit", version.ref = "junit" }
-filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekitCore" }
-filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekitCore" }
+filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
+filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
 landscapist-coil = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapist" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
-materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialkolor" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
-androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
+calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
 
 [plugins]
 room = { id = "androidx.room", version.ref = "room" }
@@ -79,3 +85,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

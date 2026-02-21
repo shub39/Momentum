@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.project.ui.sections
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -33,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,21 +61,21 @@ import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberShareFileLauncher
 import io.github.vinceglb.filekit.write
+import java.time.LocalDate
 import kotlinx.coroutines.launch
 import shub39.momentum.R
-import shub39.momentum.domain.data_classes.Day
-import shub39.momentum.domain.data_classes.PlayerAction
-import shub39.momentum.domain.data_classes.Project
-import shub39.momentum.domain.data_classes.Theme
-import shub39.momentum.domain.enums.AppTheme
-import shub39.momentum.domain.enums.VideoAction
-import shub39.momentum.domain.interfaces.MontageState
+import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.PlayerAction
+import shub39.momentum.core.data_classes.Project
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.enums.VideoAction
+import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ui.component.MontageEditSheet
 import shub39.momentum.presentation.project.ui.component.VideoPlayer
 import shub39.momentum.presentation.shared.MomentumTheme
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +86,7 @@ fun ProjectMontageView(
     onNavigateBack: () -> Unit,
     isPlusUser: Boolean,
     onNavigateToPaywall: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -96,21 +113,11 @@ fun ProjectMontageView(
     DisposableEffect(Unit) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_PAUSE -> onAction(
-                    ProjectAction.OnPlayerAction(
-                        PlayerAction(
-                            VideoAction.PAUSE
-                        )
-                    )
-                )
+                Lifecycle.Event.ON_PAUSE ->
+                    onAction(ProjectAction.OnPlayerAction(PlayerAction(VideoAction.PAUSE)))
 
-                Lifecycle.Event.ON_RESUME -> onAction(
-                    ProjectAction.OnPlayerAction(
-                        PlayerAction(
-                            VideoAction.PLAY
-                        )
-                    )
-                )
+                Lifecycle.Event.ON_RESUME ->
+                    onAction(ProjectAction.OnPlayerAction(PlayerAction(VideoAction.PLAY)))
 
                 else -> Unit
             }
@@ -129,7 +136,7 @@ fun ProjectMontageView(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             when (state.montage) {
                 is MontageState.Error -> Text("Error: ${state.montage.message}")
@@ -139,39 +146,61 @@ fun ProjectMontageView(
                         VideoPlayer(
                             exoPlayer = player,
                             onPlayerAction = { onAction(ProjectAction.OnPlayerAction(it)) },
-                            modifier = Modifier
-                                .size(330.dp, 440.dp)
-                                .clip(MaterialTheme.shapes.medium)
+                            modifier =
+                                Modifier
+                                    .size(330.dp, 440.dp)
+                                    .clip(MaterialTheme.shapes.medium),
                         )
                     }
                 }
 
-                is MontageState.Processing -> {
+                is MontageState.ProcessingImages -> {
                     Column(
                         modifier = Modifier
                             .padding(32.dp)
                             .fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        val animatedProgress by animateFloatAsState(
-                            targetValue = state.montage.progress
-                        )
+                        val animatedProgress by
+                        animateFloatAsState(targetValue = state.montage.progress)
 
                         LoadingIndicator()
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        LinearWavyProgressIndicator(
-                            progress = { animatedProgress }
-                        )
+                        LinearWavyProgressIndicator(progress = { animatedProgress })
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = state.montage.status,
+                            text = stringResource(R.string.processing_images),
                             style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+
+                MontageState.AssemblingVideo -> {
+                    Column(
+                        modifier = Modifier
+                            .padding(32.dp)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        LoadingIndicator()
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        LinearWavyProgressIndicator(progress = { 1f })
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = stringResource(R.string.assembling_video),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center,
                         )
                     }
                 }
@@ -186,57 +215,49 @@ fun ProjectMontageView(
                                 fileShareLauncher.launch(PlatformFile(result.file))
                             }
                         },
-                        containerColor = if (state.montage is MontageState.Success) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.tertiary
-                        },
-                        contentColor = if (state.montage is MontageState.Success) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onTertiary
-                        }
+                        containerColor =
+                            if (state.montage is MontageState.Success) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.tertiary
+                            },
+                        contentColor =
+                            if (state.montage is MontageState.Success) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onTertiary
+                            },
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.share),
-                            contentDescription = "Share"
+                            contentDescription = "Share",
                         )
                     }
                 },
                 modifier = Modifier
                     .padding(bottom = 32.dp)
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomCenter),
             ) {
-                IconButton(
-                    onClick = onNavigateBack
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.close),
-                        contentDescription = "Close"
-                    )
+                IconButton(onClick = onNavigateBack) {
+                    Icon(painter = painterResource(R.drawable.close), contentDescription = "Close")
                 }
 
-                IconButton(
-                    onClick = { showEditSheet = true }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.edit),
-                        contentDescription = "Edit"
-                    )
+                IconButton(onClick = { showEditSheet = true }) {
+                    Icon(painter = painterResource(R.drawable.edit), contentDescription = "Edit")
                 }
 
                 IconButton(
                     onClick = {
                         fileSaverLauncher.launch(
                             suggestedName = state.project?.title ?: "Untitled",
-                            extension = "mp4"
+                            extension = "mp4",
                         )
                     },
-                    enabled = state.montage is MontageState.Success
+                    enabled = state.montage is MontageState.Success,
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.download),
-                        contentDescription = "Save to gallery"
+                        contentDescription = "Save to gallery",
                     )
                 }
             }
@@ -247,9 +268,10 @@ fun ProjectMontageView(
                 state = state,
                 onAction = onAction,
                 onDismissRequest = { showEditSheet = false },
-                buttonEnabled = state.montageConfig != (state.montage as? MontageState.Success)?.config,
+                buttonEnabled =
+                    state.montageConfig != (state.montage as? MontageState.Success)?.config,
                 isPlusUser = isPlusUser,
-                onNavigateToPaywall = onNavigateToPaywall
+                onNavigateToPaywall = onNavigateToPaywall,
             )
         }
     }
@@ -261,37 +283,31 @@ private fun Preview() {
     var state by remember {
         mutableStateOf(
             ProjectState(
-                project = Project(
-                    id = 1,
-                    title = "Sample Project",
-                    description = "A sample project",
-                ),
-                days = (0..10).map {
-                    Day(
-                        id = it.toLong(),
-                        projectId = 1,
-                        image = "",
-                        comment = it.toString(),
-                        date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
-                        isFavorite = false
-                    )
-                }
+                project =
+                    Project(id = 1, title = "Sample Project", description = "A sample project"),
+                days =
+                    (0..10).map {
+                        Day(
+                            id = it.toLong(),
+                            projectId = 1,
+                            image = "",
+                            comment = it.toString(),
+                            date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
+                            isFavorite = false,
+                        )
+                    },
             )
         )
     }
 
-    MomentumTheme(
-        theme = Theme(
-            appTheme = AppTheme.DARK
-        )
-    ) {
+    MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
         ProjectMontageView(
             state = state,
             onAction = {},
             onNavigateBack = {},
             exoPlayer = null,
             isPlusUser = true,
-            onNavigateToPaywall = {}
+            onNavigateToPaywall = {},
         )
     }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.app
 
 import androidx.compose.animation.core.tween
@@ -71,7 +87,7 @@ fun App() {
             popExitTransition = { fadeOut(tween(300)) },
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             composable<Screens.HomeGraph> {
                 val homeViewModel: HomeViewModel = koinInject()
@@ -83,7 +99,7 @@ fun App() {
                     onNavigateToSettings = { navController.navigate(Screens.SettingsGraph) },
                     onNavigateToProject = { navController.navigate(Screens.ProjectGraph) },
                     isPlusUser = state.isPlusUser,
-                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) }
+                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) },
                 )
             }
 
@@ -98,7 +114,7 @@ fun App() {
                         navController.navigate(Screens.HomeGraph) {
                             popUpTo(Screens.Onboarding) { inclusive = true }
                         }
-                    }
+                    },
                 )
             }
 
@@ -113,7 +129,7 @@ fun App() {
                     onAction = projectViewModel::onAction,
                     onNavigateBack = { navController.navigateUp() },
                     isPlusUser = state.isPlusUser,
-                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) }
+                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) },
                 )
             }
 
@@ -126,7 +142,7 @@ fun App() {
                     onAction = settingsViewModel::onAction,
                     onNavigateBack = { navController.navigateUp() },
                     isPlusUser = state.isPlusUser,
-                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) }
+                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) },
                 )
             }
 
@@ -136,7 +152,7 @@ fun App() {
                     onDismissRequest = {
                         mainViewModel.checkSubscription()
                         navController.navigateUp()
-                    }
+                    },
                 )
             }
         }
@@ -144,7 +160,7 @@ fun App() {
         if (state.currentChangelog != null) {
             ChangelogDialog(
                 currentLog = state.currentChangelog!!,
-                onDismissRequest = { mainViewModel.dismissChangelog() }
+                onDismissRequest = { mainViewModel.dismissChangelog() },
             )
         }
     }
