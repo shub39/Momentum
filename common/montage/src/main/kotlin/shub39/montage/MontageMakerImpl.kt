@@ -30,9 +30,6 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toRectF
 import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
-import java.io.File
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import shub39.momentum.core.data_classes.Day
@@ -44,22 +41,11 @@ import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.core.toDimensions
 import shub39.momentum.core.toFontRes
 import shub39.momentum.core.toFormatStyle
+import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class MontageMakerImpl(private val context: Context) : MontageMaker {
-
-    private val textPaint =
-        Paint().apply {
-            color = Color.WHITE
-            alpha = 255
-            isAntiAlias = true
-            style = Paint.Style.FILL
-            setShadowLayer(4f, 2f, 2f, Color.BLACK)
-        }
-    private val censorPaint =
-        Paint().apply {
-            isAntiAlias = true
-            style = Paint.Style.FILL
-        }
 
     override suspend fun createMontageFlow(
         days: List<Day>,
@@ -72,16 +58,32 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
         val sortedDays = days.sortedBy { it.date }
         val total = sortedDays.size
 
-        textPaint.apply {
-            textSize = config.videoQuality.toDimensions().first * 0.04f
-            config.font.toFontRes()?.let { typeface = ResourcesCompat.getFont(context, it) }
-        }
-        censorPaint.apply { color = config.backgroundColor.toArgb() }
+        val textPaint =
+            Paint().apply {
+                color = Color.WHITE
+                alpha = 255
+                isAntiAlias = true
+                style = Paint.Style.FILL
+                setShadowLayer(4f, 2f, 2f, Color.BLACK)
+                textSize = config.videoQuality.toDimensions().first * 0.04f
+                config.font.toFontRes()?.let { typeface = ResourcesCompat.getFont(context, it) }
+            }
+        val censorPaint =
+            Paint().apply {
+                isAntiAlias = true
+                style = Paint.Style.FILL
+                color = config.backgroundColor.toArgb()
+            }
 
         val images = mutableListOf<Bitmap>()
 
         sortedDays.forEachIndexed { index, day ->
-            val bitmap = processDay(day, config)
+            val bitmap = processDay(
+                day = day,
+                config = config,
+                textPaint = textPaint,
+                censorPaint = censorPaint
+            )
             if (bitmap != null) images.add(bitmap)
 
             val progress = (index + 1).toFloat() / total
@@ -101,7 +103,12 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
         }
     }
 
-    private fun processDay(day: Day, config: MontageConfig): Bitmap? {
+    private fun processDay(
+        day: Day,
+        config: MontageConfig,
+        textPaint: Paint,
+        censorPaint: Paint
+    ): Bitmap? {
         val dimensions = config.videoQuality.toDimensions()
         val contentResolver = context.contentResolver
 
@@ -132,15 +139,15 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
                 val originalBitmap =
                     when (orientation) {
                         ExifInterface.ORIENTATION_ROTATE_90 -> {
-                            rotateBitmap(decodedBitmap, 90f)
+                            rotateBitmap(decodedBitmap, 90f).also { decodedBitmap.recycle() }
                         }
 
                         ExifInterface.ORIENTATION_ROTATE_180 -> {
-                            rotateBitmap(decodedBitmap, 180f)
+                            rotateBitmap(decodedBitmap, 180f).also { decodedBitmap.recycle() }
                         }
 
                         ExifInterface.ORIENTATION_ROTATE_270 -> {
-                            rotateBitmap(decodedBitmap, 270f)
+                            rotateBitmap(decodedBitmap, 270f).also { decodedBitmap.recycle() }
                         }
 
                         else -> decodedBitmap
