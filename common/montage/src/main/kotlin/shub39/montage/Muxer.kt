@@ -17,7 +17,9 @@
 package shub39.montage
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.annotation.RawRes
+import kotlinx.coroutines.flow.Flow
 import java.io.File
 import java.io.IOException
 
@@ -36,7 +38,7 @@ internal class Muxer(private val context: Context, private val file: File) {
         this.muxingCompletionListener = listener
     }
 
-    fun mux(imageList: List<Any>, @RawRes audioTrack: Int? = null): MuxingResult {
+    suspend fun mux(imageFlow: Flow<Bitmap>, @RawRes audioTrack: Int? = null): MuxingResult {
         val frameBuilder = FrameBuilder(context, muxerConfig, audioTrack)
         try {
             frameBuilder.start()
@@ -46,7 +48,7 @@ internal class Muxer(private val context: Context, private val file: File) {
         }
 
         try {
-            for (image in imageList) {
+            imageFlow.collect { image ->
                 frameBuilder.createFrame(image)
             }
 
@@ -77,7 +79,4 @@ internal class Muxer(private val context: Context, private val file: File) {
             return MuxingResult.MuxingError("Muxing failed", Exception(e))
         }
     }
-
-    fun muxAsync(imageList: List<Any>, @RawRes audioTrack: Int? = null): MuxingResult =
-        mux(imageList, audioTrack)
 }

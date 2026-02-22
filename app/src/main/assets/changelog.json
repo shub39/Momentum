@@ -1,5 +1,11 @@
 [
   {
+    "version": "1.5.2",
+    "changes": [
+      "Improved montage maker performance"
+    ]
+  },
+  {
     "version": "1.5.1",
     "changes": [
       "Added option to rescan all faces in the project."
