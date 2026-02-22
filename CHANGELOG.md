@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.2
+
+- Improved montage maker performance
+
 ## 1.5.1
 
 - Added option to rescan all faces in the project.

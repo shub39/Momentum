@@ -108,8 +108,6 @@ internal class FrameBuilder(
             }
 
             postCanvasFrame(canvas)
-
-            Thread.sleep(1)
         }
     }
 
