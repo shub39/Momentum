@@ -19,7 +19,6 @@ package shub39.montage
 import android.content.Context
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
@@ -33,9 +32,9 @@ import java.io.IOException
 import java.nio.ByteBuffer
 
 internal class FrameBuilder(
-    private val context: Context,
+    context: Context,
     private val muxerConfig: MuxerConfiguration,
-    @param:RawRes private val audioTrackResource: Int?,
+    @property:RawRes audioTrackResource: Int?,
 ) {
 
     companion object {
@@ -43,25 +42,23 @@ internal class FrameBuilder(
         private const val TIMEOUT_USEC = 10_000L
     }
 
-    private val mediaFormat: MediaFormat =
-        MediaFormat.createVideoFormat(
-            muxerConfig.mimeType,
-            muxerConfig.videoWidth,
-            muxerConfig.videoHeight,
-        )
-            .apply {
-                setInteger(
-                    MediaFormat.KEY_COLOR_FORMAT,
-                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface,
-                )
-                setInteger(MediaFormat.KEY_BIT_RATE, muxerConfig.bitrate)
-                setInteger(MediaFormat.KEY_FRAME_RATE, muxerConfig.framesPerSecond.toInt())
-                setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, muxerConfig.iFrameInterval)
-                setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_FULL)
-                setInteger(MediaFormat.KEY_COLOR_STANDARD, MediaFormat.COLOR_STANDARD_BT709)
-                setInteger(MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_SDR_VIDEO)
-            }
-
+    private val mediaFormat: MediaFormat = MediaFormat.createVideoFormat(
+        muxerConfig.mimeType,
+        muxerConfig.videoWidth,
+        muxerConfig.videoHeight,
+    )
+        .apply {
+            setInteger(
+                MediaFormat.KEY_COLOR_FORMAT,
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface,
+            )
+            setInteger(MediaFormat.KEY_BIT_RATE, muxerConfig.bitrate)
+            setInteger(MediaFormat.KEY_FRAME_RATE, muxerConfig.framesPerSecond.toInt())
+            setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, muxerConfig.iFrameInterval)
+            setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_FULL)
+            setInteger(MediaFormat.KEY_COLOR_STANDARD, MediaFormat.COLOR_STANDARD_BT709)
+            setInteger(MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_SDR_VIDEO)
+        }
     private val mediaCodec: MediaCodec
     private val bufferInfo = MediaCodec.BufferInfo()
     private var surface: Surface? = null
@@ -71,6 +68,7 @@ internal class FrameBuilder(
     private var pushedFrames: Long = 0
 
     init {
+
         val codecs = MediaCodecList(MediaCodecList.REGULAR_CODECS)
         val codecName =
             codecs.findEncoderForFormat(mediaFormat)
@@ -95,18 +93,10 @@ internal class FrameBuilder(
         drainCodec(false)
     }
 
-    fun createFrame(image: Any) {
+    fun createFrame(bitmap: Bitmap) {
         for (i in 0 until muxerConfig.framesPerImage) {
             val canvas = lockCanvas() ?: continue
-            when (image) {
-                is Int -> {
-                    val bitmap = BitmapFactory.decodeResource(context.resources, image)
-                    canvas.drawBitmap(bitmap, 0f, 0f, null)
-                }
-                is Bitmap -> canvas.drawBitmap(image, 0f, 0f, null)
-                else -> Log.e(TAG, "Unsupported image type: ${image::class.java}")
-            }
-
+            canvas.drawBitmap(bitmap, 0f, 0f, null)
             postCanvasFrame(canvas)
         }
     }

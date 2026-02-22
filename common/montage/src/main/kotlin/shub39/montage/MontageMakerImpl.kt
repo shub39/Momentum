@@ -32,6 +32,7 @@ import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEach
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.MontageConfig
 import shub39.momentum.core.data_classes.isValid
@@ -58,41 +59,44 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
         val sortedDays = days.sortedBy { it.date }
         val total = sortedDays.size
 
-        val textPaint =
-            Paint().apply {
-                color = Color.WHITE
-                alpha = 255
-                isAntiAlias = true
-                style = Paint.Style.FILL
-                setShadowLayer(4f, 2f, 2f, Color.BLACK)
-                textSize = config.videoQuality.toDimensions().first * 0.04f
-                config.font.toFontRes()?.let { typeface = ResourcesCompat.getFont(context, it) }
+        val textPaint = Paint().apply {
+            color = Color.WHITE
+            alpha = 255
+            isAntiAlias = true
+            style = Paint.Style.FILL
+            setShadowLayer(4f, 2f, 2f, Color.BLACK)
+            textSize = config.videoQuality.toDimensions().first * 0.04f
+            config.font.toFontRes()?.let { typeface = ResourcesCompat.getFont(context, it) }
+        }
+
+        val censorPaint = Paint().apply {
+            isAntiAlias = true
+            style = Paint.Style.FILL
+            color = config.backgroundColor.toArgb()
+        }
+
+        var processedCount = 0
+        val bitmapFlow = flow {
+            sortedDays.forEach { day ->
+                processDay(
+                    day = day,
+                    config = config,
+                    textPaint = textPaint,
+                    censorPaint = censorPaint
+                )?.let { bitmap ->
+                    emit(bitmap)
+                }
             }
-        val censorPaint =
-            Paint().apply {
-                isAntiAlias = true
-                style = Paint.Style.FILL
-                color = config.backgroundColor.toArgb()
-            }
+        }
 
-        val images = mutableListOf<Bitmap>()
-
-        sortedDays.forEachIndexed { index, day ->
-            val bitmap = processDay(
-                day = day,
-                config = config,
-                textPaint = textPaint,
-                censorPaint = censorPaint
-            )
-            if (bitmap != null) images.add(bitmap)
-
-            val progress = (index + 1).toFloat() / total
-            emit(MontageState.ProcessingImages(progress))
+        val flowForMuxer = bitmapFlow.onEach {
+            processedCount++
+            emit(MontageState.ProcessingImages(processedCount.toFloat() / total))
         }
 
         emit(MontageState.AssemblingVideo)
 
-        when (val result = muxer.muxAsync(images)) {
+        when (val result = muxer.mux(flowForMuxer)) {
             is MuxingResult.MuxingError -> {
                 emit(MontageState.Error(result.message, result.exception))
             }
@@ -192,6 +196,7 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
                     }
 
                     canvas.drawBitmap(originalBitmap, matrix, null)
+                    originalBitmap.recycle()
 
                     // --- Watermark, date, message ---
                     if (config.waterMark) {
