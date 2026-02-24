@@ -133,9 +133,7 @@ fun ProjectMontageView(
 
     Scaffold(modifier = modifier) { padding ->
         Box(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
+            modifier = Modifier.padding(padding).fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             when (state.montage) {
@@ -147,23 +145,19 @@ fun ProjectMontageView(
                             exoPlayer = player,
                             onPlayerAction = { onAction(ProjectAction.OnPlayerAction(it)) },
                             modifier =
-                                Modifier
-                                    .size(330.dp, 440.dp)
-                                    .clip(MaterialTheme.shapes.medium),
+                                Modifier.size(330.dp, 440.dp).clip(MaterialTheme.shapes.medium),
                         )
                     }
                 }
 
                 is MontageState.ProcessingImages -> {
                     Column(
-                        modifier = Modifier
-                            .padding(32.dp)
-                            .fillMaxSize(),
+                        modifier = Modifier.padding(32.dp).fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         val animatedProgress by
-                        animateFloatAsState(targetValue = state.montage.progress)
+                            animateFloatAsState(targetValue = state.montage.progress)
 
                         LoadingIndicator()
 
@@ -183,9 +177,7 @@ fun ProjectMontageView(
 
                 MontageState.AssemblingVideo -> {
                     Column(
-                        modifier = Modifier
-                            .padding(32.dp)
-                            .fillMaxSize(),
+                        modifier = Modifier.padding(32.dp).fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
@@ -234,9 +226,7 @@ fun ProjectMontageView(
                         )
                     }
                 },
-                modifier = Modifier
-                    .padding(bottom = 32.dp)
-                    .align(Alignment.BottomCenter),
+                modifier = Modifier.padding(bottom = 32.dp).align(Alignment.BottomCenter),
             ) {
                 IconButton(onClick = onNavigateBack) {
                     Icon(painter = painterResource(R.drawable.close), contentDescription = "Close")

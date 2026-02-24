@@ -111,9 +111,7 @@ fun ProjectList(
     ) { padding ->
         if (state.projects.isNotEmpty()) {
             LazyColumn(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
+                modifier = Modifier.padding(padding).fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {

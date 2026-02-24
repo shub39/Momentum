@@ -163,8 +163,7 @@ fun LookAndFeel(
                             horizontalArrangement =
                                 Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
                             modifier =
-                                Modifier
-                                    .fillParentMaxWidth()
+                                Modifier.fillParentMaxWidth()
                                     .background(listItemColors().containerColor)
                                     .padding(start = 52.dp, end = 16.dp, bottom = 8.dp),
                         ) {
@@ -217,9 +216,7 @@ fun LookAndFeel(
                     if (!isPlusUser) {
                         Box(
                             contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillParentMaxWidth()
-                                .height(60.dp),
+                            modifier = Modifier.fillParentMaxWidth().height(60.dp),
                         ) {
                             LinearWavyProgressIndicator(
                                 progress = { 0.90f },
@@ -250,8 +247,7 @@ fun LookAndFeel(
 
                         FlowRow(
                             modifier =
-                                Modifier
-                                    .fillParentMaxWidth()
+                                Modifier.fillParentMaxWidth()
                                     .background(listItemColors().containerColor)
                                     .padding(start = 52.dp, end = 16.dp, bottom = 8.dp),
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -339,8 +335,7 @@ fun LookAndFeel(
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier =
-                                Modifier
-                                    .fillParentMaxWidth()
+                                Modifier.fillParentMaxWidth()
                                     .background(listItemColors().containerColor)
                                     .padding(start = 52.dp, end = 16.dp, bottom = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -351,7 +346,7 @@ fun LookAndFeel(
                                         primary =
                                             if (
                                                 state.theme.isMaterialYou &&
-                                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                                                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                                             ) {
                                                 colorResource(system_accent1_200)
                                             } else state.theme.seedColor,
@@ -368,8 +363,7 @@ fun LookAndFeel(
 
                                 Box(
                                     modifier =
-                                        Modifier
-                                            .size(50.dp)
+                                        Modifier.size(50.dp)
                                             .background(
                                                 color = scheme.tertiary,
                                                 shape =

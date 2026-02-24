@@ -19,9 +19,9 @@ package shub39.montage
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.annotation.RawRes
-import kotlinx.coroutines.flow.Flow
 import java.io.File
 import java.io.IOException
+import kotlinx.coroutines.flow.Flow
 
 internal class Muxer(private val context: Context, private val file: File) {
 
@@ -48,9 +48,7 @@ internal class Muxer(private val context: Context, private val file: File) {
         }
 
         try {
-            imageFlow.collect { image ->
-                frameBuilder.createFrame(image)
-            }
+            imageFlow.collect { image -> frameBuilder.createFrame(image) }
 
             frameBuilder.releaseVideoCodec()
 
@@ -64,16 +62,13 @@ internal class Muxer(private val context: Context, private val file: File) {
         } catch (e: Exception) {
             try {
                 frameBuilder.releaseVideoCodec()
-            } catch (_: Exception) {
-            }
+            } catch (_: Exception) {}
             try {
                 frameBuilder.releaseAudioExtractor()
-            } catch (_: Exception) {
-            }
+            } catch (_: Exception) {}
             try {
                 frameBuilder.releaseMuxer()
-            } catch (_: Exception) {
-            }
+            } catch (_: Exception) {}
 
             muxingCompletionListener?.onVideoError(e)
             return MuxingResult.MuxingError("Muxing failed", Exception(e))

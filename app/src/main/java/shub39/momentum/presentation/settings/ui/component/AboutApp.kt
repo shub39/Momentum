@@ -56,9 +56,7 @@ fun AboutApp(modifier: Modifier = Modifier) {
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {

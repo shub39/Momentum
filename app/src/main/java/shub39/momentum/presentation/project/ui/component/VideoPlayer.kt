@@ -93,14 +93,10 @@ fun VideoPlayer(
         )
 
         AnimatedVisibility(visible = showControls, enter = fadeIn(), exit = fadeOut()) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.4f)))
+            Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.4f)))
 
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxSize().padding(16.dp),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {

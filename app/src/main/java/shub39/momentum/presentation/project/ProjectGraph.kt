@@ -49,20 +49,15 @@ import shub39.momentum.presentation.shared.MomentumTheme
 
 @Serializable
 private sealed interface ProjectRoutes {
-    @Serializable
-    data object ProjectDetails : ProjectRoutes
+    @Serializable data object ProjectDetails : ProjectRoutes
 
-    @Serializable
-    data object ProjectCalendarView : ProjectRoutes
+    @Serializable data object ProjectCalendarView : ProjectRoutes
 
-    @Serializable
-    data object ProjectShortsView : ProjectRoutes
+    @Serializable data object ProjectShortsView : ProjectRoutes
 
-    @Serializable
-    data object ProjectMontageView : ProjectRoutes
+    @Serializable data object ProjectMontageView : ProjectRoutes
 
-    @Serializable
-    data class DayInfoView(val selectedDate: Long) : ProjectRoutes
+    @Serializable data class DayInfoView(val selectedDate: Long) : ProjectRoutes
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -87,9 +82,7 @@ fun ProjectGraph(
         exitTransition = { fadeOut(tween(500)) },
         popEnterTransition = { fadeIn(tween(500)) },
         popExitTransition = { fadeOut(tween(500)) },
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize(),
+        modifier = modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
     ) {
         composable<ProjectRoutes.ProjectDetails> {
             ProjectDetails(

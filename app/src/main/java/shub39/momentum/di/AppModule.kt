@@ -40,11 +40,9 @@ class AppModule {
         return dbFactory.create().fallbackToDestructiveMigration(true).build()
     }
 
-    @Single
-    fun getProjectDao(database: ProjectDatabase): ProjectDao = database.projectDao
+    @Single fun getProjectDao(database: ProjectDatabase): ProjectDao = database.projectDao
 
-    @Single
-    fun getDaysDao(database: ProjectDatabase): DaysDao = database.daysDao
+    @Single fun getDaysDao(database: ProjectDatabase): DaysDao = database.daysDao
 
     @Single
     fun getSettingsPrefs(datastoreFactory: DatastoreFactory): SettingsPrefs =
@@ -54,9 +52,7 @@ class AppModule {
     fun getMontageConfigPrefs(datastoreFactory: DatastoreFactory): MontageConfigPrefs =
         datastoreFactory.montageConfig()
 
-    @Single
-    fun getMontageMaker(context: Context): MontageMaker = MontageMakerImpl(context)
+    @Single fun getMontageMaker(context: Context): MontageMaker = MontageMakerImpl(context)
 
-    @Single
-    fun getFaceDetector(context: Context): FaceDetector = FaceDetectorImpl(context)
+    @Single fun getFaceDetector(context: Context): FaceDetector = FaceDetectorImpl(context)
 }

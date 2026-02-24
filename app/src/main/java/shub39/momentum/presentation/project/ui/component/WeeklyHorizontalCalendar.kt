@@ -89,15 +89,11 @@ fun WeeklyHorizontalCalendar(
 
                 Box(
                     modifier =
-                        Modifier
-                            .aspectRatio(1f)
-                            .padding(2.dp)
-                            .clip(CircleShape)
-                            .clickable(
-                                enabled = possibleDay
-                            ) {
-                                onNavigateToDayInfo(weekDay.date.toEpochDay())
-                            },
+                        Modifier.aspectRatio(1f).padding(2.dp).clip(CircleShape).clickable(
+                            enabled = possibleDay
+                        ) {
+                            onNavigateToDayInfo(weekDay.date.toEpochDay())
+                        },
                     contentAlignment = Alignment.Center,
                 ) {
                     day?.let {
@@ -106,8 +102,7 @@ fun WeeklyHorizontalCalendar(
                             failure = {
                                 Box(
                                     modifier =
-                                        Modifier
-                                            .matchParentSize()
+                                        Modifier.matchParentSize()
                                             .border(
                                                 width = 2.dp,
                                                 color = MaterialTheme.colorScheme.error,
@@ -115,16 +110,12 @@ fun WeeklyHorizontalCalendar(
                                             )
                                 )
                             },
-                            modifier = Modifier
-                                .matchParentSize()
-                                .blur(2.dp)
-                                .clip(CircleShape),
+                            modifier = Modifier.matchParentSize().blur(2.dp).clip(CircleShape),
                         )
 
                         Box(
                             modifier =
-                                Modifier
-                                    .matchParentSize()
+                                Modifier.matchParentSize()
                                     .background(
                                         color =
                                             MaterialTheme.colorScheme.background.copy(alpha = 0.5f),

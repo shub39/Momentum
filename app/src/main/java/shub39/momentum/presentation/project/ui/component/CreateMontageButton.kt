@@ -74,16 +74,16 @@ fun CreateMontageButton(
     val infiniteTransition = rememberInfiniteTransition(label = "rotation")
 
     val rotation by
-    infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(durationMillis = 2000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart,
-            ),
-        label = "infinite rotation",
-    )
+        infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec =
+                infiniteRepeatable(
+                    animation = tween(durationMillis = 2000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart,
+                ),
+            label = "infinite rotation",
+        )
 
     Card(
         onClick = { if (canCreateMontage) onNavigateToMontage() },
@@ -98,8 +98,7 @@ fun CreateMontageButton(
         Box {
             Box(
                 modifier =
-                    Modifier
-                        .matchParentSize()
+                    Modifier.matchParentSize()
                         .drawWithContent {
                             val width = size.width * dayProgress
 
@@ -140,8 +139,7 @@ fun CreateMontageButton(
                 Box(modifier = Modifier.wrapContentSize(), contentAlignment = Alignment.Center) {
                     Box(
                         modifier =
-                            Modifier
-                                .size(50.dp)
+                            Modifier.size(50.dp)
                                 .then(
                                     if (canCreateMontage) {
                                         Modifier.graphicsLayer { rotationZ = rotation }

@@ -48,35 +48,25 @@ fun ColorPickerDialog(initialColor: Color, onSelect: (Color) -> Unit, onDismiss:
 
     MomentumDialog(onDismissRequest = onDismiss) {
         Column(
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(16.dp),
+            modifier = Modifier.wrapContentSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             HsvColorPicker(
-                modifier = Modifier
-                    .width(350.dp)
-                    .height(300.dp)
-                    .padding(top = 10.dp),
+                modifier = Modifier.width(350.dp).height(300.dp).padding(top = 10.dp),
                 initialColor = initialColor,
                 controller = controller,
             )
 
             BrightnessSlider(
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .height(35.dp),
+                modifier = Modifier.padding(top = 10.dp).height(35.dp),
                 initialColor = initialColor,
                 controller = controller,
             )
 
             AlphaTile(
                 modifier =
-                    Modifier
-                        .size(80.dp)
-                        .padding(vertical = 10.dp)
-                        .clip(RoundedCornerShape(6.dp)),
+                    Modifier.size(80.dp).padding(vertical = 10.dp).clip(RoundedCornerShape(6.dp)),
                 controller = controller,
             )
 

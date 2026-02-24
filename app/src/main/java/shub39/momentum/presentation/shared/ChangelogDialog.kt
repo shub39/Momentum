@@ -52,9 +52,7 @@ fun ChangelogDialog(
 ) {
     BasicAlertDialog(onDismissRequest = onDismissRequest, modifier = modifier) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = 500.dp),
+            modifier = Modifier.fillMaxWidth().heightIn(max = 500.dp),
             shape = MaterialTheme.shapes.extraLarge,
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -82,9 +80,7 @@ fun ChangelogDialog(
 
                 item {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.End,
                     ) {
                         TextButton(onClick = onDismissRequest) {

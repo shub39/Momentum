@@ -61,9 +61,7 @@ fun CameraAnimation() {
     }
 
     Box(
-        modifier = Modifier
-            .size(iconSize)
-            .offset { IntOffset(0, iconOffsetY.value.roundToInt()) },
+        modifier = Modifier.size(iconSize).offset { IntOffset(0, iconOffsetY.value.roundToInt()) },
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -77,10 +75,7 @@ fun CameraAnimation() {
             painter = painterResource(R.drawable.notification),
             contentDescription = "Notification",
             modifier =
-                Modifier
-                    .size(notificationSize)
-                    .align(Alignment.TopEnd)
-                    .scale(notifScale.value),
+                Modifier.size(notificationSize).align(Alignment.TopEnd).scale(notifScale.value),
             tint = MaterialTheme.colorScheme.error,
         )
     }

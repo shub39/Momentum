@@ -113,11 +113,11 @@ class FaceDetectorImpl(private val context: Context) : FaceDetector {
 
                 val headAngle =
                     Math.toDegrees(
-                        atan2(
-                            ((rightEye.y() - leftEye.y()) * height).toDouble(),
-                            ((rightEye.x() - leftEye.x()) * width).toDouble(),
+                            atan2(
+                                ((rightEye.y() - leftEye.y()) * height).toDouble(),
+                                ((rightEye.x() - leftEye.x()) * width).toDouble(),
+                            )
                         )
-                    )
                         .toFloat()
 
                 FaceData(

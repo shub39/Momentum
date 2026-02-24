@@ -72,7 +72,8 @@ fun AlarmCard(project: Project, onAction: (ProjectAction) -> Unit, modifier: Mod
     var showDialog by remember { mutableStateOf(false) }
 
     val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { granted ->
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {
+            granted ->
             if (granted) showDialog = true
             else
                 Toast.makeText(context, "Notification permission denied", Toast.LENGTH_SHORT).show()
@@ -80,29 +81,25 @@ fun AlarmCard(project: Project, onAction: (ProjectAction) -> Unit, modifier: Mod
 
     val contentColor = MaterialTheme.colorScheme.onSurface
     val containerColor by
-    animateColorAsState(
-        targetValue =
-            if (project.alarm != null) {
-                MaterialTheme.colorScheme.surfaceContainerHigh
-            } else {
-                MaterialTheme.colorScheme.surfaceContainerLow
-            }
-    )
+        animateColorAsState(
+            targetValue =
+                if (project.alarm != null) {
+                    MaterialTheme.colorScheme.surfaceContainerHigh
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerLow
+                }
+        )
 
     val roundness by animateDpAsState(targetValue = if (project.alarm != null) 16.dp else 100.dp)
 
     Card(
-        modifier = modifier
-            .animateContentSize()
-            .fillMaxWidth(),
+        modifier = modifier.animateContentSize().fillMaxWidth(),
         colors =
             CardDefaults.cardColors(contentColor = contentColor, containerColor = containerColor),
         shape = RoundedCornerShape(roundness),
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -116,7 +113,7 @@ fun AlarmCard(project: Project, onAction: (ProjectAction) -> Unit, modifier: Mod
                     Text(
                         text =
                             stringResource(R.string.everyday_at) +
-                                    " ${
+                                " ${
                             LocalTime.ofSecondOfDay(it.time).format(
                                 DateTimeFormatter.ofLocalizedTime(
                                     FormatStyle.SHORT
@@ -134,10 +131,10 @@ fun AlarmCard(project: Project, onAction: (ProjectAction) -> Unit, modifier: Mod
                     if (checked) {
                         if (
                             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                            ContextCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.POST_NOTIFICATIONS,
-                            ) != PackageManager.PERMISSION_GRANTED
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.POST_NOTIFICATIONS,
+                                ) != PackageManager.PERMISSION_GRANTED
                         ) {
                             launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
                         } else {

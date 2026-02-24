@@ -67,17 +67,12 @@ fun FavDayCard(day: Day, onClick: () -> Unit, modifier: Modifier = Modifier) {
                     Icon(
                         painter = painterResource(R.drawable.warning),
                         contentDescription = "Placeholder",
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(70.dp),
+                        modifier = Modifier.align(Alignment.Center).size(70.dp),
                     )
                 },
                 previewPlaceholder = getPlaceholder(),
                 modifier =
-                    Modifier
-                        .clip(RoundedCornerShape(32.dp))
-                        .heightIn(max = 300.dp)
-                        .fillMaxWidth(),
+                    Modifier.clip(RoundedCornerShape(32.dp)).heightIn(max = 300.dp).fillMaxWidth(),
             )
 
             Spacer(modifier = Modifier.height(12.dp))

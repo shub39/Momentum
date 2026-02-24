@@ -61,9 +61,7 @@ fun AutoAnimation() {
     }
 
     Box(
-        modifier = Modifier
-            .size(iconSize)
-            .offset { IntOffset(0, iconOffsetY.value.roundToInt()) },
+        modifier = Modifier.size(iconSize).offset { IntOffset(0, iconOffsetY.value.roundToInt()) },
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -77,10 +75,7 @@ fun AutoAnimation() {
             painter = painterResource(R.drawable.check_circle),
             contentDescription = "Notification",
             modifier =
-                Modifier
-                    .size(notificationSize)
-                    .align(Alignment.TopEnd)
-                    .scale(notifScale.value),
+                Modifier.size(notificationSize).align(Alignment.TopEnd).scale(notifScale.value),
             tint = MaterialTheme.colorScheme.error,
         )
     }

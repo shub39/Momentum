@@ -83,9 +83,7 @@ fun AddProject(onAction: (HomeAction) -> Unit, onNavigateBack: () -> Unit) {
                     shape = MaterialTheme.shapes.medium,
                     isError = newProjectTitle.length >= 20,
                     placeholder = { Text(text = stringResource(R.string.title)) },
-                    modifier = Modifier
-                        .widthIn(max = 300.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                 )
 
                 OutlinedTextField(
@@ -95,9 +93,7 @@ fun AddProject(onAction: (HomeAction) -> Unit, onNavigateBack: () -> Unit) {
                     shape = MaterialTheme.shapes.medium,
                     isError = newProjectDescription.length >= 100,
                     placeholder = { Text(text = stringResource(R.string.description)) },
-                    modifier = Modifier
-                        .widthIn(max = 300.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                 )
 
                 Button(
@@ -112,11 +108,9 @@ fun AddProject(onAction: (HomeAction) -> Unit, onNavigateBack: () -> Unit) {
                     },
                     enabled =
                         newProjectTitle.length <= 20 &&
-                                newProjectDescription.length <= 100 &&
-                                newProjectTitle.isNotBlank(),
-                    modifier = Modifier
-                        .widthIn(max = 300.dp)
-                        .fillMaxWidth(),
+                            newProjectDescription.length <= 100 &&
+                            newProjectTitle.isNotBlank(),
+                    modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                 ) {
                     Text(text = stringResource(R.string.add_new_project))
                 }
