@@ -24,15 +24,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 sealed interface ProjectDao {
-    @Query("SELECT * FROM projects_table")
-    fun getProjects(): Flow<List<ProjectEntity>>
+    @Query("SELECT * FROM projects_table") fun getProjects(): Flow<List<ProjectEntity>>
 
     @Query("SELECT * FROM projects_table WHERE id = :id")
     suspend fun getProjectById(id: Long): ProjectEntity?
 
-    @Upsert
-    suspend fun upsertProject(projectEntity: ProjectEntity)
+    @Upsert suspend fun upsertProject(projectEntity: ProjectEntity)
 
-    @Delete
-    suspend fun deleteProject(projectEntity: ProjectEntity)
+    @Delete suspend fun deleteProject(projectEntity: ProjectEntity)
 }

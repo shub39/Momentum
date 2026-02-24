@@ -21,8 +21,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.Theme
 
-@Serializable
-data class VersionEntry(val version: String, val changes: List<String>)
+@Serializable data class VersionEntry(val version: String, val changes: List<String>)
 
 typealias Changelog = List<VersionEntry>
 

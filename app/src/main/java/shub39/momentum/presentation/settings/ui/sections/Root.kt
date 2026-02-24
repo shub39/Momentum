@@ -115,9 +115,7 @@ fun Root(
                         ),
                 ) {
                     Row(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
@@ -165,9 +163,7 @@ fun Root(
                         )
                     },
                     modifier =
-                        Modifier
-                            .clip(detachedItemShape())
-                            .clickable { onNavigateToLookAndFeel() },
+                        Modifier.clip(detachedItemShape()).clickable { onNavigateToLookAndFeel() },
                 )
             }
 
@@ -189,11 +185,9 @@ fun Root(
                         )
                     },
                     modifier =
-                        Modifier
-                            .clip(detachedItemShape())
-                            .clickable {
-                                onAction(SettingsAction.OnOnboardingToggle(false))
-                            },
+                        Modifier.clip(detachedItemShape()).clickable {
+                            onAction(SettingsAction.OnOnboardingToggle(false))
+                        },
                 )
             }
 
@@ -214,9 +208,7 @@ fun Root(
                         )
                     },
                     modifier =
-                        Modifier
-                            .clip(detachedItemShape())
-                            .clickable { onNavigateToChangelog() },
+                        Modifier.clip(detachedItemShape()).clickable { onNavigateToChangelog() },
                 )
             }
         }

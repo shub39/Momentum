@@ -44,7 +44,7 @@ fun reminderNotification(context: Context, project: Project) {
     with(NotificationManagerCompat.from(context)) {
         if (
             ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED
+                PackageManager.PERMISSION_GRANTED
         ) {
             notify(project.id.hashCode(), builder.build())
         }

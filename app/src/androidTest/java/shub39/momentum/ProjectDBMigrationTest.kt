@@ -99,10 +99,10 @@ class ProjectDBMigrationTest {
 
         // Open the database with the latest version to run all migrations.
         Room.databaseBuilder(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            ProjectDatabase::class.java,
-            DB_NAME,
-        )
+                InstrumentationRegistry.getInstrumentation().targetContext,
+                ProjectDatabase::class.java,
+                DB_NAME,
+            )
             .build()
             .apply { openHelper.writableDatabase.close() }
     }

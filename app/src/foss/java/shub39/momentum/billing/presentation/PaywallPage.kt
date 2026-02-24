@@ -49,15 +49,11 @@ fun PaywallPage(isPlusUser: Boolean, onDismissRequest: () -> Unit, modifier: Mod
 
     Scaffold { paddingValues ->
         Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+            modifier = modifier.fillMaxSize().padding(paddingValues),
             contentAlignment = Alignment.Center,
         ) {
             Column(
-                modifier = Modifier
-                    .padding(horizontal = 32.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.padding(horizontal = 32.dp).fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {

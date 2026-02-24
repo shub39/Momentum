@@ -48,20 +48,15 @@ import shub39.momentum.viewmodels.SettingsViewModel
 
 @Serializable
 private sealed interface Screens {
-    @Serializable
-    data object Onboarding : Screens
+    @Serializable data object Onboarding : Screens
 
-    @Serializable
-    data object HomeGraph : Screens
+    @Serializable data object HomeGraph : Screens
 
-    @Serializable
-    data object ProjectGraph : Screens
+    @Serializable data object ProjectGraph : Screens
 
-    @Serializable
-    data object SettingsGraph : Screens
+    @Serializable data object SettingsGraph : Screens
 
-    @Serializable
-    data object PaywallPage : Screens
+    @Serializable data object PaywallPage : Screens
 }
 
 @Composable
@@ -85,9 +80,7 @@ fun App() {
             exitTransition = { fadeOut(tween(300)) },
             popEnterTransition = { fadeIn(tween(300)) },
             popExitTransition = { fadeOut(tween(300)) },
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize(),
+            modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
         ) {
             composable<Screens.HomeGraph> {
                 val homeViewModel: HomeViewModel = koinInject()

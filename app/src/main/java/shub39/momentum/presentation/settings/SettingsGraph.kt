@@ -28,14 +28,11 @@ import shub39.momentum.presentation.settings.ui.sections.Root
 
 @Serializable
 private sealed interface SettingsRoutes {
-    @Serializable
-    data object Root : SettingsRoutes
+    @Serializable data object Root : SettingsRoutes
 
-    @Serializable
-    data object LookAndFeel : SettingsRoutes
+    @Serializable data object LookAndFeel : SettingsRoutes
 
-    @Serializable
-    data object Changelog : SettingsRoutes
+    @Serializable data object Changelog : SettingsRoutes
 }
 
 @Composable

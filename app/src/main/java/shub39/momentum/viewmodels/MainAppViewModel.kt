@@ -96,24 +96,24 @@ class MainAppViewModel(
                     .launchIn(this)
 
                 combine(
-                    datastore.getPaletteStyle(),
-                    datastore.getFontFlow(),
-                    datastore.getSeedColorFlow(),
-                    datastore.getAppThemePrefFlow(),
-                    datastore.getAmoledPrefFlow(),
-                ) { style, font, seedColor, appTheme, amoled ->
-                    _state.update {
-                        it.copy(
-                            theme =
-                                it.theme.copy(
-                                    paletteStyle = style,
-                                    font = font,
-                                    seedColor = seedColor,
-                                    appTheme = appTheme,
-                                    isAmoled = amoled,
-                                )
-                        )
-                    }
+                        datastore.getPaletteStyle(),
+                        datastore.getFontFlow(),
+                        datastore.getSeedColorFlow(),
+                        datastore.getAppThemePrefFlow(),
+                        datastore.getAmoledPrefFlow(),
+                    ) { style, font, seedColor, appTheme, amoled ->
+                        _state.update {
+                            it.copy(
+                                theme =
+                                    it.theme.copy(
+                                        paletteStyle = style,
+                                        font = font,
+                                        seedColor = seedColor,
+                                        appTheme = appTheme,
+                                        isAmoled = amoled,
+                                    )
+                            )
+                        }
                     }
                     .launchIn(this)
 

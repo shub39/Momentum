@@ -127,18 +127,14 @@ fun ProjectCalendar(
                             contentColor = MaterialTheme.colorScheme.onPrimary,
                             containerColor = MaterialTheme.colorScheme.primary,
                         ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     shape = CircleShape,
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier =
-                            Modifier
-                                .padding(horizontal = 12.dp, vertical = 3.dp)
-                                .fillMaxWidth(),
+                            Modifier.padding(horizontal = 12.dp, vertical = 3.dp).fillMaxWidth(),
                     ) {
                         Text(
                             text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
@@ -156,8 +152,7 @@ fun ProjectCalendar(
 
                     Box(
                         modifier =
-                            Modifier
-                                .align(Alignment.Center)
+                            Modifier.align(Alignment.Center)
                                 .size(40.dp)
                                 .padding(2.dp)
                                 .clip(CircleShape)
@@ -177,8 +172,7 @@ fun ProjectCalendar(
                                         failure = {
                                             Box(
                                                 modifier =
-                                                    Modifier
-                                                        .matchParentSize()
+                                                    Modifier.matchParentSize()
                                                         .border(
                                                             width = 2.dp,
                                                             color = MaterialTheme.colorScheme.error,
@@ -186,16 +180,12 @@ fun ProjectCalendar(
                                                         )
                                             )
                                         },
-                                        modifier = Modifier
-                                            .size(38.dp)
-                                            .clip(CircleShape)
-                                            .blur(2.dp),
+                                        modifier = Modifier.size(38.dp).clip(CircleShape).blur(2.dp),
                                     )
 
                                     Box(
                                         modifier =
-                                            Modifier
-                                                .size(38.dp)
+                                            Modifier.size(38.dp)
                                                 .background(
                                                     color =
                                                         MaterialTheme.colorScheme.surface.copy(

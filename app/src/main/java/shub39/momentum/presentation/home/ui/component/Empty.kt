@@ -37,9 +37,7 @@ import shub39.momentum.R
 @Composable
 fun Empty(imageRes: Int = R.drawable.landscape) {
     Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize(),
+        modifier = Modifier.padding(16.dp).fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

@@ -42,23 +42,24 @@ internal class FrameBuilder(
         private const val TIMEOUT_USEC = 10_000L
     }
 
-    private val mediaFormat: MediaFormat = MediaFormat.createVideoFormat(
-        muxerConfig.mimeType,
-        muxerConfig.videoWidth,
-        muxerConfig.videoHeight,
-    )
-        .apply {
-            setInteger(
-                MediaFormat.KEY_COLOR_FORMAT,
-                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface,
+    private val mediaFormat: MediaFormat =
+        MediaFormat.createVideoFormat(
+                muxerConfig.mimeType,
+                muxerConfig.videoWidth,
+                muxerConfig.videoHeight,
             )
-            setInteger(MediaFormat.KEY_BIT_RATE, muxerConfig.bitrate)
-            setInteger(MediaFormat.KEY_FRAME_RATE, muxerConfig.framesPerSecond.toInt())
-            setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, muxerConfig.iFrameInterval)
-            setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_FULL)
-            setInteger(MediaFormat.KEY_COLOR_STANDARD, MediaFormat.COLOR_STANDARD_BT709)
-            setInteger(MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_SDR_VIDEO)
-        }
+            .apply {
+                setInteger(
+                    MediaFormat.KEY_COLOR_FORMAT,
+                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface,
+                )
+                setInteger(MediaFormat.KEY_BIT_RATE, muxerConfig.bitrate)
+                setInteger(MediaFormat.KEY_FRAME_RATE, muxerConfig.framesPerSecond.toInt())
+                setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, muxerConfig.iFrameInterval)
+                setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_FULL)
+                setInteger(MediaFormat.KEY_COLOR_STANDARD, MediaFormat.COLOR_STANDARD_BT709)
+                setInteger(MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_SDR_VIDEO)
+            }
     private val mediaCodec: MediaCodec
     private val bufferInfo = MediaCodec.BufferInfo()
     private var surface: Surface? = null

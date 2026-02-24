@@ -185,9 +185,7 @@ fun ProjectDetails(
                         days = state.days,
                         onNavigateToDayInfo = onNavigateToDayInfo,
                         showGuide = showGuide,
-                        modifier = Modifier
-                            .animateContentSize()
-                            .padding(horizontal = 16.dp),
+                        modifier = Modifier.animateContentSize().padding(horizontal = 16.dp),
                     )
                 }
 
@@ -216,8 +214,7 @@ fun ProjectDetails(
                     item {
                         Column(
                             modifier =
-                                Modifier
-                                    .padding(horizontal = 32.dp, vertical = 60.dp)
+                                Modifier.padding(horizontal = 32.dp, vertical = 60.dp)
                                     .fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -275,9 +272,7 @@ fun ProjectDetails(
                 }
             ) {
                 Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
@@ -308,9 +303,7 @@ fun ProjectDetails(
                         Button(
                             onClick = { onAction(ProjectAction.OnStartFaceScan) },
                             enabled = state.scanState is ScanState.Idle,
-                            modifier = Modifier
-                                .widthIn(max = 300.dp)
-                                .fillMaxWidth(),
+                            modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.start_scan))
                         }
@@ -321,9 +314,7 @@ fun ProjectDetails(
                                 showRescanDialog = false
                             },
                             enabled = state.scanState is ScanState.Done,
-                            modifier = Modifier
-                                .widthIn(max = 300.dp)
-                                .fillMaxWidth(),
+                            modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.done))
                         }
@@ -338,9 +329,7 @@ fun ProjectDetails(
 
             MomentumDialog(onDismissRequest = { showEditDialog = false }) {
                 Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
@@ -358,9 +347,7 @@ fun ProjectDetails(
                         shape = MaterialTheme.shapes.medium,
                         isError = newProjectTitle.length >= 20,
                         placeholder = { Text(text = stringResource(R.string.title)) },
-                        modifier = Modifier
-                            .widthIn(max = 300.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                     )
 
                     OutlinedTextField(
@@ -370,9 +357,7 @@ fun ProjectDetails(
                         shape = MaterialTheme.shapes.medium,
                         isError = newProjectDescription.length >= 100,
                         placeholder = { Text(text = stringResource(R.string.description)) },
-                        modifier = Modifier
-                            .widthIn(max = 300.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                     )
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -393,12 +378,10 @@ fun ProjectDetails(
                                 newProjectTitle.length <= 20 &&
                                     newProjectDescription.length <= 100 &&
                                     newProjectTitle.isNotBlank() &&
-                                        (newProjectTitle.trim() != state.project.title.trim() ||
-                                                newProjectDescription.trim() !=
-                                                state.project.description.trim()),
-                            modifier = Modifier
-                                .widthIn(max = 300.dp)
-                                .fillMaxWidth(),
+                                    (newProjectTitle.trim() != state.project.title.trim() ||
+                                        newProjectDescription.trim() !=
+                                            state.project.description.trim()),
+                            modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.edit))
                         }
@@ -414,9 +397,7 @@ fun ProjectDetails(
         if (showDeleteDialog) {
             MomentumDialog(onDismissRequest = { showDeleteDialog = false }) {
                 Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
@@ -438,9 +419,7 @@ fun ProjectDetails(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Button(
                             onClick = { showDeleteDialog = false },
-                            modifier = Modifier
-                                .widthIn(max = 300.dp)
-                                .fillMaxWidth(),
+                            modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.cancel))
                         }

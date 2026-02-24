@@ -99,17 +99,13 @@ fun ProjectListItem(
                         },
                         imageOptions = ImageOptions(contentScale = ContentScale.Crop),
                         previewPlaceholder = painterResource(R.drawable.ic_launcher_foreground),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .maskClip(RoundedCornerShape(16.dp)),
+                        modifier = Modifier.fillMaxSize().maskClip(RoundedCornerShape(16.dp)),
                     )
                 }
             }
 
             Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column {

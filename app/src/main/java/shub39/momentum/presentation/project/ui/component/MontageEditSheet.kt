@@ -141,10 +141,7 @@ fun MontageEditSheet(
         HorizontalDivider()
 
         LazyColumn(
-            modifier = modifier
-                .animateContentSize()
-                .fillMaxWidth()
-                .heightIn(max = 400.dp),
+            modifier = modifier.animateContentSize().fillMaxWidth().heightIn(max = 400.dp),
             contentPadding = PaddingValues(vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -190,9 +187,7 @@ fun MontageEditSheet(
             // show date/ date style
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -215,9 +210,7 @@ fun MontageEditSheet(
 
                 AnimatedVisibility(visible = state.montageConfig.showDate) {
                     FlowRow(
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         DateStyle.entries.forEach { style ->
@@ -249,9 +242,7 @@ fun MontageEditSheet(
             // show day message
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -276,9 +267,7 @@ fun MontageEditSheet(
             // stabilize faces
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -308,9 +297,7 @@ fun MontageEditSheet(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -342,10 +329,7 @@ fun MontageEditSheet(
                 item {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp)
-                            .zigZagBackground(),
+                        modifier = Modifier.fillMaxWidth().height(100.dp).zigZagBackground(),
                     ) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = onNavigateToPaywall) {
@@ -358,9 +342,7 @@ fun MontageEditSheet(
             // video quality
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -373,9 +355,7 @@ fun MontageEditSheet(
                 }
 
                 FlowRow(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     VideoQuality.entries.forEach { quality ->
@@ -403,9 +383,7 @@ fun MontageEditSheet(
             // text font
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -418,9 +396,7 @@ fun MontageEditSheet(
                 }
 
                 FlowRow(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Fonts.entries.forEach { font ->
@@ -444,9 +420,7 @@ fun MontageEditSheet(
             // show watermark
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -476,9 +450,7 @@ fun MontageEditSheet(
             // set background color
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

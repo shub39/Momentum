@@ -48,11 +48,9 @@ import shub39.momentum.presentation.shared.MomentumTheme
 
 @Serializable
 private sealed interface HomeRoutes {
-    @Serializable
-    data object ProjectList : HomeRoutes
+    @Serializable data object ProjectList : HomeRoutes
 
-    @Serializable
-    data object AddProject : HomeRoutes
+    @Serializable data object AddProject : HomeRoutes
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -75,9 +73,7 @@ fun HomeGraph(
         exitTransition = { fadeOut(tween(300)) },
         popEnterTransition = { fadeIn(tween(300)) },
         popExitTransition = { fadeOut(tween(300)) },
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize(),
+        modifier = modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
     ) {
         composable<HomeRoutes.ProjectList> {
             ProjectList(

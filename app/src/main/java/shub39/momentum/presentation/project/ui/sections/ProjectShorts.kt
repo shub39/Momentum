@@ -27,8 +27,7 @@ fun ProjectShorts(
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
     modifier: Modifier = Modifier,
-) {
-}
+) {}
 
 @Preview
 @Composable

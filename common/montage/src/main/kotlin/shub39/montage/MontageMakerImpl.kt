@@ -30,6 +30,9 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toRectF
 import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
+import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
@@ -42,9 +45,6 @@ import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.core.toDimensions
 import shub39.momentum.core.toFontRes
 import shub39.momentum.core.toFormatStyle
-import java.io.File
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class MontageMakerImpl(private val context: Context) : MontageMaker {
 
@@ -59,40 +59,42 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
         val sortedDays = days.sortedBy { it.date }
         val total = sortedDays.size
 
-        val textPaint = Paint().apply {
-            color = Color.WHITE
-            alpha = 255
-            isAntiAlias = true
-            style = Paint.Style.FILL
-            setShadowLayer(4f, 2f, 2f, Color.BLACK)
-            textSize = config.videoQuality.toDimensions().first * 0.04f
-            config.font.toFontRes()?.let { typeface = ResourcesCompat.getFont(context, it) }
-        }
+        val textPaint =
+            Paint().apply {
+                color = Color.WHITE
+                alpha = 255
+                isAntiAlias = true
+                style = Paint.Style.FILL
+                setShadowLayer(4f, 2f, 2f, Color.BLACK)
+                textSize = config.videoQuality.toDimensions().first * 0.04f
+                config.font.toFontRes()?.let { typeface = ResourcesCompat.getFont(context, it) }
+            }
 
-        val censorPaint = Paint().apply {
-            isAntiAlias = true
-            style = Paint.Style.FILL
-            color = config.backgroundColor.toArgb()
-        }
+        val censorPaint =
+            Paint().apply {
+                isAntiAlias = true
+                style = Paint.Style.FILL
+                color = config.backgroundColor.toArgb()
+            }
 
         var processedCount = 0
         val bitmapFlow = flow {
             sortedDays.forEach { day ->
                 processDay(
-                    day = day,
-                    config = config,
-                    textPaint = textPaint,
-                    censorPaint = censorPaint
-                )?.let { bitmap ->
-                    emit(bitmap)
-                }
+                        day = day,
+                        config = config,
+                        textPaint = textPaint,
+                        censorPaint = censorPaint,
+                    )
+                    ?.let { bitmap -> emit(bitmap) }
             }
         }
 
-        val flowForMuxer = bitmapFlow.onEach {
-            processedCount++
-            emit(MontageState.ProcessingImages(processedCount.toFloat() / total))
-        }
+        val flowForMuxer =
+            bitmapFlow.onEach {
+                processedCount++
+                emit(MontageState.ProcessingImages(processedCount.toFloat() / total))
+            }
 
         emit(MontageState.AssemblingVideo)
 
@@ -111,7 +113,7 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
         day: Day,
         config: MontageConfig,
         textPaint: Paint,
-        censorPaint: Paint
+        censorPaint: Paint,
     ): Bitmap? {
         val dimensions = config.videoQuality.toDimensions()
         val contentResolver = context.contentResolver
@@ -128,17 +130,8 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
                         )
                 } ?: ExifInterface.ORIENTATION_UNDEFINED
 
-            contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
-                val fd = pfd.fileDescriptor
-
-                val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                BitmapFactory.decodeFileDescriptor(fd, null, options)
-
-                options.inSampleSize =
-                    calculateInSampleSize(options, dimensions.first, dimensions.second)
-
-                options.inJustDecodeBounds = false
-                val decodedBitmap = BitmapFactory.decodeFileDescriptor(fd, null, options)
+            contentResolver.openInputStream(uri)?.use { pfd ->
+                val decodedBitmap = BitmapFactory.decodeStream(pfd)
 
                 val originalBitmap =
                     when (orientation) {
@@ -174,11 +167,9 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
                         val targetCenterX = dimensions.first / 2f
                         val targetCenterY = dimensions.second / 2f
 
+                        // move face center to (0,0)
                         // --- Build transform ---
-                        matrix.postTranslate(
-                            -faceCenterX,
-                            -faceCenterY,
-                        ) // move face center to (0,0)
+                        matrix.postTranslate(-faceCenterX, -faceCenterY)
                         matrix.postScale(scale, scale) // scale to target size
                         matrix.postRotate(-day.faceData!!.headAngle) // straighten roll
                         matrix.postTranslate(targetCenterX, targetCenterY) // center face
@@ -248,28 +239,5 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
     private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
         val matrix = Matrix().apply { postRotate(degrees) }
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-    }
-
-    private fun calculateInSampleSize(
-        options: BitmapFactory.Options,
-        reqWidth: Int,
-        reqHeight: Int,
-    ): Int {
-        // Raw height and width of image
-        val (height: Int, width: Int) = options.run { outHeight to outWidth }
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-            val halfHeight: Int = height / 2
-            val halfWidth: Int = width / 2
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-
-        return inSampleSize
     }
 }

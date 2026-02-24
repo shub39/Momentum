@@ -76,8 +76,7 @@ fun SelectableMiniPalette(
         ) {
             Surface(
                 modifier =
-                    Modifier
-                        .clickable(enabled = enabled, onClick = onClick)
+                    Modifier.clickable(enabled = enabled, onClick = onClick)
                         .padding(12.dp)
                         .size(50.dp),
                 shape = CircleShape,
@@ -85,15 +84,11 @@ fun SelectableMiniPalette(
             ) {
                 Box {
                     Surface(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .offset((-25).dp, 25.dp),
+                        modifier = Modifier.size(50.dp).offset((-25).dp, 25.dp),
                         color = Color(accents[1].tone(85)),
                     ) {}
                     Surface(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .offset(25.dp, 25.dp),
+                        modifier = Modifier.size(50.dp).offset(25.dp, 25.dp),
                         color = Color(accents[2].tone(75)),
                     ) {}
                     val animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium)
@@ -104,8 +99,7 @@ fun SelectableMiniPalette(
                     ) {
                         Box(
                             modifier =
-                                Modifier
-                                    .padding(10.dp)
+                                Modifier.padding(10.dp)
                                     .fillMaxSize()
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.primary),
@@ -114,9 +108,7 @@ fun SelectableMiniPalette(
                             Icon(
                                 painter = painterResource(R.drawable.check_border),
                                 contentDescription = "Checked",
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .size(16.dp),
+                                modifier = Modifier.padding(8.dp).size(16.dp),
                                 tint = MaterialTheme.colorScheme.surface,
                             )
                         }

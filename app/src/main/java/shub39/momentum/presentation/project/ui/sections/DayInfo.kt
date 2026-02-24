@@ -106,7 +106,7 @@ fun DayInfo(
 ) {
     val day = state.days.find { it.date == selectedDate }
     var imageFile: PlatformFile? by
-    remember(day) { mutableStateOf(day?.let { PlatformFile(it.image.toUri()) }) }
+        remember(day) { mutableStateOf(day?.let { PlatformFile(it.image.toUri()) }) }
     var isFavorite by remember(day) { mutableStateOf(day?.isFavorite ?: false) }
     var comment by remember(day) { mutableStateOf(day?.comment ?: "") }
 
@@ -253,28 +253,26 @@ private fun DayInfoContent(
         floatingActionButtonPosition = FabPosition.Center,
     ) { padding ->
         Column(
-            modifier = modifier
-                .padding(padding)
-                .fillMaxSize(),
+            modifier = modifier.padding(padding).fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (imageFile != null) {
                 val context = LocalContext.current
                 val zoomProgress by
-                animateFloatAsState(
-                    targetValue = if (highlightFace && day?.faceData.isValid()) 1f else 0f,
-                    animationSpec = tween(durationMillis = 500),
-                    label = "faceZoom",
-                )
+                    animateFloatAsState(
+                        targetValue = if (highlightFace && day?.faceData.isValid()) 1f else 0f,
+                        animationSpec = tween(durationMillis = 500),
+                        label = "faceZoom",
+                    )
 
                 // original image
                 val originalBitmap =
                     remember(imageFile) {
-                        context.contentResolver.openInputStream(imageFile.path.toUri())
-                            ?.use { stream ->
-                                BitmapFactory.decodeStream(stream)
-                            }
+                        context.contentResolver.openInputStream(imageFile.path.toUri())?.use {
+                            stream ->
+                            BitmapFactory.decodeStream(stream)
+                        }
                     }
 
                 // cropped image around the face
@@ -314,9 +312,7 @@ private fun DayInfoContent(
                     loading = { LoadingIndicator() },
                     success = { _, painter ->
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(MaterialTheme.shapes.large),
+                            modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.large),
                             contentAlignment = Alignment.Center,
                         ) {
                             // Show full image with fade out
@@ -324,11 +320,9 @@ private fun DayInfoContent(
                                 painter = painter,
                                 contentDescription = null,
                                 modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .graphicsLayer {
-                                            alpha = 1f - zoomProgress
-                                        },
+                                    Modifier.fillMaxWidth().graphicsLayer {
+                                        alpha = 1f - zoomProgress
+                                    },
                                 contentScale = ContentScale.Fit,
                             )
 
@@ -339,11 +333,9 @@ private fun DayInfoContent(
                                         bitmap = croppedFaceBitmap.asImageBitmap(),
                                         contentDescription = null,
                                         modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .graphicsLayer {
-                                                    alpha = zoomProgress
-                                                },
+                                            Modifier.fillMaxWidth().graphicsLayer {
+                                                alpha = zoomProgress
+                                            },
                                         contentScale = ContentScale.Fit,
                                     )
 
@@ -411,9 +403,7 @@ private fun DayInfoContent(
                     },
                     failure = {
                         Column(
-                            modifier = Modifier
-                                .size(300.dp)
-                                .padding(12.dp),
+                            modifier = Modifier.size(300.dp).padding(12.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
@@ -467,8 +457,7 @@ private fun DayInfoContent(
                         label = { Text(text = stringResource(R.string.add_comment)) },
                         shape = MaterialTheme.shapes.large,
                         modifier =
-                            Modifier
-                                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+                            Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
                                 .fillMaxWidth()
                                 .imePadding()
                                 .focusRequester(focusRequester),
@@ -483,8 +472,7 @@ private fun DayInfoContent(
                             }
                         },
                         modifier =
-                            Modifier
-                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
+                            Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
                                 .fillMaxWidth(),
                     ) {
                         Text(text = stringResource(R.string.done))

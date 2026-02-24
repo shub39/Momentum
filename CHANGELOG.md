@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.3
+
+- Fixed Montage maker face alignment bugs
+
 ## 1.5.2
 
 - Improved montage maker performance
