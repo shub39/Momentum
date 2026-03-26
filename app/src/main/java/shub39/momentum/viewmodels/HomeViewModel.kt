@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.core.interfaces.ProjectRepository

@@ -58,6 +58,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.exoplayer.ExoPlayer
 import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.FileKitDialogSettings
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberShareFileLauncher
 import io.github.vinceglb.filekit.write
@@ -94,7 +95,7 @@ fun ProjectMontageView(
     val lifeCycleOwner = LocalLifecycleOwner.current
 
     val fileShareLauncher = rememberShareFileLauncher()
-    val fileSaverLauncher = rememberFileSaverLauncher { file ->
+    val fileSaverLauncher = rememberFileSaverLauncher(dialogSettings = FileKitDialogSettings()) { file ->
         if (file != null) {
             (state.montage as? MontageState.Success)?.let { result ->
                 val platformFile = PlatformFile(result.file)

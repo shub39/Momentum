@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.BuildConfig
 import shub39.momentum.app.MainAppState
 import shub39.momentum.billing.domain.BillingHandler

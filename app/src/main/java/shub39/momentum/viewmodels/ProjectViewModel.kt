@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.core.enums.VideoAction
 import shub39.momentum.core.interfaces.AlarmScheduler
 import shub39.momentum.core.interfaces.FaceDetector
