@@ -94,6 +94,7 @@ import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -179,6 +180,7 @@ private fun DayInfoContent(
                             LocalDate.ofEpochDay(selectedDate)
                                 .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)),
                         maxLines = 1,
+                        fontFamily = flexFontRounded(),
                         modifier = Modifier.basicMarquee(),
                     )
                 },

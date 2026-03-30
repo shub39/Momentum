@@ -86,6 +86,8 @@ import shub39.momentum.presentation.project.ui.component.FavDayCard
 import shub39.momentum.presentation.project.ui.component.WeeklyHorizontalCalendar
 import shub39.momentum.presentation.shared.MomentumDialog
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontEmphasis
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @OptIn(
     ExperimentalMaterial3ExpressiveApi::class,
@@ -121,8 +123,10 @@ fun ProjectDetails(
             topBar = {
                 LargeFlexibleTopAppBar(
                     scrollBehavior = scrollBehavior,
-                    title = { Text(text = state.project.title) },
-                    subtitle = { Text(text = state.project.description) },
+                    title = { Text(text = state.project.title, fontFamily = flexFontEmphasis()) },
+                    subtitle = {
+                        Text(text = state.project.description, fontFamily = flexFontRounded())
+                    },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(

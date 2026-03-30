@@ -70,6 +70,7 @@ import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -93,7 +94,7 @@ fun ProjectCalendar(
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = state.project?.title ?: "") },
+                title = { Text(text = state.project?.title ?: "", fontFamily = flexFontRounded()) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(

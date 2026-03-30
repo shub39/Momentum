@@ -62,6 +62,8 @@ import shub39.momentum.presentation.home.HomeState
 import shub39.momentum.presentation.home.ui.component.Empty
 import shub39.momentum.presentation.home.ui.component.ProjectListItem
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontEmphasis
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -78,9 +80,14 @@ fun ProjectList(
         topBar = {
             LargeFlexibleTopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(R.string.app_name)) },
+                title = {
+                    Text(text = stringResource(R.string.app_name), fontFamily = flexFontEmphasis())
+                },
                 subtitle = {
-                    Text(text = "${state.projects.size} " + stringResource(R.string.projects))
+                    Text(
+                        text = "${state.projects.size} " + stringResource(R.string.projects),
+                        fontFamily = flexFontRounded(),
+                    )
                 },
                 actions = {
                     IconButton(

@@ -26,9 +26,7 @@ class MomentumApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        startKoin<AppModule> {
-            androidContext(this@MomentumApp)
-        }
+        startKoin<AppModule> { androidContext(this@MomentumApp) }
 
         BillingInitializerImpl().initialize(this)
     }

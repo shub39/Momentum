@@ -95,14 +95,15 @@ fun ProjectMontageView(
     val lifeCycleOwner = LocalLifecycleOwner.current
 
     val fileShareLauncher = rememberShareFileLauncher()
-    val fileSaverLauncher = rememberFileSaverLauncher(dialogSettings = FileKitDialogSettings()) { file ->
-        if (file != null) {
-            (state.montage as? MontageState.Success)?.let { result ->
-                val platformFile = PlatformFile(result.file)
-                scope.launch { file.write(platformFile) }
+    val fileSaverLauncher =
+        rememberFileSaverLauncher(dialogSettings = FileKitDialogSettings()) { file ->
+            if (file != null) {
+                (state.montage as? MontageState.Success)?.let { result ->
+                    val platformFile = PlatformFile(result.file)
+                    scope.launch { file.write(platformFile) }
+                }
             }
         }
-    }
 
     var showEditSheet by remember { mutableStateOf(false) }
 

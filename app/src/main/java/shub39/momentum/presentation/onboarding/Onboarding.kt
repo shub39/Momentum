@@ -43,6 +43,7 @@ import shub39.momentum.presentation.onboarding.ui.components.AutoAnimation
 import shub39.momentum.presentation.onboarding.ui.components.CameraAnimation
 import shub39.momentum.presentation.onboarding.ui.components.PrivateAnimation
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @Composable
 fun Onboarding(
@@ -76,7 +77,10 @@ fun Onboarding(
 
                             Text(
                                 text = "Create Montages Easily",
-                                style = MaterialTheme.typography.titleLarge,
+                                style =
+                                    MaterialTheme.typography.titleLarge.copy(
+                                        fontFamily = flexFontRounded()
+                                    ),
                                 textAlign = TextAlign.Center,
                             )
 
@@ -105,7 +109,10 @@ fun Onboarding(
 
                             Text(
                                 text = "Convenient and Automatic",
-                                style = MaterialTheme.typography.titleLarge,
+                                style =
+                                    MaterialTheme.typography.titleLarge.copy(
+                                        fontFamily = flexFontRounded()
+                                    ),
                                 textAlign = TextAlign.Center,
                             )
 
@@ -134,7 +141,10 @@ fun Onboarding(
 
                             Text(
                                 text = "Permissionless and Private",
-                                style = MaterialTheme.typography.titleLarge,
+                                style =
+                                    MaterialTheme.typography.titleLarge.copy(
+                                        fontFamily = flexFontRounded()
+                                    ),
                                 textAlign = TextAlign.Center,
                             )
 
