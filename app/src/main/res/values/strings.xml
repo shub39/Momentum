@@ -74,4 +74,5 @@
     <string name="rescan_faces">Rescan Faces</string>
     <string name="rescan_faces_desc">Rescan all the images and update face data for this project</string>
     <string name="start_scan">Start Scan</string>
+    <string name="whats_changed">What\'s Changed</string>
 </resources>

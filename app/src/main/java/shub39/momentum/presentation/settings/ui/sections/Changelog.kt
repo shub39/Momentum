@@ -18,44 +18,56 @@ package shub39.momentum.presentation.settings.ui.sections
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import shub39.momentum.R
 import shub39.momentum.app.Changelog
 import shub39.momentum.app.VersionEntry
+import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.detachedItemShape
+import shub39.momentum.presentation.shared.endItemShape
+import shub39.momentum.presentation.shared.flexFontEmphasis
+import shub39.momentum.presentation.shared.flexFontRounded
+import shub39.momentum.presentation.shared.leadingItemShape
+import shub39.momentum.presentation.shared.listItemColors
+import shub39.momentum.presentation.shared.middleItemShape
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Changelog(modifier: Modifier = Modifier, changelog: Changelog, onNavigateBack: () -> Unit) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
+            MediumFlexibleTopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(R.string.changelog)) },
+                title = {
+                    Text(text = stringResource(R.string.changelog), fontFamily = flexFontEmphasis())
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -69,6 +81,7 @@ fun Changelog(modifier: Modifier = Modifier, changelog: Changelog, onNavigateBac
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
             contentPadding =
                 PaddingValues(
                     top = padding.calculateTopPadding() + 16.dp,
@@ -82,18 +95,28 @@ fun Changelog(modifier: Modifier = Modifier, changelog: Changelog, onNavigateBac
                     Text(
                         text = versionEntry.version,
                         style =
-                            MaterialTheme.typography.headlineLarge.copy(
-                                fontWeight = FontWeight.Bold
+                            MaterialTheme.typography.headlineSmall.copy(
+                                fontFamily = flexFontRounded()
                             ),
                     )
                 }
 
-                itemsIndexed(versionEntry.changes) { index, change ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(text = "${index.plus(1)}.", fontWeight = FontWeight.Bold)
+                item { Spacer(modifier = Modifier.height(8.dp)) }
 
-                        Text(text = change, modifier = Modifier.weight(1f))
-                    }
+                itemsIndexed(versionEntry.changes) { index, change ->
+                    val shape =
+                        when {
+                            versionEntry.changes.size == 1 -> detachedItemShape()
+                            index == 0 -> leadingItemShape()
+                            index == versionEntry.changes.size - 1 -> endItemShape()
+                            else -> middleItemShape()
+                        }
+
+                    ListItem(
+                        colors = listItemColors(),
+                        modifier = Modifier.clip(shape),
+                        headlineContent = { Text(text = change) },
+                    )
                 }
 
                 item { Spacer(modifier = Modifier.height(32.dp)) }
@@ -105,7 +128,7 @@ fun Changelog(modifier: Modifier = Modifier, changelog: Changelog, onNavigateBac
 @Preview
 @Composable
 private fun ChangelogPreview() {
-    MomentumTheme {
+    MomentumTheme(theme = Theme()) {
         Changelog(
             changelog =
                 listOf(

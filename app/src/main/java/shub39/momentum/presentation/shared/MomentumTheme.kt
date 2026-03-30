@@ -24,6 +24,7 @@ import androidx.compose.ui.res.colorResource
 import com.materialkolor.DynamicMaterialTheme
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.core.toFontRes
 import shub39.momentum.presentation.toMPaletteStyle
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -44,7 +45,7 @@ fun MomentumTheme(theme: Theme = Theme(), content: @Composable () -> Unit) {
             },
         isAmoled = theme.isAmoled,
         style = theme.paletteStyle.toMPaletteStyle(),
-        typography = provideTypography(font = theme.font),
+        typography = provideTypography(font = theme.font.toFontRes()),
         content = content,
     )
 }

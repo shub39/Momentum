@@ -38,7 +38,7 @@ fun Fonts.toFontRes(): Int? {
         Fonts.MONTSERRAT -> R.font.montserrat
         Fonts.FIGTREE -> R.font.figtree
         Fonts.QUICKSAND -> R.font.quicksand
-        Fonts.GOOGLE_SANS -> R.font.google_sans
+        Fonts.GOOGLE_SANS -> R.font.google_sans_flex
         Fonts.SYSTEM_DEFAULT -> null
     }
 }

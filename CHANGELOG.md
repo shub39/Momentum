@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+
+- Material 3 Expressive UI changes
+
 ## 1.5.3
 
 - Fixed Montage maker face alignment bugs
