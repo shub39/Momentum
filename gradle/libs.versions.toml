@@ -15,7 +15,7 @@ kotlin = "2.3.20"
 ksp = "2.3.6"
 material3 = "1.5.0-alpha16"
 room = "2.8.4"
-navigation = "2.9.7"
+navigation = "1.1.0-rc01"
 serialization = "1.10.0"
 materialkolor = "4.1.1"
 compose = "1.10.6"
@@ -50,7 +50,8 @@ androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation" }
+androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotation-jvm" }
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 

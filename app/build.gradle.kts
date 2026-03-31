@@ -130,7 +130,8 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.calendar)
     implementation(libs.filekit.core)
     implementation(libs.filekit.dialogs.compose)

@@ -49,7 +49,7 @@ import shub39.momentum.presentation.shared.flexFontRounded
 fun Onboarding(
     state: OnboardingState,
     onAction: (OnboardingAction) -> Unit,
-    onNavigateToHome: () -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState { 3 }
@@ -159,7 +159,7 @@ fun Onboarding(
                             Button(
                                 onClick = {
                                     onAction(OnboardingAction.OnOnboardingDone)
-                                    onNavigateToHome()
+                                    onNavigateBack()
                                 }
                             ) {
                                 Text(text = "Done")
@@ -176,6 +176,6 @@ fun Onboarding(
 @Preview
 private fun Preview() {
     MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
-        Onboarding(state = OnboardingState(), onAction = {}, onNavigateToHome = {})
+        Onboarding(state = OnboardingState(), onAction = {}, onNavigateBack = {})
     }
 }
