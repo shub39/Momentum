@@ -18,22 +18,21 @@ package shub39.momentum.presentation.settings
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
+import shub39.momentum.navigation.horizontalTransitionMetadata
 import shub39.momentum.presentation.settings.ui.sections.Changelog
 import shub39.momentum.presentation.settings.ui.sections.LookAndFeel
 import shub39.momentum.presentation.settings.ui.sections.Root
 
-@Serializable
-private sealed interface SettingsRoutes {
-    @Serializable data object Root : SettingsRoutes
+@Serializable data object Root : NavKey
 
-    @Serializable data object LookAndFeel : SettingsRoutes
+@Serializable data object LookAndFeel : NavKey
 
-    @Serializable data object Changelog : SettingsRoutes
-}
+@Serializable data object Changelog : NavKey
 
 @Composable
 fun SettingsGraph(
@@ -45,36 +44,40 @@ fun SettingsGraph(
     onNavigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val navController = rememberNavController()
+    val backStack = rememberNavBackStack(Root)
 
-    NavHost(
-        navController = navController,
-        startDestination = SettingsRoutes.Root,
+    NavDisplay(
         modifier = modifier,
-    ) {
-        composable<SettingsRoutes.Root> {
-            Root(
-                onAction = onAction,
-                onNavigateBack = onNavigateBack,
-                onNavigateToOnboarding = onNavigateToOnboarding,
-                onNavigateToLookAndFeel = { navController.navigate(SettingsRoutes.LookAndFeel) },
-                onNavigateToPaywall = onNavigateToPaywall,
-                onNavigateToChangelog = { navController.navigate(SettingsRoutes.Changelog) },
-            )
-        }
+        backStack = backStack,
+        entryProvider =
+            entryProvider {
+                entry<Root> {
+                    Root(
+                        onAction = onAction,
+                        onNavigateBack = onNavigateBack,
+                        onNavigateToOnboarding = onNavigateToOnboarding,
+                        onNavigateToLookAndFeel = { backStack.add(LookAndFeel) },
+                        onNavigateToPaywall = onNavigateToPaywall,
+                        onNavigateToChangelog = { backStack.add(Changelog) },
+                    )
+                }
 
-        composable<SettingsRoutes.LookAndFeel> {
-            LookAndFeel(
-                state = state,
-                onAction = onAction,
-                onNavigateBack = { navController.navigateUp() },
-                isPlusUser = isPlusUser,
-                onNavigateToPaywall = onNavigateToPaywall,
-            )
-        }
+                entry<LookAndFeel>(metadata = horizontalTransitionMetadata()) {
+                    LookAndFeel(
+                        state = state,
+                        onAction = onAction,
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                        isPlusUser = isPlusUser,
+                        onNavigateToPaywall = onNavigateToPaywall,
+                    )
+                }
 
-        composable<SettingsRoutes.Changelog> {
-            Changelog(changelog = state.changelog, onNavigateBack = { navController.navigateUp() })
-        }
-    }
+                entry<Changelog>(metadata = horizontalTransitionMetadata()) {
+                    Changelog(
+                        changelog = state.changelog,
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                    )
+                }
+            },
+    )
 }
