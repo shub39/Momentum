@@ -21,8 +21,4 @@ import shub39.momentum.app.Changelog
 import shub39.momentum.core.data_classes.Theme
 
 @Immutable
-data class SettingsState(
-    val theme: Theme = Theme(),
-    val isOnboardingDone: Boolean = true,
-    val changelog: Changelog = emptyList(),
-)
+data class SettingsState(val theme: Theme = Theme(), val changelog: Changelog = emptyList())

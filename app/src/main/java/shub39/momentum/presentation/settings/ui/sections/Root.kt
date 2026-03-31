@@ -67,6 +67,7 @@ fun Root(
     onAction: (SettingsAction) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToLookAndFeel: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
     onNavigateToPaywall: () -> Unit,
     onNavigateToChangelog: () -> Unit,
     modifier: Modifier = Modifier,
@@ -185,9 +186,7 @@ fun Root(
                         )
                     },
                     modifier =
-                        Modifier.clip(detachedItemShape()).clickable {
-                            onAction(SettingsAction.OnOnboardingToggle(false))
-                        },
+                        Modifier.clip(detachedItemShape()).clickable { onNavigateToOnboarding() },
                 )
             }
 
@@ -225,6 +224,7 @@ private fun Preview() {
             onAction = {},
             onNavigateToPaywall = {},
             onNavigateToChangelog = {},
+            onNavigateToOnboarding = {},
         )
     }
 }

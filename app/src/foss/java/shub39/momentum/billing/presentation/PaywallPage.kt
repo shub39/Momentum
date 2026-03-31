@@ -16,7 +16,6 @@
  */
 package shub39.momentum.billing.presentation
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,8 +43,6 @@ import shub39.momentum.R
 @Composable
 fun PaywallPage(isPlusUser: Boolean, onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
-
-    BackHandler { onDismissRequest() }
 
     Scaffold { paddingValues ->
         Box(

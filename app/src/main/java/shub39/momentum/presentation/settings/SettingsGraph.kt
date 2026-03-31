@@ -42,6 +42,7 @@ fun SettingsGraph(
     onNavigateBack: () -> Unit,
     isPlusUser: Boolean,
     onNavigateToPaywall: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
@@ -55,6 +56,7 @@ fun SettingsGraph(
             Root(
                 onAction = onAction,
                 onNavigateBack = onNavigateBack,
+                onNavigateToOnboarding = onNavigateToOnboarding,
                 onNavigateToLookAndFeel = { navController.navigate(SettingsRoutes.LookAndFeel) },
                 onNavigateToPaywall = onNavigateToPaywall,
                 onNavigateToChangelog = { navController.navigate(SettingsRoutes.Changelog) },

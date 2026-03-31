@@ -16,31 +16,23 @@
  */
 package shub39.momentum.app
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.metadata
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import shub39.momentum.billing.presentation.PaywallPage
+import shub39.momentum.navigation.horizontalTransitionMetadata
+import shub39.momentum.navigation.verticalTransitionMetadata
 import shub39.momentum.presentation.home.HomeGraph
 import shub39.momentum.presentation.onboarding.Onboarding
 import shub39.momentum.presentation.project.ProjectGraph
@@ -53,20 +45,15 @@ import shub39.momentum.viewmodels.OnboardingViewModel
 import shub39.momentum.viewmodels.ProjectViewModel
 import shub39.momentum.viewmodels.SettingsViewModel
 
-@Serializable
-data object Onboarding : NavKey
+@Serializable data object Onboarding : NavKey
 
-@Serializable
-data object HomeGraph : NavKey
+@Serializable data object HomeGraph : NavKey
 
-@Serializable
-data object ProjectGraph : NavKey
+@Serializable data object ProjectGraph : NavKey
 
-@Serializable
-data object SettingsGraph : NavKey
+@Serializable data object SettingsGraph : NavKey
 
-@Serializable
-data object PaywallPage : NavKey
+@Serializable data object PaywallPage : NavKey
 
 @Composable
 fun App() {
@@ -75,175 +62,84 @@ fun App() {
     val mainViewModel: MainAppViewModel = koinInject()
     val state by mainViewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.isOnboardingDone) {
-        if (!state.isOnboardingDone) {
-            backStack.add(Onboarding)
-        }
-    }
-
     MomentumTheme(theme = state.theme) {
         NavDisplay(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize(),
+            modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
-            entryProvider = entryProvider {
-                entry<HomeGraph> {
-                    val homeViewModel: HomeViewModel = koinInject()
-                    val homeState by homeViewModel.state.collectAsStateWithLifecycle()
+            entryProvider =
+                entryProvider {
+                    entry<HomeGraph> {
+                        val homeViewModel: HomeViewModel = koinInject()
+                        val homeState by homeViewModel.state.collectAsStateWithLifecycle()
 
-                    HomeGraph(
-                        state = homeState,
-                        onAction = homeViewModel::onAction,
-                        onNavigateToSettings = { backStack.add(SettingsGraph) },
-                        onNavigateToProject = { backStack.add(ProjectGraph) },
-                        isPlusUser = state.isPlusUser,
-                        onNavigateToPaywall = { backStack.add(PaywallPage) },
-                    )
-                }
-
-                entry<Onboarding>(
-                    metadata = metadata {
-                        put(NavDisplay.TransitionKey) {
-                            slideInVertically(
-                                initialOffsetY = { it },
-                                animationSpec = tween(300)
-                            ) togetherWith ExitTransition.KeepUntilTransitionsFinished
-                        }
-                        put(NavDisplay.PopTransitionKey) {
-                            EnterTransition.None togetherWith
-                                    slideOutVertically(
-                                        targetOffsetY = { it },
-                                        animationSpec = tween(300)
-                                    )
-                        }
-                        put(NavDisplay.PredictivePopTransitionKey) {
-                            EnterTransition.None togetherWith
-                                    slideOutVertically(
-                                        targetOffsetY = { it },
-                                        animationSpec = tween(300)
-                                    )
-                        }
+                        HomeGraph(
+                            state = homeState,
+                            onAction = homeViewModel::onAction,
+                            onNavigateToSettings = { backStack.add(SettingsGraph) },
+                            onNavigateToProject = { backStack.add(ProjectGraph) },
+                            isPlusUser = state.isPlusUser,
+                            onNavigateToPaywall = { backStack.add(PaywallPage) },
+                        )
                     }
-                ) {
-                    val onboardingViewModel: OnboardingViewModel = koinViewModel()
-                    val onboardingState by onboardingViewModel.state.collectAsStateWithLifecycle()
 
-                    Onboarding(
-                        state = onboardingState,
-                        onAction = onboardingViewModel::onAction,
-                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
-                    )
-                }
+                    entry<Onboarding>(metadata = verticalTransitionMetadata()) {
+                        val onboardingViewModel: OnboardingViewModel = koinViewModel()
+                        val onboardingState by
+                            onboardingViewModel.state.collectAsStateWithLifecycle()
 
-                entry<ProjectGraph>(
-                    metadata = metadata {
-                        put(NavDisplay.TransitionKey) {
-                            slideInHorizontally(
-                                initialOffsetX = { it },
-                                animationSpec = tween(300)
-                            ) togetherWith ExitTransition.KeepUntilTransitionsFinished
-                        }
-                        put(NavDisplay.PopTransitionKey) {
-                            EnterTransition.None togetherWith
-                                    slideOutHorizontally(
-                                        targetOffsetX = { it },
-                                        animationSpec = tween(300)
-                                    )
-                        }
-                        put(NavDisplay.PredictivePopTransitionKey) {
-                            EnterTransition.None togetherWith
-                                    slideOutHorizontally(
-                                        targetOffsetX = { it },
-                                        animationSpec = tween(300)
-                                    )
-                        }
+                        Onboarding(
+                            state = onboardingState,
+                            onAction = onboardingViewModel::onAction,
+                            onNavigateBack = {
+                                if (backStack.size != 1) backStack.removeLastOrNull()
+                            },
+                        )
                     }
-                ) {
-                    val projectViewModel: ProjectViewModel = koinInject()
-                    val projectState by projectViewModel.state.collectAsStateWithLifecycle()
-                    val exoPlayer by projectViewModel.exoPlayer.collectAsStateWithLifecycle()
 
-                    ProjectGraph(
-                        state = projectState,
-                        exoPlayer = exoPlayer,
-                        onAction = projectViewModel::onAction,
-                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
-                        isPlusUser = state.isPlusUser,
-                        onNavigateToPaywall = { backStack.add(PaywallPage) },
-                    )
-                }
+                    entry<ProjectGraph>(metadata = horizontalTransitionMetadata()) {
+                        val projectViewModel: ProjectViewModel = koinInject()
+                        val projectState by projectViewModel.state.collectAsStateWithLifecycle()
+                        val exoPlayer by projectViewModel.exoPlayer.collectAsStateWithLifecycle()
 
-                entry<SettingsGraph>(
-                    metadata = metadata {
-                        put(NavDisplay.TransitionKey) {
-                            slideInHorizontally(
-                                initialOffsetX = { it },
-                                animationSpec = tween(300)
-                            ) togetherWith ExitTransition.KeepUntilTransitionsFinished
-                        }
-                        put(NavDisplay.PopTransitionKey) {
-                            EnterTransition.None togetherWith
-                                    slideOutHorizontally(
-                                        targetOffsetX = { it },
-                                        animationSpec = tween(300)
-                                    )
-                        }
-                        put(NavDisplay.PredictivePopTransitionKey) {
-                            EnterTransition.None togetherWith
-                                    slideOutHorizontally(
-                                        targetOffsetX = { it },
-                                        animationSpec = tween(300)
-                                    )
-                        }
+                        ProjectGraph(
+                            state = projectState,
+                            exoPlayer = exoPlayer,
+                            onAction = projectViewModel::onAction,
+                            onNavigateBack = {
+                                if (backStack.size != 1) backStack.removeLastOrNull()
+                            },
+                            isPlusUser = state.isPlusUser,
+                            onNavigateToPaywall = { backStack.add(PaywallPage) },
+                        )
                     }
-                ) {
-                    val settingsViewModel: SettingsViewModel = koinViewModel()
-                    val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
 
-                    SettingsGraph(
-                        state = settingsState,
-                        onAction = settingsViewModel::onAction,
-                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
-                        isPlusUser = state.isPlusUser,
-                        onNavigateToPaywall = { backStack.add(PaywallPage) },
-                    )
-                }
+                    entry<SettingsGraph>(metadata = horizontalTransitionMetadata()) {
+                        val settingsViewModel: SettingsViewModel = koinViewModel()
+                        val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
 
-                entry<PaywallPage>(
-                    metadata = metadata {
-                        put(NavDisplay.TransitionKey) {
-                            slideInVertically(
-                                initialOffsetY = { it },
-                                animationSpec = tween(300)
-                            ) togetherWith ExitTransition.KeepUntilTransitionsFinished
-                        }
-                        put(NavDisplay.PopTransitionKey) {
-                            EnterTransition.None togetherWith
-                                    slideOutVertically(
-                                        targetOffsetY = { it },
-                                        animationSpec = tween(300)
-                                    )
-                        }
-                        put(NavDisplay.PredictivePopTransitionKey) {
-                            EnterTransition.None togetherWith
-                                    slideOutVertically(
-                                        targetOffsetY = { it },
-                                        animationSpec = tween(300)
-                                    )
-                        }
+                        SettingsGraph(
+                            state = settingsState,
+                            onAction = settingsViewModel::onAction,
+                            onNavigateBack = {
+                                if (backStack.size != 1) backStack.removeLastOrNull()
+                            },
+                            isPlusUser = state.isPlusUser,
+                            onNavigateToPaywall = { backStack.add(PaywallPage) },
+                            onNavigateToOnboarding = { backStack.add(Onboarding) },
+                        )
                     }
-                ) {
-                    PaywallPage(
-                        isPlusUser = state.isPlusUser,
-                        onDismissRequest = {
-                            mainViewModel.checkSubscription()
-                            if (backStack.size != 1) backStack.removeLastOrNull()
-                        },
-                    )
-                }
-            }
+
+                    entry<PaywallPage>(metadata = verticalTransitionMetadata()) {
+                        PaywallPage(
+                            isPlusUser = state.isPlusUser,
+                            onDismissRequest = {
+                                mainViewModel.checkSubscription()
+                                if (backStack.size != 1) backStack.removeLastOrNull()
+                            },
+                        )
+                    }
+                },
         )
 
         if (state.currentChangelog != null) {

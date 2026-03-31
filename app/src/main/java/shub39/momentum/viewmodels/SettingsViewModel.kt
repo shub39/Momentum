@@ -64,7 +64,6 @@ class SettingsViewModel(
                 is SettingsAction.OnPaletteChange -> datastore.updatePaletteStyle(action.style)
                 is SettingsAction.OnSeedColorChange -> datastore.updateSeedColor(action.color)
                 is SettingsAction.OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
-                is SettingsAction.OnOnboardingToggle -> datastore.updateOnboardingDone(action.done)
             }
         }
 
@@ -114,11 +113,6 @@ class SettingsViewModel(
                 .onEach { pref ->
                     _state.update { it.copy(theme = it.theme.copy(appTheme = pref)) }
                 }
-                .launchIn(this)
-
-            datastore
-                .getOnboardingDoneFlow()
-                .onEach { pref -> _state.update { it.copy(isOnboardingDone = pref) } }
                 .launchIn(this)
         }
 }
