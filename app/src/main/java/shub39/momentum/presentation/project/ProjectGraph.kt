@@ -16,14 +16,8 @@
  */
 package shub39.momentum.presentation.project
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,32 +27,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.navigation.horizontalTransitionMetadata
+import shub39.momentum.navigation.verticalTransitionMetadata
 import shub39.momentum.presentation.project.ui.sections.DayInfo
 import shub39.momentum.presentation.project.ui.sections.ProjectCalendar
 import shub39.momentum.presentation.project.ui.sections.ProjectDetails
 import shub39.momentum.presentation.project.ui.sections.ProjectMontageView
 import shub39.momentum.presentation.shared.MomentumTheme
 
-@Serializable
-private sealed interface ProjectRoutes {
-    @Serializable data object ProjectDetails : ProjectRoutes
+@Serializable data object ProjectDetails : NavKey
 
-    @Serializable data object ProjectCalendarView : ProjectRoutes
+@Serializable data object ProjectCalendarView : NavKey
 
-    @Serializable data object ProjectShortsView : ProjectRoutes
+@Serializable data object ProjectMontageView : NavKey
 
-    @Serializable data object ProjectMontageView : ProjectRoutes
-
-    @Serializable data class DayInfoView(val selectedDate: Long) : ProjectRoutes
-}
+@Serializable data class DayInfoView(val selectedDate: Long) : NavKey
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -71,67 +62,56 @@ fun ProjectGraph(
     onNavigateToPaywall: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val backStack = rememberNavBackStack(ProjectDetails)
+
     LaunchedEffect(state.project) { onAction(ProjectAction.OnUpdateDays) }
 
-    val navController = rememberNavController()
+    NavDisplay(
+        modifier = modifier,
+        backStack = backStack,
+        entryProvider =
+            entryProvider {
+                entry<ProjectDetails> {
+                    ProjectDetails(
+                        state = state,
+                        onAction = onAction,
+                        onNavigateBack = onNavigateBack,
+                        onNavigateToCalendar = { backStack.add(ProjectCalendarView) },
+                        onNavigateToMontage = { backStack.add(ProjectMontageView) },
+                        onNavigateToDayInfo = { backStack.add(DayInfoView(it)) },
+                    )
+                }
 
-    NavHost(
-        navController = navController,
-        startDestination = ProjectRoutes.ProjectDetails,
-        enterTransition = { fadeIn(tween(500)) },
-        exitTransition = { fadeOut(tween(500)) },
-        popEnterTransition = { fadeIn(tween(500)) },
-        popExitTransition = { fadeOut(tween(500)) },
-        modifier = modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
-    ) {
-        composable<ProjectRoutes.ProjectDetails> {
-            ProjectDetails(
-                state = state,
-                onAction = onAction,
-                onNavigateBack = onNavigateBack,
-                onNavigateToCalendar = {
-                    navController.navigate(ProjectRoutes.ProjectCalendarView)
-                },
-                onNavigateToMontage = { navController.navigate(ProjectRoutes.ProjectMontageView) },
-                onNavigateToDayInfo = { navController.navigate(ProjectRoutes.DayInfoView(it)) },
-            )
-        }
+                entry<ProjectCalendarView>(metadata = verticalTransitionMetadata()) {
+                    ProjectCalendar(
+                        state = state,
+                        onAction = onAction,
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                        onNavigateToDayInfo = { backStack.add(DayInfoView(it)) },
+                    )
+                }
 
-        composable<ProjectRoutes.ProjectCalendarView> {
-            ProjectCalendar(
-                state = state,
-                onAction = onAction,
-                onNavigateBack = { navController.navigateUp() },
-                onNavigateToDayInfo = { navController.navigate(ProjectRoutes.DayInfoView(it)) },
-            )
-        }
+                entry<DayInfoView>(metadata = verticalTransitionMetadata()) {
+                    DayInfo(
+                        selectedDate = it.selectedDate,
+                        state = state,
+                        onAction = onAction,
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                    )
+                }
 
-        composable<ProjectRoutes.DayInfoView> {
-            val selectedDate = it.toRoute<ProjectRoutes.DayInfoView>().selectedDate
-
-            DayInfo(
-                selectedDate = selectedDate,
-                state = state,
-                onAction = onAction,
-                onNavigateBack = { navController.navigateUp() },
-            )
-        }
-
-        composable<ProjectRoutes.ProjectShortsView> {
-            // maybe someday
-        }
-
-        composable<ProjectRoutes.ProjectMontageView> {
-            ProjectMontageView(
-                state = state,
-                exoPlayer = exoPlayer,
-                onAction = onAction,
-                onNavigateBack = { navController.navigateUp() },
-                isPlusUser = isPlusUser,
-                onNavigateToPaywall = onNavigateToPaywall,
-            )
-        }
-    }
+                entry<ProjectMontageView>(metadata = horizontalTransitionMetadata()) {
+                    ProjectMontageView(
+                        state = state,
+                        exoPlayer = exoPlayer,
+                        onAction = onAction,
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                        isPlusUser = isPlusUser,
+                        onNavigateToPaywall = onNavigateToPaywall,
+                    )
+                }
+            },
+    )
 }
 
 @Preview

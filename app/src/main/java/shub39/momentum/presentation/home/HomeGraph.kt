@@ -16,9 +16,6 @@
  */
 package shub39.momentum.presentation.home
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,9 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.ProjectListData
@@ -42,16 +40,14 @@ import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.PaletteStyle
+import shub39.momentum.navigation.verticalTransitionMetadata
 import shub39.momentum.presentation.home.ui.sections.AddProject
 import shub39.momentum.presentation.home.ui.sections.ProjectList
 import shub39.momentum.presentation.shared.MomentumTheme
 
-@Serializable
-private sealed interface HomeRoutes {
-    @Serializable data object ProjectList : HomeRoutes
+@Serializable data object ProjectList : NavKey
 
-    @Serializable data object AddProject : HomeRoutes
-}
+@Serializable data object AddProject : NavKey
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -64,37 +60,37 @@ fun HomeGraph(
     onNavigateToPaywall: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val navController = rememberNavController()
+    val backStack = rememberNavBackStack(ProjectList)
 
-    NavHost(
-        navController = navController,
-        startDestination = HomeRoutes.ProjectList,
-        enterTransition = { fadeIn(tween(300)) },
-        exitTransition = { fadeOut(tween(300)) },
-        popEnterTransition = { fadeIn(tween(300)) },
-        popExitTransition = { fadeOut(tween(300)) },
+    NavDisplay(
         modifier = modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
-    ) {
-        composable<HomeRoutes.ProjectList> {
-            ProjectList(
-                state = state,
-                onAction = onAction,
-                onNavigateToProject = onNavigateToProject,
-                onNavigateToSettings = onNavigateToSettings,
-                onNavigateToNewProject = {
-                    if (state.projects.size <= 3 || isPlusUser) {
-                        navController.navigate(HomeRoutes.AddProject)
-                    } else {
-                        onNavigateToPaywall()
-                    }
-                },
-            )
-        }
+        backStack = backStack,
+        entryProvider =
+            entryProvider {
+                entry<ProjectList> {
+                    ProjectList(
+                        state = state,
+                        onAction = onAction,
+                        onNavigateToProject = onNavigateToProject,
+                        onNavigateToSettings = onNavigateToSettings,
+                        onNavigateToNewProject = {
+                            if (state.projects.size <= 3 || isPlusUser) {
+                                backStack.add(AddProject)
+                            } else {
+                                onNavigateToPaywall()
+                            }
+                        },
+                    )
+                }
 
-        composable<HomeRoutes.AddProject> {
-            AddProject(onAction = onAction, onNavigateBack = { navController.navigateUp() })
-        }
-    }
+                entry<AddProject>(metadata = verticalTransitionMetadata()) {
+                    AddProject(
+                        onAction = onAction,
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                    )
+                }
+            },
+    )
 }
 
 @Preview

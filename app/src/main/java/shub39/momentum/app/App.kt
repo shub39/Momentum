@@ -66,7 +66,6 @@ fun App() {
         NavDisplay(
             modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
             backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
             entryProvider =
                 entryProvider {
                     entry<HomeGraph> {
