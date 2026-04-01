@@ -47,11 +47,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import shub39.momentum.R
+import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.PaletteStyle
-import shub39.momentum.presentation.home.HomeAction
 import shub39.momentum.presentation.shared.MomentumBottomSheet
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontEmphasis
@@ -59,12 +59,13 @@ import shub39.momentum.presentation.shared.flexFontEmphasis
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProjectUpsertSheet(
-    onAction: (HomeAction) -> Unit,
+    project: Project,
+    onUpsertProject: (Project) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    edit: Boolean = false,
 ) {
-    var newProjectTitle by remember { mutableStateOf("") }
-    var newProjectDescription by remember { mutableStateOf("") }
+    var newProject by remember { mutableStateOf(project) }
 
     MomentumBottomSheet(
         modifier = modifier.imePadding(),
@@ -85,51 +86,47 @@ fun ProjectUpsertSheet(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.add),
-                    contentDescription = "Add new project",
+                    painter = painterResource(if (edit) R.drawable.edit else R.drawable.add),
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
 
             Text(
-                text = stringResource(R.string.start_new_project),
+                text =
+                    stringResource(if (edit) R.string.edit_project else R.string.start_new_project),
                 style = MaterialTheme.typography.titleLarge.copy(fontFamily = flexFontEmphasis()),
             )
 
             OutlinedTextField(
-                value = newProjectTitle,
-                onValueChange = { newProjectTitle = it },
+                value = newProject.title,
+                onValueChange = { newProject = newProject.copy(title = it) },
                 singleLine = true,
                 shape = MaterialTheme.shapes.medium,
-                isError = newProjectTitle.length >= 20,
+                isError = newProject.title.length >= 20,
                 placeholder = { Text(text = stringResource(R.string.title)) },
                 modifier = Modifier.fillMaxWidth(),
             )
 
             OutlinedTextField(
-                value = newProjectDescription,
-                onValueChange = { newProjectDescription = it },
+                value = newProject.description,
+                onValueChange = { newProject = newProject.copy(description = it) },
                 singleLine = true,
                 shape = MaterialTheme.shapes.medium,
-                isError = newProjectDescription.length >= 100,
+                isError = newProject.description.length >= 100,
                 placeholder = { Text(text = stringResource(R.string.description)) },
                 modifier = Modifier.fillMaxWidth(),
             )
 
             Button(
                 onClick = {
-                    onAction(
-                        HomeAction.OnAddProject(
-                            title = newProjectTitle.trim(),
-                            description = newProjectDescription.trim(),
-                        )
-                    )
+                    onUpsertProject(newProject)
                     onDismissRequest()
                 },
                 enabled =
-                    newProjectTitle.length <= 20 &&
-                        newProjectDescription.length <= 100 &&
-                        newProjectTitle.isNotBlank(),
+                    newProject.title.length <= 20 &&
+                        newProject.description.length <= 100 &&
+                        newProject.title.isNotBlank(),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text = stringResource(R.string.add_new_project))
@@ -157,6 +154,10 @@ private fun Preview() {
                 paletteStyle = PaletteStyle.FIDELITY,
             )
     ) {
-        ProjectUpsertSheet(onAction = {}, onDismissRequest = {})
+        ProjectUpsertSheet(
+            project = Project(title = "", description = ""),
+            onUpsertProject = {},
+            onDismissRequest = {},
+        )
     }
 }

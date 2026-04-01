@@ -364,17 +364,42 @@ fun LookAndFeel(
                                 Box(
                                     modifier =
                                         Modifier.size(50.dp)
-                                            .background(
-                                                color = scheme.tertiary,
-                                                shape =
-                                                    if (selected) MaterialShapes.VerySunny.toShape()
-                                                    else CircleShape,
+                                            .clip(
+                                                if (selected) MaterialShapes.VerySunny.toShape()
+                                                else CircleShape
                                             )
                                             .clickable(enabled = isPlusUser) {
                                                 onAction(SettingsAction.OnPaletteChange(style))
                                             },
                                     contentAlignment = Alignment.Center,
                                 ) {
+                                    Column(modifier = Modifier.matchParentSize()) {
+                                        Row {
+                                            Box(
+                                                modifier =
+                                                    Modifier.size(25.dp)
+                                                        .background(color = scheme.primary)
+                                            )
+                                            Box(
+                                                modifier =
+                                                    Modifier.size(25.dp)
+                                                        .background(color = scheme.tertiary)
+                                            )
+                                        }
+                                        Row {
+                                            Box(
+                                                modifier =
+                                                    Modifier.size(25.dp)
+                                                        .background(color = scheme.secondary)
+                                            )
+                                            Box(
+                                                modifier =
+                                                    Modifier.size(25.dp)
+                                                        .background(color = scheme.onSurface)
+                                            )
+                                        }
+                                    }
+
                                     if (selected) {
                                         Icon(
                                             painter = painterResource(R.drawable.check_circle),

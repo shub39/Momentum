@@ -18,7 +18,7 @@
     <string name="look_and_feel_info">Customise the app in various ways</string>
     <string name="select_app_theme">Select App theme</string>
     <string name="font">Select App font</string>
-    <string name="amoled">use AMOLED</string>
+    <string name="amoled">Use AMOLED</string>
     <string name="amoled_desc">best for OLED displays</string>
     <string name="material_theme">Use Material You</string>
     <string name="material_theme_desc">Extract colors from your wallpaper</string>

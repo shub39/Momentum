@@ -66,8 +66,11 @@ fun HomeGraph(
 
     if (showProjectUpsertSheet) {
         ProjectUpsertSheet(
-            onAction = onAction,
+            onUpsertProject = {
+                onAction(HomeAction.OnAddProject(title = it.title, description = it.description))
+            },
             onDismissRequest = { showProjectUpsertSheet = false },
+            project = Project(title = "", description = ""),
         )
     }
 }

@@ -16,11 +16,12 @@
  */
 package shub39.momentum.presentation.project.ui.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,18 +52,23 @@ import shub39.momentum.data.getPlaceholder
 import shub39.momentum.presentation.shared.MomentumTheme
 
 @Composable
-fun FavDayCard(day: Day, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun FavDayCard(
+    day: Day,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(16.dp),
+) {
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(32.dp),
+        shape = shape,
         colors =
             CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             ),
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomStart) {
             CoilImage(
                 imageModel = { day.image },
                 imageOptions = ImageOptions(contentScale = ContentScale.Crop),
@@ -71,23 +80,47 @@ fun FavDayCard(day: Day, onClick: () -> Unit, modifier: Modifier = Modifier) {
                     )
                 },
                 previewPlaceholder = getPlaceholder(),
-                modifier =
-                    Modifier.clip(RoundedCornerShape(32.dp)).heightIn(max = 300.dp).fillMaxWidth(),
+                modifier = Modifier.clip(shape).height(150.dp).fillMaxWidth(),
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Box(
+                modifier =
+                    Modifier.matchParentSize()
+                        .background(
+                            brush =
+                                Brush.verticalGradient(
+                                    0f to Color.Transparent,
+                                    0.7f to
+                                        MaterialTheme.colorScheme.primaryContainer.copy(
+                                            alpha = 0.4f
+                                        ),
+                                    0.9f to
+                                        MaterialTheme.colorScheme.primaryContainer.copy(
+                                            alpha = 0.8f
+                                        ),
+                                    1f to MaterialTheme.colorScheme.primaryContainer,
+                                )
+                        )
+            )
 
-            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
-                Text(
-                    text =
-                        LocalDate.ofEpochDay(day.date)
-                            .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)),
-                    style = MaterialTheme.typography.titleLarge,
-                )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(16.dp),
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text =
+                            LocalDate.ofEpochDay(day.date)
+                                .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
 
-                if (!day.comment.isNullOrBlank()) {
-                    Text(text = day.comment!!)
+                    if (!day.comment.isNullOrBlank()) {
+                        Text(text = day.comment!!)
+                    }
                 }
+
+                Icon(painter = painterResource(R.drawable.arrow_forward), contentDescription = null)
             }
         }
     }
