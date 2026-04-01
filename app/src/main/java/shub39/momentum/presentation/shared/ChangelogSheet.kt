@@ -57,7 +57,7 @@ fun ChangelogSheet(
     currentLog: VersionEntry,
     onDismissRequest: () -> Unit,
 ) {
-    GritBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier, padding = 0.dp) {
+    MomentumBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier, padding = 0.dp) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),

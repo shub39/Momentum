@@ -16,11 +16,8 @@
  */
 package shub39.momentum.presentation.home
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,25 +26,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.ui.NavDisplay
-import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.ProjectListData
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.PaletteStyle
-import shub39.momentum.navigation.verticalTransitionMetadata
-import shub39.momentum.presentation.home.ui.sections.AddProject
 import shub39.momentum.presentation.home.ui.sections.ProjectList
+import shub39.momentum.presentation.home.ui.sections.ProjectUpsertSheet
 import shub39.momentum.presentation.shared.MomentumTheme
-
-@Serializable data object ProjectList : NavKey
-
-@Serializable data object AddProject : NavKey
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -60,37 +47,29 @@ fun HomeGraph(
     onNavigateToPaywall: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val backStack = rememberNavBackStack(ProjectList)
+    var showProjectUpsertSheet by remember { mutableStateOf(false) }
 
-    NavDisplay(
-        modifier = modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
-        backStack = backStack,
-        entryProvider =
-            entryProvider {
-                entry<ProjectList> {
-                    ProjectList(
-                        state = state,
-                        onAction = onAction,
-                        onNavigateToProject = onNavigateToProject,
-                        onNavigateToSettings = onNavigateToSettings,
-                        onNavigateToNewProject = {
-                            if (state.projects.size <= 3 || isPlusUser) {
-                                backStack.add(AddProject)
-                            } else {
-                                onNavigateToPaywall()
-                            }
-                        },
-                    )
-                }
-
-                entry<AddProject>(metadata = verticalTransitionMetadata()) {
-                    AddProject(
-                        onAction = onAction,
-                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
-                    )
-                }
-            },
+    ProjectList(
+        modifier = modifier,
+        state = state,
+        onAction = onAction,
+        onNavigateToProject = onNavigateToProject,
+        onNavigateToSettings = onNavigateToSettings,
+        onNavigateToNewProject = {
+            if (state.projects.size <= 3 || isPlusUser) {
+                showProjectUpsertSheet = true
+            } else {
+                onNavigateToPaywall()
+            }
+        },
     )
+
+    if (showProjectUpsertSheet) {
+        ProjectUpsertSheet(
+            onAction = onAction,
+            onDismissRequest = { showProjectUpsertSheet = false },
+        )
+    }
 }
 
 @Preview

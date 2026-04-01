@@ -37,6 +37,7 @@ import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,11 +60,12 @@ import shub39.momentum.presentation.shared.MomentumTheme
 fun ProjectListItem(
     projectListData: ProjectListData,
     onClick: () -> Unit,
+    shape: Shape,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(32.dp),
+        shape = shape,
         onClick = onClick,
         colors =
             CardDefaults.cardColors(
@@ -161,6 +163,7 @@ private fun Preview() {
                         },
                 ),
             onClick = {},
+            shape = RoundedCornerShape(4.dp),
         )
     }
 }
