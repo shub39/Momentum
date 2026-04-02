@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.painter.Painter
 fun getPlaceholder(): Painter {
     return BitmapPainter(
         createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-            .apply { eraseColor(Color.BLACK) }
+            .apply { eraseColor(Color.GREEN) }
             .asImageBitmap()
     )
 }

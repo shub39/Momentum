@@ -24,10 +24,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -39,7 +39,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,9 +48,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.VerticalCalendar
@@ -67,9 +66,11 @@ import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.data.getPlaceholder
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -88,13 +89,10 @@ fun ProjectCalendar(
             outDateStyle = OutDateStyle.EndOfRow,
         )
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                scrollBehavior = scrollBehavior,
-                title = { Text(text = state.project?.title ?: "", fontFamily = flexFontRounded()) },
+                title = {},
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -104,7 +102,7 @@ fun ProjectCalendar(
                     }
                 },
             )
-        },
+        }
     ) { padding ->
         val today = LocalDate.now()
         VerticalCalendar(
@@ -122,27 +120,32 @@ fun ProjectCalendar(
                 val days =
                     state.days.count { LocalDate.ofEpochDay(it.date).yearMonth == month.yearMonth }
 
-                Card(
-                    colors =
-                        CardDefaults.cardColors(
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        ),
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                    shape = CircleShape,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth(),
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier =
-                            Modifier.padding(horizontal = 12.dp, vertical = 3.dp).fillMaxWidth(),
+                    Text(
+                        text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+                        style =
+                            MaterialTheme.typography.headlineSmall.copy(
+                                fontFamily = flexFontEmphasis()
+                            ),
+                    )
+
+                    Card(
+                        colors =
+                            CardDefaults.cardColors(
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                        shape = CircleShape,
                     ) {
                         Text(
-                            text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
-                            fontWeight = FontWeight.Bold,
+                            text = "$days/${month.yearMonth.lengthOfMonth()}",
+                            modifier = Modifier.padding(8.dp),
+                            fontFamily = flexFontRounded(),
                         )
-
-                        Text(text = "$days/${month.yearMonth.lengthOfMonth()}")
                     }
                 }
             },
@@ -154,21 +157,21 @@ fun ProjectCalendar(
                     Box(
                         modifier =
                             Modifier.align(Alignment.Center)
-                                .size(40.dp)
+                                .height(100.dp)
+                                .fillMaxWidth()
                                 .padding(2.dp)
                                 .clip(CircleShape)
                                 .clickable(enabled = possibleDay) {
                                     onNavigateToDayInfo(day.date.toEpochDay())
                                 },
-                        contentAlignment = Alignment.Center,
+                        contentAlignment = Alignment.BottomCenter,
                     ) {
                         state.days
                             .find { it.date == day.date.toEpochDay() }
                             ?.let { foundDay ->
                                 Box {
                                     CoilImage(
-                                        previewPlaceholder =
-                                            painterResource(R.drawable.ic_launcher_foreground),
+                                        previewPlaceholder = getPlaceholder(),
                                         imageModel = { foundDay.image },
                                         failure = {
                                             Box(
@@ -181,16 +184,22 @@ fun ProjectCalendar(
                                                         )
                                             )
                                         },
-                                        modifier = Modifier.size(38.dp).clip(CircleShape).blur(2.dp),
+                                        modifier =
+                                            Modifier.fillMaxSize().clip(CircleShape).blur(2.dp),
                                     )
 
                                     Box(
                                         modifier =
-                                            Modifier.size(38.dp)
+                                            Modifier.fillMaxSize()
                                                 .background(
-                                                    color =
-                                                        MaterialTheme.colorScheme.surface.copy(
-                                                            alpha = 0.5f
+                                                    brush =
+                                                        Brush.verticalGradient(
+                                                            0f to Color.Transparent,
+                                                            0.7f to
+                                                                MaterialTheme.colorScheme
+                                                                    .background,
+                                                            1f to
+                                                                MaterialTheme.colorScheme.background,
                                                         )
                                                 )
                                                 .clip(CircleShape)
@@ -198,6 +207,14 @@ fun ProjectCalendar(
                                     )
                                 }
                             }
+                            ?: Box(
+                                modifier =
+                                    Modifier.fillMaxSize()
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceContainer
+                                        )
+                                        .clip(CircleShape)
+                            )
 
                         Text(
                             text = day.date.dayOfMonth.toString(),
@@ -207,6 +224,7 @@ fun ProjectCalendar(
                                 } else {
                                     MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
                                 },
+                            modifier = Modifier.padding(bottom = 4.dp),
                         )
                     }
                 }
