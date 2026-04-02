@@ -77,7 +77,6 @@ import shub39.momentum.presentation.shared.flexFontRounded
 @Composable
 fun ProjectCalendar(
     state: ProjectState,
-    onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToDayInfo: (Long) -> Unit,
 ) {
@@ -257,6 +256,6 @@ private fun Preview() {
     }
 
     MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
-        ProjectCalendar(state = state, onAction = {}, onNavigateBack = {}, onNavigateToDayInfo = {})
+        ProjectCalendar(state = state, onNavigateBack = {}, onNavigateToDayInfo = {})
     }
 }

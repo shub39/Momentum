@@ -85,7 +85,6 @@ fun ProjectGraph(
                 entry<ProjectCalendarView>(metadata = verticalTransitionMetadata()) {
                     ProjectCalendar(
                         state = state,
-                        onAction = onAction,
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
                         onNavigateToDayInfo = { backStack.add(DayInfoView(it)) },
                     )
