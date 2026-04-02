@@ -26,8 +26,8 @@ plugins {
 apply(from = "changelog.gradle.kts")
 
 val appName = "Momentum"
-val appVersionCode = 1530
-val appVersionName = "1.5.3"
+val appVersionCode = 1600
+val appVersionName = "1.6.0"
 val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
