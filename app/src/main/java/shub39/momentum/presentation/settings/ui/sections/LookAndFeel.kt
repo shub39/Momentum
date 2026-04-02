@@ -84,6 +84,7 @@ import shub39.momentum.presentation.settings.SettingsState
 import shub39.momentum.presentation.shared.ColorPickerDialog
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.endItemShape
+import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
 import shub39.momentum.presentation.shared.middleItemShape
@@ -109,7 +110,12 @@ fun LookAndFeel(
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(R.string.look_and_feel)) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.look_and_feel),
+                        fontFamily = flexFontEmphasis(),
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(

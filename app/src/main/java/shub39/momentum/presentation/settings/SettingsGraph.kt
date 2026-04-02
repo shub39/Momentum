@@ -53,7 +53,6 @@ fun SettingsGraph(
             entryProvider {
                 entry<Root> {
                     Root(
-                        onAction = onAction,
                         onNavigateBack = onNavigateBack,
                         onNavigateToOnboarding = onNavigateToOnboarding,
                         onNavigateToLookAndFeel = { backStack.add(LookAndFeel) },

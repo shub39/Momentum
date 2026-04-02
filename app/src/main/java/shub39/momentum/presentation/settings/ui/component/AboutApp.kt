@@ -16,15 +16,16 @@
  */
 package shub39.momentum.presentation.settings.ui.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -34,13 +35,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import shub39.momentum.BuildConfig
 import shub39.momentum.R
+import shub39.momentum.presentation.shared.endItemShape
+import shub39.momentum.presentation.shared.flexFontRounded
+import shub39.momentum.presentation.shared.leadingItemShape
 
 @Composable
 fun AboutApp(modifier: Modifier = Modifier) {
@@ -63,10 +67,13 @@ fun AboutApp(modifier: Modifier = Modifier) {
             Column {
                 Text(
                     text = "Momentum",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
+                    style =
+                        MaterialTheme.typography.headlineMedium.copy(fontFamily = flexFontRounded()),
                 )
-                Text(text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
+                Text(
+                    text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -90,43 +97,69 @@ fun AboutApp(modifier: Modifier = Modifier) {
             }
         }
 
-        FlowRow(
+        Column(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Button(onClick = { uriHandler.openUri("https://buymeacoffee.com/shub39") }) {
+            Row(
+                modifier =
+                    Modifier.background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = leadingItemShape(),
+                        )
+                        .clip(leadingItemShape())
+                        .clickable { uriHandler.openUri("https://buymeacoffee.com/shub39") }
+            ) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.buymeacoffee),
                         contentDescription = "Buy me a coffee",
                         modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary,
                     )
-
-                    Text(text = stringResource(R.string.bmc))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.bmc),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontFamily = flexFontRounded(),
+                    )
                 }
             }
 
-            Button(
-                onClick = {
-                    uriHandler.openUri(
-                        "https://play.google.com/store/apps/details?id=shub39.momentum.play"
-                    )
-                }
+            Row(
+                modifier =
+                    Modifier.background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = endItemShape(),
+                        )
+                        .clip(endItemShape())
+                        .clickable {
+                            uriHandler.openUri(
+                                "https://play.google.com/store/apps/details?id=shub39.momentum.play"
+                            )
+                        }
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.play_store),
                         contentDescription = "Rate On Google Play",
-                        modifier = Modifier.size(20.dp),
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary,
                     )
-
-                    Text(text = stringResource(R.string.rate_on_play))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.rate_on_play),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontFamily = flexFontRounded(),
+                    )
                 }
             }
         }
