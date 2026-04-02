@@ -20,6 +20,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -30,10 +31,11 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -54,6 +56,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,8 +78,11 @@ import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.shared.ColorPickerDialog
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.SettingSlider
+import shub39.momentum.presentation.shared.detachedItemShape
+import shub39.momentum.presentation.shared.endItemShape
 import shub39.momentum.presentation.shared.flexFontRounded
-import shub39.momentum.presentation.shared.zigZagBackground
+import shub39.momentum.presentation.shared.leadingItemShape
+import shub39.momentum.presentation.shared.middleItemShape
 import shub39.momentum.presentation.toDisplayString
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -138,101 +144,115 @@ fun MontageEditSheet(
             }
         }
 
-        HorizontalDivider()
-
         LazyColumn(
-            modifier = modifier.animateContentSize().fillMaxWidth().heightIn(max = 400.dp),
-            contentPadding = PaddingValues(vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier =
+                modifier
+                    .animateContentSize()
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .heightIn(max = 400.dp),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // frames per image slider
             item {
-                SettingSlider(
-                    title = stringResource(R.string.frames_per_image),
-                    value = state.montageConfig.framesPerImage.toFloat(),
-                    onValueChange = {
-                        onAction(
-                            ProjectAction.OnEditMontageConfig(
-                                state.montageConfig.copy(framesPerImage = it.roundToInt())
+                Card(shape = leadingItemShape()) {
+                    SettingSlider(
+                        title = stringResource(R.string.frames_per_image),
+                        value = state.montageConfig.framesPerImage.toFloat(),
+                        onValueChange = {
+                            onAction(
+                                ProjectAction.OnEditMontageConfig(
+                                    state.montageConfig.copy(framesPerImage = it.roundToInt())
+                                )
                             )
-                        )
-                    },
-                    valueRange = 1f..10f,
-                    steps = 8,
-                    valueToShow = state.montageConfig.framesPerImage.toString(),
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                )
+                        },
+                        valueRange = 1f..10f,
+                        steps = 8,
+                        valueToShow = state.montageConfig.framesPerImage.toString(),
+                        modifier = Modifier.padding(16.dp),
+                    )
+                }
             }
 
             // fps slider
             item {
-                SettingSlider(
-                    title = stringResource(R.string.frames_per_sec),
-                    value = state.montageConfig.framesPerSecond,
-                    onValueChange = {
-                        onAction(
-                            ProjectAction.OnEditMontageConfig(
-                                state.montageConfig.copy(framesPerSecond = it)
-                            )
-                        )
-                    },
-                    valueRange = 1f..10f,
-                    steps = 8,
-                    valueToShow = state.montageConfig.framesPerSecond.roundToInt().toString(),
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                )
-            }
-
-            // show date/ date style
-            item {
-                Row(
-                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.show_date),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-
-                    Switch(
-                        checked = state.montageConfig.showDate,
-                        onCheckedChange = {
+                Card(shape = endItemShape()) {
+                    SettingSlider(
+                        title = stringResource(R.string.frames_per_sec),
+                        value = state.montageConfig.framesPerSecond,
+                        onValueChange = {
                             onAction(
                                 ProjectAction.OnEditMontageConfig(
-                                    state.montageConfig.copy(showDate = it)
+                                    state.montageConfig.copy(framesPerSecond = it)
                                 )
                             )
                         },
+                        valueRange = 1f..10f,
+                        steps = 8,
+                        valueToShow = state.montageConfig.framesPerSecond.roundToInt().toString(),
+                        modifier = Modifier.padding(16.dp),
                     )
                 }
+            }
 
-                AnimatedVisibility(visible = state.montageConfig.showDate) {
-                    FlowRow(
-                        modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        DateStyle.entries.forEach { style ->
-                            ToggleButton(
-                                checked = state.montageConfig.dateStyle == style,
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+
+            // show date/ date style
+            item {
+                Card(shape = leadingItemShape()) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = stringResource(R.string.show_date),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+
+                            Switch(
+                                checked = state.montageConfig.showDate,
                                 onCheckedChange = {
                                     onAction(
                                         ProjectAction.OnEditMontageConfig(
-                                            state.montageConfig.copy(dateStyle = style)
+                                            state.montageConfig.copy(showDate = it)
                                         )
                                     )
                                 },
+                            )
+                        }
+
+                        AnimatedVisibility(visible = state.montageConfig.showDate) {
+                            FlowRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Text(
-                                    text =
-                                        LocalDate.now()
-                                            .format(
-                                                DateTimeFormatter.ofLocalizedDate(
-                                                    style.toFormatStyle()
+                                DateStyle.entries.forEach { style ->
+                                    ToggleButton(
+                                        checked = state.montageConfig.dateStyle == style,
+                                        onCheckedChange = {
+                                            onAction(
+                                                ProjectAction.OnEditMontageConfig(
+                                                    state.montageConfig.copy(dateStyle = style)
                                                 )
                                             )
-                                )
+                                        },
+                                    ) {
+                                        Text(
+                                            text =
+                                                LocalDate.now()
+                                                    .format(
+                                                        DateTimeFormatter.ofLocalizedDate(
+                                                            style.toFormatStyle()
+                                                        )
+                                                    )
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -241,95 +261,114 @@ fun MontageEditSheet(
 
             // show day message
             item {
-                Row(
-                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.show_message),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-
-                    Switch(
-                        checked = state.montageConfig.showMessage,
-                        onCheckedChange = {
-                            onAction(
-                                ProjectAction.OnEditMontageConfig(
-                                    state.montageConfig.copy(showMessage = it)
-                                )
-                            )
-                        },
-                    )
-                }
-            }
-
-            // stabilize faces
-            item {
-                Row(
-                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.stabilize_faces),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-
-                    Switch(
-                        checked = state.montageConfig.stabilizeFaces,
-                        onCheckedChange = {
-                            if (isPlusUser) {
-                                onAction(
-                                    ProjectAction.OnEditMontageConfig(
-                                        state.montageConfig.copy(stabilizeFaces = it)
-                                    )
-                                )
-                            } else {
-                                onNavigateToPaywall()
-                            }
-                        },
-                    )
-                }
-
-                AnimatedVisibility(
-                    visible = state.montageConfig.stabilizeFaces,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
+                Card(shape = endItemShape()) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = stringResource(R.string.censor_faces),
+                            text = stringResource(R.string.show_message),
                             style = MaterialTheme.typography.titleLarge,
                         )
 
                         Switch(
-                            checked = state.montageConfig.censorFaces,
-                            enabled = state.montageConfig.stabilizeFaces,
+                            checked = state.montageConfig.showMessage,
                             onCheckedChange = {
-                                if (isPlusUser) {
-                                    onAction(
-                                        ProjectAction.OnEditMontageConfig(
-                                            state.montageConfig.copy(censorFaces = it)
-                                        )
+                                onAction(
+                                    ProjectAction.OnEditMontageConfig(
+                                        state.montageConfig.copy(showMessage = it)
                                     )
-                                } else {
-                                    onNavigateToPaywall()
-                                }
+                                )
                             },
                         )
                     }
                 }
             }
 
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+
+            // stabilize faces
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Card(
+                        shape =
+                            if (state.montageConfig.stabilizeFaces) {
+                                leadingItemShape()
+                            } else {
+                                detachedItemShape()
+                            }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = stringResource(R.string.stabilize_faces),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+
+                            Switch(
+                                checked = state.montageConfig.stabilizeFaces,
+                                onCheckedChange = {
+                                    if (isPlusUser) {
+                                        onAction(
+                                            ProjectAction.OnEditMontageConfig(
+                                                state.montageConfig.copy(stabilizeFaces = it)
+                                            )
+                                        )
+                                    } else {
+                                        onNavigateToPaywall()
+                                    }
+                                },
+                            )
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = state.montageConfig.stabilizeFaces,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Card(shape = endItemShape()) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.censor_faces),
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+
+                                Switch(
+                                    checked = state.montageConfig.censorFaces,
+                                    enabled = state.montageConfig.stabilizeFaces,
+                                    onCheckedChange = {
+                                        if (isPlusUser) {
+                                            onAction(
+                                                ProjectAction.OnEditMontageConfig(
+                                                    state.montageConfig.copy(censorFaces = it)
+                                                )
+                                            )
+                                        } else {
+                                            onNavigateToPaywall()
+                                        }
+                                    },
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+
             if (!isPlusUser) {
                 item {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth().height(100.dp).zigZagBackground(),
+                        modifier = Modifier.fillMaxWidth().height(100.dp),
                     ) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = onNavigateToPaywall) {
@@ -341,40 +380,44 @@ fun MontageEditSheet(
 
             // video quality
             item {
-                Row(
-                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.video_quality),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                Card(shape = leadingItemShape()) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.video_quality),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
 
-                    Spacer(modifier = Modifier.size(44.dp))
-                }
+                        Spacer(modifier = Modifier.size(44.dp))
+                    }
 
-                FlowRow(
-                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    VideoQuality.entries.forEach { quality ->
-                        ToggleButton(
-                            checked = quality == state.montageConfig.videoQuality,
-                            enabled = isPlusUser,
-                            onCheckedChange = {
-                                if (isPlusUser) {
-                                    onAction(
-                                        ProjectAction.OnEditMontageConfig(
-                                            state.montageConfig.copy(videoQuality = quality)
+                    FlowRow(
+                        modifier =
+                            Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                                .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        VideoQuality.entries.forEach { quality ->
+                            ToggleButton(
+                                checked = quality == state.montageConfig.videoQuality,
+                                enabled = isPlusUser,
+                                onCheckedChange = {
+                                    if (isPlusUser) {
+                                        onAction(
+                                            ProjectAction.OnEditMontageConfig(
+                                                state.montageConfig.copy(videoQuality = quality)
+                                            )
                                         )
-                                    )
-                                } else {
-                                    onNavigateToPaywall()
-                                }
-                            },
-                        ) {
-                            Text(text = quality.name)
+                                    } else {
+                                        onNavigateToPaywall()
+                                    }
+                                },
+                            ) {
+                                Text(text = quality.name)
+                            }
                         }
                     }
                 }
@@ -382,36 +425,40 @@ fun MontageEditSheet(
 
             // text font
             item {
-                Row(
-                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.video_font),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                Card(shape = middleItemShape()) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.video_font),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
 
-                    Spacer(modifier = Modifier.size(44.dp))
-                }
+                        Spacer(modifier = Modifier.size(44.dp))
+                    }
 
-                FlowRow(
-                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Fonts.entries.forEach { font ->
-                        ToggleButton(
-                            checked = font == state.montageConfig.font,
-                            onCheckedChange = {
-                                onAction(
-                                    ProjectAction.OnEditMontageConfig(
-                                        state.montageConfig.copy(font = font)
+                    FlowRow(
+                        modifier =
+                            Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                                .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Fonts.entries.forEach { font ->
+                            ToggleButton(
+                                checked = font == state.montageConfig.font,
+                                onCheckedChange = {
+                                    onAction(
+                                        ProjectAction.OnEditMontageConfig(
+                                            state.montageConfig.copy(font = font)
+                                        )
                                     )
-                                )
-                            },
-                            enabled = isPlusUser,
-                        ) {
-                            Text(text = font.toDisplayString())
+                                },
+                                enabled = isPlusUser,
+                            ) {
+                                Text(text = font.toDisplayString())
+                            }
                         }
                     }
                 }
@@ -419,65 +466,70 @@ fun MontageEditSheet(
 
             // show watermark
             item {
-                Row(
-                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.show_watermark),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                Card(shape = middleItemShape()) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.show_watermark),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
 
-                    Switch(
-                        checked = state.montageConfig.waterMark,
-                        enabled = isPlusUser,
-                        onCheckedChange = {
-                            if (isPlusUser) {
-                                onAction(
-                                    ProjectAction.OnEditMontageConfig(
-                                        state.montageConfig.copy(waterMark = it)
+                        Switch(
+                            checked = state.montageConfig.waterMark,
+                            enabled = isPlusUser,
+                            onCheckedChange = {
+                                if (isPlusUser) {
+                                    onAction(
+                                        ProjectAction.OnEditMontageConfig(
+                                            state.montageConfig.copy(waterMark = it)
+                                        )
                                     )
-                                )
-                            } else {
-                                onNavigateToPaywall()
-                            }
-                        },
-                    )
+                                } else {
+                                    onNavigateToPaywall()
+                                }
+                            },
+                        )
+                    }
                 }
             }
 
             // set background color
             item {
-                Row(
-                    modifier = Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.background_color),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-
-                    IconButton(
-                        onClick = {
-                            if (isPlusUser) {
-                                showColorPicker = true
-                            } else {
-                                onNavigateToPaywall()
-                            }
-                        },
-                        enabled = isPlusUser,
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                containerColor = state.montageConfig.backgroundColor,
-                                contentColor = contentColorFor(state.montageConfig.backgroundColor),
-                            ),
+                Card(shape = endItemShape()) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.edit),
-                            contentDescription = "Pick color",
+                        Text(
+                            text = stringResource(R.string.background_color),
+                            style = MaterialTheme.typography.titleLarge,
                         )
+
+                        IconButton(
+                            onClick = {
+                                if (isPlusUser) {
+                                    showColorPicker = true
+                                } else {
+                                    onNavigateToPaywall()
+                                }
+                            },
+                            enabled = isPlusUser,
+                            colors =
+                                IconButtonDefaults.iconButtonColors(
+                                    containerColor = state.montageConfig.backgroundColor,
+                                    contentColor =
+                                        contentColorFor(state.montageConfig.backgroundColor),
+                                ),
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.edit),
+                                contentDescription = "Pick color",
+                            )
+                        }
                     }
                 }
             }
@@ -510,7 +562,7 @@ private fun Preview() {
             buttonEnabled = false,
             onDismissRequest = {},
             sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded),
-            isPlusUser = true,
+            isPlusUser = false,
             onNavigateToPaywall = {},
         )
     }
