@@ -96,8 +96,6 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
                 emit(MontageState.ProcessingImages(processedCount.toFloat() / total))
             }
 
-        emit(MontageState.AssemblingVideo)
-
         when (val result = muxer.mux(flowForMuxer)) {
             is MuxingResult.MuxingError -> {
                 emit(MontageState.Error(result.message, result.exception))

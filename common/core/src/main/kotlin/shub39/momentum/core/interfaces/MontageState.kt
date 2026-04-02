@@ -22,8 +22,6 @@ import shub39.momentum.core.data_classes.MontageConfig
 sealed interface MontageState {
     data class ProcessingImages(val progress: Float = 0f) : MontageState
 
-    data object AssemblingVideo : MontageState
-
     data class Success(val file: File, val config: MontageConfig) : MontageState
 
     data class Error(val message: String, val exception: Exception) : MontageState
