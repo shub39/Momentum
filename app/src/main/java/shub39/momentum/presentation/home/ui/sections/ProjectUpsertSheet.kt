@@ -129,7 +129,7 @@ fun ProjectUpsertSheet(
                         newProject.title.isNotBlank(),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(text = stringResource(R.string.add_new_project))
+                Text(text = stringResource(if (edit) R.string.edit else R.string.add_new_project))
             }
 
             OutlinedButton(
