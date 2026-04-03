@@ -54,7 +54,6 @@ import androidx.compose.ui.unit.dp
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
-import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.ui.component.AboutApp
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.detachedItemShape
