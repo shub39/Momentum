@@ -24,32 +24,41 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.WeekCalendarState
+import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.skydoves.landscapist.coil3.CoilImage
 import java.time.LocalDate
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.data.getPlaceholder
+import shub39.momentum.presentation.shared.MomentumTheme
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun WeeklyHorizontalCalendar(
     onNavigateToCalendar: () -> Unit,
@@ -58,11 +67,12 @@ fun WeeklyHorizontalCalendar(
     showGuide: Boolean,
     onNavigateToDayInfo: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    shape: Shape = MaterialTheme.shapes.medium,
 ) {
-    OutlinedCard(modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium) {
+    Card(modifier = modifier.fillMaxWidth(), shape = shape, onClick = onNavigateToCalendar) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
         ) {
             Text(
                 text = stringResource(R.string.calendar),
@@ -71,34 +81,55 @@ fun WeeklyHorizontalCalendar(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(onClick = onNavigateToCalendar) {
-                Icon(
-                    painter = painterResource(R.drawable.arrow_forward),
-                    contentDescription = "Calendar",
-                )
-            }
+            Icon(
+                painter = painterResource(R.drawable.arrow_forward),
+                contentDescription = "Calendar",
+            )
         }
 
         val today = LocalDate.now()
         WeekCalendar(
             state = weekState,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 8.dp),
             dayContent = { weekDay ->
-                val day = days.find { it.date == weekDay.date.toEpochDay() }
                 val possibleDay = weekDay.date <= today
+                val day = days.find { it.date == weekDay.date.toEpochDay() }
 
                 Box(
-                    modifier =
-                        Modifier.aspectRatio(1f).padding(2.dp).clip(CircleShape).clickable(
-                            enabled = possibleDay
-                        ) {
-                            onNavigateToDayInfo(weekDay.date.toEpochDay())
-                        },
-                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.height(100.dp).fillMaxWidth().padding(2.dp),
+                    contentAlignment = Alignment.BottomCenter,
                 ) {
-                    day?.let {
+                    day?.let { validDay ->
+                        val donePrevious =
+                            days.any { it.date == weekDay.date.minusDays(1).toEpochDay() }
+                        val doneAfter =
+                            days.any { it.date == weekDay.date.plusDays(1).toEpochDay() }
+                        val dayShape =
+                            when {
+                                donePrevious && doneAfter -> RoundedCornerShape(4.dp)
+
+                                donePrevious ->
+                                    RoundedCornerShape(
+                                        topEnd = 20.dp,
+                                        bottomEnd = 20.dp,
+                                        bottomStart = 4.dp,
+                                        topStart = 4.dp,
+                                    )
+
+                                doneAfter ->
+                                    RoundedCornerShape(
+                                        topStart = 20.dp,
+                                        bottomStart = 20.dp,
+                                        topEnd = 4.dp,
+                                        bottomEnd = 4.dp,
+                                    )
+
+                                else -> RoundedCornerShape(20.dp)
+                            }
+
                         CoilImage(
-                            imageModel = { it.image },
+                            imageModel = { validDay.image },
+                            previewPlaceholder = getPlaceholder(),
                             failure = {
                                 Box(
                                     modifier =
@@ -106,23 +137,43 @@ fun WeeklyHorizontalCalendar(
                                             .border(
                                                 width = 2.dp,
                                                 color = MaterialTheme.colorScheme.error,
-                                                shape = CircleShape,
+                                                shape = dayShape,
                                             )
                                 )
                             },
-                            modifier = Modifier.matchParentSize().blur(2.dp).clip(CircleShape),
+                            modifier = Modifier.matchParentSize().clip(dayShape),
                         )
 
                         Box(
                             modifier =
                                 Modifier.matchParentSize()
                                     .background(
-                                        color =
-                                            MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
-                                        shape = CircleShape,
+                                        brush =
+                                            Brush.verticalGradient(
+                                                0f to Color.Transparent,
+                                                0.7f to MaterialTheme.colorScheme.background,
+                                                1f to MaterialTheme.colorScheme.background,
+                                            ),
+                                        shape = dayShape,
                                     )
+                                    .clip(dayShape)
+                                    .clickable(enabled = possibleDay) {
+                                        onNavigateToDayInfo(weekDay.date.toEpochDay())
+                                    }
                         )
                     }
+                        ?: Box(
+                            modifier =
+                                Modifier.matchParentSize()
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceContainer,
+                                        shape = RoundedCornerShape(20.dp),
+                                    )
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .clickable(enabled = possibleDay) {
+                                        onNavigateToDayInfo(weekDay.date.toEpochDay())
+                                    }
+                        )
 
                     Column(
                         modifier = Modifier.padding(4.dp),
@@ -130,7 +181,7 @@ fun WeeklyHorizontalCalendar(
                     ) {
                         Text(
                             text = weekDay.date.dayOfMonth.toString(),
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.labelMedium,
                             color =
                                 if (possibleDay) {
                                     MaterialTheme.colorScheme.onBackground
@@ -148,8 +199,10 @@ fun WeeklyHorizontalCalendar(
                                 } else {
                                     MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
                                 },
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.labelSmall,
                         )
+
+                        Spacer(modifier = Modifier.height(2.dp))
                     }
                 }
             },
@@ -166,5 +219,29 @@ fun WeeklyHorizontalCalendar(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    MomentumTheme(theme = Theme(appTheme = AppTheme.LIGHT)) {
+        WeeklyHorizontalCalendar(
+            onNavigateToCalendar = {},
+            weekState = rememberWeekCalendarState(),
+            days =
+                (0..2).map {
+                    Day(
+                        id = it.toLong(),
+                        projectId = 1,
+                        image = "",
+                        comment = it.toString(),
+                        date = LocalDate.now().minusDays(it.toLong()).toEpochDay(),
+                        isFavorite = true,
+                    )
+                },
+            showGuide = false,
+            onNavigateToDayInfo = {},
+        )
     }
 }

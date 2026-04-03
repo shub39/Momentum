@@ -22,17 +22,21 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -43,12 +47,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -94,6 +99,7 @@ import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -179,6 +185,7 @@ private fun DayInfoContent(
                             LocalDate.ofEpochDay(selectedDate)
                                 .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)),
                         maxLines = 1,
+                        fontFamily = flexFontRounded(),
                         modifier = Modifier.basicMarquee(),
                     )
                 },
@@ -424,15 +431,38 @@ private fun DayInfoContent(
                     imageOptions = ImageOptions(contentScale = ContentScale.Fit),
                 )
             } else {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Icon(
-                        painter = painterResource(R.drawable.add_photo),
-                        contentDescription = "Placeholder",
-                        modifier = Modifier.size(200.dp),
-                    )
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Box(
+                        modifier =
+                            Modifier.size(200.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = MaterialShapes.VerySunny.toShape(),
+                                ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.add_photo),
+                            contentDescription = "Placeholder",
+                            modifier = Modifier.size(100.dp),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    }
 
-                    TextButton(onClick = onLaunchImagePicker, modifier = Modifier.width(200.dp)) {
-                        Text(text = stringResource(R.string.select_image))
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = onLaunchImagePicker,
+                        modifier = Modifier.height(ButtonDefaults.MediumContainerHeight),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.select_image),
+                            style =
+                                ButtonDefaults.textStyleFor(ButtonDefaults.MediumContainerHeight),
+                        )
                     }
                 }
             }

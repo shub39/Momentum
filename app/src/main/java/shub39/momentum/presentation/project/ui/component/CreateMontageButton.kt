@@ -18,7 +18,6 @@ package shub39.momentum.presentation.project.ui.component
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
@@ -69,8 +68,6 @@ fun CreateMontageButton(
 
     val canCreateMontage = daysSize >= 5
 
-    val roundness by animateDpAsState(targetValue = if (canCreateMontage) 16.dp else 100.dp)
-
     val infiniteTransition = rememberInfiniteTransition(label = "rotation")
 
     val rotation by
@@ -88,7 +85,7 @@ fun CreateMontageButton(
     Card(
         onClick = { if (canCreateMontage) onNavigateToMontage() },
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(roundness),
+        shape = RoundedCornerShape(32.dp),
         colors =
             CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),

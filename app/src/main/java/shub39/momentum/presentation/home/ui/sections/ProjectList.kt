@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,6 +62,8 @@ import shub39.momentum.presentation.home.HomeState
 import shub39.momentum.presentation.home.ui.component.Empty
 import shub39.momentum.presentation.home.ui.component.ProjectListItem
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontEmphasis
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -71,16 +73,22 @@ fun ProjectList(
     onNavigateToSettings: () -> Unit,
     onNavigateToProject: () -> Unit,
     onNavigateToNewProject: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeFlexibleTopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(R.string.app_name)) },
+                title = {
+                    Text(text = stringResource(R.string.app_name), fontFamily = flexFontEmphasis())
+                },
                 subtitle = {
-                    Text(text = "${state.projects.size} " + stringResource(R.string.projects))
+                    Text(
+                        text = "${state.projects.size} " + stringResource(R.string.projects),
+                        fontFamily = flexFontRounded(),
+                    )
                 },
                 actions = {
                     IconButton(
@@ -113,11 +121,34 @@ fun ProjectList(
             LazyColumn(
                 modifier = Modifier.padding(padding).fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                items(state.projects, key = { it.project.id }) { projectListData ->
+                itemsIndexed(state.projects, key = { _, it -> it.project.id }) {
+                    index,
+                    projectListData ->
+                    val shape =
+                        when {
+                            state.projects.size == 1 -> RoundedCornerShape(32.dp)
+                            index == 0 ->
+                                RoundedCornerShape(
+                                    topStart = 32.dp,
+                                    topEnd = 32.dp,
+                                    bottomStart = 4.dp,
+                                    bottomEnd = 4.dp,
+                                )
+                            index == state.projects.size - 1 ->
+                                RoundedCornerShape(
+                                    topStart = 4.dp,
+                                    topEnd = 4.dp,
+                                    bottomStart = 32.dp,
+                                    bottomEnd = 32.dp,
+                                )
+                            else -> RoundedCornerShape(4.dp)
+                        }
+
                     ProjectListItem(
                         projectListData = projectListData,
+                        shape = shape,
                         onClick = {
                             onAction(HomeAction.OnChangeProject(projectListData.project))
                             onNavigateToProject()

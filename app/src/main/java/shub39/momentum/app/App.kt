@@ -16,29 +16,28 @@
  */
 package shub39.momentum.app
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import shub39.momentum.billing.presentation.PaywallPage
+import shub39.momentum.navigation.horizontalTransitionMetadata
+import shub39.momentum.navigation.verticalTransitionMetadata
 import shub39.momentum.presentation.home.HomeGraph
 import shub39.momentum.presentation.onboarding.Onboarding
 import shub39.momentum.presentation.project.ProjectGraph
 import shub39.momentum.presentation.settings.SettingsGraph
-import shub39.momentum.presentation.shared.ChangelogDialog
+import shub39.momentum.presentation.shared.ChangelogSheet
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.viewmodels.HomeViewModel
 import shub39.momentum.viewmodels.MainAppViewModel
@@ -46,112 +45,104 @@ import shub39.momentum.viewmodels.OnboardingViewModel
 import shub39.momentum.viewmodels.ProjectViewModel
 import shub39.momentum.viewmodels.SettingsViewModel
 
-@Serializable
-private sealed interface Screens {
-    @Serializable data object Onboarding : Screens
+@Serializable data object Onboarding : NavKey
 
-    @Serializable data object HomeGraph : Screens
+@Serializable data object HomeGraph : NavKey
 
-    @Serializable data object ProjectGraph : Screens
+@Serializable data object ProjectGraph : NavKey
 
-    @Serializable data object SettingsGraph : Screens
+@Serializable data object SettingsGraph : NavKey
 
-    @Serializable data object PaywallPage : Screens
-}
+@Serializable data object PaywallPage : NavKey
 
 @Composable
 fun App() {
-    val navController = rememberNavController()
+    val backStack = rememberNavBackStack(HomeGraph)
 
     val mainViewModel: MainAppViewModel = koinInject()
     val state by mainViewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.isOnboardingDone) {
-        if (!state.isOnboardingDone) {
-            navController.navigate(Screens.Onboarding)
-        }
-    }
-
     MomentumTheme(theme = state.theme) {
-        NavHost(
-            navController = navController,
-            startDestination = Screens.HomeGraph,
-            enterTransition = { fadeIn(tween(300)) },
-            exitTransition = { fadeOut(tween(300)) },
-            popEnterTransition = { fadeIn(tween(300)) },
-            popExitTransition = { fadeOut(tween(300)) },
+        NavDisplay(
             modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
-        ) {
-            composable<Screens.HomeGraph> {
-                val homeViewModel: HomeViewModel = koinInject()
-                val homeState by homeViewModel.state.collectAsStateWithLifecycle()
+            backStack = backStack,
+            entryProvider =
+                entryProvider {
+                    entry<HomeGraph> {
+                        val homeViewModel: HomeViewModel = koinInject()
+                        val homeState by homeViewModel.state.collectAsStateWithLifecycle()
 
-                HomeGraph(
-                    state = homeState,
-                    onAction = homeViewModel::onAction,
-                    onNavigateToSettings = { navController.navigate(Screens.SettingsGraph) },
-                    onNavigateToProject = { navController.navigate(Screens.ProjectGraph) },
-                    isPlusUser = state.isPlusUser,
-                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) },
-                )
-            }
+                        HomeGraph(
+                            state = homeState,
+                            onAction = homeViewModel::onAction,
+                            onNavigateToSettings = { backStack.add(SettingsGraph) },
+                            onNavigateToProject = { backStack.add(ProjectGraph) },
+                            isPlusUser = state.isPlusUser,
+                            onNavigateToPaywall = { backStack.add(PaywallPage) },
+                        )
+                    }
 
-            composable<Screens.Onboarding> {
-                val onboardingViewModel: OnboardingViewModel = koinInject()
-                val onboardingState by onboardingViewModel.state.collectAsStateWithLifecycle()
+                    entry<Onboarding>(metadata = verticalTransitionMetadata()) {
+                        val onboardingViewModel: OnboardingViewModel = koinViewModel()
+                        val onboardingState by
+                            onboardingViewModel.state.collectAsStateWithLifecycle()
 
-                Onboarding(
-                    state = onboardingState,
-                    onAction = onboardingViewModel::onAction,
-                    onNavigateToHome = {
-                        navController.navigate(Screens.HomeGraph) {
-                            popUpTo(Screens.Onboarding) { inclusive = true }
-                        }
-                    },
-                )
-            }
+                        Onboarding(
+                            state = onboardingState,
+                            onAction = onboardingViewModel::onAction,
+                            onNavigateBack = {
+                                if (backStack.size != 1) backStack.removeLastOrNull()
+                            },
+                        )
+                    }
 
-            composable<Screens.ProjectGraph> {
-                val projectViewModel: ProjectViewModel = koinInject()
-                val projectState by projectViewModel.state.collectAsStateWithLifecycle()
-                val exoPlayer by projectViewModel.exoPlayer.collectAsStateWithLifecycle()
+                    entry<ProjectGraph>(metadata = horizontalTransitionMetadata()) {
+                        val projectViewModel: ProjectViewModel = koinInject()
+                        val projectState by projectViewModel.state.collectAsStateWithLifecycle()
+                        val exoPlayer by projectViewModel.exoPlayer.collectAsStateWithLifecycle()
 
-                ProjectGraph(
-                    state = projectState,
-                    exoPlayer = exoPlayer,
-                    onAction = projectViewModel::onAction,
-                    onNavigateBack = { navController.navigateUp() },
-                    isPlusUser = state.isPlusUser,
-                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) },
-                )
-            }
+                        ProjectGraph(
+                            state = projectState,
+                            exoPlayer = exoPlayer,
+                            onAction = projectViewModel::onAction,
+                            onNavigateBack = {
+                                if (backStack.size != 1) backStack.removeLastOrNull()
+                            },
+                            isPlusUser = state.isPlusUser,
+                            onNavigateToPaywall = { backStack.add(PaywallPage) },
+                        )
+                    }
 
-            composable<Screens.SettingsGraph> {
-                val settingsViewModel: SettingsViewModel = koinViewModel()
-                val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
+                    entry<SettingsGraph>(metadata = horizontalTransitionMetadata()) {
+                        val settingsViewModel: SettingsViewModel = koinViewModel()
+                        val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
 
-                SettingsGraph(
-                    state = settingsState,
-                    onAction = settingsViewModel::onAction,
-                    onNavigateBack = { navController.navigateUp() },
-                    isPlusUser = state.isPlusUser,
-                    onNavigateToPaywall = { navController.navigate(Screens.PaywallPage) },
-                )
-            }
+                        SettingsGraph(
+                            state = settingsState,
+                            onAction = settingsViewModel::onAction,
+                            onNavigateBack = {
+                                if (backStack.size != 1) backStack.removeLastOrNull()
+                            },
+                            isPlusUser = state.isPlusUser,
+                            onNavigateToPaywall = { backStack.add(PaywallPage) },
+                            onNavigateToOnboarding = { backStack.add(Onboarding) },
+                        )
+                    }
 
-            composable<Screens.PaywallPage> {
-                PaywallPage(
-                    isPlusUser = state.isPlusUser,
-                    onDismissRequest = {
-                        mainViewModel.checkSubscription()
-                        navController.navigateUp()
-                    },
-                )
-            }
-        }
+                    entry<PaywallPage>(metadata = verticalTransitionMetadata()) {
+                        PaywallPage(
+                            isPlusUser = state.isPlusUser,
+                            onDismissRequest = {
+                                mainViewModel.checkSubscription()
+                                if (backStack.size != 1) backStack.removeLastOrNull()
+                            },
+                        )
+                    }
+                },
+        )
 
         if (state.currentChangelog != null) {
-            ChangelogDialog(
+            ChangelogSheet(
                 currentLog = state.currentChangelog!!,
                 onDismissRequest = { mainViewModel.dismissChangelog() },
             )

@@ -1,5 +1,17 @@
 [
   {
+    "version": "1.6.0",
+    "changes": [
+      "Material 3 Expressive UI changes"
+    ]
+  },
+  {
+    "version": "1.5.3",
+    "changes": [
+      "Fixed Montage maker face alignment bugs"
+    ]
+  },
+  {
     "version": "1.5.2",
     "changes": [
       "Improved montage maker performance"

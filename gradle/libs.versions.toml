@@ -1,35 +1,36 @@
 [versions]
-agp = "9.0.1"
+agp = "9.1.0"
 kotlinx-coroutines = "1.10.2"
 minSdk = "27"
 compileSdk = "36"
-calendar = "2.10.0"
+calendar = "2.10.1"
 exifinterface = "1.4.2"
-media3-exoplayer = "1.9.2"
+media3-exoplayer = "1.10.0"
 splashscreen = "1.2.0"
-datastore = "1.2.0"
+datastore = "1.2.1"
 colorpicker = "1.1.3"
-koin-core = "4.1.1"
-koin-annotations = "2.3.1"
-kotlin = "2.3.10"
-ksp = "2.3.5"
-material3 = "1.5.0-alpha14"
+koin = "4.2.0"
+koin-plugin = "0.4.1"
+kotlin = "2.3.20"
+ksp = "2.3.6"
+material3 = "1.5.0-alpha16"
 room = "2.8.4"
-navigation = "2.9.7"
+navigation = "1.1.0-rc01"
 serialization = "1.10.0"
 materialkolor = "4.1.1"
-compose = "1.10.3"
+compose = "1.10.6"
 landscapist = "2.9.5"
-filekit = "0.12.0"
+filekit = "0.13.0"
 annotation-jvm = "1.9.1"
-purchases = "9.22.0"
+purchases = "9.28.1"
+#noinspection GradleDependency
 tasks-vision = "0.10.32"
 truth = "1.4.5"
 espresso-core = "3.7.0"
 junit = "4.13.2"
 junit-version = "1.3.0"
-core = "1.17.0"
-spotless = "8.2.1"
+core = "1.18.0"
+spotless = "8.4.0"
 ktfmt = "0.61"
 
 [libraries]
@@ -49,7 +50,8 @@ androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation" }
+androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotation-jvm" }
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 
@@ -58,12 +60,11 @@ purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "purc
 purchases-ui = { module = "com.revenuecat.purchases:purchases-ui", version.ref = "purchases" }
 
 # Koin
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-core" }
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-core" }
-koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin-core" }
-koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koin-core" }
-koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin-annotations" }
-koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-annotations" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koin" }
+koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin" }
 
 # Others
 tasks-vision = { module = "com.google.mediapipe:tasks-vision", version.ref = "tasks-vision" }
@@ -86,3 +87,4 @@ android-library = { id = "com.android.library" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-plugin" }

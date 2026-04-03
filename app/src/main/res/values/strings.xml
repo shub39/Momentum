@@ -18,7 +18,7 @@
     <string name="look_and_feel_info">Customise the app in various ways</string>
     <string name="select_app_theme">Select App theme</string>
     <string name="font">Select App font</string>
-    <string name="amoled">use AMOLED</string>
+    <string name="amoled">Use AMOLED</string>
     <string name="amoled_desc">best for OLED displays</string>
     <string name="material_theme">Use Material You</string>
     <string name="material_theme_desc">Extract colors from your wallpaper</string>
@@ -61,7 +61,6 @@
     <string name="pro">Momentum Plus</string>
     <string name="unlock_more_pro">Unlock more with Plus</string>
     <string name="processing_images">Processing Images</string>
-    <string name="assembling_video">Assembling Video</string>
     <string name="stabilize_faces">Stabilize Faces</string>
     <plurals name="add_more_days">
         <item quantity="one">Add %d more day</item>
@@ -74,4 +73,5 @@
     <string name="rescan_faces">Rescan Faces</string>
     <string name="rescan_faces_desc">Rescan all the images and update face data for this project</string>
     <string name="start_scan">Start Scan</string>
+    <string name="whats_changed">What\'s Changed</string>
 </resources>

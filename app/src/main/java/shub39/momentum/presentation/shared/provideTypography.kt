@@ -16,134 +16,93 @@
  */
 package shub39.momentum.presentation.shared
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import shub39.momentum.core.enums.Fonts
-import shub39.momentum.core.toFontRes
+import androidx.compose.ui.text.font.FontVariation
+import androidx.compose.ui.tooling.preview.Preview
+import shub39.momentum.core.R
+
+val TYPOGRAPHY = Typography()
+
+@OptIn(ExperimentalTextApi::class)
+@Composable
+fun flexFontEmphasis(slant: Float = 0f): FontFamily =
+    FontFamily(
+        Font(
+            resId = R.font.google_sans_flex,
+            variationSettings =
+                FontVariation.Settings(
+                    FontVariation.weight(1000),
+                    FontVariation.slant(slant),
+                    FontVariation.width(120f),
+                ),
+        )
+    )
+
+@OptIn(ExperimentalTextApi::class)
+@Composable
+fun flexFontRounded(): FontFamily =
+    FontFamily(
+        Font(
+            resId = R.font.google_sans_flex,
+            variationSettings =
+                FontVariation.Settings(
+                    FontVariation.weight(800),
+                    FontVariation.Setting("ROND", 100f),
+                ),
+        )
+    )
 
 @Composable
-fun provideTypography(scale: Float = 1f, font: Fonts = Fonts.FIGTREE): Typography {
-    val selectedFont = font.toFontRes()?.let { FontFamily(Font(it)) } ?: FontFamily.Default
+fun provideTypography(font: Int? = R.font.poppins): Typography {
+    val selectedFont = font?.let { FontFamily(Font(font)) } ?: FontFamily.Default
 
     return Typography(
-        displayLarge =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Black,
-                fontSize = 57.sp * scale,
-                lineHeight = 64.sp * scale,
-                letterSpacing = -(0.25).sp,
-            ),
-        displayMedium =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Black,
-                fontSize = 45.sp * scale,
-                lineHeight = 52.sp * scale,
-            ),
-        displaySmall =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Black,
-                fontSize = 36.sp * scale,
-                lineHeight = 44.sp * scale,
-            ),
-        headlineLarge =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Bold,
-                fontSize = 32.sp * scale,
-                lineHeight = 40.sp * scale,
-            ),
-        headlineMedium =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Bold,
-                fontSize = 28.sp * scale,
-                lineHeight = 36.sp * scale,
-            ),
-        headlineSmall =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp * scale,
-                lineHeight = 32.sp * scale,
-            ),
-        titleLarge =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Medium,
-                fontSize = 22.sp * scale,
-                lineHeight = 28.sp * scale,
-            ),
-        titleMedium =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp * scale,
-                lineHeight = 24.sp * scale,
-                letterSpacing = 0.15.sp,
-            ),
-        titleSmall =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp * scale,
-                lineHeight = 20.sp * scale,
-                letterSpacing = 0.1.sp,
-            ),
-        labelLarge =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp * scale,
-                lineHeight = 16.sp * scale,
-                letterSpacing = 0.1.sp,
-            ),
-        labelMedium =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp * scale,
-                lineHeight = 14.sp * scale,
-                letterSpacing = 0.5.sp,
-            ),
-        labelSmall =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Medium,
-                fontSize = 12.sp * scale,
-                lineHeight = 12.sp * scale,
-                letterSpacing = 0.5.sp,
-            ),
-        bodyLarge =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp * scale,
-                lineHeight = 24.sp * scale,
-                letterSpacing = 0.5.sp,
-            ),
-        bodyMedium =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp * scale,
-                lineHeight = 20.sp * scale,
-                letterSpacing = 0.25.sp,
-            ),
-        bodySmall =
-            TextStyle(
-                fontFamily = selectedFont,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp * scale,
-                lineHeight = 16.sp * scale,
-                letterSpacing = 0.4.sp,
-            ),
+        displayLarge = TYPOGRAPHY.displayLarge.copy(fontFamily = selectedFont),
+        displayMedium = TYPOGRAPHY.displayMedium.copy(fontFamily = selectedFont),
+        displaySmall = TYPOGRAPHY.displaySmall.copy(fontFamily = selectedFont),
+        headlineLarge = TYPOGRAPHY.headlineLarge.copy(fontFamily = selectedFont),
+        headlineMedium = TYPOGRAPHY.headlineMedium.copy(fontFamily = selectedFont),
+        headlineSmall = TYPOGRAPHY.headlineSmall.copy(fontFamily = selectedFont),
+        titleLarge = TYPOGRAPHY.titleLarge.copy(fontFamily = selectedFont),
+        titleMedium = TYPOGRAPHY.titleMedium.copy(fontFamily = selectedFont),
+        titleSmall = TYPOGRAPHY.titleSmall.copy(fontFamily = selectedFont),
+        bodyLarge = TYPOGRAPHY.bodyLarge.copy(fontFamily = selectedFont),
+        bodyMedium = TYPOGRAPHY.bodyMedium.copy(fontFamily = selectedFont),
+        bodySmall = TYPOGRAPHY.bodySmall.copy(fontFamily = selectedFont),
+        labelLarge = TYPOGRAPHY.labelLarge.copy(fontFamily = selectedFont),
+        labelMedium = TYPOGRAPHY.labelMedium.copy(fontFamily = selectedFont),
+        labelSmall = TYPOGRAPHY.labelSmall.copy(fontFamily = selectedFont),
     )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@Composable
+private fun TypographyPreview() {
+    val typography = provideTypography()
+    Column {
+        Text("Flex Font Emphasis", fontFamily = flexFontEmphasis())
+        Text("Flex Font Rounded", fontFamily = flexFontRounded())
+
+        Text("Display Large", style = typography.displayLarge)
+        Text("Display Medium", style = typography.displayMedium)
+        Text("Display Small", style = typography.displaySmall)
+        Text("Headline Large", style = typography.headlineLarge)
+        Text("Headline Medium", style = typography.headlineMedium)
+        Text("Headline Small", style = typography.headlineSmall)
+        Text("Title Large", style = typography.titleLarge)
+        Text("Title Medium", style = typography.titleMedium)
+        Text("Title Small", style = typography.titleSmall)
+        Text("Body Large", style = typography.bodyLarge)
+        Text("Body Medium", style = typography.bodyMedium)
+        Text("Body Small", style = typography.bodySmall)
+        Text("Label Large", style = typography.labelLarge)
+        Text("Label Medium", style = typography.labelMedium)
+        Text("Label Small", style = typography.labelSmall)
+    }
 }

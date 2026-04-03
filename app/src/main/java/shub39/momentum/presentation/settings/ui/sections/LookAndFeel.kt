@@ -84,6 +84,7 @@ import shub39.momentum.presentation.settings.SettingsState
 import shub39.momentum.presentation.shared.ColorPickerDialog
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.endItemShape
+import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
 import shub39.momentum.presentation.shared.middleItemShape
@@ -109,7 +110,12 @@ fun LookAndFeel(
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(R.string.look_and_feel)) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.look_and_feel),
+                        fontFamily = flexFontEmphasis(),
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -364,17 +370,42 @@ fun LookAndFeel(
                                 Box(
                                     modifier =
                                         Modifier.size(50.dp)
-                                            .background(
-                                                color = scheme.tertiary,
-                                                shape =
-                                                    if (selected) MaterialShapes.VerySunny.toShape()
-                                                    else CircleShape,
+                                            .clip(
+                                                if (selected) MaterialShapes.VerySunny.toShape()
+                                                else CircleShape
                                             )
                                             .clickable(enabled = isPlusUser) {
                                                 onAction(SettingsAction.OnPaletteChange(style))
                                             },
                                     contentAlignment = Alignment.Center,
                                 ) {
+                                    Column(modifier = Modifier.matchParentSize()) {
+                                        Row {
+                                            Box(
+                                                modifier =
+                                                    Modifier.size(25.dp)
+                                                        .background(color = scheme.primary)
+                                            )
+                                            Box(
+                                                modifier =
+                                                    Modifier.size(25.dp)
+                                                        .background(color = scheme.tertiary)
+                                            )
+                                        }
+                                        Row {
+                                            Box(
+                                                modifier =
+                                                    Modifier.size(25.dp)
+                                                        .background(color = scheme.secondary)
+                                            )
+                                            Box(
+                                                modifier =
+                                                    Modifier.size(25.dp)
+                                                        .background(color = scheme.onSurface)
+                                            )
+                                        }
+                                    }
+
                                     if (selected) {
                                         Icon(
                                             painter = painterResource(R.drawable.check_circle),

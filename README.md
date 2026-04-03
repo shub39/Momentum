@@ -1,14 +1,14 @@
 ![](fastlane/metadata/android/en-US/images/featureGraphic.png)
 
-[<img src="badges/playstore.png" alt="Google Play" height="80">](https://play.google.com/store/apps/details?id=shub39.momentum.play)
-[<img src="badges/github.png" alt="Github" height="80">](https://github.com/shub39/Momentum/releases)
+[<img src="badges/playstore.png" alt="Google Play" width="180">](https://play.google.com/store/apps/details?id=shub39.momentum.play)
+[<img src="badges/github.png" alt="Github" width="180">](https://github.com/shub39/Momentum/releases)
 
 ## Screenshots
 
-| ![Image 1](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![Image 2](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) |
+| ![Image 1](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![Image 2](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png) |
 |:-------------------------------------------------------------------------:|:-------------------------------------------------------------------------:|
-| ![Image 3](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) | ![Image 4](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png) |
-| ![Image 5](fastlane/metadata/android/en-US/images/phoneScreenshots/5.png) | ![Image 6](fastlane/metadata/android/en-US/images/phoneScreenshots/6.png) |
+| ![Image 3](fastlane/metadata/android/en-US/images/phoneScreenshots/5.png) | ![Image 4](fastlane/metadata/android/en-US/images/phoneScreenshots/6.png) |
+| ![Image 5](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) | ![Image 6](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) |
 
 ## Features
 

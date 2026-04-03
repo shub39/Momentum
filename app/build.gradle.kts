@@ -20,11 +20,14 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.room)
+    alias(libs.plugins.koin.compiler)
 }
 
+apply(from = "changelog.gradle.kts")
+
 val appName = "Momentum"
-val appVersionCode = 1530
-val appVersionName = "1.5.3"
+val appVersionCode = 1600
+val appVersionName = "1.6.0"
 val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
@@ -55,7 +58,6 @@ android {
         }
 
         create("beta") {
-            resValue("string", "app_name", "$appName Beta")
             applicationIdSuffix = ".beta"
             versionNameSuffix = "-beta$gitHash"
             isMinifyEnabled = true
@@ -67,7 +69,6 @@ android {
         }
 
         debug {
-            resValue("string", "app_name", "$appName Debug")
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }
@@ -127,7 +128,8 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.calendar)
     implementation(libs.filekit.core)
     implementation(libs.filekit.dialogs.compose)
@@ -145,8 +147,7 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.compose.viewmodel.navigation)
-    ksp(libs.koin.ksp.compiler)
-    api(libs.koin.annotations)
+    implementation(libs.koin.annotations)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     testImplementation(libs.junit)
@@ -162,63 +163,3 @@ room { schemaDirectory("$projectDir/schemas") }
 
 fun execute(vararg command: String): String =
     providers.exec { commandLine(*command) }.standardOutput.asText.get().trim()
-
-val generateChangelogJson by
-    tasks.registering {
-        val inputFile = rootProject.file("CHANGELOG.md")
-        val outputDir = file("$projectDir/src/main/assets/")
-        val outputFile = File(outputDir, "changelog.json")
-
-        inputs.file(inputFile)
-        outputs.file(outputFile)
-
-        doLast {
-            if (!outputDir.exists()) outputDir.mkdirs()
-
-            val lines = inputFile.readLines()
-
-            val map = mutableMapOf<String, MutableList<String>>()
-            var currentVersion: String? = null
-
-            for (line in lines) {
-                when {
-                    line.startsWith("## ") -> {
-                        currentVersion = line.removePrefix("## ").trim()
-                        map[currentVersion] = mutableListOf()
-                    }
-
-                    line.startsWith("- ") && currentVersion != null -> {
-                        map[currentVersion]?.add(line.removePrefix("- ").trim())
-                    }
-                }
-            }
-
-            val json = buildString {
-                append("[\n")
-
-                map.entries.forEachIndexed { index, entry ->
-                    append("  {\n")
-                    append("    \"version\": \"${entry.key}\",\n")
-                    append("    \"changes\": [\n")
-
-                    entry.value.forEachIndexed { i, item ->
-                        append("      \"${item.replace("\"", "\\\"")}\"")
-                        if (i != entry.value.lastIndex) append(",")
-                        append("\n")
-                    }
-
-                    append("    ]\n")
-                    append("  }")
-
-                    if (index != map.entries.size - 1) append(",")
-                    append("\n")
-                }
-
-                append("]")
-            }
-
-            outputFile.writeText(json)
-        }
-    }
-
-tasks.named("preBuild") { dependsOn(generateChangelogJson) }

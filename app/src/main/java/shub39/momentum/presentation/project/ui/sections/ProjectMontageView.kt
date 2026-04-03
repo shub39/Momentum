@@ -16,13 +16,8 @@
  */
 package shub39.momentum.presentation.project.ui.sections
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,8 +26,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearWavyProgressIndicator
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -49,8 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -58,6 +49,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.exoplayer.ExoPlayer
 import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.FileKitDialogSettings
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberShareFileLauncher
 import io.github.vinceglb.filekit.write
@@ -73,6 +65,7 @@ import shub39.momentum.core.enums.VideoAction
 import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
+import shub39.momentum.presentation.project.ui.component.MontageCreationAnimation
 import shub39.momentum.presentation.project.ui.component.MontageEditSheet
 import shub39.momentum.presentation.project.ui.component.VideoPlayer
 import shub39.momentum.presentation.shared.MomentumTheme
@@ -94,14 +87,15 @@ fun ProjectMontageView(
     val lifeCycleOwner = LocalLifecycleOwner.current
 
     val fileShareLauncher = rememberShareFileLauncher()
-    val fileSaverLauncher = rememberFileSaverLauncher { file ->
-        if (file != null) {
-            (state.montage as? MontageState.Success)?.let { result ->
-                val platformFile = PlatformFile(result.file)
-                scope.launch { file.write(platformFile) }
+    val fileSaverLauncher =
+        rememberFileSaverLauncher(dialogSettings = FileKitDialogSettings()) { file ->
+            if (file != null) {
+                (state.montage as? MontageState.Success)?.let { result ->
+                    val platformFile = PlatformFile(result.file)
+                    scope.launch { file.write(platformFile) }
+                }
             }
         }
-    }
 
     var showEditSheet by remember { mutableStateOf(false) }
 
@@ -151,50 +145,7 @@ fun ProjectMontageView(
                 }
 
                 is MontageState.ProcessingImages -> {
-                    Column(
-                        modifier = Modifier.padding(32.dp).fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        val animatedProgress by
-                            animateFloatAsState(targetValue = state.montage.progress)
-
-                        LoadingIndicator()
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        LinearWavyProgressIndicator(progress = { animatedProgress })
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = stringResource(R.string.processing_images),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-
-                MontageState.AssemblingVideo -> {
-                    Column(
-                        modifier = Modifier.padding(32.dp).fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        LoadingIndicator()
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        LinearWavyProgressIndicator(progress = { 1f })
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = stringResource(R.string.assembling_video),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+                    MontageCreationAnimation(state.montage.progress)
                 }
             }
 

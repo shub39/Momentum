@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.ChangelogManager
 import shub39.momentum.presentation.settings.SettingsAction
@@ -64,7 +64,6 @@ class SettingsViewModel(
                 is SettingsAction.OnPaletteChange -> datastore.updatePaletteStyle(action.style)
                 is SettingsAction.OnSeedColorChange -> datastore.updateSeedColor(action.color)
                 is SettingsAction.OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
-                is SettingsAction.OnOnboardingToggle -> datastore.updateOnboardingDone(action.done)
             }
         }
 
@@ -114,11 +113,6 @@ class SettingsViewModel(
                 .onEach { pref ->
                     _state.update { it.copy(theme = it.theme.copy(appTheme = pref)) }
                 }
-                .launchIn(this)
-
-            datastore
-                .getOnboardingDoneFlow()
-                .onEach { pref -> _state.update { it.copy(isOnboardingDone = pref) } }
                 .launchIn(this)
         }
 }

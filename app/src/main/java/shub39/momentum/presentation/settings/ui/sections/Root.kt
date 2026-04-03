@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -55,18 +54,19 @@ import androidx.compose.ui.unit.dp
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
-import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.ui.component.AboutApp
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.detachedItemShape
+import shub39.momentum.presentation.shared.flexFontEmphasis
+import shub39.momentum.presentation.shared.flexFontRounded
 import shub39.momentum.presentation.shared.listItemColors
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Root(
-    onAction: (SettingsAction) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToLookAndFeel: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
     onNavigateToPaywall: () -> Unit,
     onNavigateToChangelog: () -> Unit,
     modifier: Modifier = Modifier,
@@ -77,7 +77,9 @@ fun Root(
         topBar = {
             MediumFlexibleTopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(R.string.settings)) },
+                title = {
+                    Text(text = stringResource(R.string.settings), fontFamily = flexFontEmphasis())
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -118,17 +120,12 @@ fun Root(
                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.add),
-                            contentDescription = "Momentum Plus",
-                            modifier = Modifier.size(24.dp),
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
                         Text(
                             text = stringResource(R.string.pro),
-                            style = MaterialTheme.typography.titleLarge,
+                            style =
+                                MaterialTheme.typography.titleLarge.copy(
+                                    fontFamily = flexFontRounded()
+                                ),
                             fontWeight = FontWeight.Bold,
                         )
 
@@ -185,9 +182,7 @@ fun Root(
                         )
                     },
                     modifier =
-                        Modifier.clip(detachedItemShape()).clickable {
-                            onAction(SettingsAction.OnOnboardingToggle(false))
-                        },
+                        Modifier.clip(detachedItemShape()).clickable { onNavigateToOnboarding() },
                 )
             }
 
@@ -222,9 +217,9 @@ private fun Preview() {
         Root(
             onNavigateBack = {},
             onNavigateToLookAndFeel = {},
-            onAction = {},
             onNavigateToPaywall = {},
             onNavigateToChangelog = {},
+            onNavigateToOnboarding = {},
         )
     }
 }

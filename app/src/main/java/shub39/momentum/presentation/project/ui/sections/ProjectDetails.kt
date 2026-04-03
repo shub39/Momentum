@@ -19,9 +19,12 @@ package shub39.momentum.presentation.project.ui.sections
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -32,24 +35,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.LinearWavyProgressIndicator
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -77,6 +80,7 @@ import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.core.enums.PaletteStyle
+import shub39.momentum.presentation.home.ui.sections.ProjectUpsertSheet
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ScanState
@@ -86,6 +90,8 @@ import shub39.momentum.presentation.project.ui.component.FavDayCard
 import shub39.momentum.presentation.project.ui.component.WeeklyHorizontalCalendar
 import shub39.momentum.presentation.shared.MomentumDialog
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontEmphasis
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @OptIn(
     ExperimentalMaterial3ExpressiveApi::class,
@@ -121,8 +127,10 @@ fun ProjectDetails(
             topBar = {
                 LargeFlexibleTopAppBar(
                     scrollBehavior = scrollBehavior,
-                    title = { Text(text = state.project.title) },
-                    subtitle = { Text(text = state.project.description) },
+                    title = { Text(text = state.project.title, fontFamily = flexFontEmphasis()) },
+                    subtitle = {
+                        Text(text = state.project.description, fontFamily = flexFontRounded())
+                    },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
@@ -159,7 +167,7 @@ fun ProjectDetails(
             val today = LocalDate.now()
             val weekState =
                 rememberWeekCalendarState(
-                    startDate = LocalDate.of(2025, 1, 1),
+                    startDate = today.minusYears(1),
                     endDate = today,
                     firstVisibleWeekDate = today,
                 )
@@ -174,7 +182,7 @@ fun ProjectDetails(
                         top = paddingValues.calculateTopPadding() + 16.dp,
                         bottom = paddingValues.calculateBottomPadding() + 60.dp,
                     ),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 // weekly horizontal calendar
@@ -185,16 +193,14 @@ fun ProjectDetails(
                         days = state.days,
                         onNavigateToDayInfo = onNavigateToDayInfo,
                         showGuide = showGuide,
+                        shape =
+                            RoundedCornerShape(
+                                topStart = 28.dp,
+                                topEnd = 28.dp,
+                                bottomStart = 4.dp,
+                                bottomEnd = 4.dp,
+                            ),
                         modifier = Modifier.animateContentSize().padding(horizontal = 16.dp),
-                    )
-                }
-
-                // montage wait/ creator options
-                item {
-                    CreateMontageButton(
-                        daysSize = state.days.size,
-                        onNavigateToMontage = onNavigateToMontage,
-                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
 
@@ -203,11 +209,27 @@ fun ProjectDetails(
                     AlarmCard(
                         project = state.project,
                         onAction = onAction,
+                        shape =
+                            RoundedCornerShape(
+                                topStart = 4.dp,
+                                topEnd = 4.dp,
+                                bottomStart = 28.dp,
+                                bottomEnd = 28.dp,
+                            ),
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
 
-                item { HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp)) }
+                // montage wait/ creator options
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    CreateMontageButton(
+                        daysSize = state.days.size,
+                        onNavigateToMontage = onNavigateToMontage,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                    )
+                }
 
                 // favorite days
                 if (state.days.none { it.isFavorite }) {
@@ -219,11 +241,21 @@ fun ProjectDetails(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Icon(
-                                painter = painterResource(R.drawable.photo_library),
-                                contentDescription = "Favorite Images",
-                                modifier = Modifier.size(100.dp),
-                            )
+                            Box(
+                                modifier =
+                                    Modifier.size(48.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            shape = MaterialShapes.Sunny.toShape(),
+                                        ),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.photo_library),
+                                    contentDescription = "Favorites",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                )
+                            }
 
                             Text(
                                 text = stringResource(R.string.favourites_text),
@@ -233,28 +265,70 @@ fun ProjectDetails(
                     }
                 } else {
                     stickyHeader {
-                        ListItem(
-                            headlineContent = {
-                                Text(
-                                    text = stringResource(R.string.favourites),
-                                    style = MaterialTheme.typography.titleLargeEmphasized,
-                                )
-                            },
-                            leadingContent = {
+                        Row(
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .padding(
+                                        top = 32.dp,
+                                        bottom = 16.dp,
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                    ),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Box(
+                                modifier =
+                                    Modifier.size(48.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            shape = MaterialShapes.Sunny.toShape(),
+                                        ),
+                                contentAlignment = Alignment.Center,
+                            ) {
                                 Icon(
                                     painter = painterResource(R.drawable.favorite),
                                     contentDescription = "Favorites",
-                                    modifier = Modifier.size(32.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                 )
-                            },
-                        )
+                            }
+
+                            Text(
+                                text = stringResource(R.string.favourites),
+                                style = MaterialTheme.typography.titleLargeEmphasized,
+                            )
+                        }
                     }
 
-                    items(state.days.filter { it.isFavorite }, key = { it.id }) { day ->
+                    val favoriteDays = state.days.filter { it.isFavorite }
+                    itemsIndexed(favoriteDays, key = { _, it -> it.id }) { index, day ->
+                        val shape =
+                            when {
+                                favoriteDays.size == 1 -> RoundedCornerShape(32.dp)
+                                index == 0 ->
+                                    RoundedCornerShape(
+                                        topStart = 32.dp,
+                                        topEnd = 32.dp,
+                                        bottomStart = 4.dp,
+                                        bottomEnd = 4.dp,
+                                    )
+
+                                index == favoriteDays.size - 1 ->
+                                    RoundedCornerShape(
+                                        topStart = 4.dp,
+                                        topEnd = 4.dp,
+                                        bottomStart = 32.dp,
+                                        bottomEnd = 32.dp,
+                                    )
+
+                                else -> RoundedCornerShape(4.dp)
+                            }
+
                         FavDayCard(
                             day = day,
                             onClick = { onNavigateToDayInfo(day.date) },
                             modifier = Modifier.padding(horizontal = 16.dp),
+                            shape = shape,
                         )
                     }
                 }
@@ -271,42 +345,56 @@ fun ProjectDetails(
                     }
                 }
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.detect_face),
-                        contentDescription = null,
-                    )
+                Column {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier =
+                            Modifier.size(48.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = MaterialShapes.Pill.toShape(),
+                                ),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.detect_face),
+                            contentDescription = null,
+                        )
+                    }
 
                     Text(
                         text = stringResource(R.string.rescan_faces),
-                        style = MaterialTheme.typography.titleLarge,
+                        style =
+                            MaterialTheme.typography.headlineSmall.copy(
+                                fontFamily = flexFontEmphasis()
+                            ),
                     )
 
                     Text(
                         text = stringResource(R.string.rescan_faces_desc),
-                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyLarge,
                     )
 
                     AnimatedVisibility(visible = state.scanState is ScanState.Processing) {
                         LinearWavyProgressIndicator(
                             progress = {
                                 (state.scanState as? ScanState.Processing)?.progress ?: 0f
-                            }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
 
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Button(
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        TextButton(
                             onClick = { onAction(ProjectAction.OnStartFaceScan) },
                             enabled = state.scanState is ScanState.Idle,
-                            modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.start_scan))
                         }
+
+                        Spacer(modifier = Modifier.widthIn(4.dp))
 
                         Button(
                             onClick = {
@@ -314,7 +402,6 @@ fun ProjectDetails(
                                 showRescanDialog = false
                             },
                             enabled = state.scanState is ScanState.Done,
-                            modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
                         ) {
                             Text(text = stringResource(R.string.done))
                         }
@@ -324,103 +411,50 @@ fun ProjectDetails(
         }
 
         if (showEditDialog) {
-            var newProjectTitle by remember { mutableStateOf(state.project.title) }
-            var newProjectDescription by remember { mutableStateOf(state.project.description) }
-
-            MomentumDialog(onDismissRequest = { showEditDialog = false }) {
-                Column(
-                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(painter = painterResource(R.drawable.edit), contentDescription = "Edit")
-
-                    Text(
-                        text = stringResource(R.string.edit_project),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-
-                    OutlinedTextField(
-                        value = newProjectTitle,
-                        onValueChange = { newProjectTitle = it },
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
-                        isError = newProjectTitle.length >= 20,
-                        placeholder = { Text(text = stringResource(R.string.title)) },
-                        modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
-                    )
-
-                    OutlinedTextField(
-                        value = newProjectDescription,
-                        onValueChange = { newProjectDescription = it },
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
-                        isError = newProjectDescription.length >= 100,
-                        placeholder = { Text(text = stringResource(R.string.description)) },
-                        modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
-                    )
-
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Button(
-                            onClick = {
-                                onAction(
-                                    ProjectAction.OnUpdateProject(
-                                        project =
-                                            state.project.copy(
-                                                title = newProjectTitle.trim(),
-                                                description = newProjectDescription.trim(),
-                                            )
-                                    )
-                                )
-                                showEditDialog = false
-                            },
-                            enabled =
-                                newProjectTitle.length <= 20 &&
-                                    newProjectDescription.length <= 100 &&
-                                    newProjectTitle.isNotBlank() &&
-                                    (newProjectTitle.trim() != state.project.title.trim() ||
-                                        newProjectDescription.trim() !=
-                                            state.project.description.trim()),
-                            modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
-                        ) {
-                            Text(text = stringResource(R.string.edit))
-                        }
-
-                        TextButton(onClick = { showEditDialog = false }) {
-                            Text(text = stringResource(R.string.cancel))
-                        }
-                    }
-                }
-            }
+            ProjectUpsertSheet(
+                project = state.project,
+                onUpsertProject = { onAction(ProjectAction.OnUpdateProject(it)) },
+                edit = true,
+                onDismissRequest = { showEditDialog = false },
+            )
         }
 
         if (showDeleteDialog) {
             MomentumDialog(onDismissRequest = { showDeleteDialog = false }) {
-                Column(
-                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.warning),
-                        contentDescription = "Caution",
-                    )
+                Column {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier =
+                            Modifier.size(48.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = MaterialShapes.Pill.toShape(),
+                                ),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.warning),
+                            contentDescription = "Caution",
+                        )
+                    }
 
                     Text(
                         text = stringResource(R.string.delete_project),
-                        style = MaterialTheme.typography.titleLarge,
+                        style =
+                            MaterialTheme.typography.headlineSmall.copy(
+                                fontFamily = flexFontEmphasis()
+                            ),
                     )
 
                     Text(
                         text = stringResource(R.string.delete_project_caution),
-                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyLarge,
                     )
 
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Button(
-                            onClick = { showDeleteDialog = false },
-                            modifier = Modifier.widthIn(max = 300.dp).fillMaxWidth(),
-                        ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        TextButton(onClick = { showDeleteDialog = false }) {
                             Text(text = stringResource(R.string.cancel))
                         }
 

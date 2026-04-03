@@ -22,9 +22,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,7 +31,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,7 +65,12 @@ import shub39.momentum.presentation.shared.MomentumTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AlarmCard(project: Project, onAction: (ProjectAction) -> Unit, modifier: Modifier = Modifier) {
+fun AlarmCard(
+    project: Project,
+    onAction: (ProjectAction) -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(16.dp),
+) {
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
 
@@ -79,25 +82,7 @@ fun AlarmCard(project: Project, onAction: (ProjectAction) -> Unit, modifier: Mod
                 Toast.makeText(context, "Notification permission denied", Toast.LENGTH_SHORT).show()
         }
 
-    val contentColor = MaterialTheme.colorScheme.onSurface
-    val containerColor by
-        animateColorAsState(
-            targetValue =
-                if (project.alarm != null) {
-                    MaterialTheme.colorScheme.surfaceContainerHigh
-                } else {
-                    MaterialTheme.colorScheme.surfaceContainerLow
-                }
-        )
-
-    val roundness by animateDpAsState(targetValue = if (project.alarm != null) 16.dp else 100.dp)
-
-    Card(
-        modifier = modifier.animateContentSize().fillMaxWidth(),
-        colors =
-            CardDefaults.cardColors(contentColor = contentColor, containerColor = containerColor),
-        shape = RoundedCornerShape(roundness),
-    ) {
+    Card(modifier = modifier.animateContentSize().fillMaxWidth(), shape = shape) {
         Row(
             modifier = Modifier.padding(16.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
