@@ -104,7 +104,7 @@ fun WeeklyHorizontalCalendar(
                             days.any { it.date == weekDay.date.minusDays(1).toEpochDay() }
                         val doneAfter =
                             days.any { it.date == weekDay.date.plusDays(1).toEpochDay() }
-                        val shape =
+                        val dayShape =
                             when {
                                 donePrevious && doneAfter -> RoundedCornerShape(4.dp)
 
@@ -137,11 +137,11 @@ fun WeeklyHorizontalCalendar(
                                             .border(
                                                 width = 2.dp,
                                                 color = MaterialTheme.colorScheme.error,
-                                                shape = shape,
+                                                shape = dayShape,
                                             )
                                 )
                             },
-                            modifier = Modifier.matchParentSize().clip(shape),
+                            modifier = Modifier.matchParentSize().clip(dayShape),
                         )
 
                         Box(
@@ -154,9 +154,9 @@ fun WeeklyHorizontalCalendar(
                                                 0.7f to MaterialTheme.colorScheme.background,
                                                 1f to MaterialTheme.colorScheme.background,
                                             ),
-                                        shape = shape,
+                                        shape = dayShape,
                                     )
-                                    .clip(shape)
+                                    .clip(dayShape)
                                     .clickable(enabled = possibleDay) {
                                         onNavigateToDayInfo(weekDay.date.toEpochDay())
                                     }
@@ -169,7 +169,7 @@ fun WeeklyHorizontalCalendar(
                                         color = MaterialTheme.colorScheme.surfaceContainer,
                                         shape = RoundedCornerShape(20.dp),
                                     )
-                                    .clip(shape)
+                                    .clip(RoundedCornerShape(20.dp))
                                     .clickable(enabled = possibleDay) {
                                         onNavigateToDayInfo(weekDay.date.toEpochDay())
                                     }

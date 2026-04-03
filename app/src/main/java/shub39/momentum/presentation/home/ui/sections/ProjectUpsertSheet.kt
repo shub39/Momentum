@@ -124,7 +124,7 @@ fun ProjectUpsertSheet(
                     onDismissRequest()
                 },
                 enabled =
-                    newProject.title.length <= 20 &&
+                    newProject.title.length < 20 &&
                         newProject.description.length <= 100 &&
                         newProject.title.isNotBlank(),
                 modifier = Modifier.fillMaxWidth(),

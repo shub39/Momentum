@@ -101,7 +101,7 @@ fun MontageCreationAnimation(progress: Float, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(horizontal = 32.dp),
     ) {
-        Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             val startX = -120f
             val endX = 120f
             // 🚀 Moving element using lerp
