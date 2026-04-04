@@ -30,6 +30,13 @@ val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
 
+val abiCodes = mapOf(
+    "arm64-v8a" to 0,
+    "armeabi-v7a" to -1,
+    "x86_64" to -2,
+    "x86" to -3
+)
+
 android {
     namespace = appNameSpace
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -112,11 +119,22 @@ android {
             //noinspection WrongGradleMethod
             val isBuildingBundle =
                 gradle.startParameter.taskNames.any { it.lowercase().contains("bundle") }
-
             isEnable = !isBuildingBundle
             reset()
-            include("x86", "x86_64", "arm64-v8a", "armeabi-v7a")
-            isUniversalApk = true
+            include(*abiCodes.keys.toTypedArray())
+            isUniversalApk = false
+        }
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.outputs.forEach { output ->
+            val name = output.filters.find { it.filterType == com.android.build.api.variant.FilterConfiguration.FilterType.ABI }?.identifier
+            val baseAbiCode = abiCodes[name]
+            if (baseAbiCode != null) {
+                output.versionCode.set(output.versionCode.get() + baseAbiCode)
+            }
         }
     }
 }
