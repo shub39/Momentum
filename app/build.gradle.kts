@@ -139,6 +139,13 @@ androidComponents {
     }
 }
 
+kotlin {
+    compilerOptions {
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
+    }
+}
+
 dependencies {
     implementation(project(":common:core"))
     implementation(project(":common:montage"))
@@ -180,7 +187,7 @@ dependencies {
     androidTestImplementation(libs.truth)
 }
 
-room { schemaDirectory("$projectDir/schemas") }
+room3 { schemaDirectory("$projectDir/schemas") }
 
 fun execute(vararg command: String): String =
     providers.exec { commandLine(*command) }.standardOutput.asText.get().trim()

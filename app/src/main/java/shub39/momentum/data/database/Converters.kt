@@ -16,7 +16,7 @@
  */
 package shub39.momentum.data.database
 
-import androidx.room.TypeConverter
+import androidx.room3.TypeConverter
 import kotlinx.serialization.json.Json
 import shub39.momentum.core.data_classes.AlarmData
 import shub39.momentum.core.data_classes.FaceData
