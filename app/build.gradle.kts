@@ -122,7 +122,7 @@ android {
             isEnable = !isBuildingBundle
             reset()
             include(*abiCodes.keys.toTypedArray())
-            isUniversalApk = false
+            isUniversalApk = true
         }
     }
 }
