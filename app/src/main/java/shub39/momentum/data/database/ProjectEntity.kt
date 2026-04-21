@@ -16,8 +16,8 @@
  */
 package shub39.momentum.data.database
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.AlarmData
 

@@ -24,8 +24,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1600
-val appVersionName = "1.6.0"
+val appVersionCode = 1610
+val appVersionName = "1.6.1"
 val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
@@ -122,7 +122,7 @@ android {
             isEnable = !isBuildingBundle
             reset()
             include(*abiCodes.keys.toTypedArray())
-            isUniversalApk = false
+            isUniversalApk = true
         }
     }
 }
@@ -136,6 +136,13 @@ androidComponents {
                 output.versionCode.set(output.versionCode.get() + baseAbiCode)
             }
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
     }
 }
 
@@ -180,7 +187,7 @@ dependencies {
     androidTestImplementation(libs.truth)
 }
 
-room { schemaDirectory("$projectDir/schemas") }
+room3 { schemaDirectory("$projectDir/schemas") }
 
 fun execute(vararg command: String): String =
     providers.exec { commandLine(*command) }.standardOutput.asText.get().trim()
