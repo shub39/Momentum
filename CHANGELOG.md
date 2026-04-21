@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.1
+- Miscellaneous Updates and Improvements
+- Notifications open App on click
+
 ## 1.6.0
 - Material 3 Expressive UI changes
 
