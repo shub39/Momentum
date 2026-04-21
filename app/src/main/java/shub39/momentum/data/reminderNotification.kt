@@ -17,12 +17,15 @@
 package shub39.momentum.data
 
 import android.Manifest
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import shub39.momentum.R
+import shub39.momentum.app.MainActivity
 import shub39.momentum.core.data_classes.Project
 
 fun reminderNotification(context: Context, project: Project) {
@@ -33,12 +36,20 @@ fun reminderNotification(context: Context, project: Project) {
             "${project.title} : ${project.description}"
         }
 
+    val intent =
+        Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+    val pendingIntent: PendingIntent =
+        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
     val builder =
         NotificationCompat.Builder(context, "1")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(context.getString(R.string.take_a_photo))
             .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
     with(NotificationManagerCompat.from(context)) {

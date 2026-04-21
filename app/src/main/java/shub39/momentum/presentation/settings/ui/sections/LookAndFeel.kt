@@ -19,6 +19,7 @@ package shub39.momentum.presentation.settings.ui.sections
 import android.R.color.system_accent1_200
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -379,32 +380,37 @@ fun LookAndFeel(
                                             },
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    Column(modifier = Modifier.matchParentSize()) {
-                                        Row {
-                                            Box(
-                                                modifier =
-                                                    Modifier.size(25.dp)
-                                                        .background(color = scheme.primary)
+                                    Canvas(modifier = Modifier.matchParentSize()) {
+                                        val colors =
+                                            listOf(
+                                                scheme.primary,
+                                                scheme.primaryContainer,
+                                                scheme.secondary,
+                                                scheme.secondaryContainer,
+                                                scheme.tertiary,
+                                                scheme.tertiaryContainer,
                                             )
-                                            Box(
-                                                modifier =
-                                                    Modifier.size(25.dp)
-                                                        .background(color = scheme.tertiary)
-                                            )
-                                        }
-                                        Row {
-                                            Box(
-                                                modifier =
-                                                    Modifier.size(25.dp)
-                                                        .background(color = scheme.secondary)
-                                            )
-                                            Box(
-                                                modifier =
-                                                    Modifier.size(25.dp)
-                                                        .background(color = scheme.onSurface)
+                                        val sweepAngle = 360f / colors.size
+                                        colors.forEachIndexed { index, color ->
+                                            drawArc(
+                                                color = color,
+                                                startAngle = index * sweepAngle,
+                                                sweepAngle = sweepAngle,
+                                                useCenter = true,
                                             )
                                         }
                                     }
+
+                                    Box(
+                                        modifier =
+                                            Modifier.matchParentSize()
+                                                .background(
+                                                    color =
+                                                        scheme.primary.copy(
+                                                            alpha = if (selected) 0.7f else 0f
+                                                        )
+                                                )
+                                    )
 
                                     if (selected) {
                                         Icon(
