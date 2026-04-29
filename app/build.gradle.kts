@@ -102,7 +102,12 @@ android {
         resValues = true
     }
 
-    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+        jniLibs.keepDebugSymbols.add("**/*.so")
+    }
 
     dependenciesInfo {
         includeInApk = false
