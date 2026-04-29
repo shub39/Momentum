@@ -1,5 +1,12 @@
 [
   {
+    "version": "1.6.1",
+    "changes": [
+      "Miscellaneous Updates and Improvements",
+      "Notifications open App on click"
+    ]
+  },
+  {
     "version": "1.6.0",
     "changes": [
       "Material 3 Expressive UI changes"
