@@ -26,6 +26,7 @@ import shub39.momentum.core.interfaces.MontageConfigPrefs
 import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.database.DaysDao
+import shub39.momentum.data.database.MontageOptionsDao
 import shub39.momentum.data.database.ProjectDBFactory
 import shub39.momentum.data.database.ProjectDao
 import shub39.momentum.data.database.ProjectDatabase
@@ -37,12 +38,16 @@ import shub39.montage.MontageMakerImpl
 class AppModule {
     @Single
     fun provideAppDb(dbFactory: ProjectDBFactory): ProjectDatabase {
-        return dbFactory.create().fallbackToDestructiveMigration(true).build()
+        return dbFactory.create().build()
     }
 
     @Single fun getProjectDao(database: ProjectDatabase): ProjectDao = database.projectDao
 
     @Single fun getDaysDao(database: ProjectDatabase): DaysDao = database.daysDao
+
+    @Single
+    fun getMontageOptionsDao(database: ProjectDatabase): MontageOptionsDao =
+        database.montageOptionsDao
 
     @Single
     fun getSettingsPrefs(datastoreFactory: DatastoreFactory): SettingsPrefs =

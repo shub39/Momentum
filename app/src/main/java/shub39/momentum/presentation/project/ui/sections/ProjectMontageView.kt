@@ -191,7 +191,7 @@ fun ProjectMontageView(
                     onClick = {
                         fileSaverLauncher.launch(
                             suggestedName = state.project?.title ?: "Untitled",
-                            extension = "mp4",
+                            defaultExtension = "mp4",
                         )
                     },
                     enabled = state.montage is MontageState.Success,

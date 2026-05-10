@@ -20,16 +20,13 @@ import androidx.room3.Dao
 import androidx.room3.Delete
 import androidx.room3.Query
 import androidx.room3.Upsert
-import kotlinx.coroutines.flow.Flow
 
 @Dao
-sealed interface DaysDao {
-    @Query("SELECT * FROM days_table WHERE projectId=:id ORDER BY date DESC LIMIT 10")
-    suspend fun getLastDaysByProjectId(id: Long): List<DayEntity>
+sealed interface MontageOptionsDao {
+    @Upsert suspend fun upsertMontageOption(montageOptions: MontageOptionsEntity)
 
-    @Query("SELECT * FROM days_table") fun getDays(): Flow<List<DayEntity>>
+    @Delete suspend fun deleteMontageOption(montageOptions: MontageOptionsEntity)
 
-    @Upsert suspend fun upsertDay(dayEntity: DayEntity)
-
-    @Delete suspend fun deleteDay(dayEntity: DayEntity)
+    @Query("SELECT * FROM options_table WHERE projectId=:projectId")
+    suspend fun getMontageOptionByProjectId(projectId: Long): MontageOptionsEntity
 }

@@ -17,8 +17,10 @@
 package shub39.momentum.data
 
 import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.MontageOptions
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.data.database.DayEntity
+import shub39.momentum.data.database.MontageOptionsEntity
 import shub39.momentum.data.database.ProjectEntity
 
 fun ProjectEntity.toProject(): Project {
@@ -50,5 +52,41 @@ fun Day.toDayEntity(): DayEntity {
         comment = comment,
         isFavorite = isFavorite,
         faceData = faceData,
+    )
+}
+
+fun MontageOptionsEntity.toMontageOptions(): MontageOptions {
+    return MontageOptions(
+        id = id,
+        projectId = projectId,
+        framesPerImage = framesPerImage,
+        framesPerSecond = framesPerSecond,
+        videoQuality = videoQuality,
+        backgroundColor = backgroundColor,
+        waterMark = waterMark,
+        showDate = showDate,
+        showMessage = showMessage,
+        font = font,
+        dateStyle = dateStyle,
+        stabilizeFaces = stabilizeFaces,
+        censorFaces = censorFaces,
+    )
+}
+
+fun MontageOptions.toMontageOptionsEntity(): MontageOptionsEntity {
+    return MontageOptionsEntity(
+        id = id,
+        projectId = projectId,
+        framesPerImage = framesPerImage,
+        framesPerSecond = framesPerSecond,
+        videoQuality = videoQuality,
+        backgroundColor = backgroundColor,
+        waterMark = waterMark,
+        showDate = showDate,
+        showMessage = showMessage,
+        font = font,
+        dateStyle = dateStyle,
+        stabilizeFaces = stabilizeFaces,
+        censorFaces = censorFaces,
     )
 }

@@ -16,15 +16,17 @@
  */
 package shub39.momentum.data.database
 
-import androidx.room3.ColumnInfo
+import androidx.compose.ui.graphics.Color
 import androidx.room3.Entity
 import androidx.room3.ForeignKey
 import androidx.room3.Index
 import androidx.room3.PrimaryKey
-import shub39.momentum.core.data_classes.FaceData
+import shub39.momentum.core.enums.DateStyle
+import shub39.momentum.core.enums.Fonts
+import shub39.momentum.core.enums.VideoQuality
 
 @Entity(
-    tableName = "days_table",
+    tableName = "options_table",
     foreignKeys =
         [
             ForeignKey(
@@ -36,12 +38,18 @@ import shub39.momentum.core.data_classes.FaceData
         ],
     indices = [Index("projectId")],
 )
-data class DayEntity(
+data class MontageOptionsEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val projectId: Long,
-    val image: String,
-    val comment: String?,
-    val date: Long,
-    val isFavorite: Boolean,
-    @ColumnInfo(name = "faceData", defaultValue = "NULL") val faceData: FaceData? = null,
+    val framesPerImage: Int = 1,
+    val framesPerSecond: Float = 1f,
+    val videoQuality: VideoQuality = VideoQuality.SMALL,
+    val backgroundColor: Color = Color.Black,
+    val waterMark: Boolean = true,
+    val showDate: Boolean = true,
+    val showMessage: Boolean = true,
+    val font: Fonts = Fonts.FIGTREE,
+    val dateStyle: DateStyle = DateStyle.FULL,
+    val stabilizeFaces: Boolean = false,
+    val censorFaces: Boolean = false,
 )

@@ -22,7 +22,7 @@ import androidx.room3.RoomDatabase
 import androidx.room3.TypeConverters
 
 @Database(
-    entities = [ProjectEntity::class, DayEntity::class],
+    entities = [ProjectEntity::class, DayEntity::class, MontageOptionsEntity::class],
     version = ProjectDatabase.SCHEMA_VERSION,
     exportSchema = true,
     autoMigrations = [AutoMigration(from = 1, to = 2)],
@@ -31,9 +31,10 @@ import androidx.room3.TypeConverters
 abstract class ProjectDatabase : RoomDatabase() {
     abstract val projectDao: ProjectDao
     abstract val daysDao: DaysDao
+    abstract val montageOptionsDao: MontageOptionsDao
 
     companion object {
         const val DATABASE_NAME = "project_db"
-        const val SCHEMA_VERSION = 2
+        const val SCHEMA_VERSION = 3
     }
 }

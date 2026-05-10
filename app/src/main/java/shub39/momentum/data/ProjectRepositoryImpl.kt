@@ -20,21 +20,26 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Single
 import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.MontageOptions
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.ProjectListData
 import shub39.momentum.core.interfaces.ProjectRepository
 import shub39.momentum.data.database.DaysDao
+import shub39.momentum.data.database.MontageOptionsDao
 import shub39.momentum.data.database.ProjectDao
 
 @Single(binds = [ProjectRepository::class])
-class ProjectRepositoryImpl(private val projectDao: ProjectDao, private val daysDao: DaysDao) :
-    ProjectRepository {
+class ProjectRepositoryImpl(
+    private val projectDao: ProjectDao,
+    private val daysDao: DaysDao,
+    private val montageOptionsDao: MontageOptionsDao,
+) : ProjectRepository {
     override fun getProjectListData(): Flow<List<ProjectListData>> {
         return projectDao.getProjects().map { flow ->
             flow.map { project ->
                 ProjectListData(
                     project = project.toProject(),
-                    last10Days = daysDao.getLastDaysById(project.id).map { it.toDay() },
+                    last10Days = daysDao.getLastDaysByProjectId(project.id).map { it.toDay() },
                 )
             }
         }
@@ -65,6 +70,18 @@ class ProjectRepositoryImpl(private val projectDao: ProjectDao, private val days
     }
 
     override suspend fun getLastCompletedDay(projectId: Long): Day? {
-        return daysDao.getLastDaysById(projectId).firstOrNull()?.toDay()
+        return daysDao.getLastDaysByProjectId(projectId).firstOrNull()?.toDay()
+    }
+
+    override suspend fun getMontageOptionsByProjectId(projectId: Long): MontageOptions {
+        return montageOptionsDao.getMontageOptionByProjectId(projectId).toMontageOptions()
+    }
+
+    override suspend fun upsertMontageOptions(montageOptions: MontageOptions) {
+        montageOptionsDao.upsertMontageOption(montageOptions.toMontageOptionsEntity())
+    }
+
+    override suspend fun deleteMontageOptions(montageOptions: MontageOptions) {
+        montageOptionsDao.deleteMontageOption(montageOptions.toMontageOptionsEntity())
     }
 }

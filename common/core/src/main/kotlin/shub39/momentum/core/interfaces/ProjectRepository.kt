@@ -18,6 +18,7 @@ package shub39.momentum.core.interfaces
 
 import kotlinx.coroutines.flow.Flow
 import shub39.momentum.core.data_classes.Day
+import shub39.momentum.core.data_classes.MontageOptions
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.ProjectListData
 
@@ -37,4 +38,10 @@ interface ProjectRepository {
     suspend fun deleteDay(day: Day)
 
     suspend fun getLastCompletedDay(projectId: Long): Day?
+
+    suspend fun getMontageOptionsByProjectId(projectId: Long): MontageOptions
+
+    suspend fun upsertMontageOptions(montageOptions: MontageOptions)
+
+    suspend fun deleteMontageOptions(montageOptions: MontageOptions)
 }
