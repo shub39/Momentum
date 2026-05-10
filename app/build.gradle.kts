@@ -30,12 +30,7 @@ val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
 
-val abiCodes = mapOf(
-    "arm64-v8a" to 0,
-    "armeabi-v7a" to -1,
-    "x86_64" to -2,
-    "x86" to -3
-)
+val abiCodes = mapOf("arm64-v8a" to 0, "armeabi-v7a" to -1, "x86_64" to -2, "x86" to -3)
 
 android {
     namespace = appNameSpace
@@ -103,9 +98,7 @@ android {
     }
 
     packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
         jniLibs.keepDebugSymbols.add("**/*.so")
     }
 
@@ -135,7 +128,13 @@ android {
 androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
-            val name = output.filters.find { it.filterType == com.android.build.api.variant.FilterConfiguration.FilterType.ABI }?.identifier
+            val name =
+                output.filters
+                    .find {
+                        it.filterType ==
+                            com.android.build.api.variant.FilterConfiguration.FilterType.ABI
+                    }
+                    ?.identifier
             val baseAbiCode = abiCodes[name]
             if (baseAbiCode != null) {
                 output.versionCode.set(output.versionCode.get() + baseAbiCode)
@@ -183,12 +182,12 @@ dependencies {
     implementation(libs.koin.annotations)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.kotlinx.datetime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.androidx.room.testing)
-    testImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.truth)
 }
 
@@ -199,6 +198,7 @@ fun execute(vararg command: String): String =
 
 val generateChangelogJson by
     tasks.registering {
+        description = "Generating Changelog for app"
         val inputFile = rootProject.file("CHANGELOG.md")
         val outputDir = file("$projectDir/src/main/assets/")
         val outputFile = File(outputDir, "changelog.json")
@@ -230,7 +230,7 @@ val generateChangelogJson by
             val json = buildString {
                 append("[\n")
 
-                map.entries.forEachIndexed { index, entry ->
+                map.entries.take(10).forEachIndexed { index, entry ->
                     append("  {\n")
                     append("    \"version\": \"${entry.key}\",\n")
                     append("    \"changes\": [\n")
@@ -244,7 +244,7 @@ val generateChangelogJson by
                     append("    ]\n")
                     append("  }")
 
-                    if (index != map.entries.size - 1) append(",")
+                    if (index != 9) append(",")
                     append("\n")
                 }
 

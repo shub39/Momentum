@@ -31,6 +31,7 @@ junit = "4.13.2"
 junit-version = "1.3.0"
 core = "1.18.0"
 spotless = "8.4.0"
+kotlinx-datetime = "0.8.0"
 ktfmt = "0.61"
 
 [libraries]
@@ -68,6 +69,7 @@ koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "
 
 # Others
 tasks-vision = { module = "com.google.mediapipe:tasks-vision", version.ref = "tasks-vision" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 junit = { module = "junit:junit", version.ref = "junit" }
 filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }

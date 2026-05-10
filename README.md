@@ -10,6 +10,7 @@
 
 [<img src="badges/playstore.png" alt="Google Play" width="180">](https://play.google.com/store/apps/details?id=shub39.momentum.play)
 [<img src="badges/github.png" alt="Github" width="180">](https://github.com/shub39/Momentum/releases)
+[<img src="badges/izzy.png" alt="IzzyOnDroid" width="180">](https://apt.izzysoft.de/fdroid/index/apk/shub39.momentum)
 
 ## Screenshots
 
@@ -35,8 +36,7 @@ This app is offline first and privacy friendly, everything stays on your device.
 
 ## Inspiration and Tech used
 
-- [Agelapse](https://github.com/hugocornellier/agelapse) by Hugo Cornellier (the guy who started it
-  all)
+- [Agelapse](https://github.com/hugocornellier/agelapse) by Hugo Cornellier (the guy who started it all)
 - [Daily You](https://github.com/Demizo/Daily_You)
 - Kotlin and Jetpack Compose 🖤
 - [MaterialKolor](https://github.com/jordond/MaterialKolor)
