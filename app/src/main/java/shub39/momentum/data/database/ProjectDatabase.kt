@@ -25,7 +25,10 @@ import androidx.room3.TypeConverters
     entities = [ProjectEntity::class, DayEntity::class, MontageOptionsEntity::class],
     version = ProjectDatabase.SCHEMA_VERSION,
     exportSchema = true,
-    autoMigrations = [AutoMigration(from = 1, to = 2)],
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3),
+    ],
 )
 @TypeConverters(Converters::class)
 abstract class ProjectDatabase : RoomDatabase() {

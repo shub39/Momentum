@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "09b3e090130457dfa401248ff032b8cc",
+    "identityHash": "1c42cba7b509f905b39bd2ba789bf9f2",
     "entities": [
       {
         "tableName": "projects_table",
@@ -115,125 +115,11 @@
             ]
           }
         ]
-      },
-      {
-        "tableName": "options_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `projectId` INTEGER NOT NULL, `framesPerImage` INTEGER NOT NULL, `framesPerSecond` REAL NOT NULL, `videoQuality` TEXT NOT NULL, `backgroundColor` INTEGER NOT NULL, `waterMark` INTEGER NOT NULL, `showDate` INTEGER NOT NULL, `showMessage` INTEGER NOT NULL, `font` TEXT NOT NULL, `dateStyle` TEXT NOT NULL, `stabilizeFaces` INTEGER NOT NULL, `censorFaces` INTEGER NOT NULL, FOREIGN KEY(`projectId`) REFERENCES `projects_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "projectId",
-            "columnName": "projectId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "framesPerImage",
-            "columnName": "framesPerImage",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "framesPerSecond",
-            "columnName": "framesPerSecond",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "videoQuality",
-            "columnName": "videoQuality",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "backgroundColor",
-            "columnName": "backgroundColor",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "waterMark",
-            "columnName": "waterMark",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "showDate",
-            "columnName": "showDate",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "showMessage",
-            "columnName": "showMessage",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "font",
-            "columnName": "font",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "dateStyle",
-            "columnName": "dateStyle",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "stabilizeFaces",
-            "columnName": "stabilizeFaces",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "censorFaces",
-            "columnName": "censorFaces",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [
-          {
-            "name": "index_options_table_projectId",
-            "unique": false,
-            "columnNames": [
-              "projectId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_options_table_projectId` ON `${TABLE_NAME}` (`projectId`)"
-          }
-        ],
-        "foreignKeys": [
-          {
-            "table": "projects_table",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "projectId"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
-        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '09b3e090130457dfa401248ff032b8cc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1c42cba7b509f905b39bd2ba789bf9f2')"
     ]
   }
 }
