@@ -22,6 +22,8 @@ import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.VideoQuality
 
 data class MontageOptions(
+    val id: Long = 0,
+    val projectId: Long,
     val framesPerImage: Int = 1,
     val framesPerSecond: Float = 1f,
     val videoQuality: VideoQuality = VideoQuality.SMALL,
