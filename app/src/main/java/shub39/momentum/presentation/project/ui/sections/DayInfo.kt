@@ -80,12 +80,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
+import io.github.vinceglb.filekit.dialogs.toAndroidUri
 import io.github.vinceglb.filekit.path
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -112,7 +112,7 @@ fun DayInfo(
 ) {
     val day = state.days.find { it.date == selectedDate }
     var imageFile: PlatformFile? by
-        remember(day) { mutableStateOf(day?.let { PlatformFile(it.image.toUri()) }) }
+        remember(day) { mutableStateOf(day?.let { PlatformFile(it.image) }) }
     var isFavorite by remember(day) { mutableStateOf(day?.isFavorite ?: false) }
     var comment by remember(day) { mutableStateOf(day?.comment ?: "") }
 
@@ -124,10 +124,10 @@ fun DayInfo(
                 onAction(
                     ProjectAction.OnUpsertDay(
                         day =
-                            day?.copy(image = image.path.toUri().toString())
+                            day?.copy(image = image.path)
                                 ?: Day(
                                     projectId = state.project?.id!!,
-                                    image = image.path.toUri().toString(),
+                                    image = image.path,
                                     comment = comment,
                                     date = selectedDate,
                                     isFavorite = isFavorite,
@@ -276,8 +276,9 @@ private fun DayInfoContent(
                 // original image
                 val originalBitmap =
                     remember(imageFile) {
-                        context.contentResolver.openInputStream(imageFile.path.toUri())?.use {
-                            stream ->
+                        val uri = imageFile.toAndroidUri()
+
+                        context.contentResolver.openInputStream(uri)?.use { stream ->
                             BitmapFactory.decodeStream(stream)
                         }
                     }
@@ -315,7 +316,7 @@ private fun DayInfoContent(
                     }
 
                 CoilImage(
-                    imageModel = { imageFile.path.toUri() },
+                    imageModel = { imageFile.toAndroidUri() },
                     loading = { LoadingIndicator() },
                     success = { _, painter ->
                         Box(

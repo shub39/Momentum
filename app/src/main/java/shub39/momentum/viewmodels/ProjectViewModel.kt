@@ -25,6 +25,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayer.Builder
 import androidx.media3.exoplayer.ExoPlayer.REPEAT_MODE_ALL
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.toAndroidUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -109,7 +111,8 @@ class ProjectViewModel(
             is ProjectAction.OnUpsertDay ->
                 viewModelScope.launch {
                     if (action.isNewImage) {
-                        val faceData = faceDetector.getFaceDataFromUri(action.day.image.toUri())
+                        val uri = PlatformFile(action.day.image).toAndroidUri()
+                        val faceData = faceDetector.getFaceDataFromUri(uri)
                         val copiedImageUri = imageHandler.copyImageToAppData(action.day)
 
                         Log.d("ProjectViewModel", "faceData : $faceData")
@@ -230,7 +233,8 @@ class ProjectViewModel(
                                     )
                                 }
 
-                                val faceData = faceDetector.getFaceDataFromUri(day.image.toUri())
+                                val uri = PlatformFile(day.image).toAndroidUri()
+                                val faceData = faceDetector.getFaceDataFromUri(uri)
                                 repository.upsertDay(day.copy(faceData = faceData))
                             }
                         }
@@ -269,7 +273,8 @@ class ProjectViewModel(
     private suspend fun processDays() {
         state.value.days.forEach { day ->
             if (day.faceData == null) {
-                val faceData = faceDetector.getFaceDataFromUri(day.image.toUri())
+                val uri = PlatformFile(day.image).toAndroidUri()
+                val faceData = faceDetector.getFaceDataFromUri(uri)
                 repository.upsertDay(day.copy(faceData = faceData))
             }
         }
