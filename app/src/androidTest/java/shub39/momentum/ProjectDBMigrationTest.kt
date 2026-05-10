@@ -47,7 +47,9 @@ class ProjectDBMigrationTest {
         )
 
     @After
-    fun tearDown() { if (dbFile.exists()) dbFile.delete() }
+    fun tearDown() {
+        if (dbFile.exists()) dbFile.delete()
+    }
 
     @Test
     fun migration1to2_containsCorrectData() = runBlocking {
