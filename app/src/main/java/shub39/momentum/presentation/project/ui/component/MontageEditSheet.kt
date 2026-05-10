@@ -102,10 +102,10 @@ fun MontageEditSheet(
     if (showColorPicker) {
         ColorPickerDialog(
             initialColor = state.montageConfig.backgroundColor,
-            onSelect = {
+            onSelect = { color ->
                 onAction(
                     ProjectAction.OnEditMontageConfig(
-                        state.montageConfig.copy(backgroundColor = it)
+                        config = state.montageConfig.copy(backgroundColor = color)
                     )
                 )
             },

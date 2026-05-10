@@ -44,7 +44,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.KoinViewModel
-import shub39.momentum.core.data_classes.MontageOptions
+import shub39.momentum.core.data_classes.MontageConfig
 import shub39.momentum.core.data_classes.toMontageConfig
 import shub39.momentum.core.data_classes.toMontageOptions
 import shub39.momentum.core.enums.VideoAction
@@ -187,9 +187,9 @@ class ProjectViewModel(
 
             is ProjectAction.OnEditMontageConfig -> {
                 viewModelScope.launch {
-                    repository.upsertMontageOptions(
-                        montageOptions = action.config.toMontageOptions(action.projectId)
-                    )
+                    _state.value.project?.id?.let { projectId ->
+                        updateMontageConfig(projectId = projectId, config = action.config)
+                    }
                 }
             }
 
@@ -209,7 +209,9 @@ class ProjectViewModel(
 
             is ProjectAction.OnResetMontagePrefs ->
                 viewModelScope.launch {
-                    repository.upsertMontageOptions(MontageOptions(projectId = action.projectId))
+                    _state.value.project?.id?.let { projectId ->
+                        updateMontageConfig(projectId = projectId, config = MontageConfig())
+                    }
                 }
 
             ProjectAction.OnStartFaceScan ->
@@ -244,6 +246,14 @@ class ProjectViewModel(
             ProjectAction.OnResetScanState -> {
                 _state.update { it.copy(scanState = ScanState.Idle) }
             }
+        }
+    }
+
+    private suspend fun updateMontageConfig(projectId: Long, config: MontageConfig) {
+        repository.upsertMontageOptions(config.toMontageOptions(projectId))
+
+        repository.getMontageOptionsByProjectId(projectId)?.toMontageConfig()?.let { config ->
+            _state.update { it.copy(montageConfig = config) }
         }
     }
 

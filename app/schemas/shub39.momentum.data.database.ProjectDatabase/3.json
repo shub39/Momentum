@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "09b3e090130457dfa401248ff032b8cc",
+    "identityHash": "d5a02b4a431d19850e75954b531e3e24",
     "entities": [
       {
         "tableName": "projects_table",
@@ -118,14 +118,8 @@
       },
       {
         "tableName": "options_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `projectId` INTEGER NOT NULL, `framesPerImage` INTEGER NOT NULL, `framesPerSecond` REAL NOT NULL, `videoQuality` TEXT NOT NULL, `backgroundColor` INTEGER NOT NULL, `waterMark` INTEGER NOT NULL, `showDate` INTEGER NOT NULL, `showMessage` INTEGER NOT NULL, `font` TEXT NOT NULL, `dateStyle` TEXT NOT NULL, `stabilizeFaces` INTEGER NOT NULL, `censorFaces` INTEGER NOT NULL, FOREIGN KEY(`projectId`) REFERENCES `projects_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`projectId` INTEGER NOT NULL, `framesPerImage` INTEGER NOT NULL, `framesPerSecond` REAL NOT NULL, `videoQuality` TEXT NOT NULL, `backgroundColor` INTEGER NOT NULL, `waterMark` INTEGER NOT NULL, `showDate` INTEGER NOT NULL, `showMessage` INTEGER NOT NULL, `font` TEXT NOT NULL, `dateStyle` TEXT NOT NULL, `stabilizeFaces` INTEGER NOT NULL, `censorFaces` INTEGER NOT NULL, PRIMARY KEY(`projectId`), FOREIGN KEY(`projectId`) REFERENCES `projects_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "projectId",
             "columnName": "projectId",
@@ -200,9 +194,9 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
-            "id"
+            "projectId"
           ]
         },
         "indices": [
@@ -233,7 +227,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '09b3e090130457dfa401248ff032b8cc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd5a02b4a431d19850e75954b531e3e24')"
     ]
   }
 }

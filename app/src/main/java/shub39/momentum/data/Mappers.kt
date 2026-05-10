@@ -57,7 +57,6 @@ fun Day.toDayEntity(): DayEntity {
 
 fun MontageOptionsEntity.toMontageOptions(): MontageOptions {
     return MontageOptions(
-        id = id,
         projectId = projectId,
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,
@@ -75,7 +74,6 @@ fun MontageOptionsEntity.toMontageOptions(): MontageOptions {
 
 fun MontageOptions.toMontageOptionsEntity(): MontageOptionsEntity {
     return MontageOptionsEntity(
-        id = id,
         projectId = projectId,
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,
