@@ -16,94 +16,99 @@
  */
 package shub39.momentum
 
-import android.content.ContentValues
-import androidx.room.Room
-import androidx.room.testing.MigrationTestHelper
-import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import androidx.room3.Room
+import androidx.room3.testing.MigrationTestHelper
+import androidx.sqlite.driver.AndroidSQLiteDriver
+import androidx.sqlite.execSQL
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import shub39.momentum.data.database.ProjectDatabase
-
-private const val DB_NAME = "projects_test.db"
+import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 class ProjectDBMigrationTest {
+
+    private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+    private val dbFile: File = targetContext.getDatabasePath("projects_test.db")
+
     @get:Rule
     val helper =
         MigrationTestHelper(
-            InstrumentationRegistry.getInstrumentation(),
-            ProjectDatabase::class.java,
-            listOf(),
-            FrameworkSQLiteOpenHelperFactory(),
+            instrumentation = InstrumentationRegistry.getInstrumentation(),
+            databaseClass = ProjectDatabase::class,
+            driver = AndroidSQLiteDriver(),
+            file = dbFile
         )
 
+    @After
+    fun tearDown() {
+        if (dbFile.exists()) {
+            dbFile.delete()
+        }
+    }
+
     @Test
-    fun migration1to2_containsCorrectData() {
-        helper.createDatabase(DB_NAME, 1).apply {
+    fun migration1to2_containsCorrectData() = runBlocking {
+        // Ensure the database directory exists
+        dbFile.parentFile?.mkdirs()
+        
+        helper.createDatabase(1).apply {
             // Insert a project into the old version 1 database
-            val projectValues =
-                ContentValues().apply {
-                    put("id", 1)
-                    put("title", "First Project")
-                    put("description", "A description for the first project.")
-                    put("alarm", "10:00")
-                }
-            insert("projects_table", 0, projectValues)
+            execSQL("INSERT INTO projects_table (id, title, description, alarm) VALUES (1, 'First Project', 'A description for the first project.', '10:00')")
 
             // Insert a 'day' for that project
-            val dayValues =
-                ContentValues().apply {
-                    put("projectId", 1)
-                    put("image", "/path/to/image.jpg")
-                    put("comment", "A comment for the day.")
-                    put("date", 1672531200L) // Example date (Jan 1, 2023)
-                    put("isFavorite", 1)
-                }
-            insert("days_table", 0, dayValues)
+            execSQL("INSERT INTO days_table (projectId, image, comment, date, isFavorite) VALUES (1, '/path/to/image.jpg', 'A comment for the day.', 1672531200, 1)")
 
             close()
         }
 
         // Run the migration to version 2 and validate the schema.
-        val db = helper.runMigrationsAndValidate(DB_NAME, 2, true)
+        val connection = helper.runMigrationsAndValidate(2)
 
         // Validate the data after migration
-        db.query("SELECT * FROM projects_table WHERE id = 1").use { cursor ->
-            assertThat(cursor.moveToFirst()).isTrue()
-            assertThat(cursor.getString(cursor.getColumnIndexOrThrow("title")))
-                .isEqualTo("First Project")
-            assertThat(cursor.getString(cursor.getColumnIndexOrThrow("description")))
-                .isEqualTo("A description for the first project.")
-            assertThat(cursor.getString(cursor.getColumnIndexOrThrow("alarm"))).isEqualTo("10:00")
+        connection.prepare("SELECT * FROM projects_table WHERE id = 1").apply {
+            assertThat(step()).isTrue()
+            assertThat(getText(1)).isEqualTo("First Project")
+            assertThat(getText(2)).isEqualTo("A description for the first project.")
+            assertThat(getText(3)).isEqualTo("10:00")
+            close()
         }
 
-        db.query("SELECT * FROM days_table WHERE projectId = 1").use { cursor ->
-            assertThat(cursor.moveToFirst()).isTrue()
-            assertThat(cursor.getString(cursor.getColumnIndexOrThrow("image")))
-                .isEqualTo("/path/to/image.jpg")
-            assertThat(cursor.getString(cursor.getColumnIndexOrThrow("comment")))
-                .isEqualTo("A comment for the day.")
-            assertThat(cursor.getLong(cursor.getColumnIndexOrThrow("date"))).isEqualTo(1672531200L)
-            assertThat(cursor.getInt(cursor.getColumnIndexOrThrow("isFavorite"))).isEqualTo(1)
+        connection.prepare("SELECT * FROM days_table WHERE projectId = 1").apply {
+            assertThat(step()).isTrue()
+            assertThat(getText(2)).isEqualTo("/path/to/image.jpg")
+            assertThat(getText(3)).isEqualTo("A comment for the day.")
+            assertThat(getLong(4)).isEqualTo(1672531200L)
+            assertThat(getLong(5)).isEqualTo(1L)
+            close()
         }
+
+        connection.close()
     }
 
     @Test
-    fun testAllMigrations() {
+    fun testAllMigrations() = runBlocking {
+        // Ensure the database directory exists
+        dbFile.parentFile?.mkdirs()
+
         // Create schema 1 and close it.
-        helper.createDatabase(DB_NAME, 1).apply { close() }
+        helper.createDatabase(1).close()
 
         // Open the database with the latest version to run all migrations.
-        Room.databaseBuilder(
-                InstrumentationRegistry.getInstrumentation().targetContext,
+        Room
+            .databaseBuilder(
+                targetContext,
                 ProjectDatabase::class.java,
-                DB_NAME,
+                dbFile.absolutePath,
             )
+            .setDriver(AndroidSQLiteDriver())
             .build()
-            .apply { openHelper.writableDatabase.close() }
+            .close()
     }
 }
