@@ -33,6 +33,8 @@ core = "1.18.0"
 spotless = "8.4.0"
 kotlinx-datetime = "0.8.0"
 ktfmt = "0.61"
+camera = "1.7.0-alpha01"
+permissions = "0.37.3"
 
 [libraries]
 # Android
@@ -55,6 +57,11 @@ androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigat
 androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotation-jvm" }
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
+camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camera" }
+camera-core = { module = "androidx.camera:camera-core", version.ref = "camera" }
+camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camera" }
+camera-compose = { module = "androidx.camera:camera-compose", version.ref = "camera" }
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permissions" }
 
 # Purchases
 purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "purchases" }

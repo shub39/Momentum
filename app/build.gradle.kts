@@ -158,6 +158,11 @@ dependencies {
     "playImplementation"(libs.purchases.ui)
     "playImplementation"(libs.purchases)
 
+    implementation(libs.camera.core)
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.compose)
+    implementation(libs.accompanist.permissions)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation3.runtime)
