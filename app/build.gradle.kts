@@ -227,10 +227,11 @@ val generateChangelogJson by
                 }
             }
 
+            val allowedEntries = map.entries.take(10)
             val json = buildString {
                 append("[\n")
 
-                map.entries.take(10).forEachIndexed { index, entry ->
+                allowedEntries.forEachIndexed { index, entry ->
                     append("  {\n")
                     append("    \"version\": \"${entry.key}\",\n")
                     append("    \"changes\": [\n")
@@ -244,7 +245,7 @@ val generateChangelogJson by
                     append("    ]\n")
                     append("  }")
 
-                    if (index != 9) append(",")
+                    if (index != allowedEntries.lastIndex) append(",")
                     append("\n")
                 }
 
