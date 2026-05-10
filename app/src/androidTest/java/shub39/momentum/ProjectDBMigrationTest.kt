@@ -23,13 +23,13 @@ import androidx.sqlite.execSQL
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import java.io.File
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import shub39.momentum.data.database.ProjectDatabase
-import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 class ProjectDBMigrationTest {
@@ -43,27 +43,27 @@ class ProjectDBMigrationTest {
             instrumentation = InstrumentationRegistry.getInstrumentation(),
             databaseClass = ProjectDatabase::class,
             driver = AndroidSQLiteDriver(),
-            file = dbFile
+            file = dbFile,
         )
 
     @After
-    fun tearDown() {
-        if (dbFile.exists()) {
-            dbFile.delete()
-        }
-    }
+    fun tearDown() { if (dbFile.exists()) dbFile.delete() }
 
     @Test
     fun migration1to2_containsCorrectData() = runBlocking {
         // Ensure the database directory exists
         dbFile.parentFile?.mkdirs()
-        
+
         helper.createDatabase(1).apply {
             // Insert a project into the old version 1 database
-            execSQL("INSERT INTO projects_table (id, title, description, alarm) VALUES (1, 'First Project', 'A description for the first project.', '10:00')")
+            execSQL(
+                "INSERT INTO projects_table (id, title, description, alarm) VALUES (1, 'First Project', 'A description for the first project.', '10:00')"
+            )
 
             // Insert a 'day' for that project
-            execSQL("INSERT INTO days_table (projectId, image, comment, date, isFavorite) VALUES (1, '/path/to/image.jpg', 'A comment for the day.', 1672531200, 1)")
+            execSQL(
+                "INSERT INTO days_table (projectId, image, comment, date, isFavorite) VALUES (1, '/path/to/image.jpg', 'A comment for the day.', 1672531200, 1)"
+            )
 
             close()
         }
@@ -101,12 +101,7 @@ class ProjectDBMigrationTest {
         helper.createDatabase(1).close()
 
         // Open the database with the latest version to run all migrations.
-        Room
-            .databaseBuilder(
-                targetContext,
-                ProjectDatabase::class.java,
-                dbFile.absolutePath,
-            )
+        Room.databaseBuilder(targetContext, ProjectDatabase::class.java, dbFile.absolutePath)
             .setDriver(AndroidSQLiteDriver())
             .build()
             .close()
