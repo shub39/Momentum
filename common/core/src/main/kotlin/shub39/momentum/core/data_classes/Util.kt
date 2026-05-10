@@ -41,3 +41,20 @@ fun MontageOptions.toMontageConfig(): MontageConfig {
         censorFaces = censorFaces,
     )
 }
+
+fun MontageConfig.toMontageOptions(projectId: Long): MontageOptions {
+    return MontageOptions(
+        projectId = projectId,
+        framesPerImage = framesPerImage,
+        framesPerSecond = framesPerSecond,
+        videoQuality = videoQuality,
+        backgroundColor = backgroundColor,
+        waterMark = waterMark,
+        showDate = showDate,
+        showMessage = showMessage,
+        font = font,
+        dateStyle = dateStyle,
+        stabilizeFaces = stabilizeFaces,
+        censorFaces = censorFaces,
+    )
+}

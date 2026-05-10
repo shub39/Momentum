@@ -73,8 +73,8 @@ class ProjectRepositoryImpl(
         return daysDao.getLastDaysByProjectId(projectId).firstOrNull()?.toDay()
     }
 
-    override suspend fun getMontageOptionsByProjectId(projectId: Long): MontageOptions {
-        return montageOptionsDao.getMontageOptionByProjectId(projectId).toMontageOptions()
+    override suspend fun getMontageOptionsByProjectId(projectId: Long): MontageOptions? {
+        return montageOptionsDao.getMontageOptionByProjectId(projectId)?.toMontageOptions()
     }
 
     override suspend fun upsertMontageOptions(montageOptions: MontageOptions) {

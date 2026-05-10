@@ -28,5 +28,5 @@ sealed interface MontageOptionsDao {
     @Delete suspend fun deleteMontageOption(montageOptions: MontageOptionsEntity)
 
     @Query("SELECT * FROM options_table WHERE projectId=:projectId")
-    suspend fun getMontageOptionByProjectId(projectId: Long): MontageOptionsEntity
+    suspend fun getMontageOptionByProjectId(projectId: Long): MontageOptionsEntity?
 }

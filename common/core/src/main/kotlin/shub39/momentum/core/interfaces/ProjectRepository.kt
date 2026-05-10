@@ -39,7 +39,7 @@ interface ProjectRepository {
 
     suspend fun getLastCompletedDay(projectId: Long): Day?
 
-    suspend fun getMontageOptionsByProjectId(projectId: Long): MontageOptions
+    suspend fun getMontageOptionsByProjectId(projectId: Long): MontageOptions?
 
     suspend fun upsertMontageOptions(montageOptions: MontageOptions)
 

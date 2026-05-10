@@ -22,7 +22,6 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 import shub39.facedetection.FaceDetectorImpl
 import shub39.momentum.core.interfaces.FaceDetector
-import shub39.momentum.core.interfaces.MontageConfigPrefs
 import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.database.DaysDao
@@ -52,10 +51,6 @@ class AppModule {
     @Single
     fun getSettingsPrefs(datastoreFactory: DatastoreFactory): SettingsPrefs =
         datastoreFactory.settingsPreferences()
-
-    @Single
-    fun getMontageConfigPrefs(datastoreFactory: DatastoreFactory): MontageConfigPrefs =
-        datastoreFactory.montageConfig()
 
     @Single fun getMontageMaker(context: Context): MontageMaker = MontageMakerImpl(context)
 

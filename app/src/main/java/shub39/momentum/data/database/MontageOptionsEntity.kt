@@ -39,8 +39,7 @@ import shub39.momentum.core.enums.VideoQuality
     indices = [Index("projectId")],
 )
 data class MontageOptionsEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val projectId: Long,
+    @PrimaryKey val projectId: Long,
     val framesPerImage: Int = 1,
     val framesPerSecond: Float = 1f,
     val videoQuality: VideoQuality = VideoQuality.SMALL,

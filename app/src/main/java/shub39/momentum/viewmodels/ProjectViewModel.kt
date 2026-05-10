@@ -33,8 +33,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -42,10 +44,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.KoinViewModel
+import shub39.momentum.core.data_classes.MontageOptions
+import shub39.momentum.core.data_classes.toMontageConfig
+import shub39.momentum.core.data_classes.toMontageOptions
 import shub39.momentum.core.enums.VideoAction
 import shub39.momentum.core.interfaces.AlarmScheduler
 import shub39.momentum.core.interfaces.FaceDetector
-import shub39.momentum.core.interfaces.MontageConfigPrefs
 import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.core.interfaces.ProjectRepository
@@ -60,7 +64,6 @@ class ProjectViewModel(
     private val montageMaker: MontageMaker,
     private val faceDetector: FaceDetector,
     private val repository: ProjectRepository,
-    private val montageConfigPrefs: MontageConfigPrefs,
     private val scheduler: AlarmScheduler,
     private val imageHandler: ImageHandler,
 ) : ViewModel() {
@@ -184,18 +187,9 @@ class ProjectViewModel(
 
             is ProjectAction.OnEditMontageConfig -> {
                 viewModelScope.launch {
-                    montageConfigPrefs.setFpi(action.config.framesPerImage)
-                    montageConfigPrefs.setFps(action.config.framesPerSecond)
-                    montageConfigPrefs.setShowDate(action.config.showDate)
-                    montageConfigPrefs.setShowMessage(action.config.showMessage)
-                    montageConfigPrefs.setFont(action.config.font)
-                    montageConfigPrefs.setDateStyle(action.config.dateStyle)
-
-                    montageConfigPrefs.setVideoQuality(action.config.videoQuality)
-                    montageConfigPrefs.setStabilizeFaces(action.config.stabilizeFaces)
-                    montageConfigPrefs.setBackgroundColor(action.config.backgroundColor)
-                    montageConfigPrefs.setWaterMark(action.config.waterMark)
-                    montageConfigPrefs.setCensorPref(action.config.censorFaces)
+                    repository.upsertMontageOptions(
+                        montageOptions = action.config.toMontageOptions(action.projectId)
+                    )
                 }
             }
 
@@ -213,8 +207,10 @@ class ProjectViewModel(
                     }
                 }
 
-            ProjectAction.OnResetMontagePrefs ->
-                viewModelScope.launch { montageConfigPrefs.resetPrefs() }
+            is ProjectAction.OnResetMontagePrefs ->
+                viewModelScope.launch {
+                    repository.upsertMontageOptions(MontageOptions(projectId = action.projectId))
+                }
 
             ProjectAction.OnStartFaceScan ->
                 viewModelScope.launch {
@@ -282,99 +278,17 @@ class ProjectViewModel(
 
     private fun observeConfig() =
         viewModelScope.launch {
-            montageConfigPrefs
-                .getFpiFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(framesPerImage = pref))
-                    }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getFpsFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(framesPerSecond = pref))
-                    }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getVideoQualityFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(videoQuality = pref))
-                    }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getBackgroundColorFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(backgroundColor = pref))
-                    }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getWaterMarkFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(waterMark = pref))
-                    }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getShowDateFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(showDate = pref))
-                    }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getShowMessageFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(showMessage = pref))
-                    }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getFontFlow()
-                .onEach { pref ->
-                    _state.update { it.copy(montageConfig = it.montageConfig.copy(font = pref)) }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getDateStyleFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(dateStyle = pref))
-                    }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getStabilizeFacesFlow()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(stabilizeFaces = pref))
-                    }
-                }
-                .launchIn(this)
-
-            montageConfigPrefs
-                .getCensorPref()
-                .onEach { pref ->
-                    _state.update {
-                        it.copy(montageConfig = it.montageConfig.copy(censorFaces = pref))
+            // get montage config when project changes
+            _state
+                .map { it.project?.id }
+                .distinctUntilChanged()
+                .onEach { projectId ->
+                    projectId?.let {
+                        repository.getMontageOptionsByProjectId(projectId)?.let { montageConfigs ->
+                            _state.update {
+                                it.copy(montageConfig = montageConfigs.toMontageConfig())
+                            }
+                        }
                     }
                 }
                 .launchIn(this)
