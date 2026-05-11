@@ -32,11 +32,11 @@ fun ImageSourcePicker(
     onOpenGallery: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA) {
-        if (it) {
+    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA) { granted ->
+        if (granted) {
             onOpenCamera()
-            onDismissRequest()
         }
+        onDismissRequest()
     }
 
     MomentumBottomSheet(
@@ -52,11 +52,10 @@ fun ImageSourcePicker(
             onOpenCamera = {
                 if (cameraPermissionState.status.isGranted) {
                     onOpenCamera()
+                    onDismissRequest()
                 } else {
                     cameraPermissionState.launchPermissionRequest()
                 }
-
-                onDismissRequest()
             }
         )
     }
