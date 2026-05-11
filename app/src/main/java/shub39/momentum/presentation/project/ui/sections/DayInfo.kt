@@ -52,14 +52,12 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,11 +86,7 @@ import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.toAndroidUri
 import io.github.vinceglb.filekit.path
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.Theme
@@ -103,6 +97,9 @@ import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ui.component.ImageSourcePicker
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontRounded
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -112,6 +109,7 @@ fun DayInfo(
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToCamera: () -> Unit
 ) {
     val day = state.days.find { it.date == selectedDate }
     var imageFile: PlatformFile? by remember(day) {
@@ -146,7 +144,7 @@ fun DayInfo(
 
     if (showImageSourceSheet) {
         ImageSourcePicker(
-            onOpenCamera = { TODO() },
+            onOpenCamera = onNavigateToCamera,
             onOpenGallery = { imagePicker.launch() },
             onDismissRequest = { showImageSourceSheet = false },
         )

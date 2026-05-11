@@ -1,11 +1,11 @@
 package shub39.momentum.presentation.project.ui.component
 
+import android.Manifest
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,12 +15,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import shub39.momentum.R
 import shub39.momentum.presentation.MomentumPreviewWrapper
 import shub39.momentum.presentation.shared.MomentumBottomSheet
 import shub39.momentum.presentation.shared.endItemShape
 import shub39.momentum.presentation.shared.leadingItemShape
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ImageSourcePicker(
     modifier: Modifier = Modifier,
@@ -28,6 +32,13 @@ fun ImageSourcePicker(
     onOpenGallery: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA) {
+        if (it) {
+            onOpenCamera()
+            onDismissRequest()
+        }
+    }
+
     MomentumBottomSheet(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
@@ -39,7 +50,12 @@ fun ImageSourcePicker(
                 onDismissRequest()
             },
             onOpenCamera = {
-                onOpenCamera()
+                if (cameraPermissionState.status.isGranted) {
+                    onOpenCamera()
+                } else {
+                    cameraPermissionState.launchPermissionRequest()
+                }
+
                 onDismissRequest()
             }
         )

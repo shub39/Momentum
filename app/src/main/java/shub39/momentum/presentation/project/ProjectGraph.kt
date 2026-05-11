@@ -16,8 +16,6 @@
  */
 package shub39.momentum.presentation.project
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,6 +35,7 @@ import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.navigation.horizontalTransitionMetadata
 import shub39.momentum.navigation.verticalTransitionMetadata
+import shub39.momentum.presentation.project.ui.sections.Camera
 import shub39.momentum.presentation.project.ui.sections.DayInfo
 import shub39.momentum.presentation.project.ui.sections.ProjectCalendar
 import shub39.momentum.presentation.project.ui.sections.ProjectDetails
@@ -51,7 +50,8 @@ import shub39.momentum.presentation.shared.MomentumTheme
 
 @Serializable data class DayInfoView(val selectedDate: Long) : NavKey
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@Serializable data object Camera : NavKey
+
 @Composable
 fun ProjectGraph(
     state: ProjectState,
@@ -96,6 +96,7 @@ fun ProjectGraph(
                         state = state,
                         onAction = onAction,
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                        onNavigateToCamera = { backStack.add(Camera) }
                     )
                 }
 
@@ -108,6 +109,10 @@ fun ProjectGraph(
                         isPlusUser = isPlusUser,
                         onNavigateToPaywall = onNavigateToPaywall,
                     )
+                }
+
+                entry<Camera> {
+                    Camera()
                 }
             },
     )
