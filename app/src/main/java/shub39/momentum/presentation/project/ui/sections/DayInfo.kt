@@ -221,7 +221,10 @@ private fun DayInfoContent(
                             highlightFace = false
                         }
                     ) {
-                        Icon(painter = painterResource(R.drawable.image), contentDescription = null)
+                        Icon(
+                            painter = painterResource(R.drawable.add_photo),
+                            contentDescription = null
+                        )
                     }
                 },
             ) {
