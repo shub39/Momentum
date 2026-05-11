@@ -113,8 +113,6 @@ fun DayInfo(
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-
     val day = state.days.find { it.date == selectedDate }
     var imageFile: PlatformFile? by remember(day) {
         mutableStateOf(day?.let { PlatformFile(it.image) })
@@ -122,7 +120,7 @@ fun DayInfo(
     var isFavorite by remember(day) { mutableStateOf(day?.isFavorite ?: false) }
     var comment by remember(day) { mutableStateOf(day?.comment ?: "") }
 
-    val imageSourceSheetState = rememberModalBottomSheetState()
+    var showImageSourceSheet by remember { mutableStateOf(false) }
 
     val imagePicker =
         rememberFilePickerLauncher(type = FileKitType.Image) { image ->
@@ -146,18 +144,19 @@ fun DayInfo(
             }
         }
 
-    ImageSourcePicker(
-        onOpenCamera = { TODO() },
-        onOpenGallery = { imagePicker.launch() },
-        onDismissRequest = { scope.launch { imageSourceSheetState.hide() } },
-        sheetState = imageSourceSheetState
-    )
+    if (showImageSourceSheet) {
+        ImageSourcePicker(
+            onOpenCamera = { TODO() },
+            onOpenGallery = { imagePicker.launch() },
+            onDismissRequest = { showImageSourceSheet = false },
+        )
+    }
 
     DayInfoContent(
         modifier = modifier,
         day = day,
         imageFile = imageFile,
-        onLaunchImageSourcePicker = { scope.launch { imageSourceSheetState.show() } },
+        onLaunchImageSourcePicker = { showImageSourceSheet = true },
         selectedDate = selectedDate,
         onAction = onAction,
         isFavorite = isFavorite,

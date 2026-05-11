@@ -27,12 +27,10 @@ fun ImageSourcePicker(
     onOpenCamera: () -> Unit,
     onOpenGallery: () -> Unit,
     onDismissRequest: () -> Unit,
-    sheetState: SheetState
 ) {
     MomentumBottomSheet(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
         padding = 16.dp
     ) {
         ImageSourcePickerContent(
