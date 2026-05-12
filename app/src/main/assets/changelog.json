@@ -3,6 +3,7 @@
     "version": "1.7.0",
     "changes": [
       "Added Camera Option for adding Pictures in Days",
+      "Montage Preferences are saved per project",
       "Miscellaneous UI Improvements"
     ]
   },

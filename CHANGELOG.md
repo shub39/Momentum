@@ -2,6 +2,7 @@
 
 ## 1.7.0
 - Added Camera Option for adding Pictures in Days
+- Montage Preferences are saved per project
 - Miscellaneous UI Improvements
 
 ## 1.6.1
