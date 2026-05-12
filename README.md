@@ -10,7 +10,7 @@
 
 [<img src="badges/playstore.png" alt="Google Play" width="180">](https://play.google.com/store/apps/details?id=shub39.momentum.play)
 [<img src="badges/github.png" alt="Github" width="180">](https://github.com/shub39/Momentum/releases)
-[<img src="badges/izzy.png" alt="IzzyOnDroid" width="180">](https://apt.izzysoft.de/fdroid/index/apk/shub39.momentum)
+[<img src="badges/izzyondroid.png" alt="IzzyOnDroid" width="180">](https://apt.izzysoft.de/fdroid/index/apk/shub39.momentum)
 
 ## Screenshots
 
