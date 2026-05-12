@@ -18,10 +18,8 @@ package shub39.momentum.data.database
 
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
-import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.AlarmData
 
-@Serializable
 @Entity(tableName = "projects_table")
 data class ProjectEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

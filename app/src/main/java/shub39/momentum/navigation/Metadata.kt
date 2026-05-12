@@ -19,6 +19,8 @@ package shub39.momentum.navigation
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -58,5 +60,18 @@ fun horizontalTransitionMetadata(durationMillis: Int = 500): Map<String, Any> = 
     put(NavDisplay.PredictivePopTransitionKey) {
         EnterTransition.None togetherWith
             slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(durationMillis))
+    }
+}
+
+fun fadeTransitionMetadata(durationMillis: Int = 500): Map<String, Any> = metadata {
+    put(NavDisplay.TransitionKey) {
+        fadeIn(animationSpec = tween(durationMillis)) togetherWith
+            ExitTransition.KeepUntilTransitionsFinished
+    }
+    put(NavDisplay.PopTransitionKey) {
+        EnterTransition.None togetherWith fadeOut(animationSpec = tween(durationMillis))
+    }
+    put(NavDisplay.PredictivePopTransitionKey) {
+        EnterTransition.None togetherWith fadeOut(animationSpec = tween(durationMillis))
     }
 }

@@ -21,10 +21,8 @@ import androidx.room3.Entity
 import androidx.room3.ForeignKey
 import androidx.room3.Index
 import androidx.room3.PrimaryKey
-import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.FaceData
 
-@Serializable
 @Entity(
     tableName = "days_table",
     foreignKeys =

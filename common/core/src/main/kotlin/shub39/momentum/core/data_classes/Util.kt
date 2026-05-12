@@ -14,50 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.data
+package shub39.momentum.core.data_classes
 
-import shub39.momentum.core.data_classes.Day
-import shub39.momentum.core.data_classes.MontageOptions
-import shub39.momentum.core.data_classes.Project
-import shub39.momentum.data.database.DayEntity
-import shub39.momentum.data.database.MontageOptionsEntity
-import shub39.momentum.data.database.ProjectEntity
+import android.graphics.Rect
 
-fun ProjectEntity.toProject(): Project {
-    return Project(id = id, title = title, description = description, alarm = alarm)
+fun FaceData?.isValid(): Boolean {
+    return this != null && this != FaceData()
 }
 
-fun Project.toEntity(): ProjectEntity {
-    return ProjectEntity(id = id, title = title, description = description, alarm = alarm)
+fun FaceData.toRect(): Rect {
+    return Rect(left, top, right, bottom)
 }
 
-fun DayEntity.toDay(): Day {
-    return Day(
-        id = id,
-        projectId = projectId,
-        date = date,
-        image = image,
-        comment = comment,
-        isFavorite = isFavorite,
-        faceData = faceData,
-    )
-}
-
-fun Day.toDayEntity(): DayEntity {
-    return DayEntity(
-        id = id,
-        projectId = projectId,
-        date = date,
-        image = image,
-        comment = comment,
-        isFavorite = isFavorite,
-        faceData = faceData,
-    )
-}
-
-fun MontageOptionsEntity.toMontageOptions(): MontageOptions {
-    return MontageOptions(
-        projectId = projectId,
+fun MontageOptions.toMontageConfig(): MontageConfig {
+    return MontageConfig(
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,
         videoQuality = videoQuality,
@@ -72,8 +42,8 @@ fun MontageOptionsEntity.toMontageOptions(): MontageOptions {
     )
 }
 
-fun MontageOptions.toMontageOptionsEntity(): MontageOptionsEntity {
-    return MontageOptionsEntity(
+fun MontageConfig.toMontageOptions(projectId: Long): MontageOptions {
+    return MontageOptions(
         projectId = projectId,
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,

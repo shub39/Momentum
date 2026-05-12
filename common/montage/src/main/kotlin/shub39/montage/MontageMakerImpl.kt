@@ -189,7 +189,7 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
 
                     // --- Watermark, date, message ---
                     if (config.waterMark) {
-                        val watermark = "Momentum"
+                        val watermark = "shub39/Momentum"
                         val paddingX = dimensions.first * 0.05f
                         val paddingY =
                             dimensions.second * 0.05f + textPaint.descent() + textPaint.textSize

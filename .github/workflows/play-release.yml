@@ -1,4 +1,4 @@
-name: release
+name: Build and Release on Playstore
 
 on:
   push:
@@ -8,14 +8,12 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   build:
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, '[release]')
+    if:  github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, '[release]')
     runs-on: ubuntu-latest
-    env:
-      VERSION: $( echo ${{ github.event.head_commit.id }} | cut -c1-7 )
-      COMMIT: $( sed -E "s/(.*) <.*@.*>/\\1/g;t" <<< "${{ github.event.head_commit.message }}" | jq -Rsa . | tail -c +2 | head -c -2 )
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -46,17 +44,15 @@ jobs:
         run: |
           VERSION="${{ env.VERSION_NAME }}"
           CHANGELOG_FILE="CHANGELOG.md"
-          OUTPUT_FILE="commit.txt"
+          # Create a directory for the upload action to find
+          mkdir -p distribution/whatsnew
           
           sed -n "/## ${VERSION}/, /## [0-9]/p" ${CHANGELOG_FILE} | \
-          sed '1d;$d' | \
-          grep -v '^# Changelog' > ${OUTPUT_FILE}
+          sed '1d;$d' | grep -v '^# Changelog' > distribution/whatsnew/whatsnew-en-US
           
-          if [ ! -s "${OUTPUT_FILE}" ]; then
-            echo "::warning file=${CHANGELOG_FILE}::Could not find changelog for version ${VERSION}. commit.txt will be empty."
+          if [ ! -s "distribution/whatsnew/whatsnew-en-US" ]; then
+             echo "Default changelog for ${{ env.VERSION_NAME }}" > distribution/whatsnew/whatsnew-en-US
           fi
-          
-          echo "Changelog extracted to commit.txt"
 
       - name: Cook KeyStore
         run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > $GITHUB_WORKSPACE/signing-key.jks
@@ -64,37 +60,35 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Remove Foojay
-        run: sed -i -e '/foojay/d' settings.gradle.kts
-
       - name: Build with Gradle
         run: |
-          ./gradlew :app:assembleFossRelease \
+          ./gradlew bundlePlayRelease \
           -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/signing-key.jks \
           -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
           -Pandroid.injected.signing.key.alias=key0 \
           -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+          
+          AAB_PATH=$(find app/build/outputs/ -name "*.aab" -print -quit)
+          
+          if [ -z "$AAB_PATH" ]; then
+            echo "::error::Could not find AAB file."
+            exit 1
+          fi
+          
+          echo "AAB_PATH=$AAB_PATH" >> $GITHUB_ENV
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Setup Google Auth
+        id: auth
+        uses: google-github-actions/auth@v2
         with:
-          name: app-release.apk
-          path: app/build/outputs/**/*.apk
+          workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.WORKLOAD_IDENTITY_POOL }}/providers/${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ secrets.WORKLOAD_IDENTITY_SERVICE_ACCOUNT }}'
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+      - name: Publish Release
+        uses: r0adkll/upload-google-play@v1
         with:
-          make_latest: true
-          tag_name: ${{ env.VERSION_NAME }}
-          name: ${{ env.VERSION_NAME }}
-          body_path: commit.txt
-          files: app/build/outputs/**/*.apk
-
-      - name: Notify on Discord
-        shell: bash
-        env:
-          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        run: |
-          message=$(echo "**New Momentum Release** **${{ env.VERSION_NAME }}** \nhttps://github.com/shub39/Momentum/releases")
-          curl -F "payload_json={\"content\":\"${message}\"}" \
-          ${{ env.WEBHOOK }}
+          serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
+          releaseFiles: ${{ env.AAB_PATH }}
+          packageName: shub39.momentum.play
+          tracks: production
+          whatsNewDirectory: distribution/whatsnew

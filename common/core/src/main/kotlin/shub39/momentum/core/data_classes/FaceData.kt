@@ -16,7 +16,6 @@
  */
 package shub39.momentum.core.data_classes
 
-import android.graphics.Rect
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,11 +26,3 @@ data class FaceData(
     val top: Int = -1,
     val headAngle: Float = -1f,
 )
-
-fun FaceData?.isValid(): Boolean {
-    return this != null && this != FaceData()
-}
-
-fun FaceData.toRect(): Rect {
-    return Rect(left, top, right, bottom)
-}

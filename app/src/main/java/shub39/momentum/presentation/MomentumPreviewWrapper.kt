@@ -14,22 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.data.database
+package shub39.momentum.presentation
 
-import androidx.room3.Dao
-import androidx.room3.Delete
-import androidx.room3.Query
-import androidx.room3.Upsert
-import kotlinx.coroutines.flow.Flow
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.PreviewWrapperProvider
+import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.presentation.shared.MomentumTheme
 
-@Dao
-sealed interface DaysDao {
-    @Query("SELECT * FROM days_table WHERE projectId=:id ORDER BY date DESC LIMIT 10")
-    suspend fun getLastDaysByProjectId(id: Long): List<DayEntity>
-
-    @Query("SELECT * FROM days_table") fun getDays(): Flow<List<DayEntity>>
-
-    @Upsert suspend fun upsertDay(dayEntity: DayEntity)
-
-    @Delete suspend fun deleteDay(dayEntity: DayEntity)
+class MomentumPreviewWrapper : PreviewWrapperProvider {
+    @Composable
+    override fun Wrap(content: @Composable (() -> Unit)) {
+        MomentumTheme(theme = Theme(appTheme = AppTheme.SYSTEM), content = content)
+    }
 }

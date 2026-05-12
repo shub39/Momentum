@@ -34,7 +34,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -80,12 +79,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
+import io.github.vinceglb.filekit.dialogs.toAndroidUri
 import io.github.vinceglb.filekit.path
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -98,6 +97,7 @@ import shub39.momentum.core.data_classes.isValid
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
+import shub39.momentum.presentation.project.ui.component.ImageSourcePicker
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontRounded
 
@@ -109,12 +109,15 @@ fun DayInfo(
     state: ProjectState,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToCamera: () -> Unit,
 ) {
     val day = state.days.find { it.date == selectedDate }
     var imageFile: PlatformFile? by
-        remember(day) { mutableStateOf(day?.let { PlatformFile(it.image.toUri()) }) }
+        remember(day) { mutableStateOf(day?.let { PlatformFile(it.image) }) }
     var isFavorite by remember(day) { mutableStateOf(day?.isFavorite ?: false) }
     var comment by remember(day) { mutableStateOf(day?.comment ?: "") }
+
+    var showImageSourceSheet by remember { mutableStateOf(false) }
 
     val imagePicker =
         rememberFilePickerLauncher(type = FileKitType.Image) { image ->
@@ -124,10 +127,10 @@ fun DayInfo(
                 onAction(
                     ProjectAction.OnUpsertDay(
                         day =
-                            day?.copy(image = image.path.toUri().toString())
+                            day?.copy(image = image.path)
                                 ?: Day(
                                     projectId = state.project?.id!!,
-                                    image = image.path.toUri().toString(),
+                                    image = image.path,
                                     comment = comment,
                                     date = selectedDate,
                                     isFavorite = isFavorite,
@@ -138,11 +141,19 @@ fun DayInfo(
             }
         }
 
+    if (showImageSourceSheet) {
+        ImageSourcePicker(
+            onOpenCamera = onNavigateToCamera,
+            onOpenGallery = { imagePicker.launch() },
+            onDismissRequest = { showImageSourceSheet = false },
+        )
+    }
+
     DayInfoContent(
         modifier = modifier,
         day = day,
         imageFile = imageFile,
-        onLaunchImagePicker = { imagePicker.launch() },
+        onLaunchImageSourcePicker = { showImageSourceSheet = true },
         selectedDate = selectedDate,
         onAction = onAction,
         isFavorite = isFavorite,
@@ -167,7 +178,7 @@ private fun DayInfoContent(
     comment: String,
     onUpdateComment: (String) -> Unit,
     onUpdateFavorite: (Boolean) -> Unit,
-    onLaunchImagePicker: () -> Unit,
+    onLaunchImageSourcePicker: () -> Unit,
     selectedDate: Long,
     onAction: (ProjectAction) -> Unit,
     onNavigateBack: () -> Unit,
@@ -205,11 +216,14 @@ private fun DayInfoContent(
                 floatingActionButton = {
                     FloatingActionButton(
                         onClick = {
-                            onLaunchImagePicker()
+                            onLaunchImageSourcePicker()
                             highlightFace = false
                         }
                     ) {
-                        Icon(painter = painterResource(R.drawable.image), contentDescription = null)
+                        Icon(
+                            painter = painterResource(R.drawable.add_photo),
+                            contentDescription = null,
+                        )
                     }
                 },
             ) {
@@ -276,8 +290,9 @@ private fun DayInfoContent(
                 // original image
                 val originalBitmap =
                     remember(imageFile) {
-                        context.contentResolver.openInputStream(imageFile.path.toUri())?.use {
-                            stream ->
+                        val uri = imageFile.toAndroidUri()
+
+                        context.contentResolver.openInputStream(uri)?.use { stream ->
                             BitmapFactory.decodeStream(stream)
                         }
                     }
@@ -315,7 +330,7 @@ private fun DayInfoContent(
                     }
 
                 CoilImage(
-                    imageModel = { imageFile.path.toUri() },
+                    imageModel = { imageFile.toAndroidUri() },
                     loading = { LoadingIndicator() },
                     success = { _, painter ->
                         Box(
@@ -455,7 +470,7 @@ private fun DayInfoContent(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
-                        onClick = onLaunchImagePicker,
+                        onClick = onLaunchImageSourcePicker,
                         modifier = Modifier.height(ButtonDefaults.MediumContainerHeight),
                     ) {
                         Text(
@@ -521,7 +536,7 @@ private fun Preview() {
             modifier = Modifier,
             day = null,
             imageFile = null,
-            onLaunchImagePicker = {},
+            onLaunchImageSourcePicker = {},
             selectedDate = 0,
             onAction = {},
             onNavigateBack = {},

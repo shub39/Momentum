@@ -22,10 +22,10 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 import shub39.facedetection.FaceDetectorImpl
 import shub39.momentum.core.interfaces.FaceDetector
-import shub39.momentum.core.interfaces.MontageConfigPrefs
 import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.database.DaysDao
+import shub39.momentum.data.database.MontageOptionsDao
 import shub39.momentum.data.database.ProjectDBFactory
 import shub39.momentum.data.database.ProjectDao
 import shub39.momentum.data.database.ProjectDatabase
@@ -37,7 +37,7 @@ import shub39.montage.MontageMakerImpl
 class AppModule {
     @Single
     fun provideAppDb(dbFactory: ProjectDBFactory): ProjectDatabase {
-        return dbFactory.create().fallbackToDestructiveMigration(true).build()
+        return dbFactory.create().build()
     }
 
     @Single fun getProjectDao(database: ProjectDatabase): ProjectDao = database.projectDao
@@ -45,12 +45,12 @@ class AppModule {
     @Single fun getDaysDao(database: ProjectDatabase): DaysDao = database.daysDao
 
     @Single
-    fun getSettingsPrefs(datastoreFactory: DatastoreFactory): SettingsPrefs =
-        datastoreFactory.settingsPreferences()
+    fun getMontageOptionsDao(database: ProjectDatabase): MontageOptionsDao =
+        database.montageOptionsDao
 
     @Single
-    fun getMontageConfigPrefs(datastoreFactory: DatastoreFactory): MontageConfigPrefs =
-        datastoreFactory.montageConfig()
+    fun getSettingsPrefs(datastoreFactory: DatastoreFactory): SettingsPrefs =
+        datastoreFactory.settingsPreferences()
 
     @Single fun getMontageMaker(context: Context): MontageMaker = MontageMakerImpl(context)
 

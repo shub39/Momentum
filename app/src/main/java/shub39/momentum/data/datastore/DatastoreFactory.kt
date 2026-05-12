@@ -22,24 +22,17 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import okio.Path.Companion.toPath
 import org.koin.core.annotation.Single
-import shub39.momentum.core.interfaces.MontageConfigPrefs
 import shub39.momentum.core.interfaces.SettingsPrefs
 
 @Single
 class DatastoreFactory(private val context: Context) {
     fun settingsPreferences(): SettingsPrefs = SettingsPrefsImpl(settingsDatastoreFile())
 
-    fun montageConfig(): MontageConfigPrefs = MontageConfigPrefsImpl(montageConfigFile())
-
     private fun settingsDatastoreFile(): DataStore<Preferences> =
         createDataStore(producePath = { context.filesDir.resolve(SETTINGS_DATASTORE).absolutePath })
 
-    private fun montageConfigFile(): DataStore<Preferences> =
-        createDataStore(producePath = { context.filesDir.resolve(MONTAGE_CONFIG).absolutePath })
-
     companion object {
         const val SETTINGS_DATASTORE = "settings.preferences_pb"
-        const val MONTAGE_CONFIG = "montage.preferences_pb"
     }
 }
 

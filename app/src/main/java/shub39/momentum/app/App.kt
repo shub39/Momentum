@@ -44,6 +44,8 @@ import shub39.momentum.viewmodels.MainAppViewModel
 import shub39.momentum.viewmodels.OnboardingViewModel
 import shub39.momentum.viewmodels.ProjectViewModel
 import shub39.momentum.viewmodels.SettingsViewModel
+import shub39.momentum.warning.WarningDialog
+import shub39.momentum.warning.WarningManager
 
 @Serializable data object Onboarding : NavKey
 
@@ -63,6 +65,18 @@ fun App() {
     val state by mainViewModel.state.collectAsStateWithLifecycle()
 
     MomentumTheme(theme = state.theme) {
+        val showWarning by WarningManager.showWarningDialog.collectAsStateWithLifecycle()
+        if (state.currentChangelog != null && showWarning) {
+            WarningDialog(onDismissRequest = { WarningManager.updateWarningDialog(false) })
+        }
+
+        if (state.currentChangelog != null && !showWarning) {
+            ChangelogSheet(
+                currentLog = state.currentChangelog!!,
+                onDismissRequest = { mainViewModel.dismissChangelog() },
+            )
+        }
+
         NavDisplay(
             modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
             backStack = backStack,
@@ -140,12 +154,5 @@ fun App() {
                     }
                 },
         )
-
-        if (state.currentChangelog != null) {
-            ChangelogSheet(
-                currentLog = state.currentChangelog!!,
-                onDismissRequest = { mainViewModel.dismissChangelog() },
-            )
-        }
     }
 }

@@ -16,8 +16,7 @@
  */
 package shub39.momentum.presentation.project
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.camera.core.CameraSelector
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,18 +24,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
+import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.navigation.fadeTransitionMetadata
 import shub39.momentum.navigation.horizontalTransitionMetadata
 import shub39.momentum.navigation.verticalTransitionMetadata
+import shub39.momentum.presentation.project.ui.sections.Camera
+import shub39.momentum.presentation.project.ui.sections.CameraViewModel
 import shub39.momentum.presentation.project.ui.sections.DayInfo
 import shub39.momentum.presentation.project.ui.sections.ProjectCalendar
 import shub39.momentum.presentation.project.ui.sections.ProjectDetails
@@ -51,7 +58,8 @@ import shub39.momentum.presentation.shared.MomentumTheme
 
 @Serializable data class DayInfoView(val selectedDate: Long) : NavKey
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@Serializable data class Camera(val selectedDate: Long) : NavKey
+
 @Composable
 fun ProjectGraph(
     state: ProjectState,
@@ -96,6 +104,7 @@ fun ProjectGraph(
                         state = state,
                         onAction = onAction,
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                        onNavigateToCamera = { backStack.add(Camera(it.selectedDate)) },
                     )
                 }
 
@@ -107,6 +116,54 @@ fun ProjectGraph(
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
                         isPlusUser = isPlusUser,
                         onNavigateToPaywall = onNavigateToPaywall,
+                    )
+                }
+
+                entry<Camera>(metadata = fadeTransitionMetadata()) { entry ->
+                    val cameraViewModel = viewModel { CameraViewModel() }
+                    val surfaceRequest by
+                        cameraViewModel.surfaceRequest.collectAsStateWithLifecycle()
+                    val showGuides by cameraViewModel.showGuides.collectAsStateWithLifecycle()
+                    val cameraSelector: CameraSelector by
+                        cameraViewModel.cameraSelector.collectAsStateWithLifecycle()
+                    val context = LocalContext.current
+                    val lifecycleOwner = LocalLifecycleOwner.current
+
+                    LaunchedEffect(lifecycleOwner) {
+                        cameraViewModel.bindToCamera(context.applicationContext, lifecycleOwner)
+                    }
+
+                    Camera(
+                        surfaceRequest = surfaceRequest,
+                        showGuides = showGuides,
+                        cameraSelector = cameraSelector,
+                        onToggleCamera = cameraViewModel::toggleCamera,
+                        onToggleGuides = cameraViewModel::toggleGuides,
+                        onTakePhoto = {
+                            cameraViewModel.takePhoto(
+                                context = context,
+                                onPhotoCaptured = { photoFile ->
+                                    val projectId = state.project?.id ?: return@takePhoto
+                                    val day = state.days.find { it.date == entry.selectedDate }
+                                    onAction(
+                                        ProjectAction.OnUpsertDay(
+                                            day =
+                                                day?.copy(image = photoFile.absolutePath)
+                                                    ?: Day(
+                                                        projectId = projectId,
+                                                        image = photoFile.absolutePath,
+                                                        comment = "",
+                                                        date = entry.selectedDate,
+                                                        isFavorite = false,
+                                                    ),
+                                            isNewImage = true,
+                                        )
+                                    )
+                                    if (backStack.size != 1) backStack.removeLastOrNull()
+                                },
+                            )
+                        },
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
                     )
                 }
             },

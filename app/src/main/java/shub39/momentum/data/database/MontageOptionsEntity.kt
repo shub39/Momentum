@@ -14,20 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.core.data_classes
+package shub39.momentum.data.database
 
-import android.media.MediaFormat
 import androidx.compose.ui.graphics.Color
+import androidx.room3.Entity
+import androidx.room3.ForeignKey
+import androidx.room3.Index
+import androidx.room3.PrimaryKey
 import shub39.momentum.core.enums.DateStyle
 import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.VideoQuality
 
-data class MontageConfig(
-    val mimeType: String = MediaFormat.MIMETYPE_VIDEO_AVC,
-    val bitrate: Int = 10_000_000,
-    val iFrameInterval: Int = 1,
-
-    // configurable
+@Entity(
+    tableName = "options_table",
+    foreignKeys =
+        [
+            ForeignKey(
+                entity = ProjectEntity::class,
+                parentColumns = ["id"],
+                childColumns = ["projectId"],
+                onDelete = ForeignKey.CASCADE,
+            )
+        ],
+    indices = [Index("projectId")],
+)
+data class MontageOptionsEntity(
+    @PrimaryKey val projectId: Long,
     val framesPerImage: Int = 1,
     val framesPerSecond: Float = 1f,
     val videoQuality: VideoQuality = VideoQuality.SMALL,

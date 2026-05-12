@@ -20,6 +20,8 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.toAndroidUri
 import java.io.File
 import kotlin.time.Clock
 import org.koin.core.annotation.Single
@@ -35,7 +37,8 @@ class ImageHandler(private val context: Context) {
 
         destDirectory.listFiles()?.find { it.name.startsWith("${day.date}_") }?.delete()
 
-        context.contentResolver.openInputStream(day.image.toUri())?.use { inputStream ->
+        val uri = PlatformFile(day.image).toAndroidUri()
+        context.contentResolver.openInputStream(uri)?.use { inputStream ->
             destFile.outputStream().use { outputStream -> inputStream.copyTo(outputStream) }
         }
 
@@ -44,7 +47,8 @@ class ImageHandler(private val context: Context) {
 
     fun deleteDayImage(day: Day) {
         try {
-            day.image.toUri().toFile().delete()
+            val uri = PlatformFile(day.image).toAndroidUri()
+            uri.toFile().delete()
         } catch (e: Exception) {
             e.printStackTrace()
         }
