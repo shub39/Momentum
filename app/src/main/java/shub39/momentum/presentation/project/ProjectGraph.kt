@@ -23,7 +23,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -33,9 +37,11 @@ import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.navigation.fadeTransitionMetadata
 import shub39.momentum.navigation.horizontalTransitionMetadata
 import shub39.momentum.navigation.verticalTransitionMetadata
 import shub39.momentum.presentation.project.ui.sections.Camera
+import shub39.momentum.presentation.project.ui.sections.CameraViewModel
 import shub39.momentum.presentation.project.ui.sections.DayInfo
 import shub39.momentum.presentation.project.ui.sections.ProjectCalendar
 import shub39.momentum.presentation.project.ui.sections.ProjectDetails
@@ -96,7 +102,7 @@ fun ProjectGraph(
                         state = state,
                         onAction = onAction,
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
-                        onNavigateToCamera = { backStack.add(Camera) }
+                        onNavigateToCamera = { backStack.add(Camera) },
                     )
                 }
 
@@ -111,8 +117,18 @@ fun ProjectGraph(
                     )
                 }
 
-                entry<Camera> {
-                    Camera()
+                entry<Camera>(metadata = fadeTransitionMetadata()) {
+                    val cameraViewModel = viewModel { CameraViewModel() }
+                    val surfaceRequest by
+                        cameraViewModel.surfaceRequest.collectAsStateWithLifecycle()
+                    val context = LocalContext.current
+                    val lifecycleOwner = LocalLifecycleOwner.current
+
+                    LaunchedEffect(lifecycleOwner) {
+                        cameraViewModel.bindToCamera(context.applicationContext, lifecycleOwner)
+                    }
+
+                    Camera(surfaceRequest = surfaceRequest)
                 }
             },
     )

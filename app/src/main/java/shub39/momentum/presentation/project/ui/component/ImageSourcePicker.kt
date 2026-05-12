@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.presentation.project.ui.component
 
 import android.Manifest
@@ -32,18 +48,15 @@ fun ImageSourcePicker(
     onOpenGallery: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA) { granted ->
-        if (granted) {
-            onOpenCamera()
+    val cameraPermissionState =
+        rememberPermissionState(Manifest.permission.CAMERA) { granted ->
+            if (granted) {
+                onOpenCamera()
+            }
+            onDismissRequest()
         }
-        onDismissRequest()
-    }
 
-    MomentumBottomSheet(
-        modifier = modifier,
-        onDismissRequest = onDismissRequest,
-        padding = 16.dp
-    ) {
+    MomentumBottomSheet(modifier = modifier, onDismissRequest = onDismissRequest, padding = 16.dp) {
         ImageSourcePickerContent(
             onOpenGallery = {
                 onOpenGallery()
@@ -56,7 +69,7 @@ fun ImageSourcePicker(
                 } else {
                     cameraPermissionState.launchPermissionRequest()
                 }
-            }
+            },
         )
     }
 }
@@ -65,49 +78,28 @@ fun ImageSourcePicker(
 private fun ImageSourcePickerContent(
     modifier: Modifier = Modifier,
     onOpenGallery: () -> Unit,
-    onOpenCamera: () -> Unit
+    onOpenCamera: () -> Unit,
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(2.dp)
-    ) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         ListItem(
-            modifier = Modifier
-                .clip(leadingItemShape())
-                .clickable { onOpenGallery() },
-            headlineContent = {
-                Text(text = stringResource(R.string.select_from_gallery))
-            },
+            modifier = Modifier.clip(leadingItemShape()).clickable { onOpenGallery() },
+            headlineContent = { Text(text = stringResource(R.string.select_from_gallery)) },
             leadingContent = {
-                Icon(
-                    painter = painterResource(R.drawable.image),
-                    contentDescription = null
-                )
+                Icon(painter = painterResource(R.drawable.image), contentDescription = null)
             },
             trailingContent = {
-                Icon(
-                    painter = painterResource(R.drawable.arrow_forward),
-                    contentDescription = null
-                )
-            }
+                Icon(painter = painterResource(R.drawable.arrow_forward), contentDescription = null)
+            },
         )
         ListItem(
-            modifier = Modifier
-                .clip(endItemShape())
-                .clickable { onOpenCamera() },
+            modifier = Modifier.clip(endItemShape()).clickable { onOpenCamera() },
             headlineContent = { Text(text = stringResource(R.string.open_camera)) },
             leadingContent = {
-                Icon(
-                    painter = painterResource(R.drawable.camera),
-                    contentDescription = null
-                )
+                Icon(painter = painterResource(R.drawable.camera), contentDescription = null)
             },
             trailingContent = {
-                Icon(
-                    painter = painterResource(R.drawable.arrow_forward),
-                    contentDescription = null
-                )
-            }
+                Icon(painter = painterResource(R.drawable.arrow_forward), contentDescription = null)
+            },
         )
     }
 }
@@ -116,8 +108,5 @@ private fun ImageSourcePickerContent(
 @Preview
 @Composable
 private fun Preview() {
-    ImageSourcePickerContent(
-        onOpenGallery = {},
-        onOpenCamera = {}
-    )
+    ImageSourcePickerContent(onOpenGallery = {}, onOpenCamera = {})
 }
