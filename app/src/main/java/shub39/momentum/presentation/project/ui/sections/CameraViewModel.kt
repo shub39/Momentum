@@ -29,13 +29,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import java.io.File
+import kotlin.time.Clock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.koin.core.annotation.KoinViewModel
 
-@KoinViewModel
 class CameraViewModel : ViewModel() {
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
@@ -54,7 +53,7 @@ class CameraViewModel : ViewModel() {
     private val imageCapture = ImageCapture.Builder().build()
 
     suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
-        val processCameraProvider = ProcessCameraProvider.Companion.awaitInstance(appContext)
+        val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
 
         try {
             _cameraSelector.collect { selector ->
@@ -87,7 +86,8 @@ class CameraViewModel : ViewModel() {
 
     fun takePhoto(context: Context, onPhotoCaptured: (File) -> Unit) {
         val outputDirectory = context.cacheDir
-        val photoFile = File(outputDirectory, "temp_image.jpg")
+        val photoFile =
+            File(outputDirectory, "temp_image_${Clock.System.now().toEpochMilliseconds()}.jpg")
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
         imageCapture.takePicture(
@@ -103,5 +103,7 @@ class CameraViewModel : ViewModel() {
                 }
             },
         )
+
+        photoFile.delete()
     }
 }
