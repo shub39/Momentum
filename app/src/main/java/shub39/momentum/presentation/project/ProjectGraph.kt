@@ -34,6 +34,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
+import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
@@ -56,7 +57,7 @@ import shub39.momentum.presentation.shared.MomentumTheme
 
 @Serializable data class DayInfoView(val selectedDate: Long) : NavKey
 
-@Serializable data object Camera : NavKey
+@Serializable data class Camera(val selectedDate: Long) : NavKey
 
 @Composable
 fun ProjectGraph(
@@ -102,7 +103,7 @@ fun ProjectGraph(
                         state = state,
                         onAction = onAction,
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
-                        onNavigateToCamera = { backStack.add(Camera) },
+                        onNavigateToCamera = { backStack.add(Camera(it.selectedDate)) },
                     )
                 }
 
@@ -117,10 +118,11 @@ fun ProjectGraph(
                     )
                 }
 
-                entry<Camera>(metadata = fadeTransitionMetadata()) {
+                entry<Camera>(metadata = fadeTransitionMetadata()) { entry ->
                     val cameraViewModel = viewModel { CameraViewModel() }
                     val surfaceRequest by
                         cameraViewModel.surfaceRequest.collectAsStateWithLifecycle()
+                    val showGuides by cameraViewModel.showGuides.collectAsStateWithLifecycle()
                     val context = LocalContext.current
                     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -128,7 +130,36 @@ fun ProjectGraph(
                         cameraViewModel.bindToCamera(context.applicationContext, lifecycleOwner)
                     }
 
-                    Camera(surfaceRequest = surfaceRequest)
+                    Camera(
+                        surfaceRequest = surfaceRequest,
+                        showGuides = showGuides,
+                        onToggleCamera = cameraViewModel::toggleCamera,
+                        onToggleGuides = cameraViewModel::toggleGuides,
+                        onTakePhoto = {
+                            cameraViewModel.takePhoto(
+                                context = context,
+                                onPhotoCaptured = { photoFile ->
+                                    val day = state.days.find { it.date == entry.selectedDate }
+                                    onAction(
+                                        ProjectAction.OnUpsertDay(
+                                            day =
+                                                day?.copy(image = photoFile.absolutePath)
+                                                    ?: Day(
+                                                        projectId = state.project?.id!!,
+                                                        image = photoFile.absolutePath,
+                                                        comment = "",
+                                                        date = entry.selectedDate,
+                                                        isFavorite = false,
+                                                    ),
+                                            isNewImage = true,
+                                        )
+                                    )
+                                    if (backStack.size != 1) backStack.removeLastOrNull()
+                                },
+                            )
+                        },
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                    )
                 }
             },
     )
