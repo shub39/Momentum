@@ -87,7 +87,7 @@ class CameraViewModel : ViewModel() {
 
     fun takePhoto(context: Context, onPhotoCaptured: (File) -> Unit) {
         val outputDirectory = context.cacheDir
-        val photoFile = File(outputDirectory, "${System.currentTimeMillis()}.jpg")
+        val photoFile = File(outputDirectory, "temp_image.jpg")
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
         imageCapture.takePicture(

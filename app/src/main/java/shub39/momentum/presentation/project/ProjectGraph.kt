@@ -143,13 +143,14 @@ fun ProjectGraph(
                             cameraViewModel.takePhoto(
                                 context = context,
                                 onPhotoCaptured = { photoFile ->
+                                    val projectId = state.project?.id ?: return@takePhoto
                                     val day = state.days.find { it.date == entry.selectedDate }
                                     onAction(
                                         ProjectAction.OnUpsertDay(
                                             day =
                                                 day?.copy(image = photoFile.absolutePath)
                                                     ?: Day(
-                                                        projectId = state.project?.id!!,
+                                                        projectId = projectId,
                                                         image = photoFile.absolutePath,
                                                         comment = "",
                                                         date = entry.selectedDate,

@@ -294,11 +294,11 @@ class ProjectViewModel(
                 .distinctUntilChanged()
                 .onEach { projectId ->
                     projectId?.let {
-                        repository.getMontageOptionsByProjectId(projectId)?.let { montageConfigs ->
-                            _state.update {
-                                it.copy(montageConfig = montageConfigs.toMontageConfig())
-                            }
-                        }
+                        val config =
+                            repository.getMontageOptionsByProjectId(it)?.toMontageConfig()
+                                ?: MontageConfig()
+
+                        _state.update { state -> state.copy(montageConfig = config) }
                     }
                 }
                 .launchIn(this)

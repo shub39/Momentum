@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -95,15 +94,11 @@ fun Camera(
             CameraGuides()
         }
 
-        IconButton(
+        FilledTonalIconButton(
             onClick = onNavigateBack,
             modifier = Modifier.padding(16.dp).align(Alignment.TopStart),
         ) {
-            Icon(
-                painter = painterResource(R.drawable.arrow_back),
-                contentDescription = "Back",
-                tint = Color.White,
-            )
+            Icon(painter = painterResource(R.drawable.arrow_back), contentDescription = "Back")
         }
 
         Box(
@@ -121,7 +116,7 @@ fun Camera(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.rounded_grid),
-                        contentDescription = null,
+                        contentDescription = "Toggle Grid",
                     )
                 }
 
