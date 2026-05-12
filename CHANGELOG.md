@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.0
+- Added Camera Option for adding Pictures in Days
+- Miscellaneous UI Improvements
+
 ## 1.6.1
 - Miscellaneous Updates and Improvements
 - Notifications open App on click

@@ -58,7 +58,6 @@ import shub39.momentum.presentation.settings.ui.component.AboutApp
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.detachedItemShape
 import shub39.momentum.presentation.shared.flexFontEmphasis
-import shub39.momentum.presentation.shared.flexFontRounded
 import shub39.momentum.presentation.shared.listItemColors
 import shub39.momentum.warning.WarningManager
 import shub39.momentum.warning.WarningReminder
@@ -128,10 +127,7 @@ fun Root(
                     ) {
                         Text(
                             text = stringResource(R.string.pro),
-                            style =
-                                MaterialTheme.typography.titleLarge.copy(
-                                    fontFamily = flexFontRounded()
-                                ),
+                            style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                         )
 
