@@ -41,6 +41,7 @@ class CameraViewModel : ViewModel() {
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
 
     private val _cameraSelector = MutableStateFlow(CameraSelector.DEFAULT_BACK_CAMERA)
+    val cameraSelector = _cameraSelector.asStateFlow()
 
     private val _showGuides = MutableStateFlow(false)
     val showGuides: StateFlow<Boolean> = _showGuides.asStateFlow()

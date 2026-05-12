@@ -16,7 +16,9 @@
  */
 package shub39.momentum.presentation.project.ui.sections
 
+import android.app.Activity
 import androidx.camera.compose.CameraXViewfinder
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.SurfaceRequest
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -32,27 +34,61 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import shub39.momentum.R
 
 @Composable
 fun Camera(
     surfaceRequest: SurfaceRequest?,
     showGuides: Boolean,
+    cameraSelector: CameraSelector,
     onToggleCamera: () -> Unit,
     onToggleGuides: () -> Unit,
     onTakePhoto: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val window = (view.context as? Activity)?.window ?: return@DisposableEffect onDispose {}
+        val controller = WindowCompat.getInsetsController(window, view)
+
+        controller.hide(
+            WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+        )
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        onDispose {
+            controller.show(
+                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+            )
+        }
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         surfaceRequest?.let { request ->
-            CameraXViewfinder(surfaceRequest = request, modifier = Modifier.fillMaxSize())
+            val isFrontCamera = cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA
+            CameraXViewfinder(
+                surfaceRequest = request,
+                modifier =
+                    Modifier.fillMaxSize().graphicsLayer {
+                        if (isFrontCamera) {
+                            scaleX = -1f
+                        }
+                    },
+            )
         }
 
         if (showGuides) {

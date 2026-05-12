@@ -16,6 +16,7 @@
  */
 package shub39.momentum.presentation.project
 
+import androidx.camera.core.CameraSelector
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -123,6 +124,8 @@ fun ProjectGraph(
                     val surfaceRequest by
                         cameraViewModel.surfaceRequest.collectAsStateWithLifecycle()
                     val showGuides by cameraViewModel.showGuides.collectAsStateWithLifecycle()
+                    val cameraSelector: CameraSelector by
+                        cameraViewModel.cameraSelector.collectAsStateWithLifecycle()
                     val context = LocalContext.current
                     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -133,6 +136,7 @@ fun ProjectGraph(
                     Camera(
                         surfaceRequest = surfaceRequest,
                         showGuides = showGuides,
+                        cameraSelector = cameraSelector,
                         onToggleCamera = cameraViewModel::toggleCamera,
                         onToggleGuides = cameraViewModel::toggleGuides,
                         onTakePhoto = {
