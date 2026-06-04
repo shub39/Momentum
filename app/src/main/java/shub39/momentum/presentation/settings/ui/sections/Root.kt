@@ -59,8 +59,6 @@ import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.detachedItemShape
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.listItemColors
-import shub39.momentum.warning.WarningManager
-import shub39.momentum.warning.WarningReminder
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -104,10 +102,6 @@ fun Root(
                 ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            if (WarningManager.showWarning()) {
-                item { WarningReminder() }
-            }
-
             // about app
             item { AboutApp() }
 

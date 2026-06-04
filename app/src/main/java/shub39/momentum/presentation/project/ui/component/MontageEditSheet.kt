@@ -47,6 +47,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -95,7 +96,10 @@ fun MontageEditSheet(
     isPlusUser: Boolean,
     onNavigateToPaywall: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    sheetState: SheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Expanded, SheetValue.Hidden)
+    ),
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
 
@@ -263,7 +267,9 @@ fun MontageEditSheet(
             item {
                 Card(shape = endItemShape()) {
                     Row(
-                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -300,7 +306,9 @@ fun MontageEditSheet(
                             }
                     ) {
                         Row(
-                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
@@ -332,7 +340,9 @@ fun MontageEditSheet(
                     ) {
                         Card(shape = endItemShape()) {
                             Row(
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
@@ -368,7 +378,9 @@ fun MontageEditSheet(
                 item {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth().height(100.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
                     ) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = onNavigateToPaywall) {
@@ -382,7 +394,9 @@ fun MontageEditSheet(
             item {
                 Card(shape = leadingItemShape()) {
                     Row(
-                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -396,7 +410,8 @@ fun MontageEditSheet(
 
                     FlowRow(
                         modifier =
-                            Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                            Modifier
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                                 .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
@@ -427,7 +442,9 @@ fun MontageEditSheet(
             item {
                 Card(shape = middleItemShape()) {
                     Row(
-                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -441,7 +458,8 @@ fun MontageEditSheet(
 
                     FlowRow(
                         modifier =
-                            Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                            Modifier
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                                 .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
@@ -468,7 +486,9 @@ fun MontageEditSheet(
             item {
                 Card(shape = middleItemShape()) {
                     Row(
-                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -500,7 +520,9 @@ fun MontageEditSheet(
             item {
                 Card(shape = endItemShape()) {
                     Row(
-                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -541,29 +563,27 @@ fun MontageEditSheet(
 @Composable
 @Preview
 private fun Preview() {
-    MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
-        MontageEditSheet(
-            state =
-                ProjectState(
-                    days =
-                        listOf(
-                            Day(
-                                id = 1,
-                                projectId = 1,
-                                image = "",
-                                comment = "",
-                                date = 1,
-                                isFavorite = false,
-                            )
-                        ),
-                    montageConfig = MontageConfig(stabilizeFaces = true),
-                ),
-            onAction = {},
-            buttonEnabled = false,
-            onDismissRequest = {},
-            sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded),
-            isPlusUser = false,
-            onNavigateToPaywall = {},
-        )
-    }
+    MontageEditSheet(
+        state =
+            ProjectState(
+                days =
+                    listOf(
+                        Day(
+                            id = 1,
+                            projectId = 1,
+                            image = "",
+                            comment = "",
+                            date = 1,
+                            isFavorite = false,
+                        )
+                    ),
+                montageConfig = MontageConfig(stabilizeFaces = true),
+            ),
+        onAction = {},
+        buttonEnabled = false,
+        onDismissRequest = {},
+        sheetState = rememberBottomSheetState(initialValue = SheetValue.Expanded),
+        isPlusUser = false,
+        onNavigateToPaywall = {},
+    )
 }
