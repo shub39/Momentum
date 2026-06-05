@@ -24,8 +24,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1700
-val appVersionName = "1.7.0"
+val appVersionCode = 1710
+val appVersionName = "1.7.1"
 val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)

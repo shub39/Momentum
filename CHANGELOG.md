@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.1
+- Bug fixes and Performance improvements
+
 ## 1.7.0
 - Added Camera Option for adding Pictures in Days
 - Montage Preferences are saved per project
