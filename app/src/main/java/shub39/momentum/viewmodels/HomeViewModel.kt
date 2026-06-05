@@ -52,7 +52,7 @@ class HomeViewModel(
     fun onAction(action: HomeAction) =
         viewModelScope.launch {
             when (action) {
-                is HomeAction.OnChangeProject ->
+                is OnChangeProject ->
                     stateLayer.projectState.update {
                         it.copy(
                             project = action.project,
@@ -61,7 +61,7 @@ class HomeViewModel(
                         )
                     }
 
-                is HomeAction.OnAddProject -> {
+                is OnAddProject -> {
                     projectRepository.upsertProject(
                         Project(title = action.title, description = action.description)
                     )

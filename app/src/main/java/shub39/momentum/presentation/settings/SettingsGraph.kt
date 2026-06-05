@@ -24,15 +24,21 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import shub39.momentum.navigation.horizontalTransitionMetadata
+import shub39.momentum.presentation.settings.ui.sections.About
 import shub39.momentum.presentation.settings.ui.sections.Changelog
 import shub39.momentum.presentation.settings.ui.sections.LookAndFeel
 import shub39.momentum.presentation.settings.ui.sections.Root
 
-@Serializable data object Root : NavKey
+@Serializable
+private sealed interface Routes : NavKey {
+    @Serializable data object Root : Routes
 
-@Serializable data object LookAndFeel : NavKey
+    @Serializable data object About : Routes
 
-@Serializable data object Changelog : NavKey
+    @Serializable data object LookAndFeel : Routes
+
+    @Serializable data object Changelog : Routes
+}
 
 @Composable
 fun SettingsGraph(
@@ -44,24 +50,26 @@ fun SettingsGraph(
     onNavigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val backStack = rememberNavBackStack(Root)
+    val backStack = rememberNavBackStack(Routes.Root)
 
     NavDisplay(
         modifier = modifier,
         backStack = backStack,
         entryProvider =
             entryProvider {
-                entry<Root> {
+                entry<Routes.Root> {
                     Root(
                         onNavigateBack = onNavigateBack,
                         onNavigateToOnboarding = onNavigateToOnboarding,
-                        onNavigateToLookAndFeel = { backStack.add(LookAndFeel) },
+                        onNavigateToLookAndFeel = { backStack.add(Routes.LookAndFeel) },
                         onNavigateToPaywall = onNavigateToPaywall,
-                        onNavigateToChangelog = { backStack.add(Changelog) },
+                        onNavigateToChangelog = { backStack.add(Routes.Changelog) },
+                        onNavigateToAppInfo = { backStack.add(Routes.About) },
+                        currentVersion = state.changelog.firstOrNull()?.version ?: "",
                     )
                 }
 
-                entry<LookAndFeel>(metadata = horizontalTransitionMetadata()) {
+                entry<Routes.LookAndFeel>(metadata = horizontalTransitionMetadata()) {
                     LookAndFeel(
                         state = state,
                         onAction = onAction,
@@ -71,9 +79,16 @@ fun SettingsGraph(
                     )
                 }
 
-                entry<Changelog>(metadata = horizontalTransitionMetadata()) {
+                entry<Routes.Changelog>(metadata = horizontalTransitionMetadata()) {
                     Changelog(
                         changelog = state.changelog,
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<Routes.About>(metadata = horizontalTransitionMetadata()) {
+                    About(
+                        versionName = state.changelog.firstOrNull()?.version ?: "",
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
                     )
                 }

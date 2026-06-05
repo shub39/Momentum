@@ -47,8 +47,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.contentColorFor
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberStandardBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,8 +66,6 @@ import kotlin.math.roundToInt
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.MontageConfig
-import shub39.momentum.core.data_classes.Theme
-import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.core.enums.DateStyle
 import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.VideoQuality
@@ -76,7 +73,6 @@ import shub39.momentum.core.toFormatStyle
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.shared.ColorPickerDialog
-import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.SettingSlider
 import shub39.momentum.presentation.shared.detachedItemShape
 import shub39.momentum.presentation.shared.endItemShape
@@ -95,7 +91,11 @@ fun MontageEditSheet(
     isPlusUser: Boolean,
     onNavigateToPaywall: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    sheetState: SheetState =
+        rememberBottomSheetState(
+            initialValue = SheetValue.Hidden,
+            enabledValues = setOf(SheetValue.Expanded, SheetValue.Hidden),
+        ),
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
 
@@ -541,29 +541,27 @@ fun MontageEditSheet(
 @Composable
 @Preview
 private fun Preview() {
-    MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
-        MontageEditSheet(
-            state =
-                ProjectState(
-                    days =
-                        listOf(
-                            Day(
-                                id = 1,
-                                projectId = 1,
-                                image = "",
-                                comment = "",
-                                date = 1,
-                                isFavorite = false,
-                            )
-                        ),
-                    montageConfig = MontageConfig(stabilizeFaces = true),
-                ),
-            onAction = {},
-            buttonEnabled = false,
-            onDismissRequest = {},
-            sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded),
-            isPlusUser = false,
-            onNavigateToPaywall = {},
-        )
-    }
+    MontageEditSheet(
+        state =
+            ProjectState(
+                days =
+                    listOf(
+                        Day(
+                            id = 1,
+                            projectId = 1,
+                            image = "",
+                            comment = "",
+                            date = 1,
+                            isFavorite = false,
+                        )
+                    ),
+                montageConfig = MontageConfig(stabilizeFaces = true),
+            ),
+        onAction = {},
+        buttonEnabled = false,
+        onDismissRequest = {},
+        sheetState = rememberBottomSheetState(initialValue = SheetValue.Expanded),
+        isPlusUser = false,
+        onNavigateToPaywall = {},
+    )
 }

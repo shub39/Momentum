@@ -24,8 +24,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1700
-val appVersionName = "1.7.0"
+val appVersionCode = 1710
+val appVersionName = "1.7.1"
 val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
@@ -145,6 +145,7 @@ androidComponents {
 
 kotlin {
     compilerOptions {
+        freeCompilerArgs.add("-Xcontext-sensitive-resolution")
         optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
         optIn.add("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
     }

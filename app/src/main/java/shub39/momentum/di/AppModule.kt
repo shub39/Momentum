@@ -36,9 +36,7 @@ import shub39.montage.MontageMakerImpl
 @ComponentScan("shub39.momentum")
 class AppModule {
     @Single
-    fun provideAppDb(dbFactory: ProjectDBFactory): ProjectDatabase {
-        return dbFactory.create().build()
-    }
+    fun provideAppDb(dbFactory: ProjectDBFactory): ProjectDatabase = dbFactory.create().build()
 
     @Single fun getProjectDao(database: ProjectDatabase): ProjectDao = database.projectDao
 

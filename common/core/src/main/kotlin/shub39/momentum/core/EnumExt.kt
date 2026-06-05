@@ -23,29 +23,29 @@ import shub39.momentum.core.enums.VideoQuality
 
 fun DateStyle.toFormatStyle(): FormatStyle {
     return when (this) {
-        DateStyle.FULL -> FormatStyle.FULL
-        DateStyle.LONG -> FormatStyle.LONG
-        DateStyle.MEDIUM -> FormatStyle.MEDIUM
-        DateStyle.SHORT -> FormatStyle.SHORT
+        FULL -> FULL
+        LONG -> LONG
+        MEDIUM -> MEDIUM
+        SHORT -> SHORT
     }
 }
 
 fun Fonts.toFontRes(): Int? {
     return when (this) {
-        Fonts.INTER -> R.font.inter
-        Fonts.POPPINS -> R.font.poppins
-        Fonts.MANROPE -> R.font.manrope
-        Fonts.MONTSERRAT -> R.font.montserrat
-        Fonts.FIGTREE -> R.font.figtree
-        Fonts.QUICKSAND -> R.font.quicksand
-        Fonts.GOOGLE_SANS -> R.font.google_sans_flex
-        Fonts.SYSTEM_DEFAULT -> null
+        INTER -> R.font.inter
+        POPPINS -> R.font.poppins
+        MANROPE -> R.font.manrope
+        MONTSERRAT -> R.font.montserrat
+        FIGTREE -> R.font.figtree
+        QUICKSAND -> R.font.quicksand
+        GOOGLE_SANS -> R.font.google_sans_flex
+        SYSTEM_DEFAULT -> null
     }
 }
 
 fun VideoQuality.toDimensions(): Pair<Int, Int> {
     return when (this) {
-        VideoQuality.SMALL -> Pair(768, 1024)
-        VideoQuality.HD -> Pair(1080, 1440)
+        SMALL -> Pair(768, 1024)
+        HD -> Pair(1080, 1440)
     }
 }

@@ -92,26 +92,26 @@ class ProjectViewModel(
 
     fun onAction(action: ProjectAction) {
         when (action) {
-            is ProjectAction.OnUpdateProject ->
+            is OnUpdateProject ->
                 viewModelScope.launch {
                     repository.upsertProject(action.project)
                     _state.update { it.copy(project = action.project) }
                     scheduler.schedule(action.project)
                 }
 
-            is ProjectAction.OnDeleteProject ->
+            is OnDeleteProject ->
                 viewModelScope.launch {
                     repository.deleteProject(action.project)
                     scheduler.cancel(action.project)
                 }
 
-            is ProjectAction.OnDeleteDay ->
+            is OnDeleteDay ->
                 viewModelScope.launch {
                     imageHandler.deleteDayImage(action.day)
                     repository.deleteDay(action.day)
                 }
 
-            is ProjectAction.OnUpsertDay ->
+            is OnUpsertDay ->
                 viewModelScope.launch {
                     if (action.isNewImage) {
                         val uri = PlatformFile(action.day.image).toAndroidUri()
@@ -128,7 +128,7 @@ class ProjectViewModel(
                     }
                 }
 
-            is ProjectAction.OnCreateMontage ->
+            is OnCreateMontage ->
                 viewModelScope.launch {
                     montageMaker
                         .createMontageFlow(days = action.days, config = _state.value.montageConfig)
@@ -148,19 +148,19 @@ class ProjectViewModel(
                         }
                 }
 
-            ProjectAction.OnUpdateDays ->
+            OnUpdateDays ->
                 viewModelScope.launch {
                     refreshDays()
                     withContext(Dispatchers.Default) { processDays() }
                 }
 
-            ProjectAction.OnClearMontageState -> {
+            OnClearMontageState -> {
                 _exoPlayer.value?.release()
                 _exoPlayer.update { null }
                 _state.update { it.copy(montage = MontageState.ProcessingImages()) }
             }
 
-            is ProjectAction.OnPlayerAction -> {
+            is OnPlayerAction -> {
                 _exoPlayer.value?.let {
                     when (action.playerAction.action) {
                         VideoAction.PLAY -> it.play()
@@ -174,7 +174,7 @@ class ProjectViewModel(
                 }
             }
 
-            is ProjectAction.OnInitializeExoPlayer -> {
+            is OnInitializeExoPlayer -> {
                 if (_exoPlayer.value == null) {
                     _exoPlayer.update {
                         Builder(action.context).build().apply {
@@ -185,7 +185,7 @@ class ProjectViewModel(
                 }
             }
 
-            is ProjectAction.OnEditMontageConfig -> {
+            is OnEditMontageConfig -> {
                 viewModelScope.launch {
                     _state.value.project?.id?.let { projectId ->
                         updateMontageConfig(projectId = projectId, config = action.config)
@@ -193,7 +193,7 @@ class ProjectViewModel(
                 }
             }
 
-            is ProjectAction.OnUpdateReminder ->
+            is OnUpdateReminder ->
                 viewModelScope.launch {
                     val newProject = _state.value.project!!.copy(alarm = action.alarmData)
 
@@ -207,14 +207,14 @@ class ProjectViewModel(
                     }
                 }
 
-            is ProjectAction.OnResetMontagePrefs ->
+            is OnResetMontagePrefs ->
                 viewModelScope.launch {
                     _state.value.project?.id?.let { projectId ->
                         updateMontageConfig(projectId = projectId, config = MontageConfig())
                     }
                 }
 
-            ProjectAction.OnStartFaceScan ->
+            OnStartFaceScan ->
                 viewModelScope.launch {
                     if (_state.value.days.isEmpty()) return@launch
 
@@ -243,7 +243,7 @@ class ProjectViewModel(
                     }
                 }
 
-            ProjectAction.OnResetScanState -> {
+            OnResetScanState -> {
                 _state.update { it.copy(scanState = ScanState.Idle) }
             }
         }

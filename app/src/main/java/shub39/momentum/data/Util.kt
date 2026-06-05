@@ -17,10 +17,18 @@
 package shub39.momentum.data
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Bitmap.createBitmap
+import android.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -60,4 +68,23 @@ fun reminderNotification(context: Context, project: Project) {
             notify(project.id.hashCode(), builder.build())
         }
     }
+}
+
+fun getPlaceholder(): Painter {
+    return BitmapPainter(
+        createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+            .apply { eraseColor(Color.GREEN) }
+            .asImageBitmap()
+    )
+}
+
+fun createNotificationChannel(context: Context) {
+    val name = "Momentum"
+    val descriptionText = "Reminders for montages"
+    val importance = NotificationManager.IMPORTANCE_DEFAULT
+    val channel = NotificationChannel("1", name, importance).apply { description = descriptionText }
+    val notificationManager: NotificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    notificationManager.createNotificationChannel(channel)
 }
