@@ -92,12 +92,8 @@ import shub39.momentum.presentation.shared.MomentumDialog
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
+import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3Api::class,
-    ExperimentalFoundationApi::class,
-)
 @Composable
 fun ProjectDetails(
     state: ProjectState,
@@ -117,7 +113,7 @@ fun ProjectDetails(
         var showGuide by remember { mutableStateOf(false) }
 
         LaunchedEffect(state.days) {
-            delay(200)
+            delay(200.milliseconds)
             showGuide = state.days.isEmpty()
         }
 
