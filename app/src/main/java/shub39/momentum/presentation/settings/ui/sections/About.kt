@@ -180,7 +180,7 @@ private fun LazyListScope.aboutApp(versionName: String, uriHandler: UriHandler) 
                             painter = painterResource(R.drawable.app_icon),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(32.dp),
+                            modifier = Modifier.size(48.dp),
                         )
                     }
 
@@ -188,9 +188,9 @@ private fun LazyListScope.aboutApp(versionName: String, uriHandler: UriHandler) 
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Grit",
+                            text = "Momentum",
                             style =
-                                MaterialTheme.typography.headlineMedium.copy(
+                                MaterialTheme.typography.headlineSmall.copy(
                                     fontFamily = flexFontRounded()
                                 ),
                         )
