@@ -86,7 +86,7 @@ fun SettingsGraph(
                     )
                 }
 
-                entry<Routes.About> {
+                entry<Routes.About>(metadata = horizontalTransitionMetadata()) {
                     About(
                         versionName = state.changelog.firstOrNull()?.version ?: "",
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
