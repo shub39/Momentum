@@ -34,6 +34,8 @@ android {
     }
 }
 
+kotlin { compilerOptions { freeCompilerArgs.add("-Xcontext-sensitive-resolution") } }
+
 dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.kotlinx.serialization.json)

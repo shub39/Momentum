@@ -56,14 +56,13 @@ class SettingsViewModel(
     fun onAction(action: SettingsAction) =
         viewModelScope.launch {
             when (action) {
-                is SettingsAction.OnAmoledSwitch -> datastore.updateAmoledPref(action.amoled)
-                is SettingsAction.OnFontChange -> datastore.updateFonts(action.fonts)
-                is SettingsAction.OnMaterialThemeToggle ->
-                    datastore.updateMaterialTheme(action.pref)
+                is OnAmoledSwitch -> datastore.updateAmoledPref(action.amoled)
+                is OnFontChange -> datastore.updateFonts(action.fonts)
+                is OnMaterialThemeToggle -> datastore.updateMaterialTheme(action.pref)
 
-                is SettingsAction.OnPaletteChange -> datastore.updatePaletteStyle(action.style)
-                is SettingsAction.OnSeedColorChange -> datastore.updateSeedColor(action.color)
-                is SettingsAction.OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
+                is OnPaletteChange -> datastore.updatePaletteStyle(action.style)
+                is OnSeedColorChange -> datastore.updateSeedColor(action.color)
+                is OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
             }
         }
 

@@ -46,8 +46,8 @@ class OnboardingViewModel(private val datastore: SettingsPrefs) : ViewModel() {
     fun onAction(action: OnboardingAction) =
         viewModelScope.launch {
             when (action) {
-                OnboardingAction.OnOnboardingDone -> datastore.updateOnboardingDone(true)
-                is OnboardingAction.OnPermissionChange ->
+                OnOnboardingDone -> datastore.updateOnboardingDone(true)
+                is OnPermissionChange ->
                     _state.update { it.copy(isPermissionGranted = action.isGranted) }
             }
         }

@@ -70,7 +70,6 @@ fun reminderNotification(context: Context, project: Project) {
     }
 }
 
-
 fun getPlaceholder(): Painter {
     return BitmapPainter(
         createBitmap(1, 1, Bitmap.Config.ARGB_8888)
@@ -78,7 +77,6 @@ fun getPlaceholder(): Painter {
             .asImageBitmap()
     )
 }
-
 
 fun createNotificationChannel(context: Context) {
     val name = "Momentum"
