@@ -17,7 +17,6 @@
 package shub39.facedetection
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import com.google.mediapipe.framework.image.BitmapImageBuilder
@@ -28,6 +27,7 @@ import kotlin.math.atan2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import shub39.momentum.core.data_classes.FaceData
+import shub39.momentum.core.getBitmapWithRotation
 import shub39.momentum.core.interfaces.FaceDetector
 
 class FaceDetectorImpl(private val context: Context) : FaceDetector {
@@ -41,7 +41,6 @@ class FaceDetectorImpl(private val context: Context) : FaceDetector {
         const val DEFAULT_NUM_FACES = 1
     }
 
-    private val contentResolver = context.contentResolver
     private val faceLandmarker: FaceLandmarker by lazy {
         val baseOptionsBuilder = BaseOptions.builder().setModelAssetPath(MP_FACE_LANDMARKER_TASK)
         val baseOptions = baseOptionsBuilder.build()
@@ -60,10 +59,7 @@ class FaceDetectorImpl(private val context: Context) : FaceDetector {
 
     override suspend fun getFaceDataFromUri(uri: Uri): FaceData =
         withContext(Dispatchers.Default) {
-            val imageBitmap =
-                contentResolver.openInputStream(uri)?.use { stream ->
-                    BitmapFactory.decodeStream(stream)
-                }
+            val imageBitmap = uri.getBitmapWithRotation(context)
             if (imageBitmap == null) {
                 Log.e(TAG, "Could not decode image from Uri")
                 return@withContext FaceData()
@@ -75,12 +71,18 @@ class FaceDetectorImpl(private val context: Context) : FaceDetector {
                 return@withContext FaceData()
             }
 
+            val width = imageBitmap.width
+            val height = imageBitmap.height
+
             val landmarks =
                 try {
-                    faceLandmarker.detect(mpImage).faceLandmarks().firstOrNull()
+                    val result = faceLandmarker.detect(mpImage)
+                    result.faceLandmarks().firstOrNull()
                 } catch (e: Exception) {
                     Log.e(TAG, "Face Detection Failed", e)
                     null
+                } finally {
+                    imageBitmap.recycle()
                 }
             if (landmarks == null) {
                 Log.e(TAG, "Could not extract landmarks")
@@ -99,9 +101,6 @@ class FaceDetectorImpl(private val context: Context) : FaceDetector {
                     maxX = maxOf(maxX, landmark.x())
                     maxY = maxOf(maxY, landmark.y())
                 }
-
-                val width = imageBitmap.width
-                val height = imageBitmap.height
 
                 val left = (minX * width).toInt()
                 val top = (minY * height).toInt()

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.2
+- Fixed color and orientation issues on some devices
+
 ## 1.7.1
 - Bug fixes and Performance improvements
 

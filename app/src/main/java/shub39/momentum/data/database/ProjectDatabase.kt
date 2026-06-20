@@ -17,9 +17,9 @@
 package shub39.momentum.data.database
 
 import androidx.room3.AutoMigration
+import androidx.room3.ColumnTypeConverters
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
-import androidx.room3.TypeConverters
 
 @Database(
     entities = [ProjectEntity::class, DayEntity::class, MontageOptionsEntity::class],
@@ -27,7 +27,7 @@ import androidx.room3.TypeConverters
     exportSchema = true,
     autoMigrations = [AutoMigration(from = 1, to = 2), AutoMigration(from = 2, to = 3)],
 )
-@TypeConverters(Converters::class)
+@ColumnTypeConverters(Converters::class)
 abstract class ProjectDatabase : RoomDatabase() {
     abstract val projectDao: ProjectDao
     abstract val daysDao: DaysDao

@@ -25,6 +25,7 @@ import android.media.MediaCodecInfo
 import android.media.MediaCodecList
 import android.media.MediaExtractor
 import android.media.MediaFormat
+import android.os.Build
 import android.util.Log
 import android.view.Surface
 import androidx.annotation.RawRes
@@ -56,9 +57,15 @@ internal class FrameBuilder(
                 setInteger(MediaFormat.KEY_BIT_RATE, muxerConfig.bitrate)
                 setInteger(MediaFormat.KEY_FRAME_RATE, muxerConfig.framesPerSecond.toInt())
                 setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, muxerConfig.iFrameInterval)
-                setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_FULL)
+                setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_LIMITED)
                 setInteger(MediaFormat.KEY_COLOR_STANDARD, MediaFormat.COLOR_STANDARD_BT709)
                 setInteger(MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_SDR_VIDEO)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    setInteger(
+                        MediaFormat.KEY_COLOR_TRANSFER_REQUEST,
+                        MediaFormat.COLOR_TRANSFER_SDR_VIDEO,
+                    )
+                }
             }
     private val mediaCodec: MediaCodec
     private val bufferInfo = MediaCodec.BufferInfo()
