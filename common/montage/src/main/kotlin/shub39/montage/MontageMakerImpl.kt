@@ -120,81 +120,86 @@ class MontageMakerImpl(private val context: Context) : MontageMaker {
 
             if (originalBitmap != null) {
                 val canvasBitmap = createBitmap(dimensions.first, dimensions.second)
-                val canvas = Canvas(canvasBitmap)
-                canvas.drawColor(config.backgroundColor.toArgb())
+                try {
+                    val canvas = Canvas(canvasBitmap)
+                    canvas.drawColor(config.backgroundColor.toArgb())
 
-                val matrix = Matrix()
+                    val matrix = Matrix()
 
-                if (config.stabilizeFaces && day.faceData.isValid()) {
-                    val faceBox = day.faceData?.toRect()!!
-                    val targetFaceHeight = dimensions.second * 0.3f
-                    val scale = targetFaceHeight / faceBox.height().toFloat()
+                    if (config.stabilizeFaces && day.faceData.isValid()) {
+                        val faceBox = day.faceData?.toRect()!!
+                        val targetFaceHeight = dimensions.second * 0.3f
+                        val scale = targetFaceHeight / faceBox.height().toFloat()
 
-                    val faceCenterX = faceBox.centerX().toFloat()
-                    val faceCenterY = faceBox.centerY().toFloat()
+                        val faceCenterX = faceBox.centerX().toFloat()
+                        val faceCenterY = faceBox.centerY().toFloat()
 
-                    val targetCenterX = dimensions.first / 2f
-                    val targetCenterY = dimensions.second / 2f
+                        val targetCenterX = dimensions.first / 2f
+                        val targetCenterY = dimensions.second / 2f
 
-                    // move face center to (0,0)
-                    // --- Build transform ---
-                    matrix.postTranslate(-faceCenterX, -faceCenterY)
-                    matrix.postScale(scale, scale) // scale to target size
-                    matrix.postRotate(-day.faceData!!.headAngle) // straighten roll
-                    matrix.postTranslate(targetCenterX, targetCenterY) // center face
-                } else {
-                    // No stabilization, just fit into canvas
-                    val scale =
-                        minOf(
-                            dimensions.first.toFloat() / originalBitmap.width,
-                            dimensions.second.toFloat() / originalBitmap.height,
-                        )
-                    val dx = (dimensions.first - originalBitmap.width * scale) / 2f
-                    val dy = (dimensions.second - originalBitmap.height * scale) / 2f
-                    matrix.postScale(scale, scale)
-                    matrix.postTranslate(dx, dy)
-                }
-
-                canvas.drawBitmap(originalBitmap, matrix, null)
-                originalBitmap.recycle()
-
-                // --- Watermark, date, message ---
-                if (config.waterMark) {
-                    val watermark = "shub39/Momentum"
-                    val paddingX = dimensions.first * 0.05f
-                    val paddingY =
-                        dimensions.second * 0.05f + textPaint.descent() + textPaint.textSize
-                    canvas.drawText(watermark, paddingX, paddingY, textPaint)
-                }
-                if (config.showDate) {
-                    val date =
-                        LocalDate.ofEpochDay(day.date)
-                            .format(
-                                DateTimeFormatter.ofLocalizedDate(config.dateStyle.toFormatStyle())
+                        // move face center to (0,0)
+                        // --- Build transform ---
+                        matrix.postTranslate(-faceCenterX, -faceCenterY)
+                        matrix.postScale(scale, scale) // scale to target size
+                        matrix.postRotate(-day.faceData!!.headAngle) // straighten roll
+                        matrix.postTranslate(targetCenterX, targetCenterY) // center face
+                    } else {
+                        // No stabilization, just fit into canvas
+                        val scale =
+                            minOf(
+                                dimensions.first.toFloat() / originalBitmap.width,
+                                dimensions.second.toFloat() / originalBitmap.height,
                             )
-                    val paddingX = dimensions.first * 0.05f
-                    val paddingY =
-                        dimensions.second - dimensions.second * 0.05f - textPaint.descent()
-                    canvas.drawText(date, paddingX, paddingY, textPaint)
-                }
-                if (config.showMessage && !day.comment.isNullOrBlank()) {
-                    val message = day.comment!!
-                    val paddingX = dimensions.first * 0.05f
-                    val paddingY =
-                        dimensions.second - dimensions.second * 0.12f - textPaint.descent()
-                    canvas.drawText(message, paddingX, paddingY, textPaint)
-                }
+                        val dx = (dimensions.first - originalBitmap.width * scale) / 2f
+                        val dy = (dimensions.second - originalBitmap.height * scale) / 2f
+                        matrix.postScale(scale, scale)
+                        matrix.postTranslate(dx, dy)
+                    }
 
-                // censor face
-                if (config.censorFaces && config.stabilizeFaces && day.faceData.isValid()) {
-                    val faceBox = day.faceData?.toRect()!!
-                    val faceRectF = faceBox.toRectF()
-                    matrix.mapRect(faceRectF)
+                    canvas.drawBitmap(originalBitmap, matrix, null)
 
-                    canvas.drawRect(faceRectF, censorPaint)
+                    // --- Watermark, date, message ---
+                    if (config.waterMark) {
+                        val watermark = "shub39/Momentum"
+                        val paddingX = dimensions.first * 0.05f
+                        val paddingY =
+                            dimensions.second * 0.05f + textPaint.descent() + textPaint.textSize
+                        canvas.drawText(watermark, paddingX, paddingY, textPaint)
+                    }
+                    if (config.showDate) {
+                        val date =
+                            LocalDate.ofEpochDay(day.date)
+                                .format(
+                                    DateTimeFormatter.ofLocalizedDate(
+                                        config.dateStyle.toFormatStyle()
+                                    )
+                                )
+                        val paddingX = dimensions.first * 0.05f
+                        val paddingY =
+                            dimensions.second - dimensions.second * 0.05f - textPaint.descent()
+                        canvas.drawText(date, paddingX, paddingY, textPaint)
+                    }
+                    if (config.showMessage && !day.comment.isNullOrBlank()) {
+                        val message = day.comment!!
+                        val paddingX = dimensions.first * 0.05f
+                        val paddingY =
+                            dimensions.second - dimensions.second * 0.12f - textPaint.descent()
+                        canvas.drawText(message, paddingX, paddingY, textPaint)
+                    }
+
+                    // censor face
+                    if (config.censorFaces && config.stabilizeFaces && day.faceData.isValid()) {
+                        val faceBox = day.faceData?.toRect()!!
+                        val faceRectF = faceBox.toRectF()
+                        matrix.mapRect(faceRectF)
+
+                        canvas.drawRect(faceRectF, censorPaint)
+                    }
+
+                    canvasBitmap
+                } finally {
+                    if (!originalBitmap.isRecycled) originalBitmap.recycle()
                 }
-
-                canvasBitmap
             } else null
         } catch (e: Exception) {
             Log.e("MontageMaker", "Error processing day: ", e)
