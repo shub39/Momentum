@@ -1,5 +1,11 @@
 [
   {
+    "version": "1.7.2",
+    "changes": [
+      "Fixed color and orientation issues on some devices"
+    ]
+  },
+  {
     "version": "1.7.1",
     "changes": [
       "Bug fixes and Performance improvements"
