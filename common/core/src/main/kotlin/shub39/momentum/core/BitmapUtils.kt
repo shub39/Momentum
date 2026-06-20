@@ -19,6 +19,7 @@ package shub39.momentum.core
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ColorSpace
 import android.graphics.Matrix
 import android.net.Uri
 import androidx.exifinterface.media.ExifInterface
@@ -33,9 +34,14 @@ fun Uri.getBitmapWithRotation(context: Context): Bitmap? {
             )
         } ?: ExifInterface.ORIENTATION_UNDEFINED
 
+    val options = BitmapFactory.Options().apply {
+        inPreferredConfig = Bitmap.Config.ARGB_8888
+        inPreferredColorSpace = ColorSpace.get(ColorSpace.Named.SRGB)
+    }
     val bitmap =
-        contentResolver.openInputStream(this)?.use { stream -> BitmapFactory.decodeStream(stream) }
-            ?: return null
+        contentResolver.openInputStream(this)?.use { stream ->
+            BitmapFactory.decodeStream(stream, null, options)
+        } ?: return null
 
     return when (orientation) {
         ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
