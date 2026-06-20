@@ -28,16 +28,15 @@ fun Uri.getBitmapWithRotation(context: Context): Bitmap? {
     val contentResolver = context.contentResolver
     val orientation =
         contentResolver.openFileDescriptor(this, "r")?.use { pfd ->
-            ExifInterface(pfd.fileDescriptor).getAttributeInt(
-                ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_UNDEFINED,
-            )
+            ExifInterface(pfd.fileDescriptor)
+                .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
         } ?: ExifInterface.ORIENTATION_UNDEFINED
 
-    val options = BitmapFactory.Options().apply {
-        inPreferredConfig = Bitmap.Config.ARGB_8888
-        inPreferredColorSpace = ColorSpace.get(ColorSpace.Named.SRGB)
-    }
+    val options =
+        BitmapFactory.Options().apply {
+            inPreferredConfig = Bitmap.Config.ARGB_8888
+            inPreferredColorSpace = ColorSpace.get(ColorSpace.Named.SRGB)
+        }
     val bitmap =
         contentResolver.openInputStream(this)?.use { stream ->
             BitmapFactory.decodeStream(stream, null, options)
@@ -53,8 +52,7 @@ fun Uri.getBitmapWithRotation(context: Context): Bitmap? {
 
 private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
     val matrix = Matrix().apply { postRotate(degrees) }
-    val rotatedBitmap =
-        Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     if (rotatedBitmap != bitmap) {
         bitmap.recycle()
     }

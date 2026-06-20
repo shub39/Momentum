@@ -27,9 +27,8 @@ import kotlin.math.atan2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import shub39.momentum.core.data_classes.FaceData
-import shub39.momentum.core.interfaces.FaceDetector
-
 import shub39.momentum.core.getBitmapWithRotation
+import shub39.momentum.core.interfaces.FaceDetector
 
 class FaceDetectorImpl(private val context: Context) : FaceDetector {
 

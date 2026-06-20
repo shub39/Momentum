@@ -63,7 +63,7 @@ internal class FrameBuilder(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     setInteger(
                         MediaFormat.KEY_COLOR_TRANSFER_REQUEST,
-                        MediaFormat.COLOR_TRANSFER_SDR_VIDEO
+                        MediaFormat.COLOR_TRANSFER_SDR_VIDEO,
                     )
                 }
             }
