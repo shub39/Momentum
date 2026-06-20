@@ -37,6 +37,7 @@ android {
 dependencies {
     implementation(project(":common:core"))
 
+    implementation(libs.androidx.exifinterface)
     implementation(libs.tasks.vision)
     implementation(libs.kotlinx.coroutines.core)
 }

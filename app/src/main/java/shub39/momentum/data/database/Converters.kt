@@ -16,7 +16,7 @@
  */
 package shub39.momentum.data.database
 
-import androidx.room3.TypeConverter
+import androidx.room3.ColumnTypeConverter
 import kotlinx.serialization.json.Json
 import shub39.momentum.core.data_classes.AlarmData
 import shub39.momentum.core.data_classes.FaceData
@@ -27,22 +27,22 @@ object Converters {
         ignoreUnknownKeys = true
     }
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun fromAlarm(alarm: AlarmData?): String? {
         return alarm?.let { json.encodeToString(AlarmData.serializer(), it) }
     }
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun toAlarm(data: String?): AlarmData? {
         return data?.let { json.decodeFromString(AlarmData.serializer(), it) }
     }
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun toFaceData(data: String?): FaceData? {
         return data?.let { json.decodeFromString(FaceData.serializer(), it) }
     }
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun fromFaceData(faceData: FaceData?): String? {
         return faceData?.let { json.encodeToString(FaceData.serializer(), it) }
     }
