@@ -78,7 +78,7 @@ fun Root(
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            painter = painterResource(R.drawable.arrow_back),
+                            painter = painterResource(R.drawable.nav_arrow_back),
                             contentDescription = "Navigate Back",
                         )
                     }
@@ -101,7 +101,7 @@ fun Root(
             // momentum pro
             item {
                 ListItem(
-                    headlineContent = { Text(text = stringResource(R.string.pro)) },
+                    content = { Text(text = stringResource(R.string.pro)) },
                     colors = listItemColors(),
                     modifier =
                         Modifier.clip(detachedItemShape()).clickable { onNavigateToPaywall() },
@@ -125,7 +125,7 @@ fun Root(
             item {
                 ListItem(
                     colors = listItemColors(),
-                    headlineContent = { Text(text = stringResource(R.string.look_and_feel)) },
+                    content = { Text(text = stringResource(R.string.look_and_feel)) },
                     supportingContent = {
                         Text(text = stringResource(R.string.look_and_feel_info))
                     },
@@ -156,7 +156,7 @@ fun Root(
                             contentDescription = "Onboarding",
                         )
                     },
-                    headlineContent = { Text(text = stringResource(R.string.onboarding)) },
+                    content = { Text(text = stringResource(R.string.onboarding)) },
                     supportingContent = { Text(text = stringResource(R.string.onboarding_desc)) },
                     trailingContent = {
                         Icon(
@@ -186,14 +186,14 @@ fun Root(
                                 contentDescription = "Navigate",
                             )
                         },
-                        headlineContent = { Text(text = stringResource(R.string.about)) },
+                        content = { Text(text = stringResource(R.string.about)) },
                         modifier =
                             Modifier.clip(leadingItemShape()).clickable { onNavigateToAppInfo() },
                     )
 
                     ListItem(
                         colors = listItemColors(),
-                        headlineContent = { Text(text = stringResource(R.string.changelog)) },
+                        content = { Text(text = stringResource(R.string.changelog)) },
                         leadingContent = {
                             Icon(
                                 painter = painterResource(R.drawable.logs),

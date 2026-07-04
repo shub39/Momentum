@@ -107,7 +107,7 @@ fun ChangelogSheet(
                     ListItem(
                         colors = listItemColors(),
                         modifier = Modifier.clip(shape),
-                        headlineContent = { Text(text = change) },
+                        content = { Text(text = change) },
                     )
                 }
             }

@@ -94,7 +94,7 @@ fun ProjectCalendar(
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            painter = painterResource(R.drawable.arrow_back),
+                            painter = painterResource(R.drawable.nav_arrow_back),
                             contentDescription = null,
                         )
                     }

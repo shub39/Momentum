@@ -132,7 +132,7 @@ androidComponents {
                 output.filters
                     .find {
                         it.filterType ==
-                                com.android.build.api.variant.FilterConfiguration.FilterType.ABI
+                            com.android.build.api.variant.FilterConfiguration.FilterType.ABI
                     }
                     ?.identifier
             val baseAbiCode = abiCodes[name]
