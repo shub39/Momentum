@@ -78,4 +78,5 @@
     <string name="open_camera">Open Camera</string>
     <string name="about">About</string>
     <string name="bmc_desc">Support me by making a small donation.</string>
+    <string name="backup">Backup</string>
 </resources>

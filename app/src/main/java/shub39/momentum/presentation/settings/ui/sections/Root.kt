@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -63,6 +64,7 @@ fun Root(
     onNavigateToPaywall: () -> Unit,
     onNavigateToChangelog: () -> Unit,
     onNavigateToAppInfo: () -> Unit,
+    onNavigateToBackup: () -> Unit,
     currentVersion: String,
     modifier: Modifier = Modifier,
 ) {
@@ -98,6 +100,8 @@ fun Root(
                 ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            item { Button(onClick = onNavigateToBackup) { Text("Backup") } }
+
             // momentum pro
             item {
                 ListItem(
@@ -226,6 +230,7 @@ private fun Preview() {
             onNavigateToChangelog = {},
             onNavigateToOnboarding = {},
             onNavigateToAppInfo = {},
+            onNavigateToBackup = {},
             currentVersion = "1.0.0",
         )
     }

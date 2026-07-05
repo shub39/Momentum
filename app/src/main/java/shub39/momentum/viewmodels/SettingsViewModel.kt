@@ -29,6 +29,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
+import shub39.momentum.core.backup.ExportRepo
+import shub39.momentum.core.backup.ExportState
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.ChangelogManager
 import shub39.momentum.presentation.settings.SettingsAction
@@ -36,6 +38,7 @@ import shub39.momentum.presentation.settings.SettingsState
 
 @KoinViewModel
 class SettingsViewModel(
+    private val exportRepo: ExportRepo,
     private val datastore: SettingsPrefs,
     private val changelogManager: ChangelogManager,
 ) : ViewModel() {
@@ -63,6 +66,14 @@ class SettingsViewModel(
                 is OnPaletteChange -> datastore.updatePaletteStyle(action.style)
                 is OnSeedColorChange -> datastore.updateSeedColor(action.color)
                 is OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
+
+                SettingsAction.OnExportData -> {
+                    _state.update { it.copy(exportState = ExportState.EXPORTING) }
+
+                    exportRepo.exportProjects()
+
+                    _state.update { it.copy(exportState = ExportState.EXPORTED) }
+                }
             }
         }
 

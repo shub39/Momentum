@@ -25,6 +25,7 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import shub39.momentum.navigation.horizontalTransitionMetadata
 import shub39.momentum.presentation.settings.ui.sections.About
+import shub39.momentum.presentation.settings.ui.sections.BackupPage
 import shub39.momentum.presentation.settings.ui.sections.Changelog
 import shub39.momentum.presentation.settings.ui.sections.LookAndFeel
 import shub39.momentum.presentation.settings.ui.sections.Root
@@ -38,6 +39,8 @@ private sealed interface Routes : NavKey {
     @Serializable data object LookAndFeel : Routes
 
     @Serializable data object Changelog : Routes
+
+    @Serializable data object Backup : Routes
 }
 
 @Composable
@@ -65,6 +68,7 @@ fun SettingsGraph(
                         onNavigateToPaywall = onNavigateToPaywall,
                         onNavigateToChangelog = { backStack.add(Routes.Changelog) },
                         onNavigateToAppInfo = { backStack.add(Routes.About) },
+                        onNavigateToBackup = { backStack.add(Routes.Backup) },
                         currentVersion = state.changelog.firstOrNull()?.version ?: "",
                     )
                 }
@@ -89,6 +93,14 @@ fun SettingsGraph(
                 entry<Routes.About>(metadata = horizontalTransitionMetadata()) {
                     About(
                         versionName = state.changelog.firstOrNull()?.version ?: "",
+                        onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
+                    )
+                }
+
+                entry<Routes.Backup>(metadata = horizontalTransitionMetadata()) {
+                    BackupPage(
+                        state = state,
+                        action = onAction,
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
                     )
                 }
