@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.core.backup.ExportRepo
+import shub39.momentum.core.backup.ExportResult
 import shub39.momentum.core.backup.ExportState
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.ChangelogManager
@@ -70,9 +71,16 @@ class SettingsViewModel(
                 SettingsAction.OnExportData -> {
                     _state.update { it.copy(exportState = ExportState.EXPORTING) }
 
-                    exportRepo.exportProjects()
+                    val result = exportRepo.exportProjects()
 
-                    _state.update { it.copy(exportState = ExportState.EXPORTED) }
+                    _state.update {
+                        it.copy(
+                            exportState = when (result) {
+                                is ExportResult.Failure -> ExportState.FAILURE
+                                ExportResult.Success -> ExportState.EXPORTED
+                            }
+                        )
+                    }
                 }
             }
         }

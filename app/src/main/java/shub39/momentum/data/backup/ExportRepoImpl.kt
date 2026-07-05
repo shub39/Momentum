@@ -38,6 +38,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
 import shub39.momentum.core.backup.ExportRepo
+import shub39.momentum.core.backup.ExportResult
 import shub39.momentum.core.backup.ExportSchema
 import shub39.momentum.core.backup.toDaySchema
 import shub39.momentum.core.backup.toProjectSchema
@@ -57,7 +58,7 @@ class ExportRepoImpl(
         private const val TAG = "ExportRepo"
     }
 
-    override suspend fun exportProjects() {
+    override suspend fun exportProjects(): ExportResult {
         // create temporary backup directory and zip file
         val backupDir = File(context.cacheDir, "backup")
 
@@ -125,11 +126,13 @@ class ExportRepoImpl(
                         suggestedName = "momentum_backup_$time",
                         defaultExtension = ".zip",
                     )
-
                 file?.write(PlatformFile(zip))
             }
+
+            return ExportResult.Success
         } catch (e: Exception) {
             Log.e(TAG, "Error while exporting data", e)
+            return ExportResult.Failure(e)
         } finally {
             backupDir.deleteRecursively()
             zip.deleteRecursively()

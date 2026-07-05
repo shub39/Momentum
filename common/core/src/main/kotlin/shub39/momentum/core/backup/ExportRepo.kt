@@ -17,11 +17,18 @@
 package shub39.momentum.core.backup
 
 interface ExportRepo {
-    suspend fun exportProjects()
+    suspend fun exportProjects(): ExportResult
+}
+
+sealed class ExportResult {
+    data object Success: ExportResult()
+
+    data class Failure(val exception: Exception): ExportResult()
 }
 
 enum class ExportState {
     IDLE,
     EXPORTING,
     EXPORTED,
+    FAILURE
 }
