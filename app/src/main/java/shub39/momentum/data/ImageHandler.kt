@@ -46,6 +46,8 @@ class ImageHandler(private val context: Context) {
     }
 
     fun deleteDayImage(day: Day) {
+        if (day.image.isEmpty()) return
+
         try {
             val uri = PlatformFile(day.image).toAndroidUri()
             uri.toFile().delete()

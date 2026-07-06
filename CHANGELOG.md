@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.8.0
+## 1.8.1
 - Added backup options
 - Miscellaneous UI Improvements
 
