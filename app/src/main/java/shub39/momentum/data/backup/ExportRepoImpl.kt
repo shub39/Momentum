@@ -134,6 +134,7 @@ class ExportRepoImpl(
                         defaultExtension = ".zip",
                     )
                 file?.write(PlatformFile(zip))
+                    ?: return@withContext ExportResult.Failure(Exception("No File Selected"))
             }
 
             return ExportResult.Success

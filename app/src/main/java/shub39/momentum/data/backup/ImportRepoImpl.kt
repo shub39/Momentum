@@ -64,7 +64,7 @@ class ImportRepoImpl(
         try {
             // ======= select file
             val file = FileKit.openFilePicker(type = FileKitType.File("zip"))
-            if (file == null) return ImportResult.Failure(ImportExceptionType.NoFileSelected)
+                ?: return ImportResult.Failure(ImportExceptionType.NoFileSelected)
 
             // ========= unzip
             if (!unzipDir.exists()) unzipDir.mkdirs()
@@ -78,6 +78,11 @@ class ImportRepoImpl(
 
                     while (entry != null) {
                         val outFile = File(unzipDir, entry.name)
+                        if (
+                            !outFile.canonicalPath
+                                .startsWith(unzipDir.canonicalPath + File.separator)
+                        ) throw SecurityException("Zip entry outside target dir: ${entry.name}")
+
 
                         if (outFile.isDirectory) {
                             outFile.mkdirs()
