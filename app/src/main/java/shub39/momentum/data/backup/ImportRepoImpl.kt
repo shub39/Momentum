@@ -29,6 +29,7 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.util.zip.ZipInputStream
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -63,8 +64,9 @@ class ImportRepoImpl(
 
         try {
             // ======= select file
-            val file = FileKit.openFilePicker(type = FileKitType.File("zip"))
-                ?: return ImportResult.Failure(ImportExceptionType.NoFileSelected)
+            val file =
+                FileKit.openFilePicker(type = FileKitType.File("zip"))
+                    ?: return ImportResult.Failure(ImportExceptionType.NoFileSelected)
 
             // ========= unzip
             if (!unzipDir.exists()) unzipDir.mkdirs()
@@ -79,10 +81,11 @@ class ImportRepoImpl(
                     while (entry != null) {
                         val outFile = File(unzipDir, entry.name)
                         if (
-                            !outFile.canonicalPath
-                                .startsWith(unzipDir.canonicalPath + File.separator)
-                        ) throw SecurityException("Zip entry outside target dir: ${entry.name}")
-
+                            !outFile.canonicalPath.startsWith(
+                                unzipDir.canonicalPath + File.separator
+                            )
+                        )
+                            throw SecurityException("Zip entry outside target dir: ${entry.name}")
 
                         if (outFile.isDirectory) {
                             outFile.mkdirs()
@@ -112,12 +115,23 @@ class ImportRepoImpl(
             }
 
             withContext(Dispatchers.IO) {
-                schema.projects.forEach { projectDao.upsertProject(it.toProject().toEntity()) }
+                // wipe existing projects
+                projectDao.getProjects().first().forEach { projectDao.deleteProject(it) }
+                montageOptionsDao.getMontageOptions().first().forEach {
+                    montageOptionsDao.deleteMontageOption(it)
+                }
+                daysDao.getDays().first().forEach {
+                    val existingDir = File(context.filesDir, it.projectId.toString())
+                    existingDir.deleteRecursively()
 
+                    daysDao.deleteDay(it)
+                }
+
+                // import
+                schema.projects.forEach { projectDao.upsertProject(it.toProject().toEntity()) }
                 schema.montageOptions.forEach {
                     montageOptionsDao.upsertMontageOption(it.toMontageOptions().toEntity())
                 }
-
                 schema.days
                     .groupBy { it.projectId }
                     .forEach { (id, schemas) ->
