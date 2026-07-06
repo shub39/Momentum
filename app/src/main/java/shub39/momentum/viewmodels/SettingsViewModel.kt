@@ -32,6 +32,9 @@ import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.core.backup.ExportRepo
 import shub39.momentum.core.backup.ExportResult
 import shub39.momentum.core.backup.ExportState
+import shub39.momentum.core.backup.ImportRepo
+import shub39.momentum.core.backup.ImportResult
+import shub39.momentum.core.backup.ImportState
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.ChangelogManager
 import shub39.momentum.presentation.settings.SettingsAction
@@ -39,6 +42,7 @@ import shub39.momentum.presentation.settings.SettingsState
 
 @KoinViewModel
 class SettingsViewModel(
+    private val importRepo: ImportRepo,
     private val exportRepo: ExportRepo,
     private val datastore: SettingsPrefs,
     private val changelogManager: ChangelogManager,
@@ -78,6 +82,21 @@ class SettingsViewModel(
                             exportState = when (result) {
                                 is ExportResult.Failure -> ExportState.FAILURE
                                 ExportResult.Success -> ExportState.EXPORTED
+                            }
+                        )
+                    }
+                }
+
+                SettingsAction.OnImportData -> {
+                    _state.update { it.copy(importState = ImportState.IMPORTING) }
+
+                    val result = importRepo.restoreData()
+
+                    _state.update {
+                        it.copy(
+                            importState =  when(result) {
+                                is ImportResult.Failure -> ImportState.FAILURE
+                                ImportResult.Success -> ImportState.IMPORTED
                             }
                         )
                     }

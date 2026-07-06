@@ -40,6 +40,7 @@ import org.koin.core.annotation.Single
 import shub39.momentum.core.backup.ExportRepo
 import shub39.momentum.core.backup.ExportResult
 import shub39.momentum.core.backup.ExportSchema
+import shub39.momentum.core.backup.SCHEMA_FILE_NAME
 import shub39.momentum.core.backup.toDaySchema
 import shub39.momentum.core.backup.toProjectSchema
 import shub39.momentum.data.database.DaysDao
@@ -86,7 +87,7 @@ class ExportRepoImpl(
                         days = days,
                     )
 
-                File(backupDir, "data.json").writeText(Json.encodeToString(exportDetails))
+                File(backupDir, SCHEMA_FILE_NAME).writeText(Json.encodeToString(exportDetails))
 
                 // prepare images
                 days

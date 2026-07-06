@@ -20,6 +20,8 @@ import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.AlarmData
 import shub39.momentum.core.data_classes.FaceData
 
+const val SCHEMA_FILE_NAME = "data.json"
+
 @Serializable
 data class ExportSchema(
     val schemaVersion: Int,

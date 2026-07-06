@@ -87,6 +87,15 @@ fun BackupPage(
                     Text("Export Data")
                 }
             }
+
+            item {
+                Button(
+                    onClick = { action(SettingsAction.OnImportData) },
+                    enabled = state.exportState != ExportState.EXPORTING
+                    ) {
+                    Text("Import Data")
+                }
+            }
         }
     }
 }
