@@ -50,32 +50,34 @@ fun DaySchema.toDay(): Day =
 fun ProjectSchema.toProject(): Project =
     Project(id = id, title = title, description = description, alarm = alarm)
 
-fun MontageOptionsSchema.toMontageOptions(): MontageOptions = MontageOptions(
-    projectId = projectId,
-    framesPerImage = framesPerImage,
-    framesPerSecond = framesPerSecond,
-    videoQuality = videoQuality,
-    backgroundColor = Color(backgroundColor),
-    waterMark = waterMark,
-    showDate = showDate,
-    showMessage = showMessage,
-    font = font,
-    dateStyle = dateStyle,
-    stabilizeFaces = stabilizeFaces,
-    censorFaces = censorFaces
-)
+fun MontageOptionsSchema.toMontageOptions(): MontageOptions =
+    MontageOptions(
+        projectId = projectId,
+        framesPerImage = framesPerImage,
+        framesPerSecond = framesPerSecond,
+        videoQuality = videoQuality,
+        backgroundColor = Color(backgroundColor),
+        waterMark = waterMark,
+        showDate = showDate,
+        showMessage = showMessage,
+        font = font,
+        dateStyle = dateStyle,
+        stabilizeFaces = stabilizeFaces,
+        censorFaces = censorFaces,
+    )
 
-fun MontageOptions.toSchema(): MontageOptionsSchema = MontageOptionsSchema(
-    projectId = projectId,
-    framesPerImage = framesPerImage,
-    framesPerSecond = framesPerSecond,
-    videoQuality = videoQuality,
-    backgroundColor = backgroundColor.toArgb(),
-    waterMark = waterMark,
-    showDate = showDate,
-    showMessage = showMessage,
-    font = font,
-    dateStyle = dateStyle,
-    stabilizeFaces = stabilizeFaces,
-    censorFaces = censorFaces
-)
+fun MontageOptions.toSchema(): MontageOptionsSchema =
+    MontageOptionsSchema(
+        projectId = projectId,
+        framesPerImage = framesPerImage,
+        framesPerSecond = framesPerSecond,
+        videoQuality = videoQuality,
+        backgroundColor = backgroundColor.toArgb(),
+        waterMark = waterMark,
+        showDate = showDate,
+        showMessage = showMessage,
+        font = font,
+        dateStyle = dateStyle,
+        stabilizeFaces = stabilizeFaces,
+        censorFaces = censorFaces,
+    )

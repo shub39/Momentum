@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package shub39.momentum.data.backup
 
 import android.content.Context
@@ -7,6 +23,11 @@ import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.dialogs.toAndroidUri
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.util.zip.ZipInputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
@@ -25,18 +46,13 @@ import shub39.momentum.data.database.MontageOptionsDao
 import shub39.momentum.data.database.ProjectDao
 import shub39.momentum.data.database.ProjectDatabase
 import shub39.momentum.data.toEntity
-import java.io.BufferedInputStream
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.util.zip.ZipInputStream
 
 @Single
 class ImportRepoImpl(
     private val context: Context,
     private val projectDao: ProjectDao,
     private val daysDao: DaysDao,
-    private val montageOptionsDao: MontageOptionsDao
+    private val montageOptionsDao: MontageOptionsDao,
 ) : ImportRepo {
     companion object {
         private const val TAG = "ImportRepo"
@@ -47,20 +63,17 @@ class ImportRepoImpl(
 
         try {
             // ======= select file
-            val file = FileKit.openFilePicker(
-                type = FileKitType.File("zip")
-            )
+            val file = FileKit.openFilePicker(type = FileKitType.File("zip"))
             if (file == null) return ImportResult.Failure(ImportExceptionType.NoFileSelected)
 
             // ========= unzip
             if (!unzipDir.exists()) unzipDir.mkdirs()
 
             withContext(Dispatchers.IO) {
-                val inputStream = context.contentResolver.openInputStream(file.toAndroidUri())
-                    ?: throw FileNotFoundException("Could not open file")
-                ZipInputStream(
-                    BufferedInputStream(inputStream)
-                ).use { zipIn ->
+                val inputStream =
+                    context.contentResolver.openInputStream(file.toAndroidUri())
+                        ?: throw FileNotFoundException("Could not open file")
+                ZipInputStream(BufferedInputStream(inputStream)).use { zipIn ->
                     var entry = zipIn.nextEntry
 
                     while (entry != null) {
@@ -71,9 +84,7 @@ class ImportRepoImpl(
                         } else {
                             outFile.parentFile?.mkdirs()
 
-                            FileOutputStream(outFile).use { out ->
-                                zipIn.copyTo(out)
-                            }
+                            FileOutputStream(outFile).use { out -> zipIn.copyTo(out) }
                         }
 
                         zipIn.closeEntry()
@@ -86,42 +97,43 @@ class ImportRepoImpl(
             val schemaFile = File(unzipDir, SCHEMA_FILE_NAME)
             if (!schemaFile.exists()) return ImportResult.Failure(ImportExceptionType.InvalidFile)
 
-            val schema = withContext(Dispatchers.IO) {
-                Json.decodeFromString<ExportSchema>(schemaFile.readText())
-            }
+            val schema =
+                withContext(Dispatchers.IO) {
+                    Json.decodeFromString<ExportSchema>(schemaFile.readText())
+                }
 
             if (schema.schemaVersion != ProjectDatabase.SCHEMA_VERSION) {
                 return ImportResult.Failure(ImportExceptionType.InvalidSchema)
             }
 
             withContext(Dispatchers.IO) {
-                schema.projects.forEach {
-                    projectDao.upsertProject(it.toProject().toEntity())
-                }
+                schema.projects.forEach { projectDao.upsertProject(it.toProject().toEntity()) }
 
                 schema.montageOptions.forEach {
                     montageOptionsDao.upsertMontageOption(it.toMontageOptions().toEntity())
                 }
 
-                schema.days.groupBy { it.projectId }.forEach { (id, schemas) ->
-                    val srcDir = File(unzipDir, id.toString())
-                    val destDir = File(context.filesDir, id.toString())
+                schema.days
+                    .groupBy { it.projectId }
+                    .forEach { (id, schemas) ->
+                        val srcDir = File(unzipDir, id.toString())
+                        val destDir = File(context.filesDir, id.toString())
 
-                    if (!destDir.exists()) destDir.mkdirs()
+                        if (!destDir.exists()) destDir.mkdirs()
 
-                    schemas.forEach { daySchema ->
-                        val fileName = "${daySchema.date}_"
-                        val srcFile = File(srcDir, fileName)
+                        schemas.forEach { daySchema ->
+                            val fileName = "${daySchema.date}_"
+                            val srcFile = File(srcDir, fileName)
 
-                        if (srcFile.exists()) {
-                            val destFile = File(destDir, fileName)
-                            srcFile.copyTo(destFile, overwrite = true)
+                            if (srcFile.exists()) {
+                                val destFile = File(destDir, fileName)
+                                srcFile.copyTo(destFile, overwrite = true)
 
-                            val newSchema = daySchema.copy(image = destFile.toUri().toString())
-                            daysDao.upsertDay(newSchema.toDay().toEntity())
+                                val newSchema = daySchema.copy(image = destFile.toUri().toString())
+                                daysDao.upsertDay(newSchema.toDay().toEntity())
+                            }
                         }
                     }
-                }
             }
 
             return ImportResult.Success

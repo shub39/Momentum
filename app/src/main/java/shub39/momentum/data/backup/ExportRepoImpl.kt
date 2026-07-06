@@ -55,7 +55,7 @@ class ExportRepoImpl(
     private val context: Context,
     private val projectDao: ProjectDao,
     private val daysDao: DaysDao,
-    private val montageOptionsDao: MontageOptionsDao
+    private val montageOptionsDao: MontageOptionsDao,
 ) : ExportRepo {
     companion object {
         private const val TAG = "ExportRepo"
@@ -78,18 +78,19 @@ class ExportRepoImpl(
                 if (!backupDir.exists()) backupDir.mkdirs()
 
                 // prepare json
-                val projects =
-                    projectDao.getProjects().first().map { it.toProject().toSchema() }
+                val projects = projectDao.getProjects().first().map { it.toProject().toSchema() }
                 val days = daysDao.getDays().first().map { it.toDay().toSchema() }
-                val montageOptions = montageOptionsDao.getMontageOptions().first()
-                    .map { it.toMontageOptions().toSchema() }
+                val montageOptions =
+                    montageOptionsDao.getMontageOptions().first().map {
+                        it.toMontageOptions().toSchema()
+                    }
 
                 val exportDetails =
                     ExportSchema(
                         schemaVersion = ProjectDatabase.SCHEMA_VERSION,
                         projects = projects,
                         days = days,
-                        montageOptions = montageOptions
+                        montageOptions = montageOptions,
                     )
 
                 File(backupDir, SCHEMA_FILE_NAME).writeText(Json.encodeToString(exportDetails))

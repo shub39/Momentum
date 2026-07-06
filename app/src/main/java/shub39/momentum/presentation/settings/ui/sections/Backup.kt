@@ -170,7 +170,7 @@ fun Backup(
                                 onClick = { onAction(SettingsAction.OnImportData) },
                                 enabled =
                                     state.importState == ImportState.IDLE ||
-                                            state.importState == ImportState.FAILURE,
+                                        state.importState == ImportState.FAILURE,
                                 modifier = Modifier.weight(1f),
                             ) {
                                 when (state.importState) {

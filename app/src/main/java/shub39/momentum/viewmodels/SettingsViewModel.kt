@@ -18,6 +18,7 @@ package shub39.momentum.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,7 +41,6 @@ import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.ChangelogManager
 import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.SettingsState
-import kotlin.time.Duration.Companion.milliseconds
 
 @KoinViewModel
 class SettingsViewModel(
@@ -81,10 +81,11 @@ class SettingsViewModel(
 
                     _state.update {
                         it.copy(
-                            exportState = when (result) {
-                                is ExportResult.Failure -> ExportState.FAILURE
-                                ExportResult.Success -> ExportState.EXPORTED
-                            }
+                            exportState =
+                                when (result) {
+                                    is ExportResult.Failure -> ExportState.FAILURE
+                                    ExportResult.Success -> ExportState.EXPORTED
+                                }
                         )
                     }
 
@@ -101,10 +102,11 @@ class SettingsViewModel(
 
                     _state.update {
                         it.copy(
-                            importState =  when(result) {
-                                is ImportResult.Failure -> ImportState.FAILURE
-                                ImportResult.Success -> ImportState.IMPORTED
-                            }
+                            importState =
+                                when (result) {
+                                    is ImportResult.Failure -> ImportState.FAILURE
+                                    ImportResult.Success -> ImportState.IMPORTED
+                                }
                         )
                     }
 

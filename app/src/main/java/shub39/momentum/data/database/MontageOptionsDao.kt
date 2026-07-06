@@ -24,8 +24,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 sealed interface MontageOptionsDao {
-    @Query("SELECT * FROM options_table")
-    fun getMontageOptions(): Flow<List<MontageOptionsEntity>>
+    @Query("SELECT * FROM options_table") fun getMontageOptions(): Flow<List<MontageOptionsEntity>>
 
     @Upsert suspend fun upsertMontageOption(montageOptions: MontageOptionsEntity)
 

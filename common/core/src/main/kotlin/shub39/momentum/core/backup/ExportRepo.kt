@@ -21,14 +21,14 @@ interface ExportRepo {
 }
 
 sealed class ExportResult {
-    data object Success: ExportResult()
+    data object Success : ExportResult()
 
-    data class Failure(val exception: Exception): ExportResult()
+    data class Failure(val exception: Exception) : ExportResult()
 }
 
 enum class ExportState {
     IDLE,
     EXPORTING,
     EXPORTED,
-    FAILURE
+    FAILURE,
 }

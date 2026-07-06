@@ -32,7 +32,7 @@ data class ExportSchema(
     val schemaVersion: Int,
     val projects: List<ProjectSchema>,
     val days: List<DaySchema>,
-    val montageOptions: List<MontageOptionsSchema>
+    val montageOptions: List<MontageOptionsSchema>,
 )
 
 @Serializable

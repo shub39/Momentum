@@ -22,7 +22,7 @@ import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.PaletteStyle
 
 sealed interface SettingsAction {
-    data object OnImportData: SettingsAction
+    data object OnImportData : SettingsAction
 
     data object OnExportData : SettingsAction
 

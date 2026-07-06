@@ -27,5 +27,5 @@ data class SettingsState(
     val theme: Theme = Theme(),
     val changelog: Changelog = emptyList(),
     val exportState: ExportState = ExportState.IDLE,
-    val importState: ImportState = ImportState.IDLE
+    val importState: ImportState = ImportState.IDLE,
 )

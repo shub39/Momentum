@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -106,9 +105,7 @@ fun Root(
                     content = { Text(text = stringResource(R.string.pro)) },
                     colors = listItemColors(),
                     modifier =
-                        Modifier
-                            .clip(detachedItemShape())
-                            .clickable { onNavigateToPaywall() },
+                        Modifier.clip(detachedItemShape()).clickable { onNavigateToPaywall() },
                     trailingContent = {
                         Icon(
                             painter = painterResource(R.drawable.arrow_forward),
@@ -132,9 +129,7 @@ fun Root(
                     ListItem(
                         colors = listItemColors(),
                         content = { Text(text = stringResource(R.string.backup)) },
-                        supportingContent = {
-                            Text(text = stringResource(R.string.backup_info))
-                        },
+                        supportingContent = { Text(text = stringResource(R.string.backup_info)) },
                         leadingContent = {
                             Icon(
                                 painter = painterResource(R.drawable.backup),
@@ -149,9 +144,7 @@ fun Root(
                             )
                         },
                         modifier =
-                            Modifier
-                                .clip(leadingItemShape())
-                                .clickable { onNavigateToBackup() },
+                            Modifier.clip(leadingItemShape()).clickable { onNavigateToBackup() },
                     )
 
                     ListItem(
@@ -174,9 +167,7 @@ fun Root(
                             )
                         },
                         modifier =
-                            Modifier
-                                .clip(endItemShape())
-                                .clickable { onNavigateToLookAndFeel() },
+                            Modifier.clip(endItemShape()).clickable { onNavigateToLookAndFeel() },
                     )
                 }
             }
@@ -200,9 +191,7 @@ fun Root(
                         )
                     },
                     modifier =
-                        Modifier
-                            .clip(detachedItemShape())
-                            .clickable { onNavigateToOnboarding() },
+                        Modifier.clip(detachedItemShape()).clickable { onNavigateToOnboarding() },
                 )
             }
 
@@ -226,12 +215,10 @@ fun Root(
                         },
                         content = { Text(text = stringResource(R.string.about)) },
                         modifier =
-                            Modifier
-                                .clip(leadingItemShape())
-                                .clickable { onNavigateToAppInfo() },
+                            Modifier.clip(leadingItemShape()).clickable { onNavigateToAppInfo() },
                     )
 
-                    //changelog
+                    // changelog
                     ListItem(
                         colors = listItemColors(),
                         content = { Text(text = stringResource(R.string.changelog)) },
@@ -248,9 +235,7 @@ fun Root(
                             )
                         },
                         modifier =
-                            Modifier
-                                .clip(endItemShape())
-                                .clickable { onNavigateToChangelog() },
+                            Modifier.clip(endItemShape()).clickable { onNavigateToChangelog() },
                     )
                 }
             }
