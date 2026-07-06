@@ -18,6 +18,7 @@ package shub39.momentum.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,6 +40,7 @@ import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.ChangelogManager
 import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.SettingsState
+import kotlin.time.Duration.Companion.milliseconds
 
 @KoinViewModel
 class SettingsViewModel(
@@ -85,6 +87,11 @@ class SettingsViewModel(
                             }
                         )
                     }
+
+                    viewModelScope.launch {
+                        delay(3000.milliseconds)
+                        _state.update { it.copy(exportState = ExportState.IDLE) }
+                    }
                 }
 
                 SettingsAction.OnImportData -> {
@@ -99,6 +106,11 @@ class SettingsViewModel(
                                 ImportResult.Success -> ImportState.IMPORTED
                             }
                         )
+                    }
+
+                    viewModelScope.launch {
+                        delay(3000.milliseconds)
+                        _state.update { it.copy(importState = ImportState.IDLE) }
                     }
                 }
             }

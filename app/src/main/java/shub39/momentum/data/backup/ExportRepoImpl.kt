@@ -41,12 +41,13 @@ import shub39.momentum.core.backup.ExportRepo
 import shub39.momentum.core.backup.ExportResult
 import shub39.momentum.core.backup.ExportSchema
 import shub39.momentum.core.backup.SCHEMA_FILE_NAME
-import shub39.momentum.core.backup.toDaySchema
-import shub39.momentum.core.backup.toProjectSchema
+import shub39.momentum.core.backup.toSchema
 import shub39.momentum.data.database.DaysDao
+import shub39.momentum.data.database.MontageOptionsDao
 import shub39.momentum.data.database.ProjectDao
 import shub39.momentum.data.database.ProjectDatabase
 import shub39.momentum.data.toDay
+import shub39.momentum.data.toMontageOptions
 import shub39.momentum.data.toProject
 
 @Single
@@ -54,6 +55,7 @@ class ExportRepoImpl(
     private val context: Context,
     private val projectDao: ProjectDao,
     private val daysDao: DaysDao,
+    private val montageOptionsDao: MontageOptionsDao
 ) : ExportRepo {
     companion object {
         private const val TAG = "ExportRepo"
@@ -77,14 +79,17 @@ class ExportRepoImpl(
 
                 // prepare json
                 val projects =
-                    projectDao.getProjects().first().map { it.toProject().toProjectSchema() }
-                val days = daysDao.getDays().first().map { it.toDay().toDaySchema() }
+                    projectDao.getProjects().first().map { it.toProject().toSchema() }
+                val days = daysDao.getDays().first().map { it.toDay().toSchema() }
+                val montageOptions = montageOptionsDao.getMontageOptions().first()
+                    .map { it.toMontageOptions().toSchema() }
 
                 val exportDetails =
                     ExportSchema(
                         schemaVersion = ProjectDatabase.SCHEMA_VERSION,
                         projects = projects,
                         days = days,
+                        montageOptions = montageOptions
                     )
 
                 File(backupDir, SCHEMA_FILE_NAME).writeText(Json.encodeToString(exportDetails))

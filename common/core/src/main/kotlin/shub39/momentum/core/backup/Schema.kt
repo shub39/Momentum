@@ -16,9 +16,14 @@
  */
 package shub39.momentum.core.backup
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.AlarmData
 import shub39.momentum.core.data_classes.FaceData
+import shub39.momentum.core.enums.DateStyle
+import shub39.momentum.core.enums.Fonts
+import shub39.momentum.core.enums.VideoQuality
 
 const val SCHEMA_FILE_NAME = "data.json"
 
@@ -27,6 +32,7 @@ data class ExportSchema(
     val schemaVersion: Int,
     val projects: List<ProjectSchema>,
     val days: List<DaySchema>,
+    val montageOptions: List<MontageOptionsSchema>
 )
 
 @Serializable
@@ -46,4 +52,20 @@ data class DaySchema(
     val date: Long,
     val isFavorite: Boolean,
     val faceData: FaceData? = null,
+)
+
+@Serializable
+data class MontageOptionsSchema(
+    val projectId: Long,
+    val framesPerImage: Int = 1,
+    val framesPerSecond: Float = 1f,
+    val videoQuality: VideoQuality = VideoQuality.SMALL,
+    val backgroundColor: Int = Color.Black.toArgb(),
+    val waterMark: Boolean = true,
+    val showDate: Boolean = true,
+    val showMessage: Boolean = true,
+    val font: Fonts = Fonts.FIGTREE,
+    val dateStyle: DateStyle = DateStyle.FULL,
+    val stabilizeFaces: Boolean = false,
+    val censorFaces: Boolean = false,
 )

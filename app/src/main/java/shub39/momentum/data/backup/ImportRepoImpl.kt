@@ -18,10 +18,12 @@ import shub39.momentum.core.backup.ImportRepo
 import shub39.momentum.core.backup.ImportResult
 import shub39.momentum.core.backup.SCHEMA_FILE_NAME
 import shub39.momentum.core.backup.toDay
+import shub39.momentum.core.backup.toMontageOptions
 import shub39.momentum.core.backup.toProject
 import shub39.momentum.data.database.DaysDao
+import shub39.momentum.data.database.MontageOptionsDao
 import shub39.momentum.data.database.ProjectDao
-import shub39.momentum.data.toDayEntity
+import shub39.momentum.data.database.ProjectDatabase
 import shub39.momentum.data.toEntity
 import java.io.BufferedInputStream
 import java.io.File
@@ -33,7 +35,8 @@ import java.util.zip.ZipInputStream
 class ImportRepoImpl(
     private val context: Context,
     private val projectDao: ProjectDao,
-    private val daysDao: DaysDao
+    private val daysDao: DaysDao,
+    private val montageOptionsDao: MontageOptionsDao
 ) : ImportRepo {
     companion object {
         private const val TAG = "ImportRepo"
@@ -44,15 +47,12 @@ class ImportRepoImpl(
 
         try {
             // ======= select file
-            Log.d(TAG, "Selecting File")
             val file = FileKit.openFilePicker(
                 type = FileKitType.File("zip")
             )
             if (file == null) return ImportResult.Failure(ImportExceptionType.NoFileSelected)
-            Log.d(TAG, "File Selected")
 
             // ========= unzip
-            Log.d(TAG, "Unzipping File")
             if (!unzipDir.exists()) unzipDir.mkdirs()
 
             withContext(Dispatchers.IO) {
@@ -81,18 +81,26 @@ class ImportRepoImpl(
                     }
                 }
             }
-            Log.d(TAG, "File Unzipped")
 
             // ========== import data
-            Log.d(TAG, "Importing Data")
             val schemaFile = File(unzipDir, SCHEMA_FILE_NAME)
             if (!schemaFile.exists()) return ImportResult.Failure(ImportExceptionType.InvalidFile)
 
-            withContext(Dispatchers.IO) {
-                val schema = Json.decodeFromString<ExportSchema>(schemaFile.readText())
+            val schema = withContext(Dispatchers.IO) {
+                Json.decodeFromString<ExportSchema>(schemaFile.readText())
+            }
 
+            if (schema.schemaVersion != ProjectDatabase.SCHEMA_VERSION) {
+                return ImportResult.Failure(ImportExceptionType.InvalidSchema)
+            }
+
+            withContext(Dispatchers.IO) {
                 schema.projects.forEach {
                     projectDao.upsertProject(it.toProject().toEntity())
+                }
+
+                schema.montageOptions.forEach {
+                    montageOptionsDao.upsertMontageOption(it.toMontageOptions().toEntity())
                 }
 
                 schema.days.groupBy { it.projectId }.forEach { (id, schemas) ->
@@ -110,7 +118,7 @@ class ImportRepoImpl(
                             srcFile.copyTo(destFile, overwrite = true)
 
                             val newSchema = daySchema.copy(image = destFile.toUri().toString())
-                            daysDao.upsertDay(newSchema.toDay().toDayEntity())
+                            daysDao.upsertDay(newSchema.toDay().toEntity())
                         }
                     }
                 }

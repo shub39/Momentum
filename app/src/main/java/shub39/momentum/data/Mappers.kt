@@ -43,7 +43,7 @@ fun DayEntity.toDay(): Day {
     )
 }
 
-fun Day.toDayEntity(): DayEntity {
+fun Day.toEntity(): DayEntity {
     return DayEntity(
         id = id,
         projectId = projectId,
@@ -72,7 +72,7 @@ fun MontageOptionsEntity.toMontageOptions(): MontageOptions {
     )
 }
 
-fun MontageOptions.toMontageOptionsEntity(): MontageOptionsEntity {
+fun MontageOptions.toEntity(): MontageOptionsEntity {
     return MontageOptionsEntity(
         projectId = projectId,
         framesPerImage = framesPerImage,
