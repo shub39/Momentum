@@ -25,7 +25,7 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import shub39.momentum.navigation.horizontalTransitionMetadata
 import shub39.momentum.presentation.settings.ui.sections.About
-import shub39.momentum.presentation.settings.ui.sections.BackupPage
+import shub39.momentum.presentation.settings.ui.sections.Backup
 import shub39.momentum.presentation.settings.ui.sections.Changelog
 import shub39.momentum.presentation.settings.ui.sections.LookAndFeel
 import shub39.momentum.presentation.settings.ui.sections.Root
@@ -98,9 +98,9 @@ fun SettingsGraph(
                 }
 
                 entry<Routes.Backup>(metadata = horizontalTransitionMetadata()) {
-                    BackupPage(
+                    Backup(
                         state = state,
-                        action = onAction,
+                        onAction = onAction,
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
                     )
                 }

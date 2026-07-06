@@ -100,15 +100,15 @@ fun Root(
                 ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            item { Button(onClick = onNavigateToBackup) { Text("Backup") } }
-
             // momentum pro
             item {
                 ListItem(
                     content = { Text(text = stringResource(R.string.pro)) },
                     colors = listItemColors(),
                     modifier =
-                        Modifier.clip(detachedItemShape()).clickable { onNavigateToPaywall() },
+                        Modifier
+                            .clip(detachedItemShape())
+                            .clickable { onNavigateToPaywall() },
                     trailingContent = {
                         Icon(
                             painter = painterResource(R.drawable.arrow_forward),
@@ -126,31 +126,62 @@ fun Root(
                 )
             }
 
+            // look and feel
             item {
-                ListItem(
-                    colors = listItemColors(),
-                    content = { Text(text = stringResource(R.string.look_and_feel)) },
-                    supportingContent = {
-                        Text(text = stringResource(R.string.look_and_feel_info))
-                    },
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.palette),
-                            contentDescription = "Navigate",
-                            modifier = Modifier.size(24.dp),
-                        )
-                    },
-                    trailingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_forward),
-                            contentDescription = "Go",
-                        )
-                    },
-                    modifier =
-                        Modifier.clip(detachedItemShape()).clickable { onNavigateToLookAndFeel() },
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    ListItem(
+                        colors = listItemColors(),
+                        content = { Text(text = stringResource(R.string.backup)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.backup_info))
+                        },
+                        leadingContent = {
+                            Icon(
+                                painter = painterResource(R.drawable.backup),
+                                contentDescription = "Navigate",
+                                modifier = Modifier.size(24.dp),
+                            )
+                        },
+                        trailingContent = {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_forward),
+                                contentDescription = "Go",
+                            )
+                        },
+                        modifier =
+                            Modifier
+                                .clip(leadingItemShape())
+                                .clickable { onNavigateToBackup() },
+                    )
+
+                    ListItem(
+                        colors = listItemColors(),
+                        content = { Text(text = stringResource(R.string.look_and_feel)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.look_and_feel_info))
+                        },
+                        leadingContent = {
+                            Icon(
+                                painter = painterResource(R.drawable.palette),
+                                contentDescription = "Navigate",
+                                modifier = Modifier.size(24.dp),
+                            )
+                        },
+                        trailingContent = {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_forward),
+                                contentDescription = "Go",
+                            )
+                        },
+                        modifier =
+                            Modifier
+                                .clip(endItemShape())
+                                .clickable { onNavigateToLookAndFeel() },
+                    )
+                }
             }
 
+            // onboarding
             item {
                 ListItem(
                     colors = listItemColors(),
@@ -169,12 +200,15 @@ fun Root(
                         )
                     },
                     modifier =
-                        Modifier.clip(detachedItemShape()).clickable { onNavigateToOnboarding() },
+                        Modifier
+                            .clip(detachedItemShape())
+                            .clickable { onNavigateToOnboarding() },
                 )
             }
 
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    // about
                     ListItem(
                         colors = listItemColors(),
                         leadingContent = {
@@ -192,9 +226,12 @@ fun Root(
                         },
                         content = { Text(text = stringResource(R.string.about)) },
                         modifier =
-                            Modifier.clip(leadingItemShape()).clickable { onNavigateToAppInfo() },
+                            Modifier
+                                .clip(leadingItemShape())
+                                .clickable { onNavigateToAppInfo() },
                     )
 
+                    //changelog
                     ListItem(
                         colors = listItemColors(),
                         content = { Text(text = stringResource(R.string.changelog)) },
@@ -211,7 +248,9 @@ fun Root(
                             )
                         },
                         modifier =
-                            Modifier.clip(endItemShape()).clickable { onNavigateToChangelog() },
+                            Modifier
+                                .clip(endItemShape())
+                                .clickable { onNavigateToChangelog() },
                     )
                 }
             }
