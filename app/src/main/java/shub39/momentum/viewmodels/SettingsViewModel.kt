@@ -18,6 +18,8 @@ package shub39.momentum.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +31,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
+import shub39.momentum.core.backup.ExportRepo
+import shub39.momentum.core.backup.ExportResult
+import shub39.momentum.core.backup.ExportState
+import shub39.momentum.core.backup.ImportRepo
+import shub39.momentum.core.backup.ImportResult
+import shub39.momentum.core.backup.ImportState
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.ChangelogManager
 import shub39.momentum.presentation.settings.SettingsAction
@@ -36,6 +44,8 @@ import shub39.momentum.presentation.settings.SettingsState
 
 @KoinViewModel
 class SettingsViewModel(
+    private val importRepo: ImportRepo,
+    private val exportRepo: ExportRepo,
     private val datastore: SettingsPrefs,
     private val changelogManager: ChangelogManager,
 ) : ViewModel() {
@@ -63,6 +73,48 @@ class SettingsViewModel(
                 is OnPaletteChange -> datastore.updatePaletteStyle(action.style)
                 is OnSeedColorChange -> datastore.updateSeedColor(action.color)
                 is OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
+
+                SettingsAction.OnExportData -> {
+                    _state.update { it.copy(exportState = ExportState.EXPORTING) }
+
+                    val result = exportRepo.exportProjects()
+
+                    _state.update {
+                        it.copy(
+                            exportState =
+                                when (result) {
+                                    is ExportResult.Failure -> ExportState.FAILURE
+                                    ExportResult.Success -> ExportState.EXPORTED
+                                }
+                        )
+                    }
+
+                    viewModelScope.launch {
+                        delay(3000.milliseconds)
+                        _state.update { it.copy(exportState = ExportState.IDLE) }
+                    }
+                }
+
+                SettingsAction.OnImportData -> {
+                    _state.update { it.copy(importState = ImportState.IMPORTING) }
+
+                    val result = importRepo.restoreData()
+
+                    _state.update {
+                        it.copy(
+                            importState =
+                                when (result) {
+                                    is ImportResult.Failure -> ImportState.FAILURE
+                                    ImportResult.Success -> ImportState.IMPORTED
+                                }
+                        )
+                    }
+
+                    viewModelScope.launch {
+                        delay(3000.milliseconds)
+                        _state.update { it.copy(importState = ImportState.IDLE) }
+                    }
+                }
             }
         }
 
