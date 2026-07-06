@@ -18,7 +18,6 @@ package shub39.momentum.data.backup
 
 import android.content.Context
 import android.util.Log
-import androidx.core.net.toFile
 import androidx.core.net.toUri
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
@@ -101,12 +100,23 @@ class ExportRepoImpl(
                     .forEach { (projectId, days) ->
                         if (days.isEmpty()) return@forEach
                         val dest = File(backupDir, projectId.toString())
+                        dest.mkdirs()
 
                         days.forEach {
-                            val source = it.image.toUri().toFile()
-                            val destPicture = File(dest, "${it.date}_")
+                            if (it.image.isNotEmpty()) {
+                                val uri = it.image.toUri()
+                                val destPicture = File(dest, "${it.date}_")
 
-                            source.copyTo(destPicture)
+                                try {
+                                    context.contentResolver.openInputStream(uri)?.use { input ->
+                                        destPicture.outputStream().use { output ->
+                                            input.copyTo(output)
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e(TAG, "Failed to copy image for day ${it.date}", e)
+                                }
+                            }
                         }
                     }
 
