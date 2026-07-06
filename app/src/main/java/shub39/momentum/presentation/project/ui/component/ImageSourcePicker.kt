@@ -83,7 +83,7 @@ private fun ImageSourcePickerContent(
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         ListItem(
             modifier = Modifier.clip(leadingItemShape()).clickable { onOpenGallery() },
-            headlineContent = { Text(text = stringResource(R.string.select_from_gallery)) },
+            content = { Text(text = stringResource(R.string.select_from_gallery)) },
             leadingContent = {
                 Icon(painter = painterResource(R.drawable.image), contentDescription = null)
             },
@@ -93,7 +93,7 @@ private fun ImageSourcePickerContent(
         )
         ListItem(
             modifier = Modifier.clip(endItemShape()).clickable { onOpenCamera() },
-            headlineContent = { Text(text = stringResource(R.string.open_camera)) },
+            content = { Text(text = stringResource(R.string.open_camera)) },
             leadingContent = {
                 Icon(painter = painterResource(R.drawable.camera), contentDescription = null)
             },

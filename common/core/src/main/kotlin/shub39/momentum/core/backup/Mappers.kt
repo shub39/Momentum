@@ -14,54 +14,49 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.data
+package shub39.momentum.core.backup
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.MontageOptions
 import shub39.momentum.core.data_classes.Project
-import shub39.momentum.data.database.DayEntity
-import shub39.momentum.data.database.MontageOptionsEntity
-import shub39.momentum.data.database.ProjectEntity
 
-fun ProjectEntity.toProject(): Project {
-    return Project(id = id, title = title, description = description, alarm = alarm)
-}
-
-fun Project.toEntity(): ProjectEntity {
-    return ProjectEntity(id = id, title = title, description = description, alarm = alarm)
-}
-
-fun DayEntity.toDay(): Day {
-    return Day(
+fun Day.toSchema(): DaySchema =
+    DaySchema(
         id = id,
         projectId = projectId,
-        date = date,
         image = image,
         comment = comment,
+        date = date,
         isFavorite = isFavorite,
         faceData = faceData,
     )
-}
 
-fun Day.toEntity(): DayEntity {
-    return DayEntity(
+fun Project.toSchema(): ProjectSchema =
+    ProjectSchema(id = id, title = title, description = description, alarm = alarm)
+
+fun DaySchema.toDay(): Day =
+    Day(
         id = id,
         projectId = projectId,
-        date = date,
         image = image,
         comment = comment,
+        date = date,
         isFavorite = isFavorite,
         faceData = faceData,
     )
-}
 
-fun MontageOptionsEntity.toMontageOptions(): MontageOptions {
-    return MontageOptions(
+fun ProjectSchema.toProject(): Project =
+    Project(id = id, title = title, description = description, alarm = alarm)
+
+fun MontageOptionsSchema.toMontageOptions(): MontageOptions =
+    MontageOptions(
         projectId = projectId,
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,
         videoQuality = videoQuality,
-        backgroundColor = backgroundColor,
+        backgroundColor = Color(backgroundColor),
         waterMark = waterMark,
         showDate = showDate,
         showMessage = showMessage,
@@ -70,15 +65,14 @@ fun MontageOptionsEntity.toMontageOptions(): MontageOptions {
         stabilizeFaces = stabilizeFaces,
         censorFaces = censorFaces,
     )
-}
 
-fun MontageOptions.toEntity(): MontageOptionsEntity {
-    return MontageOptionsEntity(
+fun MontageOptions.toSchema(): MontageOptionsSchema =
+    MontageOptionsSchema(
         projectId = projectId,
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,
         videoQuality = videoQuality,
-        backgroundColor = backgroundColor,
+        backgroundColor = backgroundColor.toArgb(),
         waterMark = waterMark,
         showDate = showDate,
         showMessage = showMessage,
@@ -87,4 +81,3 @@ fun MontageOptions.toEntity(): MontageOptionsEntity {
         stabilizeFaces = stabilizeFaces,
         censorFaces = censorFaces,
     )
-}

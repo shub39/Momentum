@@ -24,8 +24,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1720
-val appVersionName = "1.7.2"
+val appVersionCode = 1800
+val appVersionName = "1.8.0"
 val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
@@ -202,64 +202,63 @@ room3 { schemaDirectory("$projectDir/schemas") }
 fun execute(vararg command: String): String =
     providers.exec { commandLine(*command) }.standardOutput.asText.get().trim()
 
-val generateChangelogJson by
-    tasks.registering {
-        description = "Generating Changelog for app"
-        val inputFile = rootProject.file("CHANGELOG.md")
-        val outputDir = file("$projectDir/src/main/assets/")
-        val outputFile = File(outputDir, "changelog.json")
+tasks.register("generateChangelog") {
+    description = "Generating Changelog for app"
+    val inputFile = rootProject.file("CHANGELOG.md")
+    val outputDir = file("$projectDir/src/main/assets/")
+    val outputFile = File(outputDir, "changelog.json")
 
-        inputs.file(inputFile)
-        outputs.file(outputFile)
+    inputs.file(inputFile)
+    outputs.file(outputFile)
 
-        doLast {
-            if (!outputDir.exists()) outputDir.mkdirs()
+    doLast {
+        if (!outputDir.exists()) outputDir.mkdirs()
 
-            val lines = inputFile.readLines()
+        val lines = inputFile.readLines()
 
-            val map = mutableMapOf<String, MutableList<String>>()
-            var currentVersion: String? = null
+        val map = mutableMapOf<String, MutableList<String>>()
+        var currentVersion: String? = null
 
-            for (line in lines) {
-                when {
-                    line.startsWith("## ") -> {
-                        currentVersion = line.removePrefix("## ").trim()
-                        map[currentVersion] = mutableListOf()
-                    }
+        for (line in lines) {
+            when {
+                line.startsWith("## ") -> {
+                    currentVersion = line.removePrefix("## ").trim()
+                    map[currentVersion] = mutableListOf()
+                }
 
-                    line.startsWith("- ") && currentVersion != null -> {
-                        map[currentVersion]?.add(line.removePrefix("- ").trim())
-                    }
+                line.startsWith("- ") && currentVersion != null -> {
+                    map[currentVersion]?.add(line.removePrefix("- ").trim())
                 }
             }
+        }
 
-            val allowedEntries = map.entries.take(10)
-            val json = buildString {
-                append("[\n")
+        val allowedEntries = map.entries.take(10)
+        val json = buildString {
+            append("[\n")
 
-                allowedEntries.forEachIndexed { index, entry ->
-                    append("  {\n")
-                    append("    \"version\": \"${entry.key}\",\n")
-                    append("    \"changes\": [\n")
+            allowedEntries.forEachIndexed { index, entry ->
+                append("  {\n")
+                append("    \"version\": \"${entry.key}\",\n")
+                append("    \"changes\": [\n")
 
-                    entry.value.forEachIndexed { i, item ->
-                        append("      \"${item.replace("\"", "\\\"")}\"")
-                        if (i != entry.value.lastIndex) append(",")
-                        append("\n")
-                    }
-
-                    append("    ]\n")
-                    append("  }")
-
-                    if (index != allowedEntries.lastIndex) append(",")
+                entry.value.forEachIndexed { i, item ->
+                    append("      \"${item.replace("\"", "\\\"")}\"")
+                    if (i != entry.value.lastIndex) append(",")
                     append("\n")
                 }
 
-                append("]")
+                append("    ]\n")
+                append("  }")
+
+                if (index != allowedEntries.lastIndex) append(",")
+                append("\n")
             }
 
-            outputFile.writeText(json)
+            append("]")
         }
-    }
 
-tasks.named("preBuild") { dependsOn(generateChangelogJson) }
+        outputFile.writeText(json)
+    }
+}
+
+tasks.named("preBuild") { dependsOn("generateChangelog") }

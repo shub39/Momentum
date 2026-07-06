@@ -14,18 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.presentation.settings
+package shub39.momentum.core.backup
 
-import androidx.compose.runtime.Immutable
-import shub39.momentum.app.Changelog
-import shub39.momentum.core.backup.ExportState
-import shub39.momentum.core.backup.ImportState
-import shub39.momentum.core.data_classes.Theme
+interface ExportRepo {
+    suspend fun exportProjects(): ExportResult
+}
 
-@Immutable
-data class SettingsState(
-    val theme: Theme = Theme(),
-    val changelog: Changelog = emptyList(),
-    val exportState: ExportState = ExportState.IDLE,
-    val importState: ImportState = ImportState.IDLE,
-)
+sealed class ExportResult {
+    data object Success : ExportResult()
+
+    data class Failure(val exception: Exception) : ExportResult()
+}
+
+enum class ExportState {
+    IDLE,
+    EXPORTING,
+    EXPORTED,
+    FAILURE,
+}

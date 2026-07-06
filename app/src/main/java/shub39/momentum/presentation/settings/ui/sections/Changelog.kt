@@ -70,7 +70,7 @@ fun Changelog(modifier: Modifier = Modifier, changelog: Changelog, onNavigateBac
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            painter = painterResource(R.drawable.arrow_back),
+                            painter = painterResource(R.drawable.nav_arrow_back),
                             contentDescription = "Navigate Back",
                         )
                     }
@@ -114,7 +114,7 @@ fun Changelog(modifier: Modifier = Modifier, changelog: Changelog, onNavigateBac
                     ListItem(
                         colors = listItemColors(),
                         modifier = Modifier.clip(shape),
-                        headlineContent = { Text(text = change) },
+                        content = { Text(text = change) },
                     )
                 }
 

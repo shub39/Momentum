@@ -34,7 +34,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerDialog
@@ -61,6 +60,7 @@ import shub39.momentum.R
 import shub39.momentum.core.data_classes.AlarmData
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.presentation.project.ProjectAction
+import shub39.momentum.presentation.shared.ExpressiveSwitch
 import shub39.momentum.presentation.shared.MomentumTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -110,7 +110,7 @@ fun AlarmCard(
                 }
             }
 
-            Switch(
+            ExpressiveSwitch(
                 checked = project.alarm != null,
                 onCheckedChange = { checked ->
                     if (checked) {

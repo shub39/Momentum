@@ -19,9 +19,13 @@ package shub39.momentum.presentation.shared
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.colorResource
-import com.materialkolor.DynamicMaterialTheme
+import androidx.compose.ui.platform.LocalContext
+import com.materialkolor.rememberDynamicColorScheme
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.core.toFontRes
@@ -30,22 +34,35 @@ import shub39.momentum.presentation.toMPaletteStyle
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MomentumTheme(theme: Theme = Theme(), content: @Composable () -> Unit) {
-    DynamicMaterialTheme(
-        seedColor =
-            if (theme.isMaterialYou && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                colorResource(android.R.color.system_accent1_200)
-            } else {
-                theme.seedColor
-            },
-        isDark =
-            when (theme.appTheme) {
-                AppTheme.SYSTEM -> isSystemInDarkTheme()
-                AppTheme.LIGHT -> false
-                AppTheme.DARK -> true
-            },
-        isAmoled = theme.isAmoled,
-        style = theme.paletteStyle.toMPaletteStyle(),
-        typography = provideTypography(font = theme.font.toFontRes()),
+    val isDark =
+        when (theme.appTheme) {
+            AppTheme.LIGHT -> false
+            AppTheme.DARK -> true
+            AppTheme.SYSTEM -> isSystemInDarkTheme()
+        }
+
+    val dynamicColorScheme =
+        rememberDynamicColorScheme(
+            seedColor = theme.seedColor,
+            isDark = isDark,
+            isAmoled = theme.isAmoled,
+            style = theme.paletteStyle.toMPaletteStyle(),
+        )
+
+    val colorScheme =
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && theme.isMaterialYou -> {
+                val context = LocalContext.current
+                if (isDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            }
+
+            else -> dynamicColorScheme
+        }
+
+    MaterialExpressiveTheme(
+        colorScheme = colorScheme,
+        motionScheme = MotionScheme.expressive(),
+        typography = provideTypography(theme.font.toFontRes()),
         content = content,
     )
 }

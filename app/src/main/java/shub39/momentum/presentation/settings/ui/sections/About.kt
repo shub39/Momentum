@@ -90,7 +90,7 @@ fun About(versionName: String, onNavigateBack: () -> Unit, modifier: Modifier = 
                 navigationIcon = {
                     FilledTonalIconButton(onClick = onNavigateBack) {
                         Icon(
-                            painter = painterResource(R.drawable.arrow_back),
+                            painter = painterResource(R.drawable.nav_arrow_back),
                             contentDescription = "Navigate Back",
                         )
                     }
@@ -120,7 +120,7 @@ fun About(versionName: String, onNavigateBack: () -> Unit, modifier: Modifier = 
                             contentDescription = null,
                         )
                     },
-                    headlineContent = { Text(text = "License") },
+                    content = { Text(text = "License") },
                     supportingContent = { Text(text = "GPL-3.0 License") },
                     modifier =
                         Modifier.clip(detachedItemShape()).clickable {
@@ -147,7 +147,7 @@ private fun LazyListScope.engagementLinks(uriHandler: UriHandler) {
                 trailingContent = {
                     Icon(painter = painterResource(R.drawable.open_link), contentDescription = null)
                 },
-                headlineContent = { Text(text = stringResource(R.string.bmc)) },
+                content = { Text(text = stringResource(R.string.bmc)) },
                 supportingContent = { Text(text = stringResource(R.string.bmc_desc)) },
                 modifier =
                     Modifier.clip(detachedItemShape()).clickable {

@@ -62,11 +62,11 @@ class ProjectRepositoryImpl(
     }
 
     override suspend fun upsertDay(day: Day) {
-        return daysDao.upsertDay(day.toDayEntity())
+        return daysDao.upsertDay(day.toEntity())
     }
 
     override suspend fun deleteDay(day: Day) {
-        return daysDao.deleteDay(day.toDayEntity())
+        return daysDao.deleteDay(day.toEntity())
     }
 
     override suspend fun getLastCompletedDay(projectId: Long): Day? {
@@ -78,10 +78,10 @@ class ProjectRepositoryImpl(
     }
 
     override suspend fun upsertMontageOptions(montageOptions: MontageOptions) {
-        montageOptionsDao.upsertMontageOption(montageOptions.toMontageOptionsEntity())
+        montageOptionsDao.upsertMontageOption(montageOptions.toEntity())
     }
 
     override suspend fun deleteMontageOptions(montageOptions: MontageOptions) {
-        montageOptionsDao.deleteMontageOption(montageOptions.toMontageOptionsEntity())
+        montageOptionsDao.deleteMontageOption(montageOptions.toEntity())
     }
 }
