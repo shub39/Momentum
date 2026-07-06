@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.0
+- Added backup options
+- Miscellaneous UI Improvements
+
 ## 1.7.2
 - Fixed color and orientation issues on some devices
 
