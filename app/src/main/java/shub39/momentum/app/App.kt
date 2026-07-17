@@ -91,11 +91,8 @@ fun App() {
 
                     entry<Onboarding>(metadata = verticalTransitionMetadata()) {
                         val onboardingViewModel: OnboardingViewModel = koinViewModel()
-                        val onboardingState by
-                            onboardingViewModel.state.collectAsStateWithLifecycle()
 
                         Onboarding(
-                            state = onboardingState,
                             onAction = onboardingViewModel::onAction,
                             onNavigateBack = {
                                 if (backStack.size != 1) backStack.removeLastOrNull()

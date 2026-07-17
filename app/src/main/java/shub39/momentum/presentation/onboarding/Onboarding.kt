@@ -46,11 +46,7 @@ import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontRounded
 
 @Composable
-fun Onboarding(
-    state: OnboardingState,
-    onAction: (OnboardingAction) -> Unit,
-    onNavigateBack: () -> Unit,
-) {
+fun Onboarding(onAction: (OnboardingAction) -> Unit, onNavigateBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState { 3 }
 
@@ -176,6 +172,6 @@ fun Onboarding(
 @Preview
 private fun Preview() {
     MomentumTheme(theme = Theme(appTheme = AppTheme.DARK)) {
-        Onboarding(state = OnboardingState(), onAction = {}, onNavigateBack = {})
+        Onboarding(onAction = {}, onNavigateBack = {})
     }
 }
