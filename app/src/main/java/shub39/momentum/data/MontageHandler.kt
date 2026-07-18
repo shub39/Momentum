@@ -18,6 +18,8 @@ package shub39.momentum.data
 
 import android.content.Context
 import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
@@ -33,34 +35,36 @@ class MontageHandler(private val context: Context) {
         @Serializable data class MontageLog(val days: List<Day>, val options: MontageOptions)
     }
 
-    fun getBuiltMontage(projectId: Long, options: MontageOptions, days: List<Day>): File? {
-        val destDir = File(context.filesDir, projectId.toString())
-        val logFile = File(destDir, LOG_FILE_NAME)
+    suspend fun getBuiltMontage(projectId: Long, options: MontageOptions, days: List<Day>): File? =
+        withContext(Dispatchers.IO) {
+            val destDir = File(context.filesDir, projectId.toString())
+            val logFile = File(destDir, LOG_FILE_NAME)
 
-        val currentLog = Json.encodeToString(MontageLog(days = days, options = options))
+            val currentLog = Json.encodeToString(MontageLog(days = days, options = options))
 
-        return if (!logFile.exists() || logFile.readText() != currentLog) null
-        else {
-            val montage = File(destDir, MONTAGE_FILE_NAME)
-            if (montage.exists()) montage else null
+            return@withContext if (!logFile.exists() || logFile.readText() != currentLog) null
+            else {
+                val montage = File(destDir, MONTAGE_FILE_NAME)
+                if (montage.exists()) montage else null
+            }
         }
-    }
 
-    fun copyMontageToFiles(
+    suspend fun copyMontageToFiles(
         montage: File,
         projectId: Long,
         options: MontageOptions,
         days: List<Day>,
-    ): File {
-        val destDir = File(context.filesDir, projectId.toString())
-        if (!destDir.exists()) destDir.mkdirs()
+    ): File =
+        withContext(Dispatchers.IO) {
+            val destDir = File(context.filesDir, projectId.toString())
+            if (!destDir.exists()) destDir.mkdirs()
 
-        val destFile = File(destDir, MONTAGE_FILE_NAME)
-        montage.copyTo(destFile, true)
+            val destFile = File(destDir, MONTAGE_FILE_NAME)
+            montage.copyTo(destFile, true)
 
-        val log = File(destDir, LOG_FILE_NAME)
-        log.writeText(Json.encodeToString(MontageLog(days = days, options = options)))
+            val log = File(destDir, LOG_FILE_NAME)
+            log.writeText(Json.encodeToString(MontageLog(days = days, options = options)))
 
-        return destFile
-    }
+            destFile
+        }
 }
