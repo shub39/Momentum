@@ -54,6 +54,7 @@ import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.core.interfaces.ProjectRepository
 import shub39.momentum.data.ImageHandler
+import shub39.momentum.data.MontageHandler
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ScanState
@@ -66,6 +67,7 @@ class ProjectViewModel(
     private val repository: ProjectRepository,
     private val scheduler: AlarmScheduler,
     private val imageHandler: ImageHandler,
+    private val montageHandler: MontageHandler,
 ) : ViewModel() {
     private var observeDaysJob: Job? = null
 
@@ -130,22 +132,70 @@ class ProjectViewModel(
 
             is OnCreateMontage ->
                 viewModelScope.launch {
-                    montageMaker
-                        .createMontageFlow(days = action.days, config = _state.value.montageConfig)
-                        .flowOn(Dispatchers.Default)
-                        .collect { state ->
-                            Log.d("ProjectViewModel", "Montage state: $state")
+                    val projectId = _state.value.project?.id ?: return@launch
+                    val options = _state.value.montageConfig.toMontageOptions(projectId)
 
-                            if (state is MontageState.Success) {
-                                _exoPlayer.value?.apply {
-                                    clearMediaItems()
-                                    setMediaItem(MediaItem.fromUri(state.file.toUri()))
-                                    prepare()
+                    val builtMontage =
+                        montageHandler.getBuiltMontage(
+                            projectId = projectId,
+                            options = options,
+                            days = action.days,
+                        )
+                    if (builtMontage != null) {
+                        _exoPlayer.value?.apply {
+                            clearMediaItems()
+                            setMediaItem(MediaItem.fromUri(builtMontage.toUri()))
+                            prepare()
+                        }
+
+                        _state.update {
+                            it.copy(
+                                montage =
+                                    MontageState.Success(
+                                        file = builtMontage,
+                                        config = _state.value.montageConfig,
+                                    )
+                            )
+                        }
+                    } else {
+                        montageMaker
+                            .createMontageFlow(
+                                days = action.days,
+                                config = _state.value.montageConfig,
+                            )
+                            .flowOn(Dispatchers.Default)
+                            .collect { state ->
+                                Log.d("ProjectViewModel", "Montage state: $state")
+
+                                if (state is MontageState.Success) {
+                                    val file =
+                                        montageHandler.copyMontageToFiles(
+                                            montage = state.file,
+                                            projectId = projectId,
+                                            options = options,
+                                            days = action.days,
+                                        )
+
+                                    _exoPlayer.value?.apply {
+                                        clearMediaItems()
+                                        setMediaItem(MediaItem.fromUri(file.toUri()))
+                                        prepare()
+                                    }
+
+                                    _state.update {
+                                        it.copy(
+                                            montage =
+                                                state.copy(
+                                                    file = file,
+                                                    config = _state.value.montageConfig,
+                                                )
+                                        )
+                                    }
+                                } else {
+                                    _state.update { it.copy(montage = state) }
                                 }
                             }
-
-                            _state.update { it.copy(montage = state) }
-                        }
+                    }
                 }
 
             OnUpdateDays ->

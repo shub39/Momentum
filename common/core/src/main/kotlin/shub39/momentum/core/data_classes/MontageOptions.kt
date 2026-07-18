@@ -17,16 +17,19 @@
 package shub39.momentum.core.data_classes
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import kotlinx.serialization.Serializable
 import shub39.momentum.core.enums.DateStyle
 import shub39.momentum.core.enums.Fonts
 import shub39.momentum.core.enums.VideoQuality
 
+@Serializable
 data class MontageOptions(
     val projectId: Long,
     val framesPerImage: Int = 1,
     val framesPerSecond: Float = 1f,
     val videoQuality: VideoQuality = VideoQuality.SMALL,
-    val backgroundColor: Color = Color.Black,
+    val backgroundColor: Int = Color.Black.toArgb(),
     val waterMark: Boolean = true,
     val showDate: Boolean = true,
     val showMessage: Boolean = true,

@@ -17,6 +17,8 @@
 package shub39.momentum.core.data_classes
 
 import android.graphics.Rect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 
 fun FaceData?.isValid(): Boolean {
     return this != null && this != FaceData()
@@ -31,7 +33,7 @@ fun MontageOptions.toMontageConfig(): MontageConfig {
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,
         videoQuality = videoQuality,
-        backgroundColor = backgroundColor,
+        backgroundColor = Color(backgroundColor),
         waterMark = waterMark,
         showDate = showDate,
         showMessage = showMessage,
@@ -48,7 +50,7 @@ fun MontageConfig.toMontageOptions(projectId: Long): MontageOptions {
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,
         videoQuality = videoQuality,
-        backgroundColor = backgroundColor,
+        backgroundColor = backgroundColor.toArgb(),
         waterMark = waterMark,
         showDate = showDate,
         showMessage = showMessage,

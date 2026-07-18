@@ -16,8 +16,11 @@
  */
 package shub39.momentum.core.data_classes
 
+import kotlinx.serialization.Serializable
+
 // individual Days
 // FaceData(-1, -1, -1, ...) means no face
+@Serializable
 data class Day(
     val id: Long = 0,
     val projectId: Long,
