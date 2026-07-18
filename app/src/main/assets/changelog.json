@@ -1,5 +1,11 @@
 [
   {
+    "version": "1.8.2",
+    "changes": [
+      "Created Montages are saved until new images are added or config changes"
+    ]
+  },
+  {
     "version": "1.8.1",
     "changes": [
       "Added backup options",
@@ -55,16 +61,6 @@
     "version": "1.5.1",
     "changes": [
       "Added option to rescan all faces in the project."
-    ]
-  },
-  {
-    "version": "1.5.0",
-    "changes": [
-      "Changed Face stabilization to free tier and video font to paid",
-      "Replaced Mlkit Face detection with Mediavision, Face detection should be more accurate",
-      "Overhauled DayInfo UI, Added options to highlight face",
-      "Added ChangeLog Dialog to be shown after each update",
-      "Misc Bug fixes and improvements"
     ]
   }
 ]

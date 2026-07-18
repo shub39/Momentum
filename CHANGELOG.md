@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.8.2
+- Created Montages are saved until new images are added or config changes
+
 ## 1.8.1
 - Added backup options
 - Miscellaneous UI Improvements

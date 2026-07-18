@@ -18,37 +18,17 @@ package shub39.momentum.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.presentation.onboarding.OnboardingAction
-import shub39.momentum.presentation.onboarding.OnboardingState
 
 @KoinViewModel
 class OnboardingViewModel(private val datastore: SettingsPrefs) : ViewModel() {
-    private val _state = MutableStateFlow(OnboardingState())
-    val state =
-        _state
-            .asStateFlow()
-            .onStart {}
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = OnboardingState(),
-            )
-
     fun onAction(action: OnboardingAction) =
         viewModelScope.launch {
             when (action) {
                 OnOnboardingDone -> datastore.updateOnboardingDone(true)
-                is OnPermissionChange ->
-                    _state.update { it.copy(isPermissionGranted = action.isGranted) }
             }
         }
 }

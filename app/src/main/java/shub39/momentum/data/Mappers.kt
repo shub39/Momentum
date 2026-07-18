@@ -16,6 +16,8 @@
  */
 package shub39.momentum.data
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.MontageOptions
 import shub39.momentum.core.data_classes.Project
@@ -61,7 +63,7 @@ fun MontageOptionsEntity.toMontageOptions(): MontageOptions {
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,
         videoQuality = videoQuality,
-        backgroundColor = backgroundColor,
+        backgroundColor = backgroundColor.toArgb(),
         waterMark = waterMark,
         showDate = showDate,
         showMessage = showMessage,
@@ -78,7 +80,7 @@ fun MontageOptions.toEntity(): MontageOptionsEntity {
         framesPerImage = framesPerImage,
         framesPerSecond = framesPerSecond,
         videoQuality = videoQuality,
-        backgroundColor = backgroundColor,
+        backgroundColor = Color(backgroundColor),
         waterMark = waterMark,
         showDate = showDate,
         showMessage = showMessage,
