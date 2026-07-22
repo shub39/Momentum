@@ -1,5 +1,12 @@
 [
   {
+    "version": "1.8.3",
+    "changes": [
+      "Improved Camera UI",
+      "Miscellaneous UI fixes"
+    ]
+  },
+  {
     "version": "1.8.2",
     "changes": [
       "Created Montages are saved until new images are added or config changes"
@@ -55,12 +62,6 @@
     "version": "1.5.2",
     "changes": [
       "Improved montage maker performance"
-    ]
-  },
-  {
-    "version": "1.5.1",
-    "changes": [
-      "Added option to rescan all faces in the project."
     ]
   }
 ]

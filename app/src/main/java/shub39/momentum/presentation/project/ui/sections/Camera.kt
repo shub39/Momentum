@@ -16,10 +16,13 @@
  */
 package shub39.momentum.presentation.project.ui.sections
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.view.OrientationEventListener
 import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.SurfaceRequest
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,11 +38,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -48,6 +56,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import shub39.momentum.R
 
+@SuppressLint("SourceLockedOrientationActivity")
 @Composable
 fun Camera(
     surfaceRequest: SurfaceRequest?,
@@ -59,7 +68,10 @@ fun Camera(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val view = LocalView.current
+    var rotation by remember { mutableFloatStateOf(0f) }
+
     DisposableEffect(view) {
         val window = (view.context as? Activity)?.window ?: return@DisposableEffect onDispose {}
         val controller = WindowCompat.getInsetsController(window, view)
@@ -70,12 +82,35 @@ fun Camera(
         controller.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
+        val listener = object : OrientationEventListener(context) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation == ORIENTATION_UNKNOWN) return
+                val newRotation = when (orientation) {
+                    !in 46..315 -> 0f
+                    in 46..135 -> 270f
+                    in 136..225 -> 180f
+                    in 226..315 -> 90f
+                    else -> 0f
+                }
+                if (rotation != newRotation) {
+                    rotation = newRotation
+                }
+            }
+        }
+        listener.enable()
+
         onDispose {
             controller.show(
                 WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
             )
+            listener.disable()
         }
     }
+
+    val animatedRotation by animateFloatAsState(
+        targetValue = rotation,
+        label = "IconRotation"
+    )
 
     Box(modifier = modifier.fillMaxSize()) {
         surfaceRequest?.let { request ->
@@ -98,7 +133,10 @@ fun Camera(
         Box(modifier = Modifier.systemBarsPadding()) {
             FilledTonalIconButton(
                 onClick = onNavigateBack,
-                modifier = Modifier.padding(16.dp).align(Alignment.TopStart),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.TopStart)
+                    .graphicsLayer { rotationZ = animatedRotation },
             ) {
                 Icon(
                     painter = painterResource(R.drawable.nav_arrow_back),
@@ -118,6 +156,7 @@ fun Camera(
                     FilledTonalIconToggleButton(
                         checked = showGuides,
                         onCheckedChange = { onToggleGuides() },
+                        modifier = Modifier.graphicsLayer { rotationZ = animatedRotation },
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.rounded_grid),
@@ -128,11 +167,13 @@ fun Camera(
                     FilledTonalIconButton(
                         onClick = onTakePhoto,
                         modifier =
-                            Modifier.size(
-                                IconButtonDefaults.largeContainerSize(
-                                    IconButtonDefaults.IconButtonWidthOption.Wide
+                            Modifier
+                                .size(
+                                    IconButtonDefaults.largeContainerSize(
+                                        IconButtonDefaults.IconButtonWidthOption.Wide
+                                    )
                                 )
-                            ),
+                                .graphicsLayer { rotationZ = animatedRotation },
                         shapes = IconButtonDefaults.shapes(),
                     ) {
                         Icon(
@@ -142,7 +183,10 @@ fun Camera(
                         )
                     }
 
-                    FilledTonalIconButton(onClick = onToggleCamera) {
+                    FilledTonalIconButton(
+                        onClick = onToggleCamera,
+                        modifier = Modifier.graphicsLayer { rotationZ = animatedRotation },
+                    ) {
                         Icon(
                             painter = painterResource(R.drawable.sync),
                             contentDescription = "Switch Camera",
