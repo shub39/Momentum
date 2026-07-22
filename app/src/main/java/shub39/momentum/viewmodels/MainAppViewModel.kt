@@ -62,6 +62,8 @@ class MainAppViewModel(
 
     fun checkSubscription() {
         viewModelScope.launch {
+            _state.update { it.copy(isFoss = billingHandler.isFoss()) }
+
             val result = billingHandler.isPlusUser()
 
             _state.update { it.copy(isPlusUser = result) }
@@ -76,6 +78,11 @@ class MainAppViewModel(
         viewModelScope.launch {
             val changeLogs = changelogManager.changelogs.first()
             val lastShownChangelog = datastore.getLastChangelogShown().first()
+
+            if (lastShownChangelog.isBlank()) {
+                changeLogs.firstOrNull()?.version?.let { datastore.updateLastChangelogShown(it) }
+                return@launch // do not show changelog on first launch
+            }
 
             if (BuildConfig.DEBUG || lastShownChangelog != BuildConfig.VERSION_NAME) {
                 _state.update { it.copy(currentChangelog = changeLogs.firstOrNull()) }

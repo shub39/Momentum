@@ -67,6 +67,8 @@ fun App() {
             ChangelogSheet(
                 currentLog = state.currentChangelog!!,
                 onDismissRequest = { mainViewModel.dismissChangelog() },
+                showSupportButton = !state.isPlusUser || state.isFoss,
+                onNavigateToPaywall = { backStack.add(PaywallPage) },
             )
         }
 
