@@ -67,7 +67,6 @@ import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
-import shub39.momentum.presentation.shared.middleItemShape
 
 @Composable
 fun About(versionName: String, onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
@@ -170,7 +169,7 @@ private fun LazyListScope.engagementLinks(uriHandler: UriHandler) {
                 content = { Text(text = "GitHub Sponsors") },
                 supportingContent = { Text(text = "Support me through GitHub") },
                 modifier =
-                    Modifier.clip(middleItemShape()).clickable {
+                    Modifier.clip(endItemShape()).clickable {
                         uriHandler.openUri("https://github.com/sponsors/shub39")
                     },
             )
