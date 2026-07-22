@@ -44,7 +44,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import shub39.momentum.R
+import shub39.momentum.presentation.shared.endItemShape
 import shub39.momentum.presentation.shared.flexFontRounded
+import shub39.momentum.presentation.shared.leadingItemShape
 
 @Composable
 fun PaywallPage(isPlusUser: Boolean, onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
@@ -94,22 +96,51 @@ fun PaywallPage(isPlusUser: Boolean, onDismissRequest: () -> Unit, modifier: Mod
                     )
                 }
 
-                FilledTonalButton(
-                    onClick = { uriHandler.openUri("https://buymeacoffee.com/shub39") },
-                    modifier = Modifier.height(ButtonDefaults.MediumContainerHeight),
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.buymeacoffee),
-                        contentDescription = "Buy me a coffee",
-                        modifier = Modifier.size(ButtonDefaults.MediumIconSize),
-                    )
+                    FilledTonalButton(
+                        onClick = { uriHandler.openUri("https://buymeacoffee.com/shub39") },
+                        shape = leadingItemShape(),
+                        modifier =
+                            Modifier.fillMaxWidth().height(ButtonDefaults.MediumContainerHeight),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.buymeacoffee),
+                            contentDescription = "Buy me a coffee",
+                            modifier = Modifier.size(ButtonDefaults.MediumIconSize),
+                        )
 
-                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
 
-                    Text(
-                        text = stringResource(R.string.bmc),
-                        style = ButtonDefaults.textStyleFor(ButtonDefaults.MediumContainerHeight),
-                    )
+                        Text(
+                            text = stringResource(R.string.bmc),
+                            style =
+                                ButtonDefaults.textStyleFor(ButtonDefaults.MediumContainerHeight),
+                        )
+                    }
+
+                    FilledTonalButton(
+                        onClick = { uriHandler.openUri("https://github.com/sponsors/shub39") },
+                        shape = endItemShape(),
+                        modifier =
+                            Modifier.fillMaxWidth().height(ButtonDefaults.MediumContainerHeight),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.github),
+                            contentDescription = "GitHub Sponsors",
+                            modifier = Modifier.size(ButtonDefaults.MediumIconSize),
+                        )
+
+                        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+
+                        Text(
+                            text = "GitHub Sponsors",
+                            style =
+                                ButtonDefaults.textStyleFor(ButtonDefaults.MediumContainerHeight),
+                        )
+                    }
                 }
             }
         }

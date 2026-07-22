@@ -56,4 +56,6 @@ class BillingHandlerImpl : BillingHandler {
     companion object {
         private const val ENTITLEMENT_PLUS = "plus"
     }
+
+    override suspend fun isFoss(): Boolean = false
 }

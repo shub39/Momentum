@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.3
+- Improved Camera UI
+- Miscellaneous UI fixes
+
 ## 1.8.2
 - Created Montages are saved until new images are added or config changes
 
