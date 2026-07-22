@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
@@ -94,54 +95,59 @@ fun Camera(
             CameraGuides()
         }
 
-        FilledTonalIconButton(
-            onClick = onNavigateBack,
-            modifier = Modifier.padding(16.dp).align(Alignment.TopStart),
-        ) {
-            Icon(painter = painterResource(R.drawable.arrow_back), contentDescription = "Back")
-        }
-
-        Box(
-            modifier = Modifier.fillMaxSize().padding(bottom = 32.dp),
-            contentAlignment = Alignment.BottomCenter,
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 48.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+        Box(modifier = Modifier.systemBarsPadding()) {
+            FilledTonalIconButton(
+                onClick = onNavigateBack,
+                modifier = Modifier.padding(16.dp).align(Alignment.TopStart),
             ) {
-                FilledTonalIconToggleButton(
-                    checked = showGuides,
-                    onCheckedChange = { onToggleGuides() },
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.rounded_grid),
-                        contentDescription = "Toggle Grid",
-                    )
-                }
+                Icon(
+                    painter = painterResource(R.drawable.nav_arrow_back),
+                    contentDescription = "Back",
+                )
+            }
 
-                FilledTonalIconButton(
-                    onClick = onTakePhoto,
-                    modifier =
-                        Modifier.size(
-                            IconButtonDefaults.largeContainerSize(
-                                IconButtonDefaults.IconButtonWidthOption.Wide
-                            )
-                        ),
-                    shapes = IconButtonDefaults.shapes(),
+            Box(
+                modifier = Modifier.fillMaxSize().padding(bottom = 32.dp),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 48.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.camera),
-                        contentDescription = "Take Photo",
-                        modifier = Modifier.size(IconButtonDefaults.largeIconSize),
-                    )
-                }
+                    FilledTonalIconToggleButton(
+                        checked = showGuides,
+                        onCheckedChange = { onToggleGuides() },
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.rounded_grid),
+                            contentDescription = "Toggle Grid",
+                        )
+                    }
 
-                FilledTonalIconButton(onClick = onToggleCamera) {
-                    Icon(
-                        painter = painterResource(R.drawable.sync),
-                        contentDescription = "Switch Camera",
-                    )
+                    FilledTonalIconButton(
+                        onClick = onTakePhoto,
+                        modifier =
+                            Modifier.size(
+                                IconButtonDefaults.largeContainerSize(
+                                    IconButtonDefaults.IconButtonWidthOption.Wide
+                                )
+                            ),
+                        shapes = IconButtonDefaults.shapes(),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.camera),
+                            contentDescription = "Take Photo",
+                            modifier = Modifier.size(IconButtonDefaults.largeIconSize),
+                        )
+                    }
+
+                    FilledTonalIconButton(onClick = onToggleCamera) {
+                        Icon(
+                            painter = painterResource(R.drawable.sync),
+                            contentDescription = "Switch Camera",
+                        )
+                    }
                 }
             }
         }
