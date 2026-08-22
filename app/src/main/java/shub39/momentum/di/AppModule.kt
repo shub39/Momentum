@@ -18,6 +18,7 @@ package shub39.momentum.di
 
 import android.content.Context
 import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Configuration
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 import shub39.facedetection.FaceDetectorImpl
@@ -32,6 +33,7 @@ import shub39.momentum.data.database.ProjectDatabase
 import shub39.momentum.data.datastore.DatastoreFactory
 import shub39.montage.MontageMakerImpl
 
+@Configuration
 @Module
 @ComponentScan("shub39.momentum")
 class AppModule {
