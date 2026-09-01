@@ -67,7 +67,6 @@ import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
-import shub39.momentum.presentation.shared.middleItemShape
 
 @Composable
 fun About(versionName: String, onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
@@ -151,7 +150,7 @@ private fun LazyListScope.engagementLinks(uriHandler: UriHandler) {
                 content = { Text(text = stringResource(R.string.bmc)) },
                 supportingContent = { Text(text = stringResource(R.string.bmc_desc)) },
                 modifier =
-                    Modifier.clip(detachedItemShape()).clickable {
+                    Modifier.clip(leadingItemShape()).clickable {
                         uriHandler.openUri("https://buymeacoffee.com/shub39")
                     },
             )
@@ -170,7 +169,7 @@ private fun LazyListScope.engagementLinks(uriHandler: UriHandler) {
                 content = { Text(text = "GitHub Sponsors") },
                 supportingContent = { Text(text = "Support me through GitHub") },
                 modifier =
-                    Modifier.clip(middleItemShape()).clickable {
+                    Modifier.clip(endItemShape()).clickable {
                         uriHandler.openUri("https://github.com/sponsors/shub39")
                     },
             )
@@ -234,7 +233,7 @@ private fun LazyListScope.aboutApp(versionName: String, uriHandler: UriHandler) 
                             )
                         }
                         FilledTonalIconButton(
-                            onClick = { uriHandler.openUri("https://github.com/shub39/Grit") }
+                            onClick = { uriHandler.openUri("https://github.com/shub39/Momentum") }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.github),

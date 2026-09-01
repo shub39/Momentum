@@ -181,7 +181,7 @@ fun LookAndFeel(
                                     },
                                     modifier = Modifier.weight(1f),
                                     colors =
-                                        ToggleButtonDefaults.toggleButtonColors(
+                                        ToggleButtonDefaults.colors(
                                             containerColor =
                                                 MaterialTheme.colorScheme.surfaceContainerLow
                                         ),
@@ -272,7 +272,7 @@ fun LookAndFeel(
                                     },
                                     enabled = isPlusUser,
                                     colors =
-                                        ToggleButtonDefaults.toggleButtonColors(
+                                        ToggleButtonDefaults.colors(
                                             containerColor =
                                                 MaterialTheme.colorScheme.surfaceContainerLow
                                         ),
