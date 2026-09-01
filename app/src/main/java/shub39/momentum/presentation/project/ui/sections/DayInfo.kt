@@ -100,6 +100,7 @@ import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ui.component.ImageSourcePicker
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontRounded
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -488,7 +489,7 @@ private fun DayInfoContent(
                     val focusRequester = remember { FocusRequester() }
 
                     LaunchedEffect(Unit) {
-                        delay(200)
+                        delay(200.milliseconds)
                         focusRequester.requestFocus()
                         keyboardController?.show()
                     }

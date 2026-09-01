@@ -150,7 +150,7 @@ private fun LazyListScope.engagementLinks(uriHandler: UriHandler) {
                 content = { Text(text = stringResource(R.string.bmc)) },
                 supportingContent = { Text(text = stringResource(R.string.bmc_desc)) },
                 modifier =
-                    Modifier.clip(detachedItemShape()).clickable {
+                    Modifier.clip(leadingItemShape()).clickable {
                         uriHandler.openUri("https://buymeacoffee.com/shub39")
                     },
             )
