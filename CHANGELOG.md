@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.8.4
+- Fixed UI inconsistencies
+
 ## 1.8.3
 - Improved Camera UI
 - Miscellaneous UI fixes
