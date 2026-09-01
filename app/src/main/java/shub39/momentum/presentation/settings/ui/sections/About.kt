@@ -233,7 +233,7 @@ private fun LazyListScope.aboutApp(versionName: String, uriHandler: UriHandler) 
                             )
                         }
                         FilledTonalIconButton(
-                            onClick = { uriHandler.openUri("https://github.com/shub39/Grit") }
+                            onClick = { uriHandler.openUri("https://github.com/shub39/Momentum") }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.github),
