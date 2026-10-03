@@ -1,5 +1,13 @@
 [
   {
+    "version": "1.8.5",
+    "changes": [
+      "Added option to overlay last image in camera",
+      "Camera options are now saved on a per-project basis",
+      "Removed changelog sheet"
+    ]
+  },
+  {
     "version": "1.8.4",
     "changes": [
       "Fixed UI inconsistencies"
@@ -56,12 +64,6 @@
     "version": "1.6.0",
     "changes": [
       "Material 3 Expressive UI changes"
-    ]
-  },
-  {
-    "version": "1.5.3",
-    "changes": [
-      "Fixed Montage maker face alignment bugs"
     ]
   }
 ]
