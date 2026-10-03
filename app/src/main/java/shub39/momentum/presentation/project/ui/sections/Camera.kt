@@ -141,7 +141,15 @@ fun Camera(
             CoilImage(
                 imageModel = { lastImage },
                 imageOptions = ImageOptions(contentScale = ContentScale.Crop),
-                modifier = Modifier.fillMaxSize().alpha(0.4f).scale(scaleX = -1f, scaleY = 1f),
+                modifier =
+                    Modifier.fillMaxSize()
+                        .alpha(0.4f)
+                        .scale(
+                            scaleX =
+                                if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) -1f
+                                else 1f,
+                            scaleY = 1f,
+                        ),
             )
         }
 
