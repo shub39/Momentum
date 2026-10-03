@@ -84,4 +84,5 @@
     <string name="export_desc">Export all Project data to a .zip file</string>
     <string name="import_desc">Import data from a .zip file. Existing projects will be deleted</string>
     <string name="import_str">Import</string>
+    <string name="backup_caution">Update the app before creating any backups</string>
 </resources>
