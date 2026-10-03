@@ -144,7 +144,7 @@ fun Camera(
                 imageOptions = ImageOptions(
                     contentScale = ContentScale.Crop
                 ),
-                modifier = Modifier.fillMaxSize().alpha(0.3f))
+                modifier = Modifier.fillMaxSize().alpha(0.5f))
         }
 
         Box(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
