@@ -68,7 +68,7 @@ fun VideoPlayer(
 
     val sliderState = rememberSliderState(value = 0f)
 
-    LaunchedEffect(duration) { sliderState.value = position.toFloat() / duration.toFloat() }
+    LaunchedEffect(position) { sliderState.value = position.toFloat() / duration.toFloat() }
 
     // Update position periodically
     LaunchedEffect(exoPlayer) {
@@ -126,6 +126,7 @@ fun VideoPlayer(
                 Slider(
                     state = sliderState,
                     onValueChange = { sliderValue ->
+                        sliderState.value = sliderValue
                         val newPosition = (sliderValue * duration).toLong()
                         onPlayerAction(PlayerAction(action = VideoAction.SEEK, data = newPosition))
                         position = newPosition
