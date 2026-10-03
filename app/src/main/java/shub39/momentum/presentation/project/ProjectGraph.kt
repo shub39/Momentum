@@ -35,6 +35,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
+import shub39.momentum.core.data_classes.CameraOptions
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.Theme
@@ -123,11 +124,19 @@ fun ProjectGraph(
                     val cameraViewModel = viewModel { CameraViewModel() }
                     val surfaceRequest by
                         cameraViewModel.surfaceRequest.collectAsStateWithLifecycle()
-                    val showGuides by cameraViewModel.showGuides.collectAsStateWithLifecycle()
                     val cameraSelector: CameraSelector by
                         cameraViewModel.cameraSelector.collectAsStateWithLifecycle()
                     val context = LocalContext.current
                     val lifecycleOwner = LocalLifecycleOwner.current
+
+                    val cameraOptions = state.project?.cameraOptions ?: CameraOptions()
+
+                    LaunchedEffect(cameraOptions.isFrontCamera) {
+                        cameraViewModel.setCameraSelector(
+                            if (cameraOptions.isFrontCamera) CameraSelector.DEFAULT_FRONT_CAMERA
+                            else CameraSelector.DEFAULT_BACK_CAMERA
+                        )
+                    }
 
                     LaunchedEffect(lifecycleOwner) {
                         cameraViewModel.bindToCamera(context.applicationContext, lifecycleOwner)
@@ -135,11 +144,20 @@ fun ProjectGraph(
 
                     Camera(
                         surfaceRequest = surfaceRequest,
-                        showGuides = showGuides,
-                        lastImage = state.days.getOrNull(0)?.image,
+                        cameraOptions = cameraOptions,
                         cameraSelector = cameraSelector,
-                        onToggleCamera = cameraViewModel::toggleCamera,
-                        onToggleGuides = cameraViewModel::toggleGuides,
+                        lastImage = state.days.getOrNull(0)?.image,
+                        onUpdateCameraOptions = { newOptions ->
+                            onAction(ProjectAction.OnUpdateCameraOptions(newOptions))
+                        },
+                        onToggleCamera = {
+                            val isFront = cameraViewModel.toggleCamera()
+                            onAction(
+                                ProjectAction.OnUpdateCameraOptions(
+                                    cameraOptions.copy(isFrontCamera = isFront)
+                                )
+                            )
+                        },
                         onTakePhoto = {
                             cameraViewModel.takePhoto(
                                 context = context,

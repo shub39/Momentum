@@ -42,9 +42,6 @@ class CameraViewModel : ViewModel() {
     private val _cameraSelector = MutableStateFlow(CameraSelector.DEFAULT_BACK_CAMERA)
     val cameraSelector = _cameraSelector.asStateFlow()
 
-    private val _showGuides = MutableStateFlow(false)
-    val showGuides: StateFlow<Boolean> = _showGuides.asStateFlow()
-
     private val cameraPreviewUseCase =
         Preview.Builder().build().apply {
             setSurfaceProvider { newSurfaceRequest -> _surfaceRequest.update { newSurfaceRequest } }
@@ -70,18 +67,22 @@ class CameraViewModel : ViewModel() {
         }
     }
 
-    fun toggleCamera() {
+    fun setCameraSelector(selector: CameraSelector) {
+        _cameraSelector.value = selector
+    }
+
+    fun toggleCamera(): Boolean {
+        var isFront = false
         _cameraSelector.update {
             if (it == CameraSelector.DEFAULT_BACK_CAMERA) {
+                isFront = true
                 CameraSelector.DEFAULT_FRONT_CAMERA
             } else {
+                isFront = false
                 CameraSelector.DEFAULT_BACK_CAMERA
             }
         }
-    }
-
-    fun toggleGuides() {
-        _showGuides.update { !it }
+        return isFront
     }
 
     fun takePhoto(context: Context, onPhotoCaptured: (File) -> Unit) {

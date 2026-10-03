@@ -14,19 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.data.database
+package shub39.momentum.core.data_classes
 
-import androidx.room3.ColumnInfo
-import androidx.room3.Entity
-import androidx.room3.PrimaryKey
-import shub39.momentum.core.data_classes.AlarmData
-import shub39.momentum.core.data_classes.CameraOptions
+import kotlinx.serialization.Serializable
 
-@Entity(tableName = "projects_table")
-data class ProjectEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val title: String,
-    val description: String,
-    val alarm: AlarmData? = null,
-    @ColumnInfo(defaultValue = "{}") val cameraOptions: CameraOptions = CameraOptions(),
+@Serializable
+data class CameraOptions(
+    val showGuides: Boolean = false,
+    val showLastImage: Boolean = true,
+    val isFrontCamera: Boolean = false,
 )

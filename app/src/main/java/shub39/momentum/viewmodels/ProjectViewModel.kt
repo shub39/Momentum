@@ -94,6 +94,14 @@ class ProjectViewModel(
 
     fun onAction(action: ProjectAction) {
         when (action) {
+            is ProjectAction.OnUpdateCameraOptions ->
+                viewModelScope.launch {
+                    val currentProject = _state.value.project ?: return@launch
+                    val updatedProject = currentProject.copy(cameraOptions = action.cameraOptions)
+                    repository.upsertProject(updatedProject)
+                    _state.update { it.copy(project = updatedProject) }
+                }
+
             is OnUpdateProject ->
                 viewModelScope.launch {
                     repository.upsertProject(action.project)

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import kotlinx.serialization.Serializable
 import shub39.momentum.core.data_classes.AlarmData
+import shub39.momentum.core.data_classes.CameraOptions
 import shub39.momentum.core.data_classes.FaceData
 import shub39.momentum.core.enums.DateStyle
 import shub39.momentum.core.enums.Fonts
@@ -41,6 +42,7 @@ data class ProjectSchema(
     val title: String,
     val description: String,
     val alarm: AlarmData? = null,
+    val cameraOptions: CameraOptions = CameraOptions(),
 )
 
 @Serializable

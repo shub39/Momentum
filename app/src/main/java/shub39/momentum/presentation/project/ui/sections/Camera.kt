@@ -41,7 +41,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,16 +60,17 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
+import shub39.momentum.core.data_classes.CameraOptions
 
 @SuppressLint("SourceLockedOrientationActivity")
 @Composable
 fun Camera(
     surfaceRequest: SurfaceRequest?,
-    showGuides: Boolean,
+    cameraOptions: CameraOptions,
     cameraSelector: CameraSelector,
     lastImage: String?,
+    onUpdateCameraOptions: (CameraOptions) -> Unit,
     onToggleCamera: () -> Unit,
-    onToggleGuides: () -> Unit,
     onTakePhoto: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -78,8 +78,6 @@ fun Camera(
     val context = LocalContext.current
     val view = LocalView.current
     var rotation by remember { mutableFloatStateOf(0f) }
-
-    var showLastImage by remember { mutableStateOf(true) }
 
     DisposableEffect(view) {
         val window = (view.context as? Activity)?.window ?: return@DisposableEffect onDispose {}
@@ -134,17 +132,16 @@ fun Camera(
             )
         }
 
-        if (showGuides) {
+        if (cameraOptions.showGuides) {
             CameraGuides()
         }
 
-        if (showLastImage && lastImage != null) {
+        if (cameraOptions.showLastImage && lastImage != null) {
             CoilImage(
                 imageModel = { lastImage },
-                imageOptions = ImageOptions(
-                    contentScale = ContentScale.Crop
-                ),
-                modifier = Modifier.fillMaxSize().alpha(0.5f))
+                imageOptions = ImageOptions(contentScale = ContentScale.Crop),
+                modifier = Modifier.fillMaxSize().alpha(0.5f),
+            )
         }
 
         Box(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
@@ -164,13 +161,14 @@ fun Camera(
             Row(
                 modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(32.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 FilledTonalIconToggleButton(
-                    checked = showGuides,
-                    onCheckedChange = { onToggleGuides() },
-                    modifier =
-                        Modifier.graphicsLayer { rotationZ = animatedRotation }
+                    checked = cameraOptions.showGuides,
+                    onCheckedChange = {
+                        onUpdateCameraOptions(cameraOptions.copy(showGuides = it))
+                    },
+                    modifier = Modifier.graphicsLayer { rotationZ = animatedRotation },
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.rounded_grid),
@@ -208,8 +206,10 @@ fun Camera(
                     }
 
                     FilledTonalIconToggleButton(
-                        checked = showLastImage,
-                        onCheckedChange = { showLastImage = it },
+                        checked = cameraOptions.showLastImage,
+                        onCheckedChange = {
+                            onUpdateCameraOptions(cameraOptions.copy(showLastImage = it))
+                        },
                         modifier = Modifier.graphicsLayer { rotationZ = animatedRotation },
                     ) {
                         Icon(

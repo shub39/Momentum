@@ -26,11 +26,23 @@ import shub39.momentum.data.database.MontageOptionsEntity
 import shub39.momentum.data.database.ProjectEntity
 
 fun ProjectEntity.toProject(): Project {
-    return Project(id = id, title = title, description = description, alarm = alarm)
+    return Project(
+        id = id,
+        title = title,
+        description = description,
+        alarm = alarm,
+        cameraOptions = cameraOptions,
+    )
 }
 
 fun Project.toEntity(): ProjectEntity {
-    return ProjectEntity(id = id, title = title, description = description, alarm = alarm)
+    return ProjectEntity(
+        id = id,
+        title = title,
+        description = description,
+        alarm = alarm,
+        cameraOptions = cameraOptions,
+    )
 }
 
 fun DayEntity.toDay(): Day {
