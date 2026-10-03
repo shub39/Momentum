@@ -18,7 +18,10 @@ package shub39.momentum.app
 
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
 import org.koin.plugin.module.dsl.startKoin
+import shub39.momentum.BuildConfig
+import shub39.momentum.analytics.AnalyticsInitializer
 import shub39.momentum.billing.data.BillingInitializerImpl
 import shub39.momentum.di.AppModule
 
@@ -26,8 +29,12 @@ class MomentumApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        startKoin<AppModule> { androidContext(this@MomentumApp) }
+        startKoin<AppModule> {
+            if (BuildConfig.DEBUG) androidLogger()
+            androidContext(this@MomentumApp)
+        }
 
         BillingInitializerImpl().initialize(this)
+        AnalyticsInitializer().setup(this)
     }
 }

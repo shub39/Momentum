@@ -32,12 +32,15 @@ import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.app.MainAppState
 import shub39.momentum.billing.domain.BillingHandler
+import shub39.momentum.core.data_classes.AnalyticsEvent
+import shub39.momentum.core.interfaces.AnalyticsWrapper
 import shub39.momentum.core.interfaces.SettingsPrefs
 
 @KoinViewModel
 class MainAppViewModel(
     private val datastore: SettingsPrefs,
     private val billingHandler: BillingHandler,
+    private val analytics: AnalyticsWrapper,
 ) : ViewModel() {
     private var observerJob: Job? = null
 
@@ -46,6 +49,7 @@ class MainAppViewModel(
         _state
             .asStateFlow()
             .onStart {
+                analytics.trackEvent(AnalyticsEvent.APP_OPENED)
                 checkSubscription()
                 observeData()
             }
@@ -60,9 +64,16 @@ class MainAppViewModel(
             _state.update { it.copy(isFoss = billingHandler.isFoss()) }
 
             val result = billingHandler.isPlusUser()
+            if (result && !_state.value.isPlusUser) {
+                analytics.trackEvent(AnalyticsEvent.PAYWALL_PURCHASED)
+            }
 
             _state.update { it.copy(isPlusUser = result) }
         }
+    }
+
+    fun onOpenPaywall() {
+        analytics.trackEvent(AnalyticsEvent.PAYWALL_OPENED)
     }
 
     private fun observeData() {

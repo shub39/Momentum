@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.presentation.project.ui.sections
+package shub39.momentum.viewmodels
 
 import android.content.Context
 import android.util.Log
@@ -34,8 +34,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.koin.core.annotation.KoinViewModel
+import shub39.momentum.core.data_classes.AnalyticsEvent
+import shub39.momentum.core.interfaces.AnalyticsWrapper
 
-class CameraViewModel : ViewModel() {
+@KoinViewModel
+class CameraViewModel(private val analytics: AnalyticsWrapper) : ViewModel() {
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
 
@@ -74,18 +78,22 @@ class CameraViewModel : ViewModel() {
     fun toggleCamera(): Boolean {
         var isFront = false
         _cameraSelector.update {
-            if (it == CameraSelector.DEFAULT_BACK_CAMERA) {
+            if (it == DEFAULT_BACK_CAMERA) {
                 isFront = true
-                CameraSelector.DEFAULT_FRONT_CAMERA
+                DEFAULT_FRONT_CAMERA
             } else {
                 isFront = false
-                CameraSelector.DEFAULT_BACK_CAMERA
+                DEFAULT_BACK_CAMERA
             }
         }
         return isFront
     }
 
     fun takePhoto(context: Context, onPhotoCaptured: (File) -> Unit) {
+        analytics.trackEvent(
+            AnalyticsEvent.CAMERA_PHOTO_TAKEN,
+            mapOf("is_front_camera" to (_cameraSelector.value == DEFAULT_FRONT_CAMERA)),
+        )
         val outputDirectory = context.cacheDir
         val photoFile =
             File(outputDirectory, "temp_image_${Clock.System.now().toEpochMilliseconds()}.jpg")

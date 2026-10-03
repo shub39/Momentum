@@ -37,6 +37,8 @@ import shub39.momentum.core.backup.ExportState
 import shub39.momentum.core.backup.ImportRepo
 import shub39.momentum.core.backup.ImportResult
 import shub39.momentum.core.backup.ImportState
+import shub39.momentum.core.data_classes.AnalyticsEvent
+import shub39.momentum.core.interfaces.AnalyticsWrapper
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.data.ChangelogManager
 import shub39.momentum.presentation.settings.SettingsAction
@@ -48,6 +50,7 @@ class SettingsViewModel(
     private val exportRepo: ExportRepo,
     private val datastore: SettingsPrefs,
     private val changelogManager: ChangelogManager,
+    private val analytics: AnalyticsWrapper,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsState())
     val state =
@@ -66,18 +69,62 @@ class SettingsViewModel(
     fun onAction(action: SettingsAction) =
         viewModelScope.launch {
             when (action) {
-                is OnAmoledSwitch -> datastore.updateAmoledPref(action.amoled)
-                is OnFontChange -> datastore.updateFonts(action.fonts)
-                is OnMaterialThemeToggle -> datastore.updateMaterialTheme(action.pref)
+                is OnAmoledSwitch -> {
+                    analytics.trackEvent(
+                        AnalyticsEvent.THEME_CHANGED,
+                        mapOf("setting" to "amoled", "value" to action.amoled),
+                    )
+                    datastore.updateAmoledPref(action.amoled)
+                }
 
-                is OnPaletteChange -> datastore.updatePaletteStyle(action.style)
-                is OnSeedColorChange -> datastore.updateSeedColor(action.color)
-                is OnThemeSwitch -> datastore.updateAppThemePref(action.appTheme)
+                is OnFontChange -> {
+                    analytics.trackEvent(
+                        AnalyticsEvent.THEME_CHANGED,
+                        mapOf("setting" to "font", "value" to action.fonts.name),
+                    )
+                    datastore.updateFonts(action.fonts)
+                }
+
+                is OnMaterialThemeToggle -> {
+                    analytics.trackEvent(
+                        AnalyticsEvent.THEME_CHANGED,
+                        mapOf("setting" to "material_you", "value" to action.pref),
+                    )
+                    datastore.updateMaterialTheme(action.pref)
+                }
+
+                is OnPaletteChange -> {
+                    analytics.trackEvent(
+                        AnalyticsEvent.THEME_CHANGED,
+                        mapOf("setting" to "palette", "value" to action.style.name),
+                    )
+                    datastore.updatePaletteStyle(action.style)
+                }
+
+                is OnSeedColorChange -> {
+                    analytics.trackEvent(
+                        AnalyticsEvent.THEME_CHANGED,
+                        mapOf("setting" to "seed_color"),
+                    )
+                    datastore.updateSeedColor(action.color)
+                }
+
+                is OnThemeSwitch -> {
+                    analytics.trackEvent(
+                        AnalyticsEvent.THEME_CHANGED,
+                        mapOf("setting" to "app_theme", "value" to action.appTheme.name),
+                    )
+                    datastore.updateAppThemePref(action.appTheme)
+                }
 
                 SettingsAction.OnExportData -> {
                     _state.update { it.copy(exportState = ExportState.EXPORTING) }
 
                     val result = exportRepo.exportProjects()
+                    analytics.trackEvent(
+                        AnalyticsEvent.BACKUP_CREATED,
+                        mapOf("success" to (result is ExportResult.Success)),
+                    )
 
                     _state.update {
                         it.copy(
@@ -99,6 +146,10 @@ class SettingsViewModel(
                     _state.update { it.copy(importState = ImportState.IMPORTING) }
 
                     val result = importRepo.restoreData()
+                    analytics.trackEvent(
+                        AnalyticsEvent.BACKUP_RESTORED,
+                        mapOf("success" to (result is ImportResult.Success)),
+                    )
 
                     _state.update {
                         it.copy(
@@ -115,6 +166,14 @@ class SettingsViewModel(
                         _state.update { it.copy(importState = ImportState.IDLE) }
                     }
                 }
+
+                SettingsAction.OnOpenSettings ->
+                    analytics.trackEvent(AnalyticsEvent.SETTINGS_OPENED)
+
+                SettingsAction.OnOpenAbout -> analytics.trackEvent(AnalyticsEvent.ABOUT_OPENED)
+
+                SettingsAction.OnOpenChangelog ->
+                    analytics.trackEvent(AnalyticsEvent.CHANGELOG_OPENED)
             }
         }
 

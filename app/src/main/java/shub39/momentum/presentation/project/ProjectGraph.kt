@@ -28,13 +28,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 import shub39.momentum.core.data_classes.CameraOptions
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.Project
@@ -44,12 +44,12 @@ import shub39.momentum.navigation.fadeTransitionMetadata
 import shub39.momentum.navigation.horizontalTransitionMetadata
 import shub39.momentum.navigation.verticalTransitionMetadata
 import shub39.momentum.presentation.project.ui.sections.Camera
-import shub39.momentum.presentation.project.ui.sections.CameraViewModel
 import shub39.momentum.presentation.project.ui.sections.DayInfo
 import shub39.momentum.presentation.project.ui.sections.ProjectCalendar
 import shub39.momentum.presentation.project.ui.sections.ProjectDetails
 import shub39.momentum.presentation.project.ui.sections.ProjectMontageView
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.viewmodels.CameraViewModel
 
 @Serializable data object ProjectDetails : NavKey
 
@@ -121,7 +121,7 @@ fun ProjectGraph(
                 }
 
                 entry<Camera>(metadata = fadeTransitionMetadata()) { entry ->
-                    val cameraViewModel = viewModel { CameraViewModel() }
+                    val cameraViewModel: CameraViewModel = koinViewModel()
                     val surfaceRequest by
                         cameraViewModel.surfaceRequest.collectAsStateWithLifecycle()
                     val cameraSelector: CameraSelector by

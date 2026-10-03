@@ -20,15 +20,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
+import shub39.momentum.core.data_classes.AnalyticsEvent
+import shub39.momentum.core.interfaces.AnalyticsWrapper
 import shub39.momentum.core.interfaces.SettingsPrefs
 import shub39.momentum.presentation.onboarding.OnboardingAction
 
 @KoinViewModel
-class OnboardingViewModel(private val datastore: SettingsPrefs) : ViewModel() {
+class OnboardingViewModel(
+    private val datastore: SettingsPrefs,
+    private val analytics: AnalyticsWrapper,
+) : ViewModel() {
     fun onAction(action: OnboardingAction) =
         viewModelScope.launch {
             when (action) {
-                OnOnboardingDone -> datastore.updateOnboardingDone(true)
+                OnOnboardingDone -> {
+                    analytics.trackEvent(AnalyticsEvent.ONBOARDING_COMPLETED)
+                    datastore.updateOnboardingDone(true)
+                }
             }
         }
 }

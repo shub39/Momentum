@@ -23,6 +23,7 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 import shub39.facedetection.FaceDetectorImpl
 import shub39.momentum.analytics.AnalyticsImpl
+import shub39.momentum.core.interfaces.AnalyticsWrapper
 import shub39.momentum.core.interfaces.FaceDetector
 import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.SettingsPrefs
@@ -38,8 +39,7 @@ import shub39.montage.MontageMakerImpl
 @Module
 @ComponentScan("shub39.momentum")
 class AppModule {
-    @Single
-    fun getAnalyticsImpl(): AnalyticsImpl = AnalyticsImpl()
+    @Single fun getAnalyticsWrapper(): AnalyticsWrapper = AnalyticsImpl()
 
     @Single
     fun provideAppDb(dbFactory: ProjectDBFactory): ProjectDatabase = dbFactory.create().build()

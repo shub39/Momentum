@@ -26,6 +26,12 @@ sealed interface SettingsAction {
 
     data object OnExportData : SettingsAction
 
+    data object OnOpenSettings : SettingsAction
+
+    data object OnOpenAbout : SettingsAction
+
+    data object OnOpenChangelog : SettingsAction
+
     data class OnSeedColorChange(val color: Color) : SettingsAction
 
     data class OnThemeSwitch(val appTheme: AppTheme) : SettingsAction

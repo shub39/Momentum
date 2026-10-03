@@ -77,7 +77,10 @@ fun App() {
                             onNavigateToSettings = { backStack.add(SettingsGraph) },
                             onNavigateToProject = { backStack.add(ProjectGraph) },
                             isPlusUser = state.isPlusUser,
-                            onNavigateToPaywall = { backStack.add(PaywallPage) },
+                            onNavigateToPaywall = {
+                                mainViewModel.onOpenPaywall()
+                                backStack.add(PaywallPage)
+                            },
                         )
                     }
 
@@ -105,7 +108,10 @@ fun App() {
                                 if (backStack.size != 1) backStack.removeLastOrNull()
                             },
                             isPlusUser = state.isPlusUser,
-                            onNavigateToPaywall = { backStack.add(PaywallPage) },
+                            onNavigateToPaywall = {
+                                mainViewModel.onOpenPaywall()
+                                backStack.add(PaywallPage)
+                            },
                         )
                     }
 
@@ -120,7 +126,10 @@ fun App() {
                                 if (backStack.size != 1) backStack.removeLastOrNull()
                             },
                             isPlusUser = state.isPlusUser,
-                            onNavigateToPaywall = { backStack.add(PaywallPage) },
+                            onNavigateToPaywall = {
+                                mainViewModel.onOpenPaywall()
+                                backStack.add(PaywallPage)
+                            },
                             onNavigateToOnboarding = { backStack.add(Onboarding) },
                         )
                     }
