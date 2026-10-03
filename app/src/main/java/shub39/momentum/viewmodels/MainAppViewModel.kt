@@ -49,9 +49,9 @@ class MainAppViewModel(
         _state
             .asStateFlow()
             .onStart {
-                analytics.trackEvent(AnalyticsEvent.APP_OPENED)
                 checkSubscription()
                 observeData()
+                analytics.trackEvent(AnalyticsEvent.APP_OPENED)
             }
             .stateIn(
                 scope = viewModelScope,
@@ -64,9 +64,6 @@ class MainAppViewModel(
             _state.update { it.copy(isFoss = billingHandler.isFoss()) }
 
             val result = billingHandler.isPlusUser()
-            if (result && !_state.value.isPlusUser) {
-                analytics.trackEvent(AnalyticsEvent.PAYWALL_PURCHASED)
-            }
 
             _state.update { it.copy(isPlusUser = result) }
         }

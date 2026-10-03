@@ -18,6 +18,7 @@ package shub39.momentum.billing.data
 
 import com.revenuecat.purchases.CacheFetchPolicy
 import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.TrackedEventListener
 import com.revenuecat.purchases.awaitCustomerInfo
 import com.revenuecat.purchases.interfaces.UpdatedCustomerInfoListener
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +42,7 @@ class BillingHandlerImpl : BillingHandler {
     }
 
     override suspend fun isPlusUser(): Boolean {
-        isPlus.update { userResult() is SubscriptionResult.Subscribed }
+        userResult()
         return isPlus.value
     }
 
