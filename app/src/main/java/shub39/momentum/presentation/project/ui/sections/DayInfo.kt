@@ -154,7 +154,13 @@ fun DayInfo(
         modifier = modifier,
         day = day,
         imageFile = imageFile,
-        onLaunchImageSourcePicker = { showImageSourceSheet = true },
+        onLaunchImageSourcePicker = {
+            if (selectedDate != LocalDate.now().toEpochDay()) {
+                imagePicker.launch()
+                return@DayInfoContent
+            }
+            showImageSourceSheet = true
+        },
         selectedDate = selectedDate,
         onAction = onAction,
         isFavorite = isFavorite,

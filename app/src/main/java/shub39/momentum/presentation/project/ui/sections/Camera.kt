@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -140,7 +141,7 @@ fun Camera(
             CoilImage(
                 imageModel = { lastImage },
                 imageOptions = ImageOptions(contentScale = ContentScale.Crop),
-                modifier = Modifier.fillMaxSize().alpha(0.5f),
+                modifier = Modifier.fillMaxSize().alpha(0.4f).scale(scaleX = -1f, scaleY = 1f),
             )
         }
 
@@ -210,6 +211,7 @@ fun Camera(
                         onCheckedChange = {
                             onUpdateCameraOptions(cameraOptions.copy(showLastImage = it))
                         },
+                        enabled = lastImage != null,
                         modifier = Modifier.graphicsLayer { rotationZ = animatedRotation },
                     ) {
                         Icon(

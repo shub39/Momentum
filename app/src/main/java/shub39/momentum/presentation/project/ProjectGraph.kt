@@ -33,6 +33,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import java.time.LocalDate
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 import shub39.momentum.core.data_classes.CameraOptions
@@ -131,6 +132,12 @@ fun ProjectGraph(
 
                     val cameraOptions = state.project?.cameraOptions ?: CameraOptions()
 
+                    val lastImage =
+                        if (entry.selectedDate != LocalDate.now().toEpochDay()) null
+                        else if (state.days.getOrNull(0)?.date == entry.selectedDate) {
+                            state.days.getOrNull(1)?.image
+                        } else state.days.getOrNull(0)?.image
+
                     LaunchedEffect(cameraOptions.isFrontCamera) {
                         cameraViewModel.setCameraSelector(
                             if (cameraOptions.isFrontCamera) CameraSelector.DEFAULT_FRONT_CAMERA
@@ -146,7 +153,7 @@ fun ProjectGraph(
                         surfaceRequest = surfaceRequest,
                         cameraOptions = cameraOptions,
                         cameraSelector = cameraSelector,
-                        lastImage = state.days.getOrNull(0)?.image,
+                        lastImage = lastImage,
                         onUpdateCameraOptions = { newOptions ->
                             onAction(ProjectAction.OnUpdateCameraOptions(newOptions))
                         },
