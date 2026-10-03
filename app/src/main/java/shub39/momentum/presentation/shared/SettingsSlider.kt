@@ -47,9 +47,7 @@ fun SettingSlider(
 ) {
     val sliderSlate = rememberSliderState(value = value, steps = steps, trackRange = valueRange)
 
-    LaunchedEffect(value) {
-        if (sliderSlate.value != value) sliderSlate.value = value
-    }
+    LaunchedEffect(value) { if (sliderSlate.value != value) sliderSlate.value = value }
 
     Column(modifier = modifier) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
