@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.8.5
+## 1.8.6
 - Added option to overlay last image in camera
 - Camera options are now saved on a per-project basis
 - Removed changelog sheet
