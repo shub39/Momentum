@@ -57,6 +57,11 @@ jobs:
       - name: Cook KeyStore
         run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > $GITHUB_WORKSPACE/signing-key.jks
 
+      - name: Inject Posthog API Keys
+        run: |
+          echo "POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}" >> local.properties
+          echo "POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}" >> local.properties
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 

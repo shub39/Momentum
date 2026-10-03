@@ -1,3 +1,5 @@
+import java.util.Properties
+
 /*
  * Copyright (C) 2026  Shubham Gorai
  *
@@ -80,6 +82,20 @@ android {
 
     productFlavors {
         create("play") {
+            val localProperties = Properties()
+            val localFile = rootProject.file("local.properties")
+
+            if (localFile.exists()) localProperties.load(localFile.inputStream())
+
+            val postHogApiKey = localProperties.getProperty("POSTHOG_API_KEY") ?: ""
+            val postHogHost = localProperties.getProperty("POSTHOG_HOST") ?: ""
+
+            if (postHogHost.isBlank() || postHogApiKey.isBlank()) {
+                println("WARNING: POSTHOG_API_KEY and POSTHOG_HOST must be set in local.properties")
+            }
+            buildConfigField("String", "POSTHOG_API_KEY", "\"$postHogApiKey\"")
+            buildConfigField("String", "POSTHOG_HOST", "\"$postHogHost\"")
+
             dimension = "version"
             applicationIdSuffix = ".play"
             versionNameSuffix = "-play"
@@ -160,6 +176,7 @@ dependencies {
 
     "playImplementation"(libs.purchases.ui)
     "playImplementation"(libs.purchases)
+    "playImplementation"("com.posthog:posthog-android:3.+")
 
     implementation(libs.camera.core)
     implementation(libs.camera.camera2)

@@ -16,7 +16,11 @@
  */
 package shub39.momentum.billing.domain
 
+import kotlinx.coroutines.flow.StateFlow
+
 interface BillingHandler {
+    val isPlus: StateFlow<Boolean>
+
     suspend fun isPlusUser(): Boolean
 
     suspend fun userResult(): SubscriptionResult
