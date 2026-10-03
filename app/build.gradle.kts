@@ -58,6 +58,7 @@ android {
         }
 
         create("beta") {
+            resValue("string", "app_name", "$appName Beta")
             applicationIdSuffix = ".beta"
             versionNameSuffix = "-beta$gitHash"
             isMinifyEnabled = true
@@ -69,6 +70,7 @@ android {
         }
 
         debug {
+            resValue("string", "app_name", "$appName Debug")
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }

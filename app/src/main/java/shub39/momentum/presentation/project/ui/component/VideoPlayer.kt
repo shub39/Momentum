@@ -27,10 +27,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,6 +47,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import shub39.momentum.R
@@ -54,7 +55,6 @@ import shub39.momentum.core.data_classes.PlayerAction
 import shub39.momentum.core.enums.VideoAction
 
 @androidx.annotation.OptIn(UnstableApi::class)
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun VideoPlayer(
     exoPlayer: ExoPlayer,
@@ -66,21 +66,25 @@ fun VideoPlayer(
     var duration by remember { mutableLongStateOf(0L) }
     var position by remember { mutableLongStateOf(0L) }
 
+    val sliderState = rememberSliderState(value = 0f)
+
+    LaunchedEffect(duration) { sliderState.value = position.toFloat() / duration.toFloat() }
+
     // Update position periodically
     LaunchedEffect(exoPlayer) {
-        delay(300L)
+        delay(300.milliseconds)
         onPlayerAction(PlayerAction(action = VideoAction.PLAY))
         while (isActive) {
             duration = exoPlayer.duration.coerceAtLeast(0L)
             position = exoPlayer.currentPosition.coerceAtLeast(0L)
-            delay(500L)
+            delay(500.milliseconds)
         }
     }
 
     // Auto-hide controls
     LaunchedEffect(showControls) {
         if (showControls) {
-            delay(3000L)
+            delay(3000.milliseconds)
             showControls = false
         }
     }
@@ -120,7 +124,7 @@ fun VideoPlayer(
                 }
 
                 Slider(
-                    value = if (duration > 0) position / duration.toFloat() else 0f,
+                    state = sliderState,
                     onValueChange = { sliderValue ->
                         val newPosition = (sliderValue * duration).toLong()
                         onPlayerAction(PlayerAction(action = VideoAction.SEEK, data = newPosition))

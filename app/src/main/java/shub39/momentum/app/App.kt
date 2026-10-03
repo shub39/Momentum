@@ -37,7 +37,6 @@ import shub39.momentum.presentation.home.HomeGraph
 import shub39.momentum.presentation.onboarding.Onboarding
 import shub39.momentum.presentation.project.ProjectGraph
 import shub39.momentum.presentation.settings.SettingsGraph
-import shub39.momentum.presentation.shared.ChangelogSheet
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.viewmodels.HomeViewModel
 import shub39.momentum.viewmodels.MainAppViewModel
@@ -63,15 +62,6 @@ fun App() {
     val state by mainViewModel.state.collectAsStateWithLifecycle()
 
     MomentumTheme(theme = state.theme) {
-        if (state.currentChangelog != null) {
-            ChangelogSheet(
-                currentLog = state.currentChangelog!!,
-                onDismissRequest = { mainViewModel.dismissChangelog() },
-                showSupportButton = !state.isPlusUser || state.isFoss,
-                onNavigateToPaywall = { backStack.add(PaywallPage) },
-            )
-        }
-
         NavDisplay(
             modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize(),
             backStack = backStack,

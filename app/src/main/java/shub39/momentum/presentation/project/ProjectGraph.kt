@@ -136,6 +136,7 @@ fun ProjectGraph(
                     Camera(
                         surfaceRequest = surfaceRequest,
                         showGuides = showGuides,
+                        lastImage = state.days.getOrNull(0)?.image,
                         cameraSelector = cameraSelector,
                         onToggleCamera = cameraViewModel::toggleCamera,
                         onToggleGuides = cameraViewModel::toggleGuides,
