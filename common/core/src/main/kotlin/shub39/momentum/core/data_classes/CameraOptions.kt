@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.billing.domain
+package shub39.momentum.core.data_classes
 
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.Serializable
 
-interface BillingHandler {
-    val isPlus: StateFlow<Boolean>
-
-    suspend fun isPlusUser(): Boolean
-
-    suspend fun userResult(): SubscriptionResult
-
-    suspend fun isFoss(): Boolean
-}
+@Serializable
+data class CameraOptions(
+    val showGuides: Boolean = false,
+    val showLastImage: Boolean = true,
+    val isFrontCamera: Boolean = false,
+)

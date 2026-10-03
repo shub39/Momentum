@@ -89,6 +89,7 @@ import io.github.vinceglb.filekit.path
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.Day
@@ -100,7 +101,6 @@ import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ui.component.ImageSourcePicker
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontRounded
-import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -154,7 +154,13 @@ fun DayInfo(
         modifier = modifier,
         day = day,
         imageFile = imageFile,
-        onLaunchImageSourcePicker = { showImageSourceSheet = true },
+        onLaunchImageSourcePicker = {
+            if (selectedDate != LocalDate.now().toEpochDay()) {
+                imagePicker.launch()
+                return@DayInfoContent
+            }
+            showImageSourceSheet = true
+        },
         selectedDate = selectedDate,
         onAction = onAction,
         isFavorite = isFavorite,

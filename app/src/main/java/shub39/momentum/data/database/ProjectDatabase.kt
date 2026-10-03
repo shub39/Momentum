@@ -25,7 +25,12 @@ import androidx.room3.RoomDatabase
     entities = [ProjectEntity::class, DayEntity::class, MontageOptionsEntity::class],
     version = ProjectDatabase.SCHEMA_VERSION,
     exportSchema = true,
-    autoMigrations = [AutoMigration(from = 1, to = 2), AutoMigration(from = 2, to = 3)],
+    autoMigrations =
+        [
+            AutoMigration(from = 1, to = 2),
+            AutoMigration(from = 2, to = 3),
+            AutoMigration(from = 3, to = 4),
+        ],
 )
 @ColumnTypeConverters(Converters::class)
 abstract class ProjectDatabase : RoomDatabase() {
@@ -35,6 +40,6 @@ abstract class ProjectDatabase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME = "project_db"
-        const val SCHEMA_VERSION = 3
+        const val SCHEMA_VERSION = 4
     }
 }

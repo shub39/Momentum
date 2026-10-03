@@ -28,13 +28,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import java.time.LocalDate
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
+import shub39.momentum.core.data_classes.CameraOptions
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.Theme
@@ -43,12 +45,12 @@ import shub39.momentum.navigation.fadeTransitionMetadata
 import shub39.momentum.navigation.horizontalTransitionMetadata
 import shub39.momentum.navigation.verticalTransitionMetadata
 import shub39.momentum.presentation.project.ui.sections.Camera
-import shub39.momentum.presentation.project.ui.sections.CameraViewModel
 import shub39.momentum.presentation.project.ui.sections.DayInfo
 import shub39.momentum.presentation.project.ui.sections.ProjectCalendar
 import shub39.momentum.presentation.project.ui.sections.ProjectDetails
 import shub39.momentum.presentation.project.ui.sections.ProjectMontageView
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.viewmodels.CameraViewModel
 
 @Serializable data object ProjectDetails : NavKey
 
@@ -120,14 +122,28 @@ fun ProjectGraph(
                 }
 
                 entry<Camera>(metadata = fadeTransitionMetadata()) { entry ->
-                    val cameraViewModel = viewModel { CameraViewModel() }
+                    val cameraViewModel: CameraViewModel = koinViewModel()
                     val surfaceRequest by
                         cameraViewModel.surfaceRequest.collectAsStateWithLifecycle()
-                    val showGuides by cameraViewModel.showGuides.collectAsStateWithLifecycle()
                     val cameraSelector: CameraSelector by
                         cameraViewModel.cameraSelector.collectAsStateWithLifecycle()
                     val context = LocalContext.current
                     val lifecycleOwner = LocalLifecycleOwner.current
+
+                    val cameraOptions = state.project?.cameraOptions ?: CameraOptions()
+
+                    val lastImage =
+                        if (entry.selectedDate != LocalDate.now().toEpochDay()) null
+                        else if (state.days.getOrNull(0)?.date == entry.selectedDate) {
+                            state.days.getOrNull(1)?.image
+                        } else state.days.getOrNull(0)?.image
+
+                    LaunchedEffect(cameraOptions.isFrontCamera) {
+                        cameraViewModel.setCameraSelector(
+                            if (cameraOptions.isFrontCamera) CameraSelector.DEFAULT_FRONT_CAMERA
+                            else CameraSelector.DEFAULT_BACK_CAMERA
+                        )
+                    }
 
                     LaunchedEffect(lifecycleOwner) {
                         cameraViewModel.bindToCamera(context.applicationContext, lifecycleOwner)
@@ -135,10 +151,20 @@ fun ProjectGraph(
 
                     Camera(
                         surfaceRequest = surfaceRequest,
-                        showGuides = showGuides,
+                        cameraOptions = cameraOptions,
                         cameraSelector = cameraSelector,
-                        onToggleCamera = cameraViewModel::toggleCamera,
-                        onToggleGuides = cameraViewModel::toggleGuides,
+                        lastImage = lastImage,
+                        onUpdateCameraOptions = { newOptions ->
+                            onAction(ProjectAction.OnUpdateCameraOptions(newOptions))
+                        },
+                        onToggleCamera = {
+                            val isFront = cameraViewModel.toggleCamera()
+                            onAction(
+                                ProjectAction.OnUpdateCameraOptions(
+                                    cameraOptions.copy(isFrontCamera = isFront)
+                                )
+                            )
+                        },
                         onTakePhoto = {
                             cameraViewModel.takePhoto(
                                 context = context,

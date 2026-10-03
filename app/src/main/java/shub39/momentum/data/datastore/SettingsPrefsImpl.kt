@@ -52,7 +52,6 @@ class SettingsPrefsImpl(private val dataStore: DataStore<Preferences>) : Setting
         private val materialTheme = booleanPreferencesKey("material_theme")
         private val onboardingDone = booleanPreferencesKey("onboarding_done")
         private val selectedFont = stringPreferencesKey("font")
-        private val lastChangelogShownKey = stringPreferencesKey("last_changelog_shown")
     }
 
     override fun getAppThemePrefFlow(): Flow<AppTheme> =
@@ -115,12 +114,5 @@ class SettingsPrefsImpl(private val dataStore: DataStore<Preferences>) : Setting
 
     override suspend fun updateFonts(font: Fonts) {
         dataStore.edit { settings -> settings[selectedFont] = font.name }
-    }
-
-    override fun getLastChangelogShown(): Flow<String> =
-        dataStore.data.map { prefs -> prefs[lastChangelogShownKey] ?: "" }
-
-    override suspend fun updateLastChangelogShown(version: String) {
-        dataStore.edit { settings -> settings[lastChangelogShownKey] = version }
     }
 }

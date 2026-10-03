@@ -19,6 +19,7 @@ package shub39.momentum.data.database
 import androidx.room3.ColumnTypeConverter
 import kotlinx.serialization.json.Json
 import shub39.momentum.core.data_classes.AlarmData
+import shub39.momentum.core.data_classes.CameraOptions
 import shub39.momentum.core.data_classes.FaceData
 
 object Converters {
@@ -45,5 +46,15 @@ object Converters {
     @ColumnTypeConverter
     fun fromFaceData(faceData: FaceData?): String? {
         return faceData?.let { json.encodeToString(FaceData.serializer(), it) }
+    }
+
+    @ColumnTypeConverter
+    fun fromCameraOptions(cameraOptions: CameraOptions?): String? {
+        return cameraOptions?.let { json.encodeToString(CameraOptions.serializer(), it) }
+    }
+
+    @ColumnTypeConverter
+    fun toCameraOptions(data: String?): CameraOptions? {
+        return data?.let { json.decodeFromString(CameraOptions.serializer(), it) }
     }
 }

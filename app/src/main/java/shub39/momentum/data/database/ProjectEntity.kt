@@ -16,9 +16,11 @@
  */
 package shub39.momentum.data.database
 
+import androidx.room3.ColumnInfo
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
 import shub39.momentum.core.data_classes.AlarmData
+import shub39.momentum.core.data_classes.CameraOptions
 
 @Entity(tableName = "projects_table")
 data class ProjectEntity(
@@ -26,4 +28,5 @@ data class ProjectEntity(
     val title: String,
     val description: String,
     val alarm: AlarmData? = null,
+    @ColumnInfo(defaultValue = "{}") val cameraOptions: CameraOptions = CameraOptions(),
 )

@@ -14,29 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.viewmodels
+package shub39.momentum.analytics
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.core.data_classes.AnalyticsEvent
 import shub39.momentum.core.interfaces.AnalyticsWrapper
-import shub39.momentum.core.interfaces.SettingsPrefs
-import shub39.momentum.presentation.onboarding.OnboardingAction
 
-@KoinViewModel
-class OnboardingViewModel(
-    private val datastore: SettingsPrefs,
-    private val analytics: AnalyticsWrapper,
-) : ViewModel() {
-    fun onAction(action: OnboardingAction) =
-        viewModelScope.launch {
-            when (action) {
-                OnOnboardingDone -> {
-                    analytics.trackEvent(AnalyticsEvent.ONBOARDING_COMPLETED)
-                    datastore.updateOnboardingDone(true)
-                }
-            }
-        }
+class AnalyticsImpl : AnalyticsWrapper {
+    override fun trackEvent(event: AnalyticsEvent, properties: Map<String, Any>) {}
 }

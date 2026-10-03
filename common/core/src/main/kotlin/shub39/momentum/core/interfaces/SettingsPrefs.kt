@@ -52,8 +52,4 @@ interface SettingsPrefs {
     fun getFontFlow(): Flow<Fonts>
 
     suspend fun updateFonts(font: Fonts)
-
-    fun getLastChangelogShown(): Flow<String>
-
-    suspend fun updateLastChangelogShown(version: String)
 }

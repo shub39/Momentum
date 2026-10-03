@@ -19,7 +19,10 @@ package shub39.momentum.billing.data
 import com.revenuecat.purchases.CacheFetchPolicy
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.awaitCustomerInfo
+import com.revenuecat.purchases.interfaces.UpdatedCustomerInfoListener
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
 import shub39.momentum.billing.domain.BillingHandler
@@ -29,8 +32,17 @@ import shub39.momentum.billing.domain.SubscriptionResult
 class BillingHandlerImpl : BillingHandler {
     private val purchases by lazy { Purchases.sharedInstance }
 
+    override val isPlus = MutableStateFlow(false)
+
+    init {
+        purchases.updatedCustomerInfoListener = UpdatedCustomerInfoListener { customerInfo ->
+            isPlus.update { customerInfo.entitlements.all[ENTITLEMENT_PLUS]?.isActive == true }
+        }
+    }
+
     override suspend fun isPlusUser(): Boolean {
-        return userResult() is SubscriptionResult.Subscribed
+        userResult()
+        return isPlus.value
     }
 
     override suspend fun userResult(): SubscriptionResult {
@@ -42,14 +54,16 @@ class BillingHandlerImpl : BillingHandler {
                     )
                 }
             val entitlement = userInfo.entitlements.all[ENTITLEMENT_PLUS]
-            val isPlus = entitlement?.isActive
-            if (isPlus == true) {
+            val subscribed = entitlement?.isActive
+            if (subscribed == true) {
+                isPlus.update { true }
                 return SubscriptionResult.Subscribed
             }
         } catch (e: Exception) {
             return SubscriptionResult.Error(e)
         }
 
+        isPlus.update { false }
         return SubscriptionResult.NotSubscribed
     }
 

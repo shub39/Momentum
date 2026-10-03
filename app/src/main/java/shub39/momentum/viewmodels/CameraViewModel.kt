@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.presentation.project.ui.sections
+package shub39.momentum.viewmodels
 
 import android.content.Context
 import android.util.Log
@@ -34,16 +34,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.koin.core.annotation.KoinViewModel
+import shub39.momentum.core.data_classes.AnalyticsEvent
+import shub39.momentum.core.interfaces.AnalyticsWrapper
 
-class CameraViewModel : ViewModel() {
+@KoinViewModel
+class CameraViewModel(private val analytics: AnalyticsWrapper) : ViewModel() {
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
 
     private val _cameraSelector = MutableStateFlow(CameraSelector.DEFAULT_BACK_CAMERA)
     val cameraSelector = _cameraSelector.asStateFlow()
-
-    private val _showGuides = MutableStateFlow(false)
-    val showGuides: StateFlow<Boolean> = _showGuides.asStateFlow()
 
     private val cameraPreviewUseCase =
         Preview.Builder().build().apply {
@@ -70,21 +71,29 @@ class CameraViewModel : ViewModel() {
         }
     }
 
-    fun toggleCamera() {
-        _cameraSelector.update {
-            if (it == CameraSelector.DEFAULT_BACK_CAMERA) {
-                CameraSelector.DEFAULT_FRONT_CAMERA
-            } else {
-                CameraSelector.DEFAULT_BACK_CAMERA
-            }
-        }
+    fun setCameraSelector(selector: CameraSelector) {
+        _cameraSelector.value = selector
     }
 
-    fun toggleGuides() {
-        _showGuides.update { !it }
+    fun toggleCamera(): Boolean {
+        var isFront = false
+        _cameraSelector.update {
+            if (it == DEFAULT_BACK_CAMERA) {
+                isFront = true
+                DEFAULT_FRONT_CAMERA
+            } else {
+                isFront = false
+                DEFAULT_BACK_CAMERA
+            }
+        }
+        return isFront
     }
 
     fun takePhoto(context: Context, onPhotoCaptured: (File) -> Unit) {
+        analytics.trackEvent(
+            AnalyticsEvent.CAMERA_PHOTO_TAKEN,
+            mapOf("is_front_camera" to (_cameraSelector.value == DEFAULT_FRONT_CAMERA)),
+        )
         val outputDirectory = context.cacheDir
         val photoFile =
             File(outputDirectory, "temp_image_${Clock.System.now().toEpochMilliseconds()}.jpg")

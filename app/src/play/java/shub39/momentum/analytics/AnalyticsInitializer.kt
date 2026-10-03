@@ -14,16 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.billing.domain
+package shub39.momentum.analytics
 
-import kotlinx.coroutines.flow.StateFlow
+import android.content.Context
+import com.posthog.PostHog
+import com.posthog.android.PostHogAndroid
+import com.posthog.android.PostHogAndroidConfig
+import com.revenuecat.purchases.Purchases
+import shub39.momentum.BuildConfig
 
-interface BillingHandler {
-    val isPlus: StateFlow<Boolean>
+class AnalyticsInitializer {
+    private val config =
+        PostHogAndroidConfig(apiKey = BuildConfig.POSTHOG_API_KEY, host = BuildConfig.POSTHOG_HOST)
 
-    suspend fun isPlusUser(): Boolean
+    fun setup(context: Context) {
+        PostHogAndroid.setup(context, config)
 
-    suspend fun userResult(): SubscriptionResult
-
-    suspend fun isFoss(): Boolean
+        val rcId = Purchases.sharedInstance.appUserID
+        PostHog.identify("momentum:$rcId")
+    }
 }

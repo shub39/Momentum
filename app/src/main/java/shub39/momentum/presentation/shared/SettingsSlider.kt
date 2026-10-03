@@ -26,7 +26,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -43,6 +45,10 @@ fun SettingSlider(
     @IntRange steps: Int = 0,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
 ) {
+    val sliderSlate = rememberSliderState(value = value, steps = steps, trackRange = valueRange)
+
+    LaunchedEffect(value) { if (sliderSlate.value != value) sliderSlate.value = value }
+
     Column(modifier = modifier) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
@@ -61,12 +67,10 @@ fun SettingSlider(
         Spacer(modifier = Modifier.height(4.dp))
 
         Slider(
-            value = value,
+            state = sliderSlate,
+            enabled = enabled,
             onValueChange = onValueChange,
             onValueChangeFinished = onValueChangeFinished,
-            steps = steps,
-            valueRange = valueRange,
-            enabled = enabled,
             modifier = Modifier.fillMaxWidth(),
         )
     }

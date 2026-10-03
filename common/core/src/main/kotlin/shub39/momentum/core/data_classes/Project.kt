@@ -21,4 +21,5 @@ data class Project(
     val title: String,
     val description: String,
     val alarm: AlarmData? = null,
+    val cameraOptions: CameraOptions = CameraOptions(),
 )

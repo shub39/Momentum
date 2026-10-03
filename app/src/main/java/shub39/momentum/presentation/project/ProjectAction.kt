@@ -18,6 +18,7 @@ package shub39.momentum.presentation.project
 
 import android.content.Context
 import shub39.momentum.core.data_classes.AlarmData
+import shub39.momentum.core.data_classes.CameraOptions
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.MontageConfig
 import shub39.momentum.core.data_classes.PlayerAction
@@ -29,6 +30,8 @@ sealed interface ProjectAction {
     data class OnPlayerAction(val playerAction: PlayerAction) : ProjectAction
 
     data class OnUpdateReminder(val alarmData: AlarmData? = null) : ProjectAction
+
+    data class OnUpdateCameraOptions(val cameraOptions: CameraOptions) : ProjectAction
 
     data object OnUpdateDays : ProjectAction
 

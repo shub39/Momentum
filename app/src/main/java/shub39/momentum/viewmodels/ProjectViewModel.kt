@@ -27,6 +27,7 @@ import androidx.media3.exoplayer.ExoPlayer.Builder
 import androidx.media3.exoplayer.ExoPlayer.REPEAT_MODE_ALL
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.toAndroidUri
+import kotlin.time.TimeSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -44,11 +45,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.KoinViewModel
+import shub39.momentum.core.data_classes.AnalyticsEvent
 import shub39.momentum.core.data_classes.MontageConfig
 import shub39.momentum.core.data_classes.toMontageConfig
 import shub39.momentum.core.data_classes.toMontageOptions
 import shub39.momentum.core.enums.VideoAction
 import shub39.momentum.core.interfaces.AlarmScheduler
+import shub39.momentum.core.interfaces.AnalyticsWrapper
 import shub39.momentum.core.interfaces.FaceDetector
 import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.MontageState
@@ -68,6 +71,7 @@ class ProjectViewModel(
     private val scheduler: AlarmScheduler,
     private val imageHandler: ImageHandler,
     private val montageHandler: MontageHandler,
+    private val analytics: AnalyticsWrapper,
 ) : ViewModel() {
     private var observeDaysJob: Job? = null
 
@@ -94,6 +98,14 @@ class ProjectViewModel(
 
     fun onAction(action: ProjectAction) {
         when (action) {
+            is ProjectAction.OnUpdateCameraOptions ->
+                viewModelScope.launch {
+                    val currentProject = _state.value.project ?: return@launch
+                    val updatedProject = currentProject.copy(cameraOptions = action.cameraOptions)
+                    repository.upsertProject(updatedProject)
+                    _state.update { it.copy(project = updatedProject) }
+                }
+
             is OnUpdateProject ->
                 viewModelScope.launch {
                     repository.upsertProject(action.project)
@@ -103,18 +115,30 @@ class ProjectViewModel(
 
             is OnDeleteProject ->
                 viewModelScope.launch {
+                    analytics.trackEvent(
+                        AnalyticsEvent.PROJECT_DELETED,
+                        mapOf("days_count" to _state.value.days.size),
+                    )
                     repository.deleteProject(action.project)
                     scheduler.cancel(action.project)
                 }
 
             is OnDeleteDay ->
                 viewModelScope.launch {
+                    analytics.trackEvent(AnalyticsEvent.DAY_DELETED)
                     imageHandler.deleteDayImage(action.day)
                     repository.deleteDay(action.day)
                 }
 
             is OnUpsertDay ->
                 viewModelScope.launch {
+                    analytics.trackEvent(
+                        AnalyticsEvent.DAY_ADDED,
+                        mapOf(
+                            "is_new_image" to action.isNewImage,
+                            "has_comment" to (action.day.comment?.isNotBlank() == true),
+                        ),
+                    )
                     if (action.isNewImage) {
                         val uri = PlatformFile(action.day.image).toAndroidUri()
                         val faceData = faceDetector.getFaceDataFromUri(uri)
@@ -132,6 +156,7 @@ class ProjectViewModel(
 
             is OnCreateMontage ->
                 viewModelScope.launch {
+                    val startTime = TimeSource.Monotonic.markNow()
                     val projectId = _state.value.project?.id ?: return@launch
                     val options = _state.value.montageConfig.toMontageOptions(projectId)
 
@@ -142,6 +167,16 @@ class ProjectViewModel(
                             days = action.days,
                         )
                     if (builtMontage != null) {
+                        analytics.trackEvent(
+                            AnalyticsEvent.MONTAGE_CREATED,
+                            mapOf(
+                                "days_count" to action.days.size,
+                                "time_taken_ms" to startTime.elapsedNow().inWholeMilliseconds,
+                                "fps" to _state.value.montageConfig.framesPerSecond,
+                                "video_quality" to _state.value.montageConfig.videoQuality.name,
+                                "is_cached" to true,
+                            ),
+                        )
                         _exoPlayer.value?.apply {
                             clearMediaItems()
                             setMediaItem(MediaItem.fromUri(builtMontage.toUri()))
@@ -168,6 +203,18 @@ class ProjectViewModel(
                                 Log.d("ProjectViewModel", "Montage state: $state")
 
                                 if (state is MontageState.Success) {
+                                    analytics.trackEvent(
+                                        AnalyticsEvent.MONTAGE_CREATED,
+                                        mapOf(
+                                            "days_count" to action.days.size,
+                                            "time_taken_ms" to
+                                                startTime.elapsedNow().inWholeMilliseconds,
+                                            "fps" to _state.value.montageConfig.framesPerSecond,
+                                            "video_quality" to
+                                                _state.value.montageConfig.videoQuality.name,
+                                            "is_cached" to false,
+                                        ),
+                                    )
                                     val file =
                                         montageHandler.copyMontageToFiles(
                                             montage = state.file,
@@ -237,6 +284,13 @@ class ProjectViewModel(
 
             is OnEditMontageConfig -> {
                 viewModelScope.launch {
+                    analytics.trackEvent(
+                        AnalyticsEvent.MONTAGE_CONFIG_UPDATED,
+                        mapOf(
+                            "fps" to action.config.framesPerSecond,
+                            "video_quality" to action.config.videoQuality.name,
+                        ),
+                    )
                     _state.value.project?.id?.let { projectId ->
                         updateMontageConfig(projectId = projectId, config = action.config)
                     }
@@ -245,6 +299,10 @@ class ProjectViewModel(
 
             is OnUpdateReminder ->
                 viewModelScope.launch {
+                    analytics.trackEvent(
+                        AnalyticsEvent.REMINDER_UPDATED,
+                        mapOf("is_enabled" to (action.alarmData != null)),
+                    )
                     val newProject = _state.value.project!!.copy(alarm = action.alarmData)
 
                     repository.upsertProject(newProject)
@@ -267,6 +325,11 @@ class ProjectViewModel(
             OnStartFaceScan ->
                 viewModelScope.launch {
                     if (_state.value.days.isEmpty()) return@launch
+
+                    analytics.trackEvent(
+                        AnalyticsEvent.FACE_SCAN_STARTED,
+                        mapOf("days_count" to _state.value.days.size),
+                    )
 
                     _state.update { it.copy(scanState = ScanState.Processing(0f)) }
                     val size = _state.value.days.size
@@ -315,7 +378,7 @@ class ProjectViewModel(
                     .getDays()
                     .onEach { days ->
                         val filteredDays =
-                            async(Dispatchers.Default) {
+                            this.async(Dispatchers.Default) {
                                 days
                                     .filter { it.projectId == _state.value.project?.id }
                                     .sortedByDescending { it.date }

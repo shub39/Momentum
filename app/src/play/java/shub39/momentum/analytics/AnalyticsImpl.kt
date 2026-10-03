@@ -14,29 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.viewmodels
+package shub39.momentum.analytics
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import org.koin.core.annotation.KoinViewModel
+import com.posthog.PostHog
+import kotlin.time.Clock
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import shub39.momentum.BuildConfig
+import shub39.momentum.billing.domain.BillingHandler
 import shub39.momentum.core.data_classes.AnalyticsEvent
 import shub39.momentum.core.interfaces.AnalyticsWrapper
-import shub39.momentum.core.interfaces.SettingsPrefs
-import shub39.momentum.presentation.onboarding.OnboardingAction
 
-@KoinViewModel
-class OnboardingViewModel(
-    private val datastore: SettingsPrefs,
-    private val analytics: AnalyticsWrapper,
-) : ViewModel() {
-    fun onAction(action: OnboardingAction) =
-        viewModelScope.launch {
-            when (action) {
-                OnOnboardingDone -> {
-                    analytics.trackEvent(AnalyticsEvent.ONBOARDING_COMPLETED)
-                    datastore.updateOnboardingDone(true)
-                }
-            }
-        }
+class AnalyticsImpl : AnalyticsWrapper, KoinComponent {
+    private fun getDefaultProperties() =
+        mapOf(
+            "app_name" to "Momentum",
+            "app_version" to BuildConfig.VERSION_NAME,
+            "time_stamp" to Clock.System.now().toEpochMilliseconds().div(1000),
+            "is_pro" to get<BillingHandler>().isPlus.value,
+        )
+
+    override fun trackEvent(event: AnalyticsEvent, properties: Map<String, Any>) {
+        PostHog.capture(event = event.name, properties = getDefaultProperties() + properties)
+    }
 }

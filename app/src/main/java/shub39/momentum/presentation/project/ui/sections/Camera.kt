@@ -26,6 +26,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,9 +45,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -54,16 +58,20 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.coil3.CoilImage
 import shub39.momentum.R
+import shub39.momentum.core.data_classes.CameraOptions
 
 @SuppressLint("SourceLockedOrientationActivity")
 @Composable
 fun Camera(
     surfaceRequest: SurfaceRequest?,
-    showGuides: Boolean,
+    cameraOptions: CameraOptions,
     cameraSelector: CameraSelector,
+    lastImage: String?,
+    onUpdateCameraOptions: (CameraOptions) -> Unit,
     onToggleCamera: () -> Unit,
-    onToggleGuides: () -> Unit,
     onTakePhoto: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -82,21 +90,23 @@ fun Camera(
         controller.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-        val listener = object : OrientationEventListener(context) {
-            override fun onOrientationChanged(orientation: Int) {
-                if (orientation == ORIENTATION_UNKNOWN) return
-                val newRotation = when (orientation) {
-                    !in 46..315 -> 0f
-                    in 46..135 -> 270f
-                    in 136..225 -> 180f
-                    in 226..315 -> 90f
-                    else -> 0f
-                }
-                if (rotation != newRotation) {
-                    rotation = newRotation
+        val listener =
+            object : OrientationEventListener(context) {
+                override fun onOrientationChanged(orientation: Int) {
+                    if (orientation == ORIENTATION_UNKNOWN) return
+                    val newRotation =
+                        when (orientation) {
+                            !in 46..315 -> 0f
+                            in 46..135 -> 270f
+                            in 136..225 -> 180f
+                            in 226..315 -> 90f
+                            else -> 0f
+                        }
+                    if (rotation != newRotation) {
+                        rotation = newRotation
+                    }
                 }
             }
-        }
         listener.enable()
 
         onDispose {
@@ -107,10 +117,7 @@ fun Camera(
         }
     }
 
-    val animatedRotation by animateFloatAsState(
-        targetValue = rotation,
-        label = "IconRotation"
-    )
+    val animatedRotation by animateFloatAsState(targetValue = rotation, label = "IconRotation")
 
     Box(modifier = modifier.fillMaxSize()) {
         surfaceRequest?.let { request ->
@@ -126,17 +133,33 @@ fun Camera(
             )
         }
 
-        if (showGuides) {
+        if (cameraOptions.showGuides) {
             CameraGuides()
         }
 
-        Box(modifier = Modifier.systemBarsPadding()) {
+        if (cameraOptions.showLastImage && lastImage != null) {
+            CoilImage(
+                imageModel = { lastImage },
+                imageOptions = ImageOptions(contentScale = ContentScale.Crop),
+                modifier =
+                    Modifier.fillMaxSize()
+                        .alpha(0.4f)
+                        .scale(
+                            scaleX =
+                                if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) -1f
+                                else 1f,
+                            scaleY = 1f,
+                        ),
+            )
+        }
+
+        Box(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
             FilledTonalIconButton(
                 onClick = onNavigateBack,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.TopStart)
-                    .graphicsLayer { rotationZ = animatedRotation },
+                modifier =
+                    Modifier.padding(16.dp).align(Alignment.TopStart).graphicsLayer {
+                        rotationZ = animatedRotation
+                    },
             ) {
                 Icon(
                     painter = painterResource(R.drawable.nav_arrow_back),
@@ -144,45 +167,43 @@ fun Camera(
                 )
             }
 
-            Box(
-                modifier = Modifier.fillMaxSize().padding(bottom = 32.dp),
-                contentAlignment = Alignment.BottomCenter,
+            Row(
+                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(32.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 48.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                FilledTonalIconToggleButton(
+                    checked = cameraOptions.showGuides,
+                    onCheckedChange = {
+                        onUpdateCameraOptions(cameraOptions.copy(showGuides = it))
+                    },
+                    modifier = Modifier.graphicsLayer { rotationZ = animatedRotation },
                 ) {
-                    FilledTonalIconToggleButton(
-                        checked = showGuides,
-                        onCheckedChange = { onToggleGuides() },
-                        modifier = Modifier.graphicsLayer { rotationZ = animatedRotation },
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.rounded_grid),
-                            contentDescription = "Toggle Grid",
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(R.drawable.rounded_grid),
+                        contentDescription = "Toggle Grid",
+                    )
+                }
 
-                    FilledTonalIconButton(
-                        onClick = onTakePhoto,
-                        modifier =
-                            Modifier
-                                .size(
-                                    IconButtonDefaults.largeContainerSize(
-                                        IconButtonDefaults.IconButtonWidthOption.Wide
-                                    )
+                FilledTonalIconButton(
+                    onClick = onTakePhoto,
+                    modifier =
+                        Modifier.size(
+                                IconButtonDefaults.largeContainerSize(
+                                    IconButtonDefaults.IconButtonWidthOption.Wide
                                 )
-                                .graphicsLayer { rotationZ = animatedRotation },
-                        shapes = IconButtonDefaults.shapes(),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.camera),
-                            contentDescription = "Take Photo",
-                            modifier = Modifier.size(IconButtonDefaults.largeIconSize),
-                        )
-                    }
+                            )
+                            .graphicsLayer { rotationZ = animatedRotation },
+                    shapes = IconButtonDefaults.shapes(),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.camera),
+                        contentDescription = "Take Photo",
+                        modifier = Modifier.size(IconButtonDefaults.largeIconSize),
+                    )
+                }
 
+                Column {
                     FilledTonalIconButton(
                         onClick = onToggleCamera,
                         modifier = Modifier.graphicsLayer { rotationZ = animatedRotation },
@@ -190,6 +211,20 @@ fun Camera(
                         Icon(
                             painter = painterResource(R.drawable.sync),
                             contentDescription = "Switch Camera",
+                        )
+                    }
+
+                    FilledTonalIconToggleButton(
+                        checked = cameraOptions.showLastImage,
+                        onCheckedChange = {
+                            onUpdateCameraOptions(cameraOptions.copy(showLastImage = it))
+                        },
+                        enabled = lastImage != null,
+                        modifier = Modifier.graphicsLayer { rotationZ = animatedRotation },
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.show_last_image),
+                            contentDescription = "Toggle show last Image",
                         )
                     }
                 }

@@ -104,7 +104,10 @@ fun Backup(
                             },
                             colors = listItemColors(),
                             supportingContent = {
-                                Text(text = stringResource(R.string.export_desc))
+                                Text(
+                                    text =
+                                        "${stringResource(R.string.export_desc)}. ${stringResource(R.string.backup_caution)}"
+                                )
                             },
                         )
 

@@ -32,7 +32,13 @@ fun Day.toSchema(): DaySchema =
     )
 
 fun Project.toSchema(): ProjectSchema =
-    ProjectSchema(id = id, title = title, description = description, alarm = alarm)
+    ProjectSchema(
+        id = id,
+        title = title,
+        description = description,
+        alarm = alarm,
+        cameraOptions = cameraOptions,
+    )
 
 fun DaySchema.toDay(): Day =
     Day(
@@ -46,7 +52,13 @@ fun DaySchema.toDay(): Day =
     )
 
 fun ProjectSchema.toProject(): Project =
-    Project(id = id, title = title, description = description, alarm = alarm)
+    Project(
+        id = id,
+        title = title,
+        description = description,
+        alarm = alarm,
+        cameraOptions = cameraOptions,
+    )
 
 fun MontageOptionsSchema.toMontageOptions(): MontageOptions =
     MontageOptions(

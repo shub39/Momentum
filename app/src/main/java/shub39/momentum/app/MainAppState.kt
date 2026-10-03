@@ -31,6 +31,5 @@ data class MainAppState(
     val isOnboardingDone: Boolean = true,
     val theme: Theme = Theme(),
     val isPlusUser: Boolean = false,
-    val currentChangelog: VersionEntry? = null, // if not null then shows changelog
     val isFoss: Boolean = false,
 )

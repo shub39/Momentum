@@ -14,16 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.billing.domain
+package shub39.momentum.analytics
 
-import kotlinx.coroutines.flow.StateFlow
+import android.content.Context
 
-interface BillingHandler {
-    val isPlus: StateFlow<Boolean>
-
-    suspend fun isPlusUser(): Boolean
-
-    suspend fun userResult(): SubscriptionResult
-
-    suspend fun isFoss(): Boolean
+class AnalyticsInitializer {
+    fun setup(context: Context) {}
 }

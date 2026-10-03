@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -31,17 +30,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
-import shub39.momentum.BuildConfig
 import shub39.momentum.app.MainAppState
 import shub39.momentum.billing.domain.BillingHandler
+import shub39.momentum.core.data_classes.AnalyticsEvent
+import shub39.momentum.core.interfaces.AnalyticsWrapper
 import shub39.momentum.core.interfaces.SettingsPrefs
-import shub39.momentum.data.ChangelogManager
 
 @KoinViewModel
 class MainAppViewModel(
     private val datastore: SettingsPrefs,
     private val billingHandler: BillingHandler,
-    private val changelogManager: ChangelogManager,
+    private val analytics: AnalyticsWrapper,
 ) : ViewModel() {
     private var observerJob: Job? = null
 
@@ -51,8 +50,8 @@ class MainAppViewModel(
             .asStateFlow()
             .onStart {
                 checkSubscription()
-                checkChangelog()
                 observeData()
+                analytics.trackEvent(AnalyticsEvent.APP_OPENED)
             }
             .stateIn(
                 scope = viewModelScope,
@@ -70,25 +69,8 @@ class MainAppViewModel(
         }
     }
 
-    fun dismissChangelog() {
-        _state.update { it.copy(currentChangelog = null) }
-    }
-
-    private fun checkChangelog() {
-        viewModelScope.launch {
-            val changeLogs = changelogManager.changelogs.first()
-            val lastShownChangelog = datastore.getLastChangelogShown().first()
-
-            if (lastShownChangelog.isBlank()) {
-                changeLogs.firstOrNull()?.version?.let { datastore.updateLastChangelogShown(it) }
-                return@launch // do not show changelog on first launch
-            }
-
-            if (BuildConfig.DEBUG || lastShownChangelog != BuildConfig.VERSION_NAME) {
-                _state.update { it.copy(currentChangelog = changeLogs.firstOrNull()) }
-                datastore.updateLastChangelogShown(BuildConfig.VERSION_NAME)
-            }
-        }
+    fun onOpenPaywall() {
+        analytics.trackEvent(AnalyticsEvent.PAYWALL_OPENED)
     }
 
     private fun observeData() {

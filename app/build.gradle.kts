@@ -14,6 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import java.util.Properties
+
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
@@ -24,8 +42,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1840
-val appVersionName = "1.8.4"
+val appVersionCode = 1850
+val appVersionName = "1.8.5"
 val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
@@ -58,6 +76,7 @@ android {
         }
 
         create("beta") {
+            resValue("string", "app_name", "$appName Beta")
             applicationIdSuffix = ".beta"
             versionNameSuffix = "-beta$gitHash"
             isMinifyEnabled = true
@@ -69,6 +88,7 @@ android {
         }
 
         debug {
+            resValue("string", "app_name", "$appName Debug")
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }
@@ -78,6 +98,20 @@ android {
 
     productFlavors {
         create("play") {
+            val localProperties = Properties()
+            val localFile = rootProject.file("local.properties")
+
+            if (localFile.exists()) localProperties.load(localFile.inputStream())
+
+            val postHogApiKey = localProperties.getProperty("POSTHOG_API_KEY") ?: ""
+            val postHogHost = localProperties.getProperty("POSTHOG_HOST") ?: ""
+
+            if (postHogHost.isBlank() || postHogApiKey.isBlank()) {
+                println("WARNING: POSTHOG_API_KEY and POSTHOG_HOST must be set in local.properties")
+            }
+            buildConfigField("String", "POSTHOG_API_KEY", "\"$postHogApiKey\"")
+            buildConfigField("String", "POSTHOG_HOST", "\"$postHogHost\"")
+
             dimension = "version"
             applicationIdSuffix = ".play"
             versionNameSuffix = "-play"
@@ -158,6 +192,7 @@ dependencies {
 
     "playImplementation"(libs.purchases.ui)
     "playImplementation"(libs.purchases)
+    "playImplementation"("com.posthog:posthog-android:3.+")
 
     implementation(libs.camera.core)
     implementation(libs.camera.camera2)

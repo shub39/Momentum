@@ -17,6 +17,7 @@
 package shub39.momentum.presentation.settings
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -61,6 +62,7 @@ fun SettingsGraph(
         entryProvider =
             entryProvider {
                 entry<Routes.Root> {
+                    LaunchedEffect(Unit) { onAction(SettingsAction.OnOpenSettings) }
                     Root(
                         onNavigateBack = onNavigateBack,
                         onNavigateToOnboarding = onNavigateToOnboarding,
@@ -84,6 +86,7 @@ fun SettingsGraph(
                 }
 
                 entry<Routes.Changelog>(metadata = horizontalTransitionMetadata()) {
+                    LaunchedEffect(Unit) { onAction(SettingsAction.OnOpenChangelog) }
                     Changelog(
                         changelog = state.changelog,
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
@@ -91,6 +94,7 @@ fun SettingsGraph(
                 }
 
                 entry<Routes.About>(metadata = horizontalTransitionMetadata()) {
+                    LaunchedEffect(Unit) { onAction(SettingsAction.OnOpenAbout) }
                     About(
                         versionName = state.changelog.firstOrNull()?.version ?: "",
                         onNavigateBack = { if (backStack.size != 1) backStack.removeLastOrNull() },
