@@ -19,8 +19,10 @@ package shub39.momentum.presentation.shared
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
@@ -30,6 +32,11 @@ private const val endCornerRadius = 16
 @Composable
 fun listItemColors(): ListItemColors {
     return ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+}
+
+@Composable
+fun rectListItemShapes(): ListItemShapes {
+    return ListItemDefaults.shapes(shape = RectangleShape)
 }
 
 fun leadingItemShape(): Shape =

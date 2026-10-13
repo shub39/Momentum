@@ -51,6 +51,7 @@ import shub39.momentum.presentation.shared.endItemShape
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
+import shub39.momentum.presentation.shared.rectListItemShapes
 
 @Composable
 fun Backup(
@@ -102,6 +103,7 @@ fun Backup(
                                     contentDescription = null,
                                 )
                             },
+                            shapes = rectListItemShapes(),
                             colors = listItemColors(),
                             supportingContent = {
                                 Text(
@@ -151,6 +153,7 @@ fun Backup(
                     Column(modifier = Modifier.clip(endItemShape())) {
                         ListItem(
                             colors = listItemColors(),
+                            shapes = rectListItemShapes(),
                             leadingContent = {
                                 Icon(
                                     painter = painterResource(R.drawable.download),
