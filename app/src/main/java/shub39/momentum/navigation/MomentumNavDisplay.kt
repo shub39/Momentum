@@ -194,11 +194,12 @@ private fun EntryProviderScope<Routes>.projectScreens(
     entry<Project.Camera>(metadata = verticalTransitionMetadata()) { entry ->
         val projectVM = koinViewModel<ProjectViewModel>()
         val state by projectVM.state.collectAsStateWithLifecycle()
-        val cameraViewModel: CameraViewModel = koinViewModel()
 
+        val cameraViewModel: CameraViewModel = koinViewModel()
         val surfaceRequest by cameraViewModel.surfaceRequest.collectAsStateWithLifecycle()
         val cameraSelector: CameraSelector by
             cameraViewModel.cameraSelector.collectAsStateWithLifecycle()
+
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
 
