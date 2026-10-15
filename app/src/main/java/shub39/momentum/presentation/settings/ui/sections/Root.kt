@@ -24,9 +24,8 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -48,13 +47,13 @@ import shub39.momentum.R
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.PageFill
 import shub39.momentum.presentation.shared.detachedItemShape
 import shub39.momentum.presentation.shared.endItemShape
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Root(
     onNavigateBack: () -> Unit,
@@ -66,167 +65,136 @@ fun Root(
     onNavigateToBackup: () -> Unit,
     currentVersion: String,
     modifier: Modifier = Modifier,
-) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            MediumFlexibleTopAppBar(
-                scrollBehavior = scrollBehavior,
-                title = {
-                    Text(text = stringResource(R.string.settings), fontFamily = flexFontEmphasis())
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            painter = painterResource(R.drawable.nav_arrow_back),
-                            contentDescription = "Navigate Back",
-                        )
-                    }
-                },
-            )
-        },
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding =
-                PaddingValues(
-                    top = paddingValues.calculateTopPadding() + 16.dp,
-                    bottom = paddingValues.calculateBottomPadding() + 60.dp,
-                    start =
-                        paddingValues.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
-                    end = paddingValues.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
-                ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            // momentum pro
-            item {
-                ListItem(
-                    content = { Text(text = stringResource(R.string.pro)) },
-                    colors = listItemColors(),
-                    modifier =
-                        Modifier.clip(detachedItemShape()).clickable { onNavigateToPaywall() },
-                    trailingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_forward),
-                            contentDescription = "Grit Plus",
+) =
+    PageFill(modifier) {
+        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+        Scaffold(
+            modifier =
+                Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).widthIn(max = 700.dp),
+            topBar = {
+                MediumFlexibleTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    title = {
+                        Text(
+                            text = stringResource(R.string.settings),
+                            fontFamily = flexFontEmphasis(),
                         )
                     },
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.app_icon),
-                            contentDescription = null,
-                            modifier = Modifier.size(30.dp),
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                painter = painterResource(R.drawable.nav_arrow_back),
+                                contentDescription = "Navigate Back",
+                            )
+                        }
                     },
                 )
-            }
-
-            // look and feel
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            },
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding =
+                    PaddingValues(
+                        top = paddingValues.calculateTopPadding() + 16.dp,
+                        bottom = paddingValues.calculateBottomPadding() + 60.dp,
+                        start =
+                            paddingValues.calculateStartPadding(LocalLayoutDirection.current) +
+                                16.dp,
+                        end =
+                            paddingValues.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
+                    ),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                // momentum pro
+                item {
                     ListItem(
+                        content = { Text(text = stringResource(R.string.pro)) },
                         colors = listItemColors(),
-                        content = { Text(text = stringResource(R.string.backup)) },
-                        supportingContent = { Text(text = stringResource(R.string.backup_info)) },
-                        leadingContent = {
-                            Icon(
-                                painter = painterResource(R.drawable.backup),
-                                contentDescription = "Navigate",
-                                modifier = Modifier.size(24.dp),
-                            )
-                        },
+                        modifier =
+                            Modifier.clip(detachedItemShape()).clickable { onNavigateToPaywall() },
                         trailingContent = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_forward),
-                                contentDescription = "Go",
+                                contentDescription = "Grit Plus",
                             )
-                        },
-                        modifier =
-                            Modifier.clip(leadingItemShape()).clickable { onNavigateToBackup() },
-                    )
-
-                    ListItem(
-                        colors = listItemColors(),
-                        content = { Text(text = stringResource(R.string.look_and_feel)) },
-                        supportingContent = {
-                            Text(text = stringResource(R.string.look_and_feel_info))
                         },
                         leadingContent = {
                             Icon(
-                                painter = painterResource(R.drawable.palette),
-                                contentDescription = "Navigate",
-                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(R.drawable.app_icon),
+                                contentDescription = null,
+                                modifier = Modifier.size(30.dp),
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                         },
-                        trailingContent = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_forward),
-                                contentDescription = "Go",
-                            )
-                        },
-                        modifier =
-                            Modifier.clip(endItemShape()).clickable { onNavigateToLookAndFeel() },
                     )
                 }
-            }
 
-            // onboarding
-            item {
-                ListItem(
-                    colors = listItemColors(),
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.star),
-                            contentDescription = "Onboarding",
+                // look and feel
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        ListItem(
+                            colors = listItemColors(),
+                            content = { Text(text = stringResource(R.string.backup)) },
+                            supportingContent = {
+                                Text(text = stringResource(R.string.backup_info))
+                            },
+                            leadingContent = {
+                                Icon(
+                                    painter = painterResource(R.drawable.backup),
+                                    contentDescription = "Navigate",
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            },
+                            trailingContent = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_forward),
+                                    contentDescription = "Go",
+                                )
+                            },
+                            modifier =
+                                Modifier.clip(leadingItemShape()).clickable { onNavigateToBackup() },
                         )
-                    },
-                    content = { Text(text = stringResource(R.string.onboarding)) },
-                    supportingContent = { Text(text = stringResource(R.string.onboarding_desc)) },
-                    trailingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_forward),
-                            contentDescription = "Go",
-                        )
-                    },
-                    modifier =
-                        Modifier.clip(detachedItemShape()).clickable { onNavigateToOnboarding() },
-                )
-            }
 
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    // about
+                        ListItem(
+                            colors = listItemColors(),
+                            content = { Text(text = stringResource(R.string.look_and_feel)) },
+                            supportingContent = {
+                                Text(text = stringResource(R.string.look_and_feel_info))
+                            },
+                            leadingContent = {
+                                Icon(
+                                    painter = painterResource(R.drawable.palette),
+                                    contentDescription = "Navigate",
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            },
+                            trailingContent = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_forward),
+                                    contentDescription = "Go",
+                                )
+                            },
+                            modifier =
+                                Modifier.clip(endItemShape()).clickable {
+                                    onNavigateToLookAndFeel()
+                                },
+                        )
+                    }
+                }
+
+                // onboarding
+                item {
                     ListItem(
                         colors = listItemColors(),
                         leadingContent = {
                             Icon(
-                                painter = painterResource(R.drawable.info),
-                                contentDescription = null,
+                                painter = painterResource(R.drawable.star),
+                                contentDescription = "Onboarding",
                             )
                         },
-                        supportingContent = { Text(text = "Momentum $currentVersion") },
-                        trailingContent = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_forward),
-                                contentDescription = "Navigate",
-                            )
-                        },
-                        content = { Text(text = stringResource(R.string.about)) },
-                        modifier =
-                            Modifier.clip(leadingItemShape()).clickable { onNavigateToAppInfo() },
-                    )
-
-                    // changelog
-                    ListItem(
-                        colors = listItemColors(),
-                        content = { Text(text = stringResource(R.string.changelog)) },
-                        leadingContent = {
-                            Icon(
-                                painter = painterResource(R.drawable.logs),
-                                contentDescription = "Changelog",
-                            )
+                        content = { Text(text = stringResource(R.string.onboarding)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.onboarding_desc))
                         },
                         trailingContent = {
                             Icon(
@@ -235,13 +203,61 @@ fun Root(
                             )
                         },
                         modifier =
-                            Modifier.clip(endItemShape()).clickable { onNavigateToChangelog() },
+                            Modifier.clip(detachedItemShape()).clickable {
+                                onNavigateToOnboarding()
+                            },
                     )
+                }
+
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        // about
+                        ListItem(
+                            colors = listItemColors(),
+                            leadingContent = {
+                                Icon(
+                                    painter = painterResource(R.drawable.info),
+                                    contentDescription = null,
+                                )
+                            },
+                            supportingContent = { Text(text = "Momentum $currentVersion") },
+                            trailingContent = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_forward),
+                                    contentDescription = "Navigate",
+                                )
+                            },
+                            content = { Text(text = stringResource(R.string.about)) },
+                            modifier =
+                                Modifier.clip(leadingItemShape()).clickable {
+                                    onNavigateToAppInfo()
+                                },
+                        )
+
+                        // changelog
+                        ListItem(
+                            colors = listItemColors(),
+                            content = { Text(text = stringResource(R.string.changelog)) },
+                            leadingContent = {
+                                Icon(
+                                    painter = painterResource(R.drawable.logs),
+                                    contentDescription = "Changelog",
+                                )
+                            },
+                            trailingContent = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_forward),
+                                    contentDescription = "Go",
+                                )
+                            },
+                            modifier =
+                                Modifier.clip(endItemShape()).clickable { onNavigateToChangelog() },
+                        )
+                    }
                 }
             }
         }
     }
-}
 
 @Preview
 @Composable

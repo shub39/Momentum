@@ -412,6 +412,7 @@ class ProjectViewModel(
                                 ?: MontageConfig()
 
                         _state.update { state -> state.copy(montageConfig = config) }
+                        refreshDays()
                     }
                 }
                 .launchIn(this)

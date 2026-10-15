@@ -47,6 +47,8 @@ data class ListDetailScene<T : Any>(
     override val entries: List<NavEntry<T>> = listOf(listEntry, detailEntry)
     override val content: @Composable (() -> Unit) = {
         Row(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.weight(0.4f)) { listEntry.Content() }
+
             // Let the detail entry know not to display a back button.
             CompositionLocalProvider(LocalBackButtonVisibility provides false) {
                 Column(modifier = Modifier.weight(0.6f)) {
@@ -62,8 +64,6 @@ data class ListDetailScene<T : Any>(
                     }
                 }
             }
-
-            Column(modifier = Modifier.weight(0.4f)) { listEntry.Content() }
         }
     }
 
@@ -109,8 +109,7 @@ class ListDetailSceneStrategy<T : Any>(val windowSizeClass: WindowSizeClass) : S
         if (windowSizeClass.isCompact()) return null
 
         val listEntry =
-            entries.lastOrNull()?.takeIf { it.metadata.contains(ListDetailScene.ListKey) }
-                ?: return null
+            entries.findLast { it.metadata.contains(ListDetailScene.ListKey) } ?: return null
         val detailEntry =
             entries.findLast { it.metadata.contains(ListDetailScene.DetailKey) } ?: return null
 

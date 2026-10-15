@@ -66,36 +66,53 @@ class TopLevelBackstack(startKey: Routes = Routes.Home) {
     fun isRouteOnTop(route: Routes) = backStack.lastOrNull() == route
 
     fun add(route: Routes) {
-        if (route is Routes.Project) {
-            val dayInfoRoutes = backStack.filterIsInstance<Routes.Project.DayInfoView>()
-            backStack.removeAll(dayInfoRoutes)
+        if (isRouteOnTop(route)) return
 
-            backStack.add(route)
-            return
-        }
-
-        if (route is Routes.Settings) {
-            val settingsRoutes = backStack.filterIsInstance<Routes.Settings>()
-            backStack.removeAll(settingsRoutes)
-
-            if (route != Routes.Settings.SettingsRoot) {
-                backStack.add(Routes.Settings.SettingsRoot)
+        when (route) {
+            is Routes.Project.Camera -> {
+                backStack.remove(route)
+                backStack.add(route)
             }
-            backStack.add(route)
-        } else {
-            backStack.removeAll { it.getSubtype() is Routes.Settings }
-
-            // Remove if already exists to move it to the top
-            backStack.remove(route)
-
-            // Enforce max 2 unique routes per subtype
-            val subtype = route.getSubtype()
-            val existingOfSubtype = backStack.filter { it.getSubtype() == subtype }
-            if (existingOfSubtype.size >= 2) {
-                backStack.remove(existingOfSubtype.first())
+            is Routes.Project.DayInfoView -> {
+                backStack.removeAll { it is Routes.Project.DayInfoView }
+                backStack.add(route)
             }
+            is Routes.Project.ProjectMontageView -> {
+                backStack.remove(route)
+                backStack.add(route)
+            }
+            is Routes.Project.ProjectCalendarView -> {
+                backStack.remove(route)
+                backStack.add(route)
+            }
+            is Routes.Project.ProjectDetails -> {
+                backStack.removeAll { it is Routes.Project }
+                backStack.add(route)
+            }
+            is Routes.Settings -> {
+                val settingsRoutes = backStack.filterIsInstance<Routes.Settings>()
+                backStack.removeAll(settingsRoutes)
 
-            backStack.add(route)
+                if (route != Routes.Settings.SettingsRoot) {
+                    backStack.add(Routes.Settings.SettingsRoot)
+                }
+                backStack.add(route)
+            }
+            else -> {
+                backStack.removeAll { it.getSubtype() is Routes.Settings }
+
+                // Remove if already exists to move it to the top
+                backStack.remove(route)
+
+                // Enforce max 2 unique routes per subtype
+                val subtype = route.getSubtype()
+                val existingOfSubtype = backStack.filter { it.getSubtype() == subtype }
+                if (existingOfSubtype.size >= 2) {
+                    backStack.remove(existingOfSubtype.first())
+                }
+
+                backStack.add(route)
+            }
         }
     }
 

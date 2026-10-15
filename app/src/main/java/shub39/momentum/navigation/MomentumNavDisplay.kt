@@ -85,7 +85,7 @@ fun MomentumNavDisplay(
                     backStack = stack.backStack,
                     sharedTransitionScope = this,
                     onBack = { stack.removeLast() },
-                    sceneStrategies = listOf(twoPaneStrategy, listDetailStrategy),
+                    sceneStrategies = listOf(listDetailStrategy, twoPaneStrategy),
                     entryProvider =
                         entryProvider {
                             entry<Home>(
