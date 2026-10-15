@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.0
+- Miscellaneous UI updates and Fixes
+- Updated App Icon
+- Miscellaneous Bug Fixes
+
 ## 1.8.6
 - Added option to overlay last image in camera
 - Camera options are now saved on a per-project basis
