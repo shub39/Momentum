@@ -26,10 +26,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -74,6 +75,10 @@ fun Root(
             topBar = {
                 MediumFlexibleTopAppBar(
                     scrollBehavior = scrollBehavior,
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            scrolledContainerColor = colorScheme.surface
+                        ),
                     title = {
                         Text(
                             text = stringResource(R.string.settings),
@@ -81,7 +86,7 @@ fun Root(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
+                        FilledTonalIconButton(onClick = onNavigateBack) {
                             Icon(
                                 painter = painterResource(R.drawable.nav_arrow_back),
                                 contentDescription = "Navigate Back",

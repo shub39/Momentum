@@ -39,6 +39,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -84,6 +85,8 @@ fun About(versionName: String, onNavigateBack: () -> Unit, modifier: Modifier = 
         topBar = {
             MediumFlexibleTopAppBar(
                 scrollBehavior = scrollBehavior,
+                colors =
+                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
                 title = {
                     Text(text = stringResource(R.string.about), fontFamily = flexFontEmphasis())
                 },

@@ -30,6 +30,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -78,6 +79,8 @@ fun Backup(
                         )
                     }
                 },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
             )
         },
     ) { padding ->

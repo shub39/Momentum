@@ -108,10 +108,11 @@ class ListDetailSceneStrategy<T : Any>(val windowSizeClass: WindowSizeClass) : S
 
         if (windowSizeClass.isCompact()) return null
 
+        val detailEntry =
+            entries.lastOrNull()?.takeIf { it.metadata.contains(ListDetailScene.DetailKey) }
+                ?: return null
         val listEntry =
             entries.findLast { it.metadata.contains(ListDetailScene.ListKey) } ?: return null
-        val detailEntry =
-            entries.findLast { it.metadata.contains(ListDetailScene.DetailKey) } ?: return null
 
         // We use the list's contentKey to uniquely identify the scene.
         // This allows the detail panes to be animated in and out by the scene, rather than

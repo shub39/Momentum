@@ -38,6 +38,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -45,6 +46,7 @@ import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -126,8 +128,12 @@ fun ProjectDetails(
                     subtitle = {
                         Text(text = state.project.description, fontFamily = flexFontRounded())
                     },
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            scrolledContainerColor = colorScheme.surface
+                        ),
                     navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
+                        FilledTonalIconButton(onClick = onNavigateBack) {
                             Icon(
                                 painter = painterResource(R.drawable.nav_arrow_back),
                                 contentDescription = "Navigate Back",
