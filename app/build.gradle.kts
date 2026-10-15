@@ -42,8 +42,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1860
-val appVersionName = "1.8.6"
+val appVersionCode = 1900
+val appVersionName = "1.9.0"
 val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
@@ -52,12 +52,12 @@ val abiCodes = mapOf("arm64-v8a" to 0, "armeabi-v7a" to -1, "x86_64" to -2, "x86
 
 android {
     namespace = appNameSpace
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     defaultConfig {
         applicationId = appNameSpace
         minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.compileSdk.get().toInt()
+        targetSdk = 37
         versionCode = appVersionCode
         versionName = appVersionName
 
@@ -203,6 +203,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.material3.adaptive.navigation3)
     implementation(libs.calendar)
     implementation(libs.filekit.core)
     implementation(libs.filekit.dialogs.compose)

@@ -16,13 +16,10 @@
  */
 package shub39.momentum.presentation.settings.ui.sections
 
-import android.R.color.system_accent1_200
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,31 +27,29 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -83,6 +78,7 @@ import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.SettingsState
 import shub39.momentum.presentation.shared.ColorPickerDialog
 import shub39.momentum.presentation.shared.ExpressiveSwitch
+import shub39.momentum.presentation.shared.ListSelect
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.detachedItemShape
 import shub39.momentum.presentation.shared.endItemShape
@@ -90,11 +86,12 @@ import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
 import shub39.momentum.presentation.shared.middleItemShape
+import shub39.momentum.presentation.shared.rectListItemShapes
 import shub39.momentum.presentation.toDisplayString
 import shub39.momentum.presentation.toMPaletteStyle
 import shub39.momentum.presentation.toStringRes
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LookAndFeel(
     state: SettingsState,
@@ -118,8 +115,10 @@ fun LookAndFeel(
                         fontFamily = flexFontEmphasis(),
                     )
                 },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    FilledTonalIconButton(onClick = onNavigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.nav_arrow_back),
                             contentDescription = "Navigate Back",
@@ -161,6 +160,7 @@ fun LookAndFeel(
                                     contentDescription = null,
                                 )
                             },
+                            shapes = rectListItemShapes(),
                             colors = listItemColors(),
                             content = { Text(text = stringResource(R.string.select_app_theme)) },
                         )
@@ -173,26 +173,19 @@ fun LookAndFeel(
                                     .background(listItemColors().containerColor)
                                     .padding(start = 52.dp, end = 16.dp, bottom = 8.dp),
                         ) {
-                            AppTheme.entries.forEach { appTheme ->
-                                ToggleButton(
-                                    checked = appTheme == state.theme.appTheme,
-                                    onCheckedChange = {
-                                        onAction(SettingsAction.OnThemeSwitch(appTheme))
-                                    },
-                                    modifier = Modifier.weight(1f),
-                                    colors =
-                                        ToggleButtonDefaults.colors(
-                                            containerColor =
-                                                MaterialTheme.colorScheme.surfaceContainerLow
-                                        ),
-                                ) {
+                            ListSelect(
+                                title = null,
+                                options = AppTheme.entries.toList(),
+                                selected = state.theme.appTheme,
+                                onSelectedChange = { onAction(SettingsAction.OnThemeSwitch(it)) },
+                                labelProvider = {
                                     Text(
-                                        text = stringResource(appTheme.toStringRes()),
+                                        text = stringResource(it.toStringRes()),
                                         modifier = Modifier.basicMarquee(),
                                         maxLines = 1,
                                     )
-                                }
-                            }
+                                },
+                            )
                         }
                     }
 
@@ -255,6 +248,7 @@ fun LookAndFeel(
                                 )
                             },
                             colors = listItemColors(),
+                            shapes = rectListItemShapes(),
                         )
 
                         FlowRow(
@@ -264,27 +258,20 @@ fun LookAndFeel(
                                     .padding(start = 52.dp, end = 16.dp, bottom = 8.dp),
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
-                            Fonts.entries.forEach { font ->
-                                ToggleButton(
-                                    checked = state.theme.font == font,
-                                    onCheckedChange = {
-                                        onAction(SettingsAction.OnFontChange(font))
-                                    },
-                                    enabled = isPlusUser,
-                                    colors =
-                                        ToggleButtonDefaults.colors(
-                                            containerColor =
-                                                MaterialTheme.colorScheme.surfaceContainerLow
-                                        ),
-                                ) {
+                            ListSelect(
+                                title = null,
+                                options = Fonts.entries.toList(),
+                                selected = state.theme.font,
+                                onSelectedChange = { onAction(SettingsAction.OnFontChange(it)) },
+                                labelProvider = { font ->
                                     Text(
                                         text = font.toDisplayString(),
                                         fontFamily =
                                             font.toFontRes()?.let { FontFamily(Font(it)) }
                                                 ?: FontFamily.Default,
                                     )
-                                }
-                            }
+                                },
+                            )
                         }
                     }
 
@@ -340,6 +327,7 @@ fun LookAndFeel(
                             ListItem(
                                 content = { Text(text = stringResource(R.string.palette_style)) },
                                 colors = listItemColors(),
+                                shapes = rectListItemShapes(),
                                 leadingContent = {
                                     Icon(
                                         painter = painterResource(R.drawable.palette),
@@ -348,89 +336,73 @@ fun LookAndFeel(
                                 },
                             )
 
-                            FlowRow(
+                            Row(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier =
-                                    Modifier.fillParentMaxWidth()
+                                    Modifier.fillMaxWidth()
                                         .background(listItemColors().containerColor)
                                         .padding(start = 52.dp, end = 16.dp, bottom = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                PaletteStyle.entries.toList().forEach { style ->
-                                    val scheme =
-                                        rememberDynamicColorScheme(
-                                            primary =
-                                                if (
-                                                    state.theme.isMaterialYou &&
-                                                        Build.VERSION.SDK_INT >=
-                                                            Build.VERSION_CODES.S
-                                                ) {
-                                                    colorResource(system_accent1_200)
-                                                } else state.theme.seedColor,
-                                            isDark =
-                                                when (state.theme.appTheme) {
-                                                    AppTheme.SYSTEM -> isSystemInDarkTheme()
-                                                    AppTheme.DARK -> true
-                                                    AppTheme.LIGHT -> false
-                                                },
-                                            isAmoled = state.theme.isAmoled,
-                                            style = style.toMPaletteStyle(),
-                                        )
-                                    val selected = state.theme.paletteStyle == style
+                                ListSelect(
+                                    title = null,
+                                    options = PaletteStyle.entries.toList(),
+                                    selected = state.theme.paletteStyle,
+                                    onSelectedChange = {
+                                        onAction(SettingsAction.OnPaletteChange(it))
+                                    },
+                                    enabled = isPlusUser,
+                                    labelProvider = { style: PaletteStyle ->
+                                        val scheme =
+                                            rememberDynamicColorScheme(
+                                                primary =
+                                                    if (
+                                                        state.theme.isMaterialYou &&
+                                                            Build.VERSION.SDK_INT >=
+                                                                Build.VERSION_CODES.S
+                                                    ) {
+                                                        colorResource(
+                                                            android.R.color.system_accent1_900
+                                                        )
+                                                    } else state.theme.seedColor,
+                                                isDark =
+                                                    when (state.theme.appTheme) {
+                                                        AppTheme.SYSTEM -> isSystemInDarkTheme()
+                                                        AppTheme.DARK -> true
+                                                        AppTheme.LIGHT -> false
+                                                    },
+                                                isAmoled = state.theme.isAmoled,
+                                                style = style.toMPaletteStyle(),
+                                            )
 
-                                    Box(
-                                        modifier =
-                                            Modifier.size(50.dp)
-                                                .clip(
-                                                    if (selected) MaterialShapes.VerySunny.toShape()
-                                                    else CircleShape
-                                                )
-                                                .clickable(enabled = isPlusUser) {
-                                                    onAction(SettingsAction.OnPaletteChange(style))
-                                                },
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        Canvas(modifier = Modifier.matchParentSize()) {
-                                            val colors =
-                                                listOf(
+                                        Row(
+                                            modifier =
+                                                Modifier.size(width = 64.dp, height = 20.dp)
+                                                    .clip(MaterialTheme.shapes.extraSmall)
+                                        ) {
+                                            listOf(
                                                     scheme.primary,
                                                     scheme.primaryContainer,
+                                                    scheme.onPrimary,
                                                     scheme.secondary,
                                                     scheme.secondaryContainer,
+                                                    scheme.onSecondary,
                                                     scheme.tertiary,
                                                     scheme.tertiaryContainer,
+                                                    scheme.onTertiary,
+                                                    scheme.surface,
+                                                    scheme.onSurface,
                                                 )
-                                            val sweepAngle = 360f / colors.size
-                                            colors.forEachIndexed { index, color ->
-                                                drawArc(
-                                                    color = color,
-                                                    startAngle = index * sweepAngle,
-                                                    sweepAngle = sweepAngle,
-                                                    useCenter = true,
-                                                )
-                                            }
-                                        }
-
-                                        Box(
-                                            modifier =
-                                                Modifier.matchParentSize()
-                                                    .background(
-                                                        color =
-                                                            scheme.primary.copy(
-                                                                alpha = if (selected) 0.7f else 0f
-                                                            )
+                                                .forEach { color ->
+                                                    Box(
+                                                        modifier =
+                                                            Modifier.weight(1f)
+                                                                .fillMaxHeight()
+                                                                .background(color)
                                                     )
-                                        )
-
-                                        if (selected) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.check_circle),
-                                                contentDescription = null,
-                                                tint = scheme.onTertiary,
-                                            )
+                                                }
                                         }
-                                    }
-                                }
+                                    },
+                                )
                             }
                         }
                     }

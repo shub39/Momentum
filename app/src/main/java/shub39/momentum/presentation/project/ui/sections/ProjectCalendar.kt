@@ -31,14 +31,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.blur.BlurRadiusSpec
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,7 +73,6 @@ import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProjectCalendar(
     state: ProjectState,
@@ -91,8 +91,10 @@ fun ProjectCalendar(
         topBar = {
             TopAppBar(
                 title = {},
+                colors =
+                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    FilledTonalIconButton(onClick = onNavigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.nav_arrow_back),
                             contentDescription = null,
@@ -134,8 +136,8 @@ fun ProjectCalendar(
                     Card(
                         colors =
                             CardDefaults.cardColors(
-                                contentColor = MaterialTheme.colorScheme.onPrimary,
-                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = colorScheme.onPrimary,
+                                containerColor = colorScheme.primary,
                             ),
                         shape = CircleShape,
                     ) {
@@ -177,7 +179,7 @@ fun ProjectCalendar(
                                                     Modifier.matchParentSize()
                                                         .border(
                                                             width = 2.dp,
-                                                            color = MaterialTheme.colorScheme.error,
+                                                            color = colorScheme.error,
                                                             shape = CircleShape,
                                                         )
                                             )
@@ -193,24 +195,24 @@ fun ProjectCalendar(
                                                     brush =
                                                         Brush.verticalGradient(
                                                             0f to Color.Transparent,
-                                                            0.7f to
-                                                                MaterialTheme.colorScheme
-                                                                    .background,
-                                                            1f to
-                                                                MaterialTheme.colorScheme.background,
+                                                            1f to colorScheme.secondaryContainer,
                                                         )
                                                 )
                                                 .clip(CircleShape)
-                                                .blur(2.dp)
+                                                .blur(
+                                                    blurRadiusSpec =
+                                                        BlurRadiusSpec.verticalGradient(
+                                                            startRadius = 0.dp,
+                                                            endRadius = 2.dp,
+                                                        )
+                                                )
                                     )
                                 }
                             }
                             ?: Box(
                                 modifier =
                                     Modifier.fillMaxSize()
-                                        .background(
-                                            color = MaterialTheme.colorScheme.surfaceContainer
-                                        )
+                                        .background(color = colorScheme.surfaceContainer)
                                         .clip(CircleShape)
                             )
 
@@ -218,10 +220,11 @@ fun ProjectCalendar(
                             text = day.date.dayOfMonth.toString(),
                             color =
                                 if (possibleDay) {
-                                    MaterialTheme.colorScheme.onBackground
+                                    colorScheme.onSecondaryContainer
                                 } else {
-                                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                    colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
                                 },
+                            fontFamily = flexFontRounded(),
                             modifier = Modifier.padding(bottom = 4.dp),
                         )
                     }

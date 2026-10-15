@@ -1,5 +1,13 @@
 [
   {
+    "version": "1.9.0",
+    "changes": [
+      "Miscellaneous UI updates and Fixes",
+      "Updated App Icon",
+      "Miscellaneous Bug Fixes"
+    ]
+  },
+  {
     "version": "1.8.6",
     "changes": [
       "Added option to overlay last image in camera",
@@ -58,12 +66,6 @@
     "changes": [
       "Miscellaneous Updates and Improvements",
       "Notifications open App on click"
-    ]
-  },
-  {
-    "version": "1.6.0",
-    "changes": [
-      "Material 3 Expressive UI changes"
     ]
   }
 ]

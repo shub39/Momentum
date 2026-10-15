@@ -18,7 +18,7 @@ plugins { alias(libs.plugins.android.library) }
 
 android {
     namespace = "shub39.montage"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21

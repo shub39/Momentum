@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    if:  github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, '[release]')
+    if:  github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, '[release]') || startsWith(github.event.head_commit.message, '[play]')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo

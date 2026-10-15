@@ -30,6 +30,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -51,6 +52,7 @@ import shub39.momentum.presentation.shared.endItemShape
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
+import shub39.momentum.presentation.shared.rectListItemShapes
 
 @Composable
 fun Backup(
@@ -77,6 +79,8 @@ fun Backup(
                         )
                     }
                 },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
             )
         },
     ) { padding ->
@@ -102,6 +106,7 @@ fun Backup(
                                     contentDescription = null,
                                 )
                             },
+                            shapes = rectListItemShapes(),
                             colors = listItemColors(),
                             supportingContent = {
                                 Text(
@@ -151,6 +156,7 @@ fun Backup(
                     Column(modifier = Modifier.clip(endItemShape())) {
                         ListItem(
                             colors = listItemColors(),
+                            shapes = rectListItemShapes(),
                             leadingContent = {
                                 Icon(
                                     painter = painterResource(R.drawable.download),

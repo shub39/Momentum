@@ -32,12 +32,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -45,13 +50,16 @@ import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MediumExtendedFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,8 +77,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import java.time.LocalDate
-import kotlin.time.Duration.Companion.milliseconds
-import kotlinx.coroutines.delay
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.AlarmData
 import shub39.momentum.core.data_classes.Day
@@ -83,11 +89,11 @@ import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ScanState
 import shub39.momentum.presentation.project.ui.component.AlarmCard
-import shub39.momentum.presentation.project.ui.component.CreateMontageButton
 import shub39.momentum.presentation.project.ui.component.FavDayCard
 import shub39.momentum.presentation.project.ui.component.WeeklyHorizontalCalendar
 import shub39.momentum.presentation.shared.MomentumDialog
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.PageFill
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
 
@@ -99,7 +105,7 @@ fun ProjectDetails(
     onNavigateToMontage: () -> Unit,
     onNavigateToCalendar: () -> Unit,
     onNavigateToDayInfo: (Long) -> Unit,
-) {
+) = PageFill {
     if (state.project == null) {
         LoadingIndicator()
     } else {
@@ -107,16 +113,12 @@ fun ProjectDetails(
         var showEditDialog by remember { mutableStateOf(false) }
         var showRescanDialog by rememberSaveable { mutableStateOf(false) }
 
-        var showGuide by remember { mutableStateOf(false) }
-
-        LaunchedEffect(state.days) {
-            delay(200.milliseconds)
-            showGuide = state.days.isEmpty()
-        }
-
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+        val listState = rememberLazyListState()
+
         Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            modifier =
+                Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).widthIn(max = 700.dp),
             topBar = {
                 LargeFlexibleTopAppBar(
                     scrollBehavior = scrollBehavior,
@@ -124,8 +126,12 @@ fun ProjectDetails(
                     subtitle = {
                         Text(text = state.project.description, fontFamily = flexFontRounded())
                     },
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            scrolledContainerColor = colorScheme.surface
+                        ),
                     navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
+                        FilledTonalIconButton(onClick = onNavigateBack) {
                             Icon(
                                 painter = painterResource(R.drawable.nav_arrow_back),
                                 contentDescription = "Navigate Back",
@@ -156,6 +162,34 @@ fun ProjectDetails(
                     },
                 )
             },
+            floatingActionButton = {
+                val isScrollingTop by remember {
+                    derivedStateOf {
+                        listState.firstVisibleItemIndex == 0 || listState.lastScrolledBackward
+                    }
+                }
+
+                MediumExtendedFloatingActionButton(
+                    onClick = onNavigateToMontage,
+                    containerColor = colorScheme.primary,
+                    contentColor = colorScheme.onPrimary,
+                    shape = MaterialTheme.shapes.extraExtraLarge,
+                    modifier =
+                        Modifier.animateFloatingActionButton(
+                            visible = (state.days.size >= 5) && isScrollingTop,
+                            alignment = Alignment.Center,
+                        ),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.play),
+                        contentDescription = null,
+                        modifier = Modifier.size(FloatingActionButtonDefaults.MediumIconSize),
+                    )
+                    Spacer(modifier = Modifier.width(ButtonDefaults.MediumIconSize))
+                    Text(text = stringResource(R.string.montage), fontFamily = flexFontRounded())
+                }
+            },
+            floatingActionButtonPosition = FabPosition.Center,
         ) { paddingValues ->
             val today = LocalDate.now()
             val weekState =
@@ -166,7 +200,7 @@ fun ProjectDetails(
                 )
 
             LazyColumn(
-                state = rememberLazyListState(),
+                state = listState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding =
                     PaddingValues(
@@ -185,7 +219,6 @@ fun ProjectDetails(
                         weekState = weekState,
                         days = state.days,
                         onNavigateToDayInfo = onNavigateToDayInfo,
-                        showGuide = showGuide,
                         shape =
                             RoundedCornerShape(
                                 topStart = 28.dp,
@@ -213,17 +246,6 @@ fun ProjectDetails(
                     )
                 }
 
-                // montage wait/ creator options
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    CreateMontageButton(
-                        daysSize = state.days.size,
-                        onNavigateToMontage = onNavigateToMontage,
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                    )
-                }
-
                 // favorite days
                 if (state.days.none { it.isFavorite }) {
                     item {
@@ -238,7 +260,7 @@ fun ProjectDetails(
                                 modifier =
                                     Modifier.size(48.dp)
                                         .background(
-                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            color = colorScheme.primaryContainer,
                                             shape = MaterialShapes.Sunny.toShape(),
                                         ),
                                 contentAlignment = Alignment.Center,
@@ -246,7 +268,7 @@ fun ProjectDetails(
                                 Icon(
                                     painter = painterResource(R.drawable.photo_library),
                                     contentDescription = "Favorites",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    tint = colorScheme.onPrimaryContainer,
                                 )
                             }
 
@@ -257,7 +279,7 @@ fun ProjectDetails(
                         }
                     }
                 } else {
-                    stickyHeader {
+                    item {
                         Row(
                             modifier =
                                 Modifier.fillMaxWidth()
@@ -274,7 +296,7 @@ fun ProjectDetails(
                                 modifier =
                                     Modifier.size(48.dp)
                                         .background(
-                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            color = colorScheme.primaryContainer,
                                             shape = MaterialShapes.Sunny.toShape(),
                                         ),
                                 contentAlignment = Alignment.Center,
@@ -282,13 +304,16 @@ fun ProjectDetails(
                                 Icon(
                                     painter = painterResource(R.drawable.favorite),
                                     contentDescription = "Favorites",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    tint = colorScheme.onPrimaryContainer,
                                 )
                             }
 
                             Text(
                                 text = stringResource(R.string.favourites),
-                                style = MaterialTheme.typography.titleLargeEmphasized,
+                                style =
+                                    MaterialTheme.typography.titleLargeEmphasized.copy(
+                                        fontFamily = flexFontRounded()
+                                    ),
                             )
                         }
                     }

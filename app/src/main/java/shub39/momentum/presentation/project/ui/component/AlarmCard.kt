@@ -29,14 +29,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TimeInput
-import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,11 +53,15 @@ import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.time.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.AlarmData
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.shared.ExpressiveSwitch
+import shub39.momentum.presentation.shared.GritTimePicker
 import shub39.momentum.presentation.shared.MomentumTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -134,35 +135,28 @@ fun AlarmCard(
     }
 
     if (showDialog) {
-        val timePickerState = rememberTimePickerState(initialHour = 8, initialMinute = 0)
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val timePickerState =
+            rememberTimePickerState(initialHour = now.hour, initialMinute = now.minute)
 
-        TimePickerDialog(
+        GritTimePicker(
             onDismissRequest = { showDialog = false },
-            confirmButton = {
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        onAction(
-                            ProjectAction.OnUpdateReminder(
-                                AlarmData(
-                                    time =
-                                        LocalTime.of(timePickerState.hour, timePickerState.minute)
-                                            .toSecondOfDay()
-                                            .toLong(),
-                                    days = DayOfWeek.entries.map { it.name },
-                                )
-                            )
+            state = timePickerState,
+            onConfirm = {
+                onAction(
+                    ProjectAction.OnUpdateReminder(
+                        AlarmData(
+                            time =
+                                LocalTime.of(timePickerState.hour, timePickerState.minute)
+                                    .toSecondOfDay()
+                                    .toLong(),
+                            days = DayOfWeek.entries.map { it.name },
                         )
-                        showDialog = false
-                    },
-                ) {
-                    Text(stringResource(R.string.done))
-                }
+                    )
+                )
+                showDialog = false
             },
-            title = {},
-        ) {
-            TimeInput(state = timePickerState)
-        }
+        )
     }
 }
 

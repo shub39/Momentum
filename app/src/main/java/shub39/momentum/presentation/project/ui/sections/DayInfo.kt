@@ -37,9 +37,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -48,10 +47,12 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -102,7 +103,6 @@ import shub39.momentum.presentation.project.ui.component.ImageSourcePicker
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontRounded
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DayInfo(
     modifier: Modifier = Modifier,
@@ -175,7 +175,6 @@ fun DayInfo(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun DayInfoContent(
     modifier: Modifier = Modifier,
@@ -207,8 +206,10 @@ private fun DayInfoContent(
                         modifier = Modifier.basicMarquee(),
                     )
                 },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    FilledTonalIconButton(onClick = onNavigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.nav_arrow_back),
                             contentDescription = null,
@@ -510,9 +511,9 @@ private fun DayInfoContent(
                         shape = MaterialTheme.shapes.large,
                         modifier =
                             Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+                                .focusRequester(focusRequester)
                                 .fillMaxWidth()
-                                .imePadding()
-                                .focusRequester(focusRequester),
+                                .imePadding(),
                     )
 
                     Button(

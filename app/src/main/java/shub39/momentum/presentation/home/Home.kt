@@ -16,8 +16,7 @@
  */
 package shub39.momentum.presentation.home
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.ProjectListData
 import shub39.momentum.core.data_classes.Theme
@@ -35,10 +35,10 @@ import shub39.momentum.core.enums.PaletteStyle
 import shub39.momentum.presentation.home.ui.sections.ProjectList
 import shub39.momentum.presentation.home.ui.sections.ProjectUpsertSheet
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.PageFill
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun HomeGraph(
+fun Home(
     state: HomeState,
     onAction: (HomeAction) -> Unit,
     onNavigateToSettings: () -> Unit,
@@ -46,34 +46,37 @@ fun HomeGraph(
     isPlusUser: Boolean,
     onNavigateToPaywall: () -> Unit,
     modifier: Modifier = Modifier,
-) {
-    var showProjectUpsertSheet by remember { mutableStateOf(false) }
+) =
+    PageFill(modifier) {
+        var showProjectUpsertSheet by remember { mutableStateOf(false) }
 
-    ProjectList(
-        modifier = modifier,
-        state = state,
-        onAction = onAction,
-        onNavigateToProject = onNavigateToProject,
-        onNavigateToSettings = onNavigateToSettings,
-        onNavigateToNewProject = {
-            if (state.projects.size <= 3 || isPlusUser) {
-                showProjectUpsertSheet = true
-            } else {
-                onNavigateToPaywall()
-            }
-        },
-    )
-
-    if (showProjectUpsertSheet) {
-        ProjectUpsertSheet(
-            onUpsertProject = {
-                onAction(HomeAction.OnAddProject(title = it.title, description = it.description))
+        ProjectList(
+            modifier = Modifier.widthIn(max = 700.dp),
+            state = state,
+            onAction = onAction,
+            onNavigateToProject = onNavigateToProject,
+            onNavigateToSettings = onNavigateToSettings,
+            onNavigateToNewProject = {
+                if (state.projects.size <= 3 || isPlusUser) {
+                    showProjectUpsertSheet = true
+                } else {
+                    onNavigateToPaywall()
+                }
             },
-            onDismissRequest = { showProjectUpsertSheet = false },
-            project = Project(title = "", description = ""),
         )
+
+        if (showProjectUpsertSheet) {
+            ProjectUpsertSheet(
+                onUpsertProject = {
+                    onAction(
+                        HomeAction.OnAddProject(title = it.title, description = it.description)
+                    )
+                },
+                onDismissRequest = { showProjectUpsertSheet = false },
+                project = Project(title = "", description = ""),
+            )
+        }
     }
-}
 
 @Preview
 @Composable
@@ -106,7 +109,7 @@ private fun Preview() {
                 paletteStyle = PaletteStyle.FIDELITY,
             )
     ) {
-        HomeGraph(
+        Home(
             state = state,
             onAction = {},
             onNavigateToSettings = {},

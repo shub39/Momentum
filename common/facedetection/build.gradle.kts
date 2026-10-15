@@ -21,7 +21,7 @@ plugins {
 
 android {
     namespace = "shub39.facedetection"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21

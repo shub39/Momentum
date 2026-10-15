@@ -43,9 +43,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -73,6 +71,8 @@ import shub39.momentum.core.toFormatStyle
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.shared.ColorPickerDialog
+import shub39.momentum.presentation.shared.ExpressiveSwitch
+import shub39.momentum.presentation.shared.ListSelect
 import shub39.momentum.presentation.shared.SettingSlider
 import shub39.momentum.presentation.shared.detachedItemShape
 import shub39.momentum.presentation.shared.endItemShape
@@ -214,7 +214,7 @@ fun MontageEditSheet(
                                 style = MaterialTheme.typography.titleLarge,
                             )
 
-                            Switch(
+                            ExpressiveSwitch(
                                 checked = state.montageConfig.showDate,
                                 onCheckedChange = {
                                     onAction(
@@ -227,33 +227,30 @@ fun MontageEditSheet(
                         }
 
                         AnimatedVisibility(visible = state.montageConfig.showDate) {
-                            FlowRow(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                DateStyle.entries.forEach { style ->
-                                    ToggleButton(
-                                        checked = state.montageConfig.dateStyle == style,
-                                        onCheckedChange = {
-                                            onAction(
-                                                ProjectAction.OnEditMontageConfig(
-                                                    state.montageConfig.copy(dateStyle = style)
-                                                )
-                                            )
-                                        },
-                                    ) {
-                                        Text(
-                                            text =
-                                                LocalDate.now()
-                                                    .format(
-                                                        DateTimeFormatter.ofLocalizedDate(
-                                                            style.toFormatStyle()
-                                                        )
-                                                    )
+                            ListSelect(
+                                title = null,
+                                modifier = Modifier.padding(top = 8.dp),
+                                options = DateStyle.entries.toList(),
+                                selected = state.montageConfig.dateStyle,
+                                onSelectedChange = {
+                                    onAction(
+                                        ProjectAction.OnEditMontageConfig(
+                                            state.montageConfig.copy(dateStyle = it)
                                         )
-                                    }
-                                }
-                            }
+                                    )
+                                },
+                                labelProvider = {
+                                    Text(
+                                        text =
+                                            LocalDate.now()
+                                                .format(
+                                                    DateTimeFormatter.ofLocalizedDate(
+                                                        it.toFormatStyle()
+                                                    )
+                                                )
+                                    )
+                                },
+                            )
                         }
                     }
                 }
@@ -272,7 +269,7 @@ fun MontageEditSheet(
                             style = MaterialTheme.typography.titleLarge,
                         )
 
-                        Switch(
+                        ExpressiveSwitch(
                             checked = state.montageConfig.showMessage,
                             onCheckedChange = {
                                 onAction(
@@ -309,7 +306,7 @@ fun MontageEditSheet(
                                 style = MaterialTheme.typography.titleLarge,
                             )
 
-                            Switch(
+                            ExpressiveSwitch(
                                 checked = state.montageConfig.stabilizeFaces,
                                 onCheckedChange = {
                                     if (isPlusUser) {
@@ -341,7 +338,7 @@ fun MontageEditSheet(
                                     style = MaterialTheme.typography.titleLarge,
                                 )
 
-                                Switch(
+                                ExpressiveSwitch(
                                     checked = state.montageConfig.censorFaces,
                                     enabled = state.montageConfig.stabilizeFaces,
                                     onCheckedChange = {
@@ -394,31 +391,26 @@ fun MontageEditSheet(
                         Spacer(modifier = Modifier.size(44.dp))
                     }
 
-                    FlowRow(
+                    Row(
                         modifier =
                             Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                                 .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        VideoQuality.entries.forEach { quality ->
-                            ToggleButton(
-                                checked = quality == state.montageConfig.videoQuality,
-                                enabled = isPlusUser,
-                                onCheckedChange = {
-                                    if (isPlusUser) {
-                                        onAction(
-                                            ProjectAction.OnEditMontageConfig(
-                                                state.montageConfig.copy(videoQuality = quality)
-                                            )
-                                        )
-                                    } else {
-                                        onNavigateToPaywall()
-                                    }
-                                },
-                            ) {
-                                Text(text = quality.name)
-                            }
-                        }
+                        ListSelect(
+                            title = null,
+                            options = VideoQuality.entries.toList(),
+                            selected = state.montageConfig.videoQuality,
+                            onSelectedChange = {
+                                onAction(
+                                    ProjectAction.OnEditMontageConfig(
+                                        state.montageConfig.copy(videoQuality = it)
+                                    )
+                                )
+                            },
+                            enabled = isPlusUser,
+                            labelProvider = { Text(text = it.name) },
+                        )
                     }
                 }
             }
@@ -445,21 +437,20 @@ fun MontageEditSheet(
                                 .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Fonts.entries.forEach { font ->
-                            ToggleButton(
-                                checked = font == state.montageConfig.font,
-                                onCheckedChange = {
-                                    onAction(
-                                        ProjectAction.OnEditMontageConfig(
-                                            state.montageConfig.copy(font = font)
-                                        )
+                        ListSelect(
+                            title = null,
+                            options = Fonts.entries.toList(),
+                            selected = state.montageConfig.font,
+                            onSelectedChange = {
+                                onAction(
+                                    ProjectAction.OnEditMontageConfig(
+                                        state.montageConfig.copy(font = it)
                                     )
-                                },
-                                enabled = isPlusUser,
-                            ) {
-                                Text(text = font.toDisplayString())
-                            }
-                        }
+                                )
+                            },
+                            enabled = isPlusUser,
+                            labelProvider = { Text(text = it.toDisplayString()) },
+                        )
                     }
                 }
             }
@@ -477,7 +468,7 @@ fun MontageEditSheet(
                             style = MaterialTheme.typography.titleLarge,
                         )
 
-                        Switch(
+                        ExpressiveSwitch(
                             checked = state.montageConfig.waterMark,
                             enabled = isPlusUser,
                             onCheckedChange = {
