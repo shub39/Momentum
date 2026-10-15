@@ -16,6 +16,7 @@ ksp = "2.3.10"
 material3 = "1.5.0-beta01"
 room = "3.0.3"
 navigation = "1.2.0"
+adaptive-navigation3 = "1.4.0-alpha03"
 serialization = "1.11.0"
 materialkolor = "5.0.1"
 compose = "1.12.1"
@@ -23,8 +24,7 @@ landscapist = "2.13.2"
 filekit = "0.16.0"
 annotation-jvm = "1.11.0"
 purchases = "10.27.0"
-#noinspection GradleDependency
-tasks-vision = "0.10.35"
+tasks-vision = "1.1.1"
 truth = "1.4.5"
 espresso-core = "3.7.0"
 junit = "4.13.2"
@@ -55,6 +55,7 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", ve
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
 androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation" }
 androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation" }
+androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "adaptive-navigation3" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotation-jvm" }
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camera" }

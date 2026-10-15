@@ -44,7 +44,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -253,7 +252,7 @@ fun MontageEditSheet(
                                                         )
                                                     )
                                         )
-                                    }
+                                    },
                                 )
                             }
                         }
@@ -407,14 +406,14 @@ fun MontageEditSheet(
                             options = VideoQuality.entries.toList(),
                             selected = state.montageConfig.videoQuality,
                             onSelectedChange = {
-                                    onAction(
-                                        ProjectAction.OnEditMontageConfig(
-                                            state.montageConfig.copy(videoQuality = it)
-                                        )
+                                onAction(
+                                    ProjectAction.OnEditMontageConfig(
+                                        state.montageConfig.copy(videoQuality = it)
                                     )
+                                )
                             },
                             enabled = isPlusUser,
-                            labelProvider = { Text(text = it.name) }
+                            labelProvider = { Text(text = it.name) },
                         )
                     }
                 }
@@ -454,7 +453,7 @@ fun MontageEditSheet(
                                 )
                             },
                             enabled = isPlusUser,
-                            labelProvider = { Text(text = it.toDisplayString()) }
+                            labelProvider = { Text(text = it.toDisplayString()) },
                         )
                     }
                 }

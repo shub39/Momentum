@@ -203,6 +203,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.material3.adaptive.navigation3)
     implementation(libs.calendar)
     implementation(libs.filekit.core)
     implementation(libs.filekit.dialogs.compose)

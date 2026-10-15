@@ -23,7 +23,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
+import shub39.momentum.billing.presentation.PaywallPage
 import shub39.momentum.data.createNotificationChannel
+import shub39.momentum.navigation.MomentumNavDisplay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +36,12 @@ class MainActivity : ComponentActivity() {
         FileKit.init(this)
 
         createNotificationChannel(this)
-        setContent { App() }
+        setContent {
+            MomentumNavDisplay(
+                paywall = { isPlusUser, onNavigateBack ->
+                    PaywallPage(isPlusUser = isPlusUser, onDismissRequest = onNavigateBack)
+                }
+            )
+        }
     }
 }

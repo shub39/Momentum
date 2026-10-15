@@ -16,8 +16,6 @@
  */
 package shub39.momentum.presentation.home
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,9 +34,8 @@ import shub39.momentum.presentation.home.ui.sections.ProjectList
 import shub39.momentum.presentation.home.ui.sections.ProjectUpsertSheet
 import shub39.momentum.presentation.shared.MomentumTheme
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun HomeGraph(
+fun Home(
     state: HomeState,
     onAction: (HomeAction) -> Unit,
     onNavigateToSettings: () -> Unit,
@@ -106,7 +103,7 @@ private fun Preview() {
                 paletteStyle = PaletteStyle.FIDELITY,
             )
     ) {
-        HomeGraph(
+        Home(
             state = state,
             onAction = {},
             onNavigateToSettings = {},
