@@ -88,6 +88,7 @@ import shub39.momentum.presentation.project.ui.component.FavDayCard
 import shub39.momentum.presentation.project.ui.component.WeeklyHorizontalCalendar
 import shub39.momentum.presentation.shared.MomentumDialog
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.PageFill
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
 
@@ -99,7 +100,7 @@ fun ProjectDetails(
     onNavigateToMontage: () -> Unit,
     onNavigateToCalendar: () -> Unit,
     onNavigateToDayInfo: (Long) -> Unit,
-) {
+) = PageFill {
     if (state.project == null) {
         LoadingIndicator()
     } else {
@@ -116,7 +117,8 @@ fun ProjectDetails(
 
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            modifier =
+                Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).widthIn(max = 700.dp),
             topBar = {
                 LargeFlexibleTopAppBar(
                     scrollBehavior = scrollBehavior,

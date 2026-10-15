@@ -27,27 +27,27 @@ sealed interface Routes : NavKey {
     data object Paywall : Routes
 
     sealed interface Project : Routes {
-        data object ProjectDetails : Routes
+        data object ProjectDetails : Project
 
-        data object ProjectCalendarView : Routes
+        data object ProjectCalendarView : Project
 
-        data object ProjectMontageView : Routes
+        data object ProjectMontageView : Project
 
-        data class DayInfoView(val selectedDate: Long) : Routes
+        data class DayInfoView(val selectedDate: Long) : Project
 
-        data class Camera(val selectedDate: Long) : Routes
+        data class Camera(val selectedDate: Long) : Project
     }
 
     sealed interface Settings : Routes {
-        data object SettingsRoot : Routes
+        data object SettingsRoot : Settings
 
-        data object About : Routes
+        data object About : Settings
 
-        data object LookAndFeel : Routes
+        data object LookAndFeel : Settings
 
-        data object Changelog : Routes
+        data object Changelog : Settings
 
-        data object Backup : Routes
+        data object Backup : Settings
     }
 }
 
@@ -66,6 +66,14 @@ class TopLevelBackstack(startKey: Routes = Routes.Home) {
     fun isRouteOnTop(route: Routes) = backStack.lastOrNull() == route
 
     fun add(route: Routes) {
+        if (route is Routes.Project) {
+            val dayInfoRoutes = backStack.filterIsInstance<Routes.Project.DayInfoView>()
+            backStack.removeAll(dayInfoRoutes)
+
+            backStack.add(route)
+            return
+        }
+
         if (route is Routes.Settings) {
             val settingsRoutes = backStack.filterIsInstance<Routes.Settings>()
             backStack.removeAll(settingsRoutes)
@@ -75,6 +83,8 @@ class TopLevelBackstack(startKey: Routes = Routes.Home) {
             }
             backStack.add(route)
         } else {
+            backStack.removeAll { it.getSubtype() is Routes.Settings }
+
             // Remove if already exists to move it to the top
             backStack.remove(route)
 

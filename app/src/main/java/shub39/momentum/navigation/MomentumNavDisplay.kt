@@ -44,6 +44,7 @@ import shub39.momentum.presentation.home.Home
 import shub39.momentum.presentation.onboarding.Onboarding
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ui.sections.Camera
+import shub39.momentum.presentation.project.ui.sections.DayInfo
 import shub39.momentum.presentation.project.ui.sections.ProjectCalendar
 import shub39.momentum.presentation.project.ui.sections.ProjectDetails
 import shub39.momentum.presentation.project.ui.sections.ProjectMontageView
@@ -87,7 +88,9 @@ fun MomentumNavDisplay(
                     sceneStrategies = listOf(twoPaneStrategy, listDetailStrategy),
                     entryProvider =
                         entryProvider {
-                            entry<Home> {
+                            entry<Home>(
+                                metadata = ListDetailScene.listPane() + fadeTransitionMetadata()
+                            ) {
                                 val viewModel = koinViewModel<HomeViewModel>()
                                 val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -101,7 +104,7 @@ fun MomentumNavDisplay(
                                 )
                             }
 
-                            entry<Onboarding> {
+                            entry<Onboarding>(metadata = verticalTransitionMetadata()) {
                                 val viewModel = koinViewModel<OnboardingViewModel>()
 
                                 Onboarding(
@@ -110,7 +113,7 @@ fun MomentumNavDisplay(
                                 )
                             }
 
-                            entry<Paywall> {
+                            entry<Paywall>(metadata = verticalTransitionMetadata()) {
                                 paywall(mainAppState.isPlusUser) { stack.removeLast() }
                             }
 
@@ -128,7 +131,10 @@ private fun EntryProviderScope<Routes>.projectScreens(
     stack: TopLevelBackstack,
     mainAppState: MainAppState,
 ) {
-    entry<Project.ProjectDetails> {
+    entry<Project.ProjectDetails>(
+        metadata =
+            ListDetailScene.detailPane() + TwoPaneScene.twoPane() + horizontalTransitionMetadata()
+    ) {
         val viewModel = koinViewModel<ProjectViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -142,7 +148,9 @@ private fun EntryProviderScope<Routes>.projectScreens(
         )
     }
 
-    entry<Project.ProjectMontageView> {
+    entry<Project.ProjectMontageView>(
+        metadata = TwoPaneScene.twoPane() + verticalTransitionMetadata()
+    ) {
         val viewModel = koinViewModel<ProjectViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val exoPlayer by viewModel.exoPlayer.collectAsStateWithLifecycle()
@@ -157,7 +165,9 @@ private fun EntryProviderScope<Routes>.projectScreens(
         )
     }
 
-    entry<Project.ProjectCalendarView> {
+    entry<Project.ProjectCalendarView>(
+        metadata = TwoPaneScene.twoPane() + horizontalTransitionMetadata()
+    ) {
         val viewModel = koinViewModel<ProjectViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -168,7 +178,20 @@ private fun EntryProviderScope<Routes>.projectScreens(
         )
     }
 
-    entry<Project.Camera> { entry ->
+    entry<Project.DayInfoView>(metadata = TwoPaneScene.twoPane() + horizontalTransitionMetadata()) {
+        val viewModel = koinViewModel<ProjectViewModel>()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        DayInfo(
+            selectedDate = it.selectedDate,
+            state = state,
+            onAction = viewModel::onAction,
+            onNavigateBack = { stack.removeLast() },
+            onNavigateToCamera = { stack.add(Project.Camera(it.selectedDate)) },
+        )
+    }
+
+    entry<Project.Camera>(metadata = verticalTransitionMetadata()) { entry ->
         val projectVM = koinViewModel<ProjectViewModel>()
         val state by projectVM.state.collectAsStateWithLifecycle()
         val cameraViewModel: CameraViewModel = koinViewModel()
@@ -246,7 +269,7 @@ private fun EntryProviderScope<Routes>.settingsScreens(
     stack: TopLevelBackstack,
     mainAppState: MainAppState,
 ) {
-    entry<Settings.SettingsRoot> {
+    entry<Settings.SettingsRoot>(metadata = TwoPaneScene.twoPane() + verticalTransitionMetadata()) {
         val viewModel = koinViewModel<SettingsViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -264,7 +287,9 @@ private fun EntryProviderScope<Routes>.settingsScreens(
         )
     }
 
-    entry<Settings.LookAndFeel> {
+    entry<Settings.LookAndFeel>(
+        metadata = TwoPaneScene.twoPane() + horizontalTransitionMetadata()
+    ) {
         val viewModel = koinViewModel<SettingsViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -277,7 +302,7 @@ private fun EntryProviderScope<Routes>.settingsScreens(
         )
     }
 
-    entry<Settings.Changelog> {
+    entry<Settings.Changelog>(metadata = TwoPaneScene.twoPane() + horizontalTransitionMetadata()) {
         val viewModel = koinViewModel<SettingsViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -286,7 +311,7 @@ private fun EntryProviderScope<Routes>.settingsScreens(
         Changelog(changelog = state.changelog, onNavigateBack = { stack.removeLast() })
     }
 
-    entry<Settings.Backup> {
+    entry<Settings.Backup>(metadata = TwoPaneScene.twoPane() + horizontalTransitionMetadata()) {
         val viewModel = koinViewModel<SettingsViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -297,7 +322,7 @@ private fun EntryProviderScope<Routes>.settingsScreens(
         )
     }
 
-    entry<Settings.About> {
+    entry<Settings.About>(metadata = TwoPaneScene.twoPane() + horizontalTransitionMetadata()) {
         val viewModel = koinViewModel<SettingsViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
