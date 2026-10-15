@@ -1,11 +1,3 @@
-> [!CAUTION]
-> ## [Keep Android Open](https://keepandroidopen.org/)
-> ###  Your phone is about to stop being yours.
-> Starting September 2026, a silent update, nonconsensually pushed by Google, will block every
-> Android app whose developer hasn't registered with Google, signed their contract, paid up, and
-> handed over government ID.
-> **Every app and every device, worldwide, with no opt-out.**
-
 ![](fastlane/metadata/android/en-US/images/featureGraphic.png)
 
 [<img src="badges/playstore.png" alt="Google Play" width="180">](https://play.google.com/store/apps/details?id=shub39.momentum.play)
@@ -19,20 +11,13 @@
 | ![Image 3](fastlane/metadata/android/en-US/images/phoneScreenshots/5.png) | ![Image 4](fastlane/metadata/android/en-US/images/phoneScreenshots/6.png) |
 | ![Image 5](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) | ![Image 6](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) |
 
-## Features
-
-- [x] Montage maker with customisations
-- [x] Auto face stabilisation
-- [x] Calendar View
-- [x] Daily reminders
-
 ## Motivation
 
 I always wanted a simple app to make making montages like [this](https://youtu.be/65nfbW-27ps)
 effortless and convenient.
-This has been brewing in my mind for over an year and Revenuecat shipaton 2025 was the best excuse
+This has been brewing in my mind for over a year and Revenuecat Shipaton 2025 was the best excuse
 to give myself a challenge to build it.
-This app is offline first and privacy friendly, everything stays on your device.
+This app is offline first and privacy-friendly, everything stays on your device.
 
 ## Inspiration and Tech used
 
