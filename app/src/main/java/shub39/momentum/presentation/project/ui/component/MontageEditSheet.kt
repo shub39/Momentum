@@ -227,34 +227,30 @@ fun MontageEditSheet(
                         }
 
                         AnimatedVisibility(visible = state.montageConfig.showDate) {
-                            FlowRow(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                ListSelect(
-                                    title = null,
-                                    options = DateStyle.entries.toList(),
-                                    selected = state.montageConfig.dateStyle,
-                                    onSelectedChange = {
-                                        onAction(
-                                            ProjectAction.OnEditMontageConfig(
-                                                state.montageConfig.copy(dateStyle = it)
-                                            )
+                            ListSelect(
+                                title = null,
+                                modifier = Modifier.padding(top = 8.dp),
+                                options = DateStyle.entries.toList(),
+                                selected = state.montageConfig.dateStyle,
+                                onSelectedChange = {
+                                    onAction(
+                                        ProjectAction.OnEditMontageConfig(
+                                            state.montageConfig.copy(dateStyle = it)
                                         )
-                                    },
-                                    labelProvider = {
-                                        Text(
-                                            text =
-                                                LocalDate.now()
-                                                    .format(
-                                                        DateTimeFormatter.ofLocalizedDate(
-                                                            it.toFormatStyle()
-                                                        )
+                                    )
+                                },
+                                labelProvider = {
+                                    Text(
+                                        text =
+                                            LocalDate.now()
+                                                .format(
+                                                    DateTimeFormatter.ofLocalizedDate(
+                                                        it.toFormatStyle()
                                                     )
-                                        )
-                                    },
-                                )
-                            }
+                                                )
+                                    )
+                                },
+                            )
                         }
                     }
                 }

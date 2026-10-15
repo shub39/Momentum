@@ -82,7 +82,7 @@ fun ProjectList(
                 scrollBehavior = scrollBehavior,
                 title = {
                     Text(
-                        text = stringResource(R.string.app_name),
+                        text = "Momentum",
                         fontFamily = flexFontEmphasis(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

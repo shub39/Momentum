@@ -4,14 +4,14 @@
 [<img src="badges/github.png" alt="Github" width="180">](https://github.com/shub39/Momentum/releases)
 [<img src="badges/izzyondroid.png" alt="IzzyOnDroid" width="180">](https://apt.izzysoft.de/fdroid/index/apk/shub39.momentum)
 
-## Screenshots
+# Screenshots
 
+## Mobile
 | ![Image 1](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![Image 2](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png) |
 |:-------------------------------------------------------------------------:|:-------------------------------------------------------------------------:|
 | ![Image 3](fastlane/metadata/android/en-US/images/phoneScreenshots/5.png) | ![Image 4](fastlane/metadata/android/en-US/images/phoneScreenshots/6.png) |
-| ![Image 5](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) | ![Image 6](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) |
 
-## Motivation
+# Motivation
 
 I always wanted a simple app to make making montages like [this](https://youtu.be/65nfbW-27ps)
 effortless and convenient.
@@ -19,7 +19,7 @@ This has been brewing in my mind for over a year and Revenuecat Shipaton 2025 wa
 to give myself a challenge to build it.
 This app is offline first and privacy-friendly, everything stays on your device.
 
-## Inspiration and Tech used
+# Inspiration and Tech used
 
 - [Agelapse](https://github.com/hugocornellier/agelapse) by Hugo Cornellier (the guy who started it all)
 - [Daily You](https://github.com/Demizo/Daily_You)
