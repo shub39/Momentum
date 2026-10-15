@@ -99,7 +99,7 @@ class TopLevelBackstack(startKey: Routes = Routes.Home) {
                 backStack.add(route)
             }
             else -> {
-                backStack.removeAll { it.getSubtype() is Routes.Settings }
+                backStack.removeAll { it is Routes.Settings }
 
                 // Remove if already exists to move it to the top
                 backStack.remove(route)
