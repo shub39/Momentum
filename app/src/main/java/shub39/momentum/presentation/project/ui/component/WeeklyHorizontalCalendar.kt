@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -64,7 +65,6 @@ fun WeeklyHorizontalCalendar(
     onNavigateToCalendar: () -> Unit,
     weekState: WeekCalendarState,
     days: List<Day>,
-    showGuide: Boolean,
     onNavigateToDayInfo: (Long) -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
@@ -208,10 +208,20 @@ fun WeeklyHorizontalCalendar(
             },
         )
 
-        if (showGuide) {
+        if (days.size < 5) {
             Row(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
                 Text(
-                    text = stringResource(R.string.guide_text),
+                    text = if (days.isEmpty()) {
+                        stringResource(R.string.guide_text)
+                    } else {
+                        val leftDays = 5 - days.size
+
+                        pluralStringResource(
+                            id = R.plurals.add_more_days,
+                            count = leftDays,
+                            formatArgs = arrayOf(leftDays)
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -240,7 +250,6 @@ private fun Preview() {
                         isFavorite = true,
                     )
                 },
-            showGuide = false,
             onNavigateToDayInfo = {},
         )
     }

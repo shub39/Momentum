@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
@@ -66,7 +67,6 @@ import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProjectList(
     state: HomeState,
@@ -83,7 +83,12 @@ fun ProjectList(
             LargeFlexibleTopAppBar(
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Text(text = stringResource(R.string.app_name), fontFamily = flexFontEmphasis())
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        fontFamily = flexFontEmphasis(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 },
                 subtitle = {
                     Text(
