@@ -32,14 +32,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.blur.BlurRadiusSpec
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -58,6 +61,7 @@ import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.data.getPlaceholder
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -136,12 +140,21 @@ fun WeeklyHorizontalCalendar(
                                         Modifier.matchParentSize()
                                             .border(
                                                 width = 2.dp,
-                                                color = MaterialTheme.colorScheme.error,
+                                                color = colorScheme.error,
                                                 shape = dayShape,
                                             )
                                 )
                             },
-                            modifier = Modifier.matchParentSize().clip(dayShape),
+                            modifier =
+                                Modifier.matchParentSize()
+                                    .clip(dayShape)
+                                    .blur(
+                                        blurRadiusSpec =
+                                            BlurRadiusSpec.verticalGradient(
+                                                startRadius = 0.dp,
+                                                endRadius = 4.dp,
+                                            )
+                                    ),
                         )
 
                         Box(
@@ -151,22 +164,18 @@ fun WeeklyHorizontalCalendar(
                                         brush =
                                             Brush.verticalGradient(
                                                 0f to Color.Transparent,
-                                                0.7f to MaterialTheme.colorScheme.background,
-                                                1f to MaterialTheme.colorScheme.background,
+                                                1f to colorScheme.secondaryContainer,
                                             ),
                                         shape = dayShape,
                                     )
                                     .clip(dayShape)
-                                    .clickable(enabled = possibleDay) {
-                                        onNavigateToDayInfo(weekDay.date.toEpochDay())
-                                    }
                         )
                     }
                         ?: Box(
                             modifier =
                                 Modifier.matchParentSize()
                                     .background(
-                                        color = MaterialTheme.colorScheme.surfaceContainer,
+                                        color = colorScheme.surfaceContainer,
                                         shape = RoundedCornerShape(20.dp),
                                     )
                                     .clip(RoundedCornerShape(20.dp))
@@ -181,25 +190,30 @@ fun WeeklyHorizontalCalendar(
                     ) {
                         Text(
                             text = weekDay.date.dayOfMonth.toString(),
-                            style = MaterialTheme.typography.labelMedium,
+                            style =
+                                MaterialTheme.typography.labelMedium.copy(
+                                    fontFamily = flexFontRounded()
+                                ),
                             color =
                                 if (possibleDay) {
-                                    MaterialTheme.colorScheme.onBackground
+                                    colorScheme.onSecondaryContainer
                                 } else {
-                                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                    colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
                                 },
-                            fontWeight = FontWeight.Bold,
                         )
 
                         Text(
                             text = weekDay.date.dayOfWeek.toString().take(3),
                             color =
                                 if (possibleDay) {
-                                    MaterialTheme.colorScheme.onBackground
+                                    colorScheme.onSecondaryContainer
                                 } else {
-                                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                    colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
                                 },
-                            style = MaterialTheme.typography.labelSmall,
+                            style =
+                                MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = flexFontRounded()
+                                ),
                         )
 
                         Spacer(modifier = Modifier.height(2.dp))
@@ -211,20 +225,21 @@ fun WeeklyHorizontalCalendar(
         if (days.size < 5) {
             Row(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
                 Text(
-                    text = if (days.isEmpty()) {
-                        stringResource(R.string.guide_text)
-                    } else {
-                        val leftDays = 5 - days.size
+                    text =
+                        if (days.isEmpty()) {
+                            stringResource(R.string.guide_text)
+                        } else {
+                            val leftDays = 5 - days.size
 
-                        pluralStringResource(
-                            id = R.plurals.add_more_days,
-                            count = leftDays,
-                            formatArgs = arrayOf(leftDays)
-                        )
-                    },
+                            pluralStringResource(
+                                id = R.plurals.add_more_days,
+                                count = leftDays,
+                                formatArgs = arrayOf(leftDays),
+                            )
+                        },
                     modifier = Modifier.fillMaxWidth(),
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = colorScheme.primary,
                     textAlign = TextAlign.Center,
                 )
             }

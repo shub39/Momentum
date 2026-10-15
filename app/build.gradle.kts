@@ -52,12 +52,12 @@ val abiCodes = mapOf("arm64-v8a" to 0, "armeabi-v7a" to -1, "x86_64" to -2, "x86
 
 android {
     namespace = appNameSpace
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     defaultConfig {
         applicationId = appNameSpace
         minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.compileSdk.get().toInt()
+        targetSdk = 37
         versionCode = appVersionCode
         versionName = appVersionName
 

@@ -45,7 +45,6 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeExtendedFloatingActionButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.LoadingIndicator
@@ -60,7 +59,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -176,22 +174,22 @@ fun ProjectDetails(
                     containerColor = colorScheme.primary,
                     contentColor = colorScheme.onPrimary,
                     shape = MaterialTheme.shapes.extraExtraLarge,
-                    modifier = Modifier
-                        .animateFloatingActionButton(
+                    modifier =
+                        Modifier.animateFloatingActionButton(
                             visible = (state.days.size >= 5) && isScrollingTop,
-                            alignment = Alignment.Center
-                        )
+                            alignment = Alignment.Center,
+                        ),
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.play),
                         contentDescription = null,
-                        modifier = Modifier.size(FloatingActionButtonDefaults.MediumIconSize)
+                        modifier = Modifier.size(FloatingActionButtonDefaults.MediumIconSize),
                     )
                     Spacer(modifier = Modifier.width(ButtonDefaults.MediumIconSize))
                     Text(text = stringResource(R.string.montage), fontFamily = flexFontRounded())
                 }
             },
-            floatingActionButtonPosition = FabPosition.Center
+            floatingActionButtonPosition = FabPosition.Center,
         ) { paddingValues ->
             val today = LocalDate.now()
             val weekState =
