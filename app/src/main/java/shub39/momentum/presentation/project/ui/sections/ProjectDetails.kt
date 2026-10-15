@@ -260,7 +260,7 @@ fun ProjectDetails(
                                 modifier =
                                     Modifier.size(48.dp)
                                         .background(
-                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            color = colorScheme.primaryContainer,
                                             shape = MaterialShapes.Sunny.toShape(),
                                         ),
                                 contentAlignment = Alignment.Center,
@@ -268,7 +268,7 @@ fun ProjectDetails(
                                 Icon(
                                     painter = painterResource(R.drawable.photo_library),
                                     contentDescription = "Favorites",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    tint = colorScheme.onPrimaryContainer,
                                 )
                             }
 
@@ -279,7 +279,7 @@ fun ProjectDetails(
                         }
                     }
                 } else {
-                    stickyHeader {
+                    item {
                         Row(
                             modifier =
                                 Modifier.fillMaxWidth()
@@ -296,7 +296,7 @@ fun ProjectDetails(
                                 modifier =
                                     Modifier.size(48.dp)
                                         .background(
-                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                            color = colorScheme.primaryContainer,
                                             shape = MaterialShapes.Sunny.toShape(),
                                         ),
                                 contentAlignment = Alignment.Center,
@@ -304,13 +304,16 @@ fun ProjectDetails(
                                 Icon(
                                     painter = painterResource(R.drawable.favorite),
                                     contentDescription = "Favorites",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    tint = colorScheme.onPrimaryContainer,
                                 )
                             }
 
                             Text(
                                 text = stringResource(R.string.favourites),
-                                style = MaterialTheme.typography.titleLargeEmphasized,
+                                style =
+                                    MaterialTheme.typography.titleLargeEmphasized.copy(
+                                        fontFamily = flexFontRounded()
+                                    ),
                             )
                         }
                     }

@@ -29,14 +29,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.blur.BlurRadiusSpec
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,6 +53,7 @@ import shub39.momentum.R
 import shub39.momentum.core.data_classes.Day
 import shub39.momentum.data.getPlaceholder
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.flexFontRounded
 
 @Composable
 fun FavDayCard(
@@ -64,8 +68,8 @@ fun FavDayCard(
         shape = shape,
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                containerColor = colorScheme.primaryContainer,
+                contentColor = colorScheme.onPrimaryContainer,
             ),
     ) {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomStart) {
@@ -80,7 +84,17 @@ fun FavDayCard(
                     )
                 },
                 previewPlaceholder = getPlaceholder(),
-                modifier = Modifier.clip(shape).height(150.dp).fillMaxWidth(),
+                modifier =
+                    Modifier.clip(shape)
+                        .height(150.dp)
+                        .fillMaxWidth()
+                        .blur(
+                            blurRadiusSpec =
+                                BlurRadiusSpec.verticalGradient(
+                                    startRadius = 0.dp,
+                                    endRadius = 2.dp,
+                                )
+                        ),
             )
 
             Box(
@@ -90,15 +104,7 @@ fun FavDayCard(
                             brush =
                                 Brush.verticalGradient(
                                     0f to Color.Transparent,
-                                    0.7f to
-                                        MaterialTheme.colorScheme.primaryContainer.copy(
-                                            alpha = 0.4f
-                                        ),
-                                    0.9f to
-                                        MaterialTheme.colorScheme.primaryContainer.copy(
-                                            alpha = 0.8f
-                                        ),
-                                    1f to MaterialTheme.colorScheme.primaryContainer,
+                                    1f to colorScheme.tertiaryContainer,
                                 )
                         )
             )
@@ -107,20 +113,25 @@ fun FavDayCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp),
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     Text(
                         text =
                             LocalDate.ofEpochDay(day.date)
                                 .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)),
-                        style = MaterialTheme.typography.titleLarge,
+                        style =
+                            MaterialTheme.typography.titleLarge.copy(
+                                fontFamily = flexFontRounded()
+                            ),
+                        color = colorScheme.onTertiaryContainer,
                     )
 
                     if (!day.comment.isNullOrBlank()) {
-                        Text(text = day.comment!!)
+                        Text(text = day.comment!!, color = colorScheme.onTertiaryContainer)
                     }
                 }
-
-                Icon(painter = painterResource(R.drawable.arrow_forward), contentDescription = null)
             }
         }
     }
