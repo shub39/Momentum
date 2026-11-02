@@ -32,4 +32,7 @@ sealed interface MontageOptionsDao {
 
     @Query("SELECT * FROM options_table WHERE projectId=:projectId")
     suspend fun getMontageOptionByProjectId(projectId: Long): MontageOptionsEntity?
+
+    @Query("SELECT * FROM options_table WHERE projectId=:projectId")
+    fun getMontageOptionFlowByProjectId(projectId: Long): Flow<MontageOptionsEntity?>
 }

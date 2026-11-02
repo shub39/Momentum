@@ -19,33 +19,28 @@ package shub39.momentum.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.core.data_classes.AnalyticsEvent
 import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.interfaces.AnalyticsWrapper
-import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.core.interfaces.ProjectRepository
+import shub39.momentum.core.interfaces.ProjectSelection
 import shub39.momentum.presentation.home.HomeAction
 import shub39.momentum.presentation.home.HomeState
 
 @KoinViewModel
 class HomeViewModel(
-    private val stateLayer: SharedState,
+    private val selection: ProjectSelection,
     private val projectRepository: ProjectRepository,
     private val analytics: AnalyticsWrapper,
 ) : ViewModel() {
-    private val _state = stateLayer.homeState
     val state =
-        _state
-            .asStateFlow()
-            .onStart { observeProjects() }
+        projectRepository
+            .getProjectListData()
+            .map { projects -> HomeState(projects = projects) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -57,32 +52,18 @@ class HomeViewModel(
             when (action) {
                 is OnChangeProject -> {
                     analytics.trackEvent(AnalyticsEvent.PROJECT_SELECTED)
-                    stateLayer.projectState.update {
-                        it.copy(
-                            project = action.project,
-                            days = emptyList(),
-                            montage = MontageState.ProcessingImages(),
-                        )
-                    }
+                    selection.selectProject(action.projectId)
                 }
 
                 is OnAddProject -> {
                     analytics.trackEvent(
                         AnalyticsEvent.PROJECT_CREATED,
-                        mapOf("project_count" to (_state.value.projects.size + 1)),
+                        mapOf("project_count" to (state.value.projects.size + 1)),
                     )
                     projectRepository.upsertProject(
                         Project(title = action.title, description = action.description)
                     )
                 }
             }
-        }
-
-    private fun observeProjects() =
-        viewModelScope.launch {
-            projectRepository
-                .getProjectListData()
-                .onEach { projects -> _state.update { it.copy(projects = projects) } }
-                .launchIn(this)
         }
 }

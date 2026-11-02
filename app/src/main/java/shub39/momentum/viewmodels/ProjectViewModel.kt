@@ -29,23 +29,24 @@ import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.toAndroidUri
 import kotlin.time.TimeSource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.KoinViewModel
 import shub39.momentum.core.data_classes.AnalyticsEvent
+import shub39.momentum.core.data_classes.Day
 import shub39.momentum.core.data_classes.MontageConfig
+import shub39.momentum.core.data_classes.Project
 import shub39.momentum.core.data_classes.toMontageConfig
 import shub39.momentum.core.data_classes.toMontageOptions
 import shub39.momentum.core.enums.VideoAction
@@ -55,15 +56,17 @@ import shub39.momentum.core.interfaces.FaceDetector
 import shub39.momentum.core.interfaces.MontageMaker
 import shub39.momentum.core.interfaces.MontageState
 import shub39.momentum.core.interfaces.ProjectRepository
+import shub39.momentum.core.interfaces.ProjectSelection
 import shub39.momentum.data.ImageHandler
 import shub39.momentum.data.MontageHandler
 import shub39.momentum.presentation.project.ProjectAction
 import shub39.momentum.presentation.project.ProjectState
 import shub39.momentum.presentation.project.ScanState
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @KoinViewModel
 class ProjectViewModel(
-    sharedState: SharedState,
+    private val selection: ProjectSelection,
     private val montageMaker: MontageMaker,
     private val faceDetector: FaceDetector,
     private val repository: ProjectRepository,
@@ -72,8 +75,6 @@ class ProjectViewModel(
     private val montageHandler: MontageHandler,
     private val analytics: AnalyticsWrapper,
 ) : ViewModel() {
-    private var observeDaysJob: Job? = null
-
     private val _exoPlayer = MutableStateFlow<ExoPlayer?>(null)
     val exoPlayer =
         _exoPlayer
@@ -84,31 +85,68 @@ class ProjectViewModel(
                 initialValue = null,
             )
 
-    private val _state = sharedState.projectState
+    /** The only state without a persistent owner: in-flight montages and face scans. */
+    private val ephemeral = MutableStateFlow(ProjectEphemeral())
+
+    private val content: Flow<ProjectContent> =
+        selection.selectedProjectId.flatMapLatest { projectId ->
+            if (projectId == null) {
+                flowOf(ProjectContent())
+            } else {
+                combine(
+                    repository.getProjectByIdFlow(projectId),
+                    repository.getDaysByProjectId(projectId),
+                    repository.getMontageOptionsFlow(projectId),
+                ) { project, days, options ->
+                    ProjectContent(
+                        project = project,
+                        days = days,
+                        montageConfig = options?.toMontageConfig() ?: MontageConfig(),
+                    )
+                }
+            }
+        }
+
     val state =
-        _state
-            .asStateFlow()
-            .onStart { observeConfig() }
+        combine(content, ephemeral) { content, ephemeral ->
+                ProjectState(
+                    project = content.project,
+                    days = content.days,
+                    montage = ephemeral.montage,
+                    montageConfig = content.montageConfig,
+                    scanState = ephemeral.scanState,
+                )
+            }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = ProjectState(),
             )
 
+    init {
+        // Selecting another project discards everything scoped to the previous one
+        viewModelScope.launch {
+            selection.selectedProjectId.collect {
+                _exoPlayer.value?.release()
+                _exoPlayer.value = null
+                ephemeral.value = ProjectEphemeral()
+            }
+        }
+    }
+
     fun onAction(action: ProjectAction) {
         when (action) {
             is ProjectAction.OnUpdateCameraOptions ->
                 viewModelScope.launch {
-                    val currentProject = _state.value.project ?: return@launch
-                    val updatedProject = currentProject.copy(cameraOptions = action.cameraOptions)
-                    repository.upsertProject(updatedProject)
-                    _state.update { it.copy(project = updatedProject) }
+                    val currentProject = state.value.project ?: return@launch
+                    repository.upsertProject(
+                        currentProject.copy(cameraOptions = action.cameraOptions)
+                    )
                 }
 
             is OnUpdateProject ->
                 viewModelScope.launch {
                     repository.upsertProject(action.project)
-                    _state.update { it.copy(project = action.project) }
                     scheduler.schedule(action.project)
                 }
 
@@ -116,10 +154,11 @@ class ProjectViewModel(
                 viewModelScope.launch {
                     analytics.trackEvent(
                         AnalyticsEvent.PROJECT_DELETED,
-                        mapOf("days_count" to _state.value.days.size),
+                        mapOf("days_count" to state.value.days.size),
                     )
                     repository.deleteProject(action.project)
                     scheduler.cancel(action.project)
+                    selection.clearSelection()
                 }
 
             is OnDeleteDay ->
@@ -156,8 +195,8 @@ class ProjectViewModel(
             is OnCreateMontage ->
                 viewModelScope.launch {
                     val startTime = TimeSource.Monotonic.markNow()
-                    val projectId = _state.value.project?.id ?: return@launch
-                    val options = _state.value.montageConfig.toMontageOptions(projectId)
+                    val projectId = selection.selectedProjectId.value ?: return@launch
+                    val options = state.value.montageConfig.toMontageOptions(projectId)
 
                     val builtMontage =
                         montageHandler.getBuiltMontage(
@@ -171,8 +210,8 @@ class ProjectViewModel(
                             mapOf(
                                 "days_count" to action.days.size,
                                 "time_taken_ms" to startTime.elapsedNow().inWholeMilliseconds,
-                                "fps" to _state.value.montageConfig.framesPerSecond,
-                                "video_quality" to _state.value.montageConfig.videoQuality.name,
+                                "fps" to state.value.montageConfig.framesPerSecond,
+                                "video_quality" to state.value.montageConfig.videoQuality.name,
                                 "is_cached" to true,
                             ),
                         )
@@ -182,12 +221,12 @@ class ProjectViewModel(
                             prepare()
                         }
 
-                        _state.update {
+                        ephemeral.update {
                             it.copy(
                                 montage =
                                     MontageState.Success(
                                         file = builtMontage,
-                                        config = _state.value.montageConfig,
+                                        config = state.value.montageConfig,
                                     )
                             )
                         }
@@ -195,28 +234,28 @@ class ProjectViewModel(
                         montageMaker
                             .createMontageFlow(
                                 days = action.days,
-                                config = _state.value.montageConfig,
+                                config = state.value.montageConfig,
                             )
                             .flowOn(Dispatchers.Default)
-                            .collect { state ->
-                                Log.d("ProjectViewModel", "Montage state: $state")
+                            .collect { montageState ->
+                                Log.d("ProjectViewModel", "Montage state: $montageState")
 
-                                if (state is MontageState.Success) {
+                                if (montageState is MontageState.Success) {
                                     analytics.trackEvent(
                                         AnalyticsEvent.MONTAGE_CREATED,
                                         mapOf(
                                             "days_count" to action.days.size,
                                             "time_taken_ms" to
                                                 startTime.elapsedNow().inWholeMilliseconds,
-                                            "fps" to _state.value.montageConfig.framesPerSecond,
+                                            "fps" to state.value.montageConfig.framesPerSecond,
                                             "video_quality" to
-                                                _state.value.montageConfig.videoQuality.name,
+                                                state.value.montageConfig.videoQuality.name,
                                             "is_cached" to false,
                                         ),
                                     )
                                     val file =
                                         montageHandler.copyMontageToFiles(
-                                            montage = state.file,
+                                            montage = montageState.file,
                                             projectId = projectId,
                                             options = options,
                                             days = action.days,
@@ -228,32 +267,26 @@ class ProjectViewModel(
                                         prepare()
                                     }
 
-                                    _state.update {
+                                    ephemeral.update {
                                         it.copy(
                                             montage =
-                                                state.copy(
+                                                montageState.copy(
                                                     file = file,
-                                                    config = _state.value.montageConfig,
+                                                    config = state.value.montageConfig,
                                                 )
                                         )
                                     }
                                 } else {
-                                    _state.update { it.copy(montage = state) }
+                                    ephemeral.update { it.copy(montage = montageState) }
                                 }
                             }
                     }
                 }
 
-            OnUpdateDays ->
-                viewModelScope.launch {
-                    refreshDays()
-                    withContext(Dispatchers.Default) { processDays() }
-                }
-
             OnClearMontageState -> {
                 _exoPlayer.value?.release()
-                _exoPlayer.update { null }
-                _state.update { it.copy(montage = MontageState.ProcessingImages()) }
+                _exoPlayer.value = null
+                ephemeral.update { it.copy(montage = MontageState.ProcessingImages()) }
             }
 
             is OnPlayerAction -> {
@@ -290,8 +323,8 @@ class ProjectViewModel(
                             "video_quality" to action.config.videoQuality.name,
                         ),
                     )
-                    _state.value.project?.id?.let { projectId ->
-                        updateMontageConfig(projectId = projectId, config = action.config)
+                    selection.selectedProjectId.value?.let { projectId ->
+                        repository.upsertMontageOptions(action.config.toMontageOptions(projectId))
                     }
                 }
             }
@@ -302,10 +335,10 @@ class ProjectViewModel(
                         AnalyticsEvent.REMINDER_UPDATED,
                         mapOf("is_enabled" to (action.alarmData != null)),
                     )
-                    val newProject = _state.value.project!!.copy(alarm = action.alarmData)
+                    val newProject =
+                        state.value.project?.copy(alarm = action.alarmData) ?: return@launch
 
                     repository.upsertProject(newProject)
-                    _state.update { it.copy(project = newProject) }
 
                     if (action.alarmData == null) {
                         scheduler.cancel(newProject)
@@ -316,27 +349,27 @@ class ProjectViewModel(
 
             is OnResetMontagePrefs ->
                 viewModelScope.launch {
-                    _state.value.project?.id?.let { projectId ->
-                        updateMontageConfig(projectId = projectId, config = MontageConfig())
+                    selection.selectedProjectId.value?.let { projectId ->
+                        repository.upsertMontageOptions(MontageConfig().toMontageOptions(projectId))
                     }
                 }
 
             OnStartFaceScan ->
                 viewModelScope.launch {
-                    if (_state.value.days.isEmpty()) return@launch
+                    if (state.value.days.isEmpty()) return@launch
 
                     analytics.trackEvent(
                         AnalyticsEvent.FACE_SCAN_STARTED,
-                        mapOf("days_count" to _state.value.days.size),
+                        mapOf("days_count" to state.value.days.size),
                     )
 
-                    _state.update { it.copy(scanState = ScanState.Processing(0f)) }
-                    val size = _state.value.days.size
+                    ephemeral.update { it.copy(scanState = ScanState.Processing(0f)) }
+                    val size = state.value.days.size
 
                     try {
                         withContext(Dispatchers.IO) {
-                            _state.value.days.fastForEachIndexed { index, day ->
-                                _state.update {
+                            state.value.days.fastForEachIndexed { index, day ->
+                                ephemeral.update {
                                     it.copy(
                                         scanState =
                                             ScanState.Processing(index.toFloat() / size.toFloat())
@@ -351,73 +384,31 @@ class ProjectViewModel(
                     } catch (e: Exception) {
                         Log.e("ProjectViewModel", "Error while scanning project for faces: ", e)
                     } finally {
-                        _state.update { it.copy(scanState = ScanState.Done) }
+                        ephemeral.update { it.copy(scanState = ScanState.Done) }
                     }
                 }
 
             OnResetScanState -> {
-                _state.update { it.copy(scanState = ScanState.Idle) }
+                ephemeral.update { it.copy(scanState = ScanState.Idle) }
             }
         }
     }
-
-    private suspend fun updateMontageConfig(projectId: Long, config: MontageConfig) {
-        repository.upsertMontageOptions(config.toMontageOptions(projectId))
-
-        repository.getMontageOptionsByProjectId(projectId)?.toMontageConfig()?.let { config ->
-            _state.update { it.copy(montageConfig = config) }
-        }
-    }
-
-    private fun refreshDays() {
-        observeDaysJob?.cancel()
-        observeDaysJob =
-            viewModelScope.launch {
-                repository
-                    .getDays()
-                    .onEach { days ->
-                        val filteredDays =
-                            this.async(Dispatchers.Default) {
-                                days
-                                    .filter { it.projectId == _state.value.project?.id }
-                                    .sortedByDescending { it.date }
-                            }
-                        _state.update { it.copy(days = filteredDays.await()) }
-                    }
-                    .launchIn(this)
-            }
-    }
-
-    private suspend fun processDays() {
-        state.value.days.forEach { day ->
-            if (day.faceData == null) {
-                val uri = PlatformFile(day.image).toAndroidUri()
-                val faceData = faceDetector.getFaceDataFromUri(uri)
-                repository.upsertDay(day.copy(faceData = faceData))
-            }
-        }
-    }
-
-    private fun observeConfig() =
-        viewModelScope.launch {
-            // get montage config when project changes
-            _state
-                .map { it.project?.id }
-                .onEach { projectId ->
-                    projectId?.let {
-                        val config =
-                            repository.getMontageOptionsByProjectId(it)?.toMontageConfig()
-                                ?: MontageConfig()
-
-                        _state.update { state -> state.copy(montageConfig = config) }
-                        refreshDays()
-                    }
-                }
-                .launchIn(this)
-        }
 
     override fun onCleared() {
         super.onCleared()
         _exoPlayer.value?.release()
     }
 }
+
+/** Project data owned by [ProjectRepository]; the only flow this screen derives from. */
+private data class ProjectContent(
+    val project: Project? = null,
+    val days: List<Day> = emptyList(),
+    val montageConfig: MontageConfig = MontageConfig(),
+)
+
+/** In-flight state that belongs to the session, not to the database. */
+private data class ProjectEphemeral(
+    val montage: MontageState = MontageState.ProcessingImages(),
+    val scanState: ScanState = ScanState.Idle,
+)

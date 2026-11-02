@@ -156,7 +156,7 @@ fun ProjectList(
                         projectListData = projectListData,
                         shape = shape,
                         onClick = {
-                            onAction(HomeAction.OnChangeProject(projectListData.project))
+                            onAction(HomeAction.OnChangeProject(projectListData.project.id))
                             onNavigateToProject()
                         },
                     )

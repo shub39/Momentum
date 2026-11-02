@@ -31,7 +31,11 @@ interface ProjectRepository {
 
     suspend fun getProjectById(id: Long): Project?
 
+    fun getProjectByIdFlow(id: Long): Flow<Project?>
+
     fun getDays(): Flow<List<Day>>
+
+    fun getDaysByProjectId(projectId: Long): Flow<List<Day>>
 
     suspend fun upsertDay(day: Day)
 
@@ -40,6 +44,8 @@ interface ProjectRepository {
     suspend fun getLastCompletedDay(projectId: Long): Day?
 
     suspend fun getMontageOptionsByProjectId(projectId: Long): MontageOptions?
+
+    fun getMontageOptionsFlow(projectId: Long): Flow<MontageOptions?>
 
     suspend fun upsertMontageOptions(montageOptions: MontageOptions)
 
