@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.9.0
+## 1.9.1
 - Miscellaneous UI updates and Fixes
 - Updated App Icon
 - Miscellaneous Bug Fixes

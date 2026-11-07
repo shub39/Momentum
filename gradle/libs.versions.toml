@@ -1,5 +1,5 @@
 [versions]
-agp = "9.5.0"
+agp = "9.5.1"
 kotlinx-coroutines = "1.11.0"
 minSdk = "27"
 calendar = "2.10.1"
@@ -12,18 +12,18 @@ koin = "4.2.2"
 koin-plugin = "1.2.1"
 kotlin = "2.4.21"
 ksp = "2.3.10"
-material3 = "1.5.0-beta02"
+material3 = "1.5.0-rc01"
 room = "3.0.3"
-navigation = "1.2.0"
+navigation = "1.2.1"
 adaptive-navigation3 = "1.4.0-alpha03"
 serialization = "1.12.0"
 materialkolor = "5.0.1"
-compose = "1.13.0-beta02"
+compose = "1.13.0-rc01"
 landscapist = "2.13.2"
 filekit = "0.17.0"
 annotation-jvm = "1.11.0"
 purchases = "11.0.1"
-tasks-vision = "1.2.0"
+tasks-vision = "1.2.2"
 truth = "1.4.5"
 espresso-core = "3.7.0"
 junit = "4.13.2"
@@ -32,8 +32,9 @@ core = "1.19.1"
 spotless = "8.10.4"
 kotlinx-datetime = "0.8.0"
 ktfmt = "0.61"
-camera = "1.7.0-rc01"
+camera = "1.7.0-rc02"
 permissions = "0.37.3"
+posthog = "3.76.1"
 
 [libraries]
 # Android
@@ -87,6 +88,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialkolor" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
 calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
+posthog = { module = "com.posthog:posthog-android", version.ref = "posthog" }
 
 [plugins]
 room = { id = "androidx.room3", version.ref = "room" }
