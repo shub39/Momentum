@@ -29,6 +29,9 @@ sealed interface ProjectDao {
     @Query("SELECT * FROM projects_table WHERE id = :id")
     suspend fun getProjectById(id: Long): ProjectEntity?
 
+    @Query("SELECT * FROM projects_table WHERE id = :id")
+    fun getProjectByIdFlow(id: Long): Flow<ProjectEntity?>
+
     @Upsert suspend fun upsertProject(projectEntity: ProjectEntity)
 
     @Delete suspend fun deleteProject(projectEntity: ProjectEntity)

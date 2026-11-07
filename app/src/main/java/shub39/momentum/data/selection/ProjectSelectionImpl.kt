@@ -14,15 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package shub39.momentum.viewmodels
+package shub39.momentum.data.selection
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.koin.core.annotation.Single
-import shub39.momentum.presentation.home.HomeState
-import shub39.momentum.presentation.project.ProjectState
+import shub39.momentum.core.interfaces.ProjectSelection
 
-@Single
-class SharedState {
-    val projectState: MutableStateFlow<ProjectState> = MutableStateFlow(ProjectState())
-    val homeState: MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
+@Single(binds = [ProjectSelection::class])
+class ProjectSelectionImpl : ProjectSelection {
+    private val _selectedProjectId = MutableStateFlow<Long?>(null)
+    override val selectedProjectId = _selectedProjectId.asStateFlow()
+
+    override fun selectProject(projectId: Long) {
+        _selectedProjectId.value = projectId
+    }
+
+    override fun clearSelection() {
+        _selectedProjectId.value = null
+    }
 }

@@ -1,1 +1,1 @@
-App to make Montages easily
+Turn daily photos into a progress montage. Private, offline, automatic.

@@ -57,8 +57,16 @@ class ProjectRepositoryImpl(
         return projectDao.getProjectById(id)?.toProject()
     }
 
+    override fun getProjectByIdFlow(id: Long): Flow<Project?> {
+        return projectDao.getProjectByIdFlow(id).map { it?.toProject() }
+    }
+
     override fun getDays(): Flow<List<Day>> {
         return daysDao.getDays().map { flow -> flow.map { it.toDay() } }
+    }
+
+    override fun getDaysByProjectId(projectId: Long): Flow<List<Day>> {
+        return daysDao.getDaysByProjectId(projectId).map { flow -> flow.map { it.toDay() } }
     }
 
     override suspend fun upsertDay(day: Day) {
@@ -75,6 +83,12 @@ class ProjectRepositoryImpl(
 
     override suspend fun getMontageOptionsByProjectId(projectId: Long): MontageOptions? {
         return montageOptionsDao.getMontageOptionByProjectId(projectId)?.toMontageOptions()
+    }
+
+    override fun getMontageOptionsFlow(projectId: Long): Flow<MontageOptions?> {
+        return montageOptionsDao.getMontageOptionFlowByProjectId(projectId).map {
+            it?.toMontageOptions()
+        }
     }
 
     override suspend fun upsertMontageOptions(montageOptions: MontageOptions) {

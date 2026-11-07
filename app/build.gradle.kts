@@ -42,8 +42,8 @@ plugins {
 }
 
 val appName = "Momentum"
-val appVersionCode = 1900
-val appVersionName = "1.9.0"
+val appVersionCode = 1910
+val appVersionName = "1.9.1"
 val appNameSpace = "shub39.momentum"
 
 val gitHash = execute("git", "rev-parse", "HEAD").take(7)
@@ -153,6 +153,7 @@ android {
                 gradle.startParameter.taskNames.any { it.lowercase().contains("bundle") }
             isEnable = !isBuildingBundle
             reset()
+            //noinspection ChromeOsAbiSupport
             include(*abiCodes.keys.toTypedArray())
             isUniversalApk = true
         }
@@ -192,7 +193,7 @@ dependencies {
 
     "playImplementation"(libs.purchases.ui)
     "playImplementation"(libs.purchases)
-    "playImplementation"("com.posthog:posthog-android:3.+")
+    "playImplementation"(libs.posthog)
 
     implementation(libs.camera.core)
     implementation(libs.camera.camera2)

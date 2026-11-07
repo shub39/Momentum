@@ -33,8 +33,6 @@ sealed interface ProjectAction {
 
     data class OnUpdateCameraOptions(val cameraOptions: CameraOptions) : ProjectAction
 
-    data object OnUpdateDays : ProjectAction
-
     data class OnUpdateProject(val project: Project) : ProjectAction
 
     data class OnDeleteProject(val project: Project) : ProjectAction

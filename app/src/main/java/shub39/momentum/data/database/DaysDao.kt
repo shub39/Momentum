@@ -29,6 +29,9 @@ sealed interface DaysDao {
 
     @Query("SELECT * FROM days_table") fun getDays(): Flow<List<DayEntity>>
 
+    @Query("SELECT * FROM days_table WHERE projectId=:projectId ORDER BY date DESC")
+    fun getDaysByProjectId(projectId: Long): Flow<List<DayEntity>>
+
     @Upsert suspend fun upsertDay(dayEntity: DayEntity)
 
     @Delete suspend fun deleteDay(dayEntity: DayEntity)
