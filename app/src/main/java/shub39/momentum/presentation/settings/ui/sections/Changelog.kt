@@ -17,28 +17,19 @@
 package shub39.momentum.presentation.settings.ui.sections
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +38,9 @@ import shub39.momentum.R
 import shub39.momentum.app.Changelog
 import shub39.momentum.app.VersionEntry
 import shub39.momentum.core.data_classes.Theme
+import shub39.momentum.presentation.shared.ExpressiveTopBar
+import shub39.momentum.presentation.shared.LazierColumn
+import shub39.momentum.presentation.shared.LazierDefaults
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.detachedItemShape
 import shub39.momentum.presentation.shared.endItemShape
@@ -56,15 +50,12 @@ import shub39.momentum.presentation.shared.leadingItemShape
 import shub39.momentum.presentation.shared.listItemColors
 import shub39.momentum.presentation.shared.middleItemShape
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Changelog(modifier: Modifier = Modifier, changelog: Changelog, onNavigateBack: () -> Unit) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         topBar = {
-            MediumFlexibleTopAppBar(
-                scrollBehavior = scrollBehavior,
+            ExpressiveTopBar(
                 title = {
                     Text(text = stringResource(R.string.changelog), fontFamily = flexFontEmphasis())
                 },
@@ -76,21 +67,14 @@ fun Changelog(modifier: Modifier = Modifier, changelog: Changelog, onNavigateBac
                         )
                     }
                 },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
             )
         },
     ) { padding ->
-        LazyColumn(
+        LazierColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(2.dp),
-            contentPadding =
-                PaddingValues(
-                    top = padding.calculateTopPadding() + 16.dp,
-                    bottom = padding.calculateBottomPadding() + 60.dp,
-                    start = padding.calculateLeftPadding(LocalLayoutDirection.current) + 16.dp,
-                    end = padding.calculateRightPadding(LocalLayoutDirection.current) + 16.dp,
-                ),
+            contentPadding = padding,
+            extraPadding = LazierDefaults.pagePadding(extraBottom = 44.dp),
         ) {
             changelog.forEach { versionEntry ->
                 item {

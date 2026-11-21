@@ -22,11 +22,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,7 +31,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +41,6 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialShapes
@@ -69,7 +64,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -91,6 +85,10 @@ import shub39.momentum.presentation.project.ScanState
 import shub39.momentum.presentation.project.ui.component.AlarmCard
 import shub39.momentum.presentation.project.ui.component.FavDayCard
 import shub39.momentum.presentation.project.ui.component.WeeklyHorizontalCalendar
+import shub39.momentum.presentation.shared.ExpressiveTopBar
+import shub39.momentum.presentation.shared.ExpressiveTopBarStyle
+import shub39.momentum.presentation.shared.LazierColumn
+import shub39.momentum.presentation.shared.LazierDefaults
 import shub39.momentum.presentation.shared.MomentumDialog
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.PageFill
@@ -120,16 +118,13 @@ fun ProjectDetails(
             modifier =
                 Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).widthIn(max = 700.dp),
             topBar = {
-                LargeFlexibleTopAppBar(
+                ExpressiveTopBar(
+                    style = ExpressiveTopBarStyle.LargeFlexible,
                     scrollBehavior = scrollBehavior,
                     title = { Text(text = state.project.title, fontFamily = flexFontEmphasis()) },
                     subtitle = {
                         Text(text = state.project.description, fontFamily = flexFontRounded())
                     },
-                    colors =
-                        TopAppBarDefaults.topAppBarColors(
-                            scrolledContainerColor = colorScheme.surface
-                        ),
                     navigationIcon = {
                         FilledTonalIconButton(onClick = onNavigateBack) {
                             Icon(
@@ -199,16 +194,11 @@ fun ProjectDetails(
                     firstVisibleWeekDate = today,
                 )
 
-            LazyColumn(
+            LazierColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding =
-                    PaddingValues(
-                        start = paddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                        end = paddingValues.calculateEndPadding(LocalLayoutDirection.current),
-                        top = paddingValues.calculateTopPadding() + 16.dp,
-                        bottom = paddingValues.calculateBottomPadding() + 60.dp,
-                    ),
+                contentPadding = paddingValues,
+                extraPadding = LazierDefaults.pagePadding(extraBottom = 44.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -226,7 +216,7 @@ fun ProjectDetails(
                                 bottomStart = 4.dp,
                                 bottomEnd = 4.dp,
                             ),
-                        modifier = Modifier.animateContentSize().padding(horizontal = 16.dp),
+                        modifier = Modifier.animateContentSize(),
                     )
                 }
 
@@ -242,7 +232,6 @@ fun ProjectDetails(
                                 bottomStart = 28.dp,
                                 bottomEnd = 28.dp,
                             ),
-                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
 
@@ -281,14 +270,7 @@ fun ProjectDetails(
                 } else {
                     item {
                         Row(
-                            modifier =
-                                Modifier.fillMaxWidth()
-                                    .padding(
-                                        top = 32.dp,
-                                        bottom = 16.dp,
-                                        start = 16.dp,
-                                        end = 16.dp,
-                                    ),
+                            modifier = Modifier.fillMaxWidth().padding(top = 32.dp, bottom = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
@@ -345,7 +327,6 @@ fun ProjectDetails(
                         FavDayCard(
                             day = day,
                             onClick = { onNavigateToDayInfo(day.date) },
-                            modifier = Modifier.padding(horizontal = 16.dp),
                             shape = shape,
                         )
                     }

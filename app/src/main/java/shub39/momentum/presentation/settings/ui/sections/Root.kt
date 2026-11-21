@@ -19,19 +19,13 @@ package shub39.momentum.presentation.settings.ui.sections
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -39,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +40,10 @@ import androidx.compose.ui.unit.dp
 import shub39.momentum.R
 import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
+import shub39.momentum.presentation.shared.ExpressiveTopBar
+import shub39.momentum.presentation.shared.ExpressiveTopBarStyle
+import shub39.momentum.presentation.shared.LazierColumn
+import shub39.momentum.presentation.shared.LazierDefaults
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.PageFill
 import shub39.momentum.presentation.shared.detachedItemShape
@@ -73,12 +70,9 @@ fun Root(
             modifier =
                 Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).widthIn(max = 700.dp),
             topBar = {
-                MediumFlexibleTopAppBar(
+                ExpressiveTopBar(
+                    style = ExpressiveTopBarStyle.LargeFlexible,
                     scrollBehavior = scrollBehavior,
-                    colors =
-                        TopAppBarDefaults.topAppBarColors(
-                            scrolledContainerColor = colorScheme.surface
-                        ),
                     title = {
                         Text(
                             text = stringResource(R.string.settings),
@@ -96,18 +90,10 @@ fun Root(
                 )
             },
         ) { paddingValues ->
-            LazyColumn(
+            LazierColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding =
-                    PaddingValues(
-                        top = paddingValues.calculateTopPadding() + 16.dp,
-                        bottom = paddingValues.calculateBottomPadding() + 60.dp,
-                        start =
-                            paddingValues.calculateStartPadding(LocalLayoutDirection.current) +
-                                16.dp,
-                        end =
-                            paddingValues.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
-                    ),
+                contentPadding = paddingValues,
+                extraPadding = LazierDefaults.pagePadding(extraBottom = 44.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 // momentum pro

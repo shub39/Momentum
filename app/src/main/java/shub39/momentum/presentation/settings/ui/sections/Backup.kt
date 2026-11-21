@@ -19,27 +19,20 @@ package shub39.momentum.presentation.settings.ui.sections
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -48,6 +41,9 @@ import shub39.momentum.core.backup.ExportState
 import shub39.momentum.core.backup.ImportState
 import shub39.momentum.presentation.settings.SettingsAction
 import shub39.momentum.presentation.settings.SettingsState
+import shub39.momentum.presentation.shared.ExpressiveTopBar
+import shub39.momentum.presentation.shared.LazierColumn
+import shub39.momentum.presentation.shared.LazierDefaults
 import shub39.momentum.presentation.shared.endItemShape
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.leadingItemShape
@@ -61,13 +57,10 @@ fun Backup(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         topBar = {
-            MediumFlexibleTopAppBar(
-                scrollBehavior = scrollBehavior,
+            ExpressiveTopBar(
                 title = {
                     Text(text = stringResource(R.string.backup), fontFamily = flexFontEmphasis())
                 },
@@ -79,21 +72,14 @@ fun Backup(
                         )
                     }
                 },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
             )
         },
     ) { padding ->
-        LazyColumn(
+        LazierColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding =
-                PaddingValues(
-                    top = padding.calculateTopPadding() + 16.dp,
-                    bottom = padding.calculateBottomPadding() + 60.dp,
-                    start = padding.calculateLeftPadding(LocalLayoutDirection.current) + 16.dp,
-                    end = padding.calculateRightPadding(LocalLayoutDirection.current) + 16.dp,
-                ),
+            contentPadding = padding,
+            extraPadding = LazierDefaults.pagePadding(extraBottom = 44.dp),
         ) {
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {

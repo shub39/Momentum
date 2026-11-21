@@ -21,7 +21,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,8 +36,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +49,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.blur.BlurRadiusSpec
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.VerticalCalendar
@@ -69,6 +67,10 @@ import shub39.momentum.core.data_classes.Theme
 import shub39.momentum.core.enums.AppTheme
 import shub39.momentum.data.getPlaceholder
 import shub39.momentum.presentation.project.ProjectState
+import shub39.momentum.presentation.shared.ExpressiveTopBar
+import shub39.momentum.presentation.shared.LazierBlur
+import shub39.momentum.presentation.shared.LazierDefaults
+import shub39.momentum.presentation.shared.LazierDefaults.lazierEdgeBlur
 import shub39.momentum.presentation.shared.MomentumTheme
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
@@ -89,10 +91,10 @@ fun ProjectCalendar(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {},
-                colors =
-                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
+            ExpressiveTopBar(
+                title = {
+                    Text(text = stringResource(R.string.calendar), fontFamily = flexFontEmphasis())
+                },
                 navigationIcon = {
                     FilledTonalIconButton(onClick = onNavigateBack) {
                         Icon(
@@ -108,14 +110,8 @@ fun ProjectCalendar(
         VerticalCalendar(
             reverseLayout = true,
             state = calendarState,
-            contentPadding =
-                PaddingValues(
-                    top = padding.calculateTopPadding() + 16.dp,
-                    bottom = padding.calculateBottomPadding() + 16.dp,
-                    start = 16.dp,
-                    end = 16.dp,
-                ),
-            modifier = Modifier.fillMaxWidth(),
+            contentPadding = LazierDefaults.contentPaddingWith(padding),
+            modifier = Modifier.fillMaxWidth().lazierEdgeBlur(LazierBlur.Top),
             monthHeader = { month ->
                 val days =
                     state.days.count { LocalDate.ofEpochDay(it.date).yearMonth == month.yearMonth }

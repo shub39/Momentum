@@ -17,11 +17,9 @@
 package shub39.momentum.presentation.home.ui.sections
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,8 +27,6 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonShapes
-import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -61,7 +57,11 @@ import shub39.momentum.presentation.home.HomeAction
 import shub39.momentum.presentation.home.HomeState
 import shub39.momentum.presentation.home.ui.component.Empty
 import shub39.momentum.presentation.home.ui.component.ProjectListItem
+import shub39.momentum.presentation.shared.ExpressiveTopBar
+import shub39.momentum.presentation.shared.ExpressiveTopBarStyle
+import shub39.momentum.presentation.shared.LazierColumn
 import shub39.momentum.presentation.shared.MomentumTheme
+import shub39.momentum.presentation.shared.PageFill
 import shub39.momentum.presentation.shared.flexFontEmphasis
 import shub39.momentum.presentation.shared.flexFontRounded
 
@@ -78,7 +78,8 @@ fun ProjectList(
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            LargeFlexibleTopAppBar(
+            ExpressiveTopBar(
+                style = ExpressiveTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = {
                     Text(
@@ -94,8 +95,6 @@ fun ProjectList(
                         fontFamily = flexFontRounded(),
                     )
                 },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surface),
                 actions = {
                     IconButton(
                         onClick = onNavigateToSettings,
@@ -124,9 +123,9 @@ fun ProjectList(
         },
     ) { padding ->
         if (state.projects.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier.padding(padding).fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
+            LazierColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = padding,
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 itemsIndexed(state.projects, key = { _, it -> it.project.id }) {
@@ -163,7 +162,7 @@ fun ProjectList(
                 }
             }
         } else {
-            Empty()
+            PageFill(Modifier.padding(padding)) { Empty() }
         }
     }
 }
