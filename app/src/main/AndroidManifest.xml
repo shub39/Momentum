@@ -22,7 +22,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:name=".app.MomentumApp"
-        android:theme="@style/Theme.Momentum">
+        android:enableOnBackInvokedCallback="true"
+        android:theme="@style/Theme.Momentum"
+        tools:targetApi="33">
         <activity
             android:name=".app.MainActivity"
             android:exported="true"
